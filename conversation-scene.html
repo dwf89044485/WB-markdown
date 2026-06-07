@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>对话场景顶部栏 + 输入框</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f7;
+    }
+    .glass-blur {
+      -webkit-backdrop-filter: blur(32px) saturate(150%);
+      backdrop-filter: blur(32px) saturate(150%);
+    }
+    .lg-layer-one {
+      background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08));
+    }
+    .lg-layer-two {
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.58), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.2), transparent 48%);
+    }
+    .lg-layer-three {
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -8px 14px rgba(255,255,255,0.08);
+    }
+    .lg-capsule-layer-one {
+      background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08));
+    }
+    .lg-capsule-layer-two {
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.58), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.2), transparent 48%);
+    }
+    .lg-capsule-layer-three {
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -8px 14px rgba(255,255,255,0.08);
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen">
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- iPhone 状态栏（Status Bar）             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div
+    class="shrink-0 flex items-start justify-between bg-white"
+    style="padding-top: 21px; height: 54px; padding-left: 0; padding-right: 0;"
+  >
+    <!-- 左侧：时间 -->
+    <div class="flex items-center justify-center" style="padding-left: 16px; padding-right: 6px; width: 139px;">
+      <p style="
+        font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 17px;
+        font-weight: 590;
+        line-height: normal;
+        color: #000000;
+        white-space: nowrap;
+        text-align: center;
+        letter-spacing: -0.01em;
+      ">9:41</p>
+    </div>
+
+    <!-- 右侧：信号 + WiFi + 电池 -->
+    <div style="width: 139px; height: 20px; margin-top: 0;">
+      <svg width="139" height="20" viewBox="0 0 139 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+        <!-- Cellular Connection -->
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M44.8651 5.03302C44.8651 4.39998 44.3876 3.88679 43.7985 3.88679H42.7318C42.1427 3.88679 41.6651 4.39998 41.6651 5.03302V14.967C41.6651 15.6 42.1427 16.1132 42.7318 16.1132H43.7985C44.3876 16.1132 44.8651 15.6 44.8651 14.967V5.03302ZM37.431 6.33207H38.4977C39.0868 6.33207 39.5644 6.85757 39.5644 7.50581V14.9395C39.5644 15.5877 39.0868 16.1132 38.4977 16.1132H37.431C36.8419 16.1132 36.3644 15.5877 36.3644 14.9395V7.50581C36.3644 6.85757 36.8419 6.33207 37.431 6.33207ZM33.0993 8.98112H32.0326C31.4435 8.98112 30.9659 9.51331 30.9659 10.1698V14.9245C30.9659 15.581 31.4435 16.1132 32.0326 16.1132H33.0993C33.6884 16.1132 34.1659 15.581 34.1659 14.9245V10.1698C34.1659 9.51331 33.6884 8.98112 33.0993 8.98112ZM27.7985 11.4264H26.7318C26.1427 11.4264 25.6651 11.951 25.6651 12.5981V14.9415C25.6651 15.5886 26.1427 16.1132 26.7318 16.1132H27.7985C28.3876 16.1132 28.8651 15.5886 28.8651 14.9415V12.5981C28.8651 11.951 28.3876 11.4264 27.7985 11.4264Z" fill="black"/>
+        <!-- WiFi -->
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M60.4365 6.30213C62.9236 6.30223 65.3156 7.22432 67.1181 8.8778C67.2538 9.00545 67.4708 9.00384 67.6045 8.87419L68.9019 7.61072C68.9696 7.54496 69.0074 7.45588 69.0068 7.3632C69.0063 7.27052 68.9674 7.18188 68.899 7.11688C64.1679 2.74217 56.7042 2.74217 51.9732 7.11688C51.9047 7.18183 51.8658 7.27045 51.8652 7.36313C51.8645 7.45581 51.9022 7.54491 51.9698 7.61072L53.2677 8.87419C53.4013 9.00404 53.6184 9.00565 53.7541 8.8778C55.5568 7.22421 57.9491 6.30212 60.4365 6.30213ZM60.4331 10.5224C61.7904 10.5223 63.0993 11.0341 64.1054 11.9582C64.2415 12.0893 64.4559 12.0865 64.5885 11.9518L65.8758 10.6325C65.9436 10.5633 65.9812 10.4694 65.9802 10.3718C65.9793 10.2743 65.9398 10.1812 65.8706 10.1134C62.8068 7.22257 58.062 7.22257 54.9982 10.1134C54.929 10.1812 54.8895 10.2743 54.8886 10.3719C54.8877 10.4695 54.9254 10.5634 54.9934 10.6325L56.2803 11.9518C56.4129 12.0865 56.6273 12.0893 56.7634 11.9582C57.7688 11.0347 59.0767 10.523 60.4331 10.5224ZM62.9575 13.316C62.9594 13.4213 62.9224 13.5229 62.8551 13.5967L60.6784 16.0514C60.6146 16.1236 60.5276 16.1642 60.4369 16.1642C60.3461 16.1642 60.2591 16.1236 60.1953 16.0514L58.0183 13.5967C57.951 13.5228 57.914 13.4212 57.916 13.3159C57.918 13.2105 57.9588 13.1108 58.0288 13.0401C59.4189 11.7262 61.4548 11.7262 62.8449 13.0401C62.9149 13.1108 62.9556 13.2106 62.9575 13.316Z" fill="black"/>
+        <!-- Battery -->
+        <path d="M95.0068 5.5C96.4068 5.5 97.1068 5.50007 97.6416 5.77246C98.112 6.01214 98.4947 6.39483 98.7343 6.86523C99.0067 7.39999 99.0068 8.10002 99.0068 9.5V10.5C99.0068 11.9 99.0067 12.6 98.7343 13.1348C98.4947 13.6052 98.112 13.9879 97.6416 14.2275C97.1068 14.4999 96.4068 14.5 95.0068 14.5H82.0068C80.6068 14.5 79.9068 14.4999 79.372 14.2275C78.9016 13.9879 78.5189 13.6052 78.2793 13.1348C78.0069 12.6 78.0068 11.9 78.0068 10.5V9.5C78.0068 8.10002 78.0069 7.39999 78.2793 6.86523C78.5189 6.39483 78.9016 6.01214 79.372 5.77246C79.9068 5.50007 80.6068 5.5 82.0068 5.5H95.0068Z" fill="black"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M94.5068 3.5C96.5573 3.5 97.5826 3.50026 98.3886 3.84277C99.4131 4.27816 100.229 5.09373 100.664 6.11816C101.007 6.92416 101.007 7.9495 101.007 10C101.007 12.0505 101.007 13.0758 100.664 13.8818L100.578 14.0713C100.126 15.0067 99.3491 15.749 98.3886 16.1572L98.2343 16.2178C97.4501 16.4999 96.4289 16.5 94.5068 16.5H82.5068L81.1484 16.4951C79.9573 16.4791 79.2294 16.4141 78.625 16.1572C77.6645 15.749 76.8876 15.0067 76.4355 14.0713L76.3496 13.8818C76.0071 13.0758 76.0068 12.0505 76.0068 10C76.0068 8.07788 76.0069 7.05669 76.289 6.27246L76.3496 6.11816C76.7578 5.15771 77.5001 4.38081 78.4355 3.92871L78.625 3.84277C79.2294 3.5859 79.9573 3.52094 81.1484 3.50488L82.5068 3.5H94.5068ZM82.5068 4.5C81.4676 4.5 80.7394 4.50022 80.1689 4.54004C79.608 4.57919 79.2746 4.65311 79.0166 4.7627C78.2303 5.09683 77.6036 5.72347 77.2695 6.50977C77.1599 6.7678 77.086 7.1012 77.0468 7.66211C77.007 8.23258 77.0068 8.96078 77.0068 10C77.0068 11.0392 77.007 11.7674 77.0468 12.3379C77.086 12.8988 77.1599 13.2322 77.2695 13.4902C77.6036 14.2765 78.2303 14.9032 79.0166 15.2373C79.2746 15.3469 79.608 15.4208 80.1689 15.46C80.7394 15.4998 81.4676 15.5 82.5068 15.5H94.5068C95.546 15.5 96.2742 15.4998 96.8447 15.46C97.4056 15.4208 97.739 15.3469 97.997 15.2373C98.7833 14.9032 99.41 14.2765 99.7441 13.4902C99.8537 13.2322 99.9276 12.8988 99.9668 12.3379C100.007 11.7674 100.007 11.0392 100.007 10C100.007 8.96078 100.007 8.23258 99.9668 7.66211C99.9276 7.1012 99.8537 6.7678 99.7441 6.50977C99.41 5.72347 98.7833 5.09683 97.997 4.7627C97.739 4.65311 97.4056 4.57919 96.8447 4.54004C96.2742 4.50022 95.546 4.5 94.5068 4.5H82.5068Z" fill="black"/>
+        <path d="M102.007 8.28125C102.812 8.62642 103.335 9.42973 103.335 10.3193C103.335 11.2088 102.811 12.0113 102.007 12.3564V8.28125Z" fill="black"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 顶部栏（固定顶部）                       -->
+  <header
+    class="shrink-0 flex items-center min-h-12 px-4 gap-2"
+    style="background: rgba(245,245,247,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);"
+  >
+    <!-- 左侧：液晶玻璃菜单按钮 -->
+    <button
+      type="button"
+      aria-label="菜单"
+      class="group relative z-10 flex items-center justify-center overflow-hidden rounded-full border border-white/50 w-[46px] h-[46px] [border-top-color:rgba(255,255,255,0.82)] [border-left-color:rgba(255,255,255,0.62)] [border-right-color:rgba(255,255,255,0.36)] bg-white transition-[transform,box-shadow,background-color] duration-200 glass-blur shadow-[0_7px_30px_rgba(2,6,23,0.075),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.12)] hover:shadow-[0_10px_38px_rgba(2,6,23,0.1),inset_0_1px_0_rgba(255,255,255,0.72),inset_0_-1px_0_rgba(255,255,255,0.14)] active:scale-[0.985]"
+    >
+      <span aria-hidden class="pointer-events-none absolute inset-0 rounded-full lg-layer-one"></span>
+      <span aria-hidden class="pointer-events-none absolute inset-0 rounded-full lg-layer-two"></span>
+      <span aria-hidden class="pointer-events-none absolute inset-[1px] rounded-full lg-layer-three"></span>
+      <!-- MenuIcon SVG (from lucide-react) -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="relative z-10">
+        <path d="M4 5h16M4 12h16M4 19h16" stroke="#1c1c1e" stroke-opacity="0.86" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <!-- 中间：标题区 -->
+    <div class="flex-1 min-w-0 ml-2">
+      <h1 class="text-sm font-medium truncate text-[#1c1c1e]">项目需求讨论</h1>
+      <p class="text-xs text-muted-foreground truncate" style="color: #8e8e93;">/Users/josephdeng/Documents/workbuddy</p>
+    </div>
+
+    <!-- 右侧：液晶玻璃胶囊（新建 + 文件） -->
+    <div
+      class="group relative z-10 inline-flex items-center h-[46px] rounded-full overflow-hidden border border-white/50 [border-top-color:rgba(255,255,255,0.82)] [border-left-color:rgba(255,255,255,0.62)] [border-right-color:rgba(255,255,255,0.36)] bg-white transition-[transform,box-shadow,background-color] duration-200 glass-blur shadow-[0_7px_30px_rgba(2,6,23,0.075),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.12)] hover:shadow-[0_10px_38px_rgba(2,6,23,0.1),inset_0_1px_0_rgba(255,255,255,0.72),inset_0_-1px_0_rgba(255,255,255,0.14)] active:scale-[0.985]"
+    >
+      <span aria-hidden class="pointer-events-none absolute inset-0 rounded-full lg-capsule-layer-one"></span>
+      <span aria-hidden class="pointer-events-none absolute inset-0 rounded-full lg-capsule-layer-two"></span>
+      <span aria-hidden class="pointer-events-none absolute inset-[1px] rounded-full lg-capsule-layer-three"></span>
+
+      <!-- 新建按钮 -->
+      <button
+        type="button"
+        aria-label="新建会话"
+        class="relative z-10 flex-1 flex items-center justify-center px-3.5 h-full active:bg-black/5 transition-colors"
+      >
+        <!-- MessageSquarePlus SVG (from lucide-react) -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="relative z-10">
+          <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" stroke="#1c1c1e" stroke-opacity="0.86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 8v6M9 11h6" stroke="#1c1c1e" stroke-opacity="0.86" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- 分隔线 -->
+      <span aria-hidden class="w-px shrink-0 self-center" style="background-color: rgba(28,28,30,0.12);"></span>
+
+      <!-- 文件按钮 -->
+      <button
+        type="button"
+        aria-label="文件"
+        class="relative z-10 flex-1 flex items-center justify-center px-3.5 h-full active:bg-black/5 transition-colors"
+      >
+        <!-- Folder SVG (from lucide-react) -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" stroke-opacity="0.86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative z-10">
+          <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 中间内容区（flex: 1 自适应）             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="flex-1"></div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 底部输入框（ChatboxWave 收起状态）       -->
+  <!-- ══════════════════════════════════════════ -->
+
+  <div class="shrink-0 flex justify-center px-[26px] pb-8 pt-4">
+    <div class="relative z-50 w-full">
+      <div
+        class="relative z-10 w-full overflow-hidden"
+        style="
+          background: #FFFFFF;
+          border-radius: 24px;
+          box-shadow: 0 4px 10px 0 rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
+          min-height: 46px;
+          height: 46px;
+        "
+      >
+        <div class="flex h-full items-center">
+
+          <!-- 左侧添加按钮 -->
+          <button
+            type="button"
+            tabindex="-1"
+            aria-label="添加"
+            class="flex h-[46px] w-12 items-center justify-center shrink-0"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 2.5C10.4602 2.5 10.8333 2.8731 10.8333 3.33333V9.16504H16.6667C17.1268 9.16514 17.5 9.5382 17.5 9.99837C17.4999 10.4585 17.1267 10.8316 16.6667 10.8317H10.8333V16.6667C10.8333 17.1269 10.4602 17.5 10 17.5C9.53977 17.5 9.16667 17.1269 9.16667 16.6667V10.8317H3.33333C2.87316 10.8317 2.50011 10.4585 2.5 9.99837C2.5 9.53814 2.8731 9.16504 3.33333 9.16504H9.16667V3.33333C9.16667 2.8731 9.53976 2.5 10 2.5Z" fill="black"/>
+            </svg>
+          </button>
+
+          <!-- 占位文字 -->
+          <span
+            class="flex-1 select-none truncate text-center"
+            style="font-size: 14px; line-height: 24px; padding: 8px 12px; color: rgba(0,0,0,0.30);"
+          >
+            安排任务，WorkBuddy 帮你完成
+          </span>
+
+          <!-- 右侧语音按钮 -->
+          <button
+            type="button"
+            tabindex="-1"
+            aria-label="语音输入"
+            class="flex h-[46px] w-12 items-center justify-center shrink-0"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.355 11.0551C16.8865 11.0552 17.2905 11.5386 17.1257 12.0439C16.2278 14.7938 13.7848 16.8429 10.8211 17.166V18.8294C10.8207 19.2892 10.4477 19.6634 9.98781 19.6635C9.52798 19.6635 9.15514 19.2899 9.15448 18.8302V17.1635C6.20224 16.8316 3.77055 14.786 2.87518 12.0439C2.71035 11.5386 3.11433 11.0552 3.64585 11.0551C4.0415 11.0551 4.37932 11.3302 4.51418 11.7021C5.32726 13.9462 7.47627 15.5506 10.0008 15.5506C12.5251 15.5502 14.6737 13.946 15.4867 11.7021C15.6215 11.3302 15.9594 11.0551 16.355 11.0551Z" fill="black" fill-opacity="0.86"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1001 0.644165C12.6298 0.644595 14.6809 2.69526 14.681 5.22506V9.11503C14.6806 11.6445 12.6296 13.6955 10.1001 13.6959C7.57024 13.6959 5.51967 11.6448 5.51923 9.11503V5.22506C5.51934 2.695 7.57003 0.644165 10.1001 0.644165ZM10.1001 2.30595C8.48821 2.30595 7.18112 3.61317 7.18101 5.22506V9.11503C7.18145 10.7266 8.48841 12.0333 10.1001 12.0333C11.7115 12.0329 13.0188 10.7264 13.0192 9.11503V5.22506C13.0191 3.61344 11.7117 2.30638 10.1001 2.30595Z" fill="black" fill-opacity="0.86"/>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

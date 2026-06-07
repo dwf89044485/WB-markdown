@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy — Agent 对话流动态原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="phone-shell">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+        <rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/>
+        <rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/>
+      </svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+        <path d="M7.5 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="currentColor"/>
+        <path d="M3.2 6.2A6 6 0 017.5 4.5a6 6 0 014.3 1.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M.8 3.8A10.2 10.2 0 017.5 1.5a10.2 10.2 0 016.7 2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-width="1"/>
+        <rect x="22" y="3.5" width="2.5" height="5" rx="1.5" fill="currentColor" opacity="0.4"/>
+        <rect x="1.5" y="1.5" width="18" height="9" rx="2.5" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+        <button class="nav-back" aria-label="返回">
+      <svg width="10" height="17" viewBox="0 0 10 17" fill="none">
+        <path d="M8.5 1.5L1.5 8.5L8.5 15.5" stroke="#007AFF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="nav-center">
+      <span class="nav-title">Hello</span>
+      <span class="nav-subtitle">josephdeng · 测试用</span>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" aria-label="新建">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="10" stroke="#007AFF" stroke-width="1.5"/>
+          <path d="M11 7v8M7 11h8" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="nav-btn" aria-label="更多">
+        <svg width="20" height="5" viewBox="0 0 20 5" fill="#007AFF">
+          <circle cx="2.5" cy="2.5" r="2.2"/><circle cx="10" cy="2.5" r="2.2"/><circle cx="17.5" cy="2.5" r="2.2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="conversation" id="conv">
+    <div class="user-msg-wrap is-hidden" id="userMsgWrap"><div class="user-bubble" id="userBubble"></div></div>
+    <div class="agent-msg is-hidden" id="agentMsg">
+      <div class="agent-header">
+        <div class="agent-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle fill="#000" fill-opacity="0.7" cx="12" cy="12" r="12"/><clipPath id="clip_0"><circle cx="12" cy="12" r="12"/></clipPath><g clip-path="url(#clip_0)"><path fill="#FFF" transform="matrix(0.866025 -0.5 0.5 0.866025 -0.803674 14.0118)" d="M3.3094 0.8611C3.486 0.3278 3.6141 0.12 3.8253 0.0334C3.9535 -0.0185 4.2513 0.023 4.5733 0.1373C5.3802 0.4317 6.9108 1.4705 8.5072 2.8106L8.6734 2.9492L9.2863 2.8245C10.3044 2.6167 10.945 2.5405 12.067 2.5025C13.2375 2.4609 14.4633 2.5786 15.7584 2.8591L16.174 2.9492L16.6588 2.5544C18.4006 1.1312 19.8827 0.1962 20.6446 0.0404C20.9077 -0.0151 20.9216 -0.0151 21.0532 0.0507C21.2679 0.1546 21.3995 0.3624 21.5518 0.8403C21.9085 1.9553 22.144 3.9603 22.1024 5.5325L22.0851 6.1419L22.3379 6.5229C22.5803 6.8934 22.937 7.5721 23.0617 7.8976C23.1171 8.0465 23.1309 8.0569 23.266 8.0777C23.8754 8.1712 24.4399 8.8395 24.7204 9.8057C24.9732 10.6749 24.9801 11.9146 24.7411 12.808C24.6996 12.95 24.5853 13.2408 24.4849 13.4486C24.1282 14.1758 23.5811 14.6052 23.0028 14.6087C22.885 14.6087 22.8712 14.6191 22.7465 14.8407C22.1613 15.9003 21.2748 16.7834 20.1182 17.476C18.8162 18.2516 16.9912 18.778 14.8027 19.0031C13.6253 19.1277 11.0039 19.1381 9.8854 19.0273C7.2086 18.7572 5.2936 18.1408 3.9188 17.1054C3.0981 16.489 2.2982 15.5679 1.9381 14.8269C1.8446 14.6295 1.8238 14.6087 1.6853 14.574C0.9477 14.3905 0.3348 13.5387 0.082 12.3509C-0.0184 11.8765 -0.0288 10.848 0.0612 10.3528C0.2759 9.1962 0.8438 8.3686 1.5953 8.1123C1.7892 8.0465 1.7961 8.0431 1.9 7.8041C2.0697 7.4128 2.364 6.8588 2.5856 6.5194L2.7899 6.2008L2.8003 5.0477C2.8211 3.2539 2.9943 1.8376 3.3094 0.8611ZM4.012 9.5945C3.9259 10.0251 3.9259 10.5458 3.9259 11.5872C3.9259 12.6285 3.9259 13.1492 4.012 13.5799C4.3612 15.3257 5.7365 16.701 7.4823 17.0502C7.913 17.1363 8.4337 17.1363 9.475 17.1363L15.4571 17.1363C16.4985 17.1363 17.0192 17.1363 17.4498 17.0502C19.1956 16.701 20.5709 15.3257 20.9202 13.5799C21.0063 13.1492 21.0063 12.6285 21.0063 11.5872C21.0063 10.5458 21.0063 10.0251 20.9202 9.5945C20.5709 7.8487 19.1956 6.4734 17.4498 6.1242H7.4823C5.7365 6.4734 4.3612 7.8487 4.012 9.5945Z"/><rect fill="#FFF" transform="matrix(0.866025 -0.5 0.5 0.866025 10.9199 18.1232)" width="2.0465" height="4.2504" rx="1.0233"/><rect fill="#FFF" transform="matrix(0.866025 -0.5 0.5 0.866025 16.4414 14.9355)" width="2.0465" height="4.2504" rx="1.0233"/></g></svg>
+        </div>
+        <span class="agent-name" id="agentName">WorkBuddy</span>
+      </div>
+      <div id="timingMount"></div>
+      <div class="exec-area open is-hidden" id="execArea">
+        <div id="thinkingMount" class="thinking-mount"></div>
+        <div class="steps-list open" id="stepsList"></div>
+      </div>
+      <div class="main-content"><div class="md" id="mainMd"></div></div>
+    </div>
+  </div>
+  <!-- Composer -->
+  <div class="composer">
+    <div class="composer-row">
+      <button class="c-add" aria-label="附件">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="c-input"><span class="c-placeholder">发消息或按住说话...</span></div>
+      <button class="c-mic" aria-label="麦克风">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M4 10a6 6 0 0012 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M10 16v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="c-voice">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="3" fill="white"/>
+          <path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16M4.1 4.1l1 1M12.9 12.9l1 1M4.1 13.9l1-1M12.9 5.1l1-1" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
+    <div class="bottom-sheet" id="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-hdr">
+        <span class="sheet-ttl" id="sheetTitle">过程</span>
+        <button class="sheet-x" onclick="closeSheet()">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+</div>
+<div class="demo-controls" aria-label="演示参数控制">
+  <div class="stepper-control" aria-label="步进控制">
+    <button id="ctrlPrevStep" type="button" class="ghost-btn">上一步</button>
+    <button id="ctrlAutoStep" type="button">停止</button>
+    <button id="ctrlNextStep" type="button" class="ghost-btn">下一步</button>
+    <span id="ctrlStepInfo" class="stepper-info">0/0</span>
+  </div>
+  <label class="speed-control">输出速度
+    <input id="ctrlTokensPerSecond" type="number" min="20" max="1000" step="20" value="200" inputmode="numeric">
+    <span>tokens/s</span>
+  </label>
+  <button id="ctrlReplay" type="button">刷新重放</button>
+</div>
+
+<script src="./scenario.js"></script>
+<script src="./icons-inline.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

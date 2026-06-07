@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Cache & logs
+.cache/
+server.log
+
+# IDE / tool directories
+.codebuddy/
+.with/
+
+# Backups
+*.old

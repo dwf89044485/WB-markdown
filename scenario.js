@@ -5,6 +5,11 @@ window.WORKBUDDY_SCENARIO = {
     "autoStartDelay": 420,
     "tokensPerSecond": 200
   },
+  "nav": {
+    "title": "策划日本关西旅游方案",
+    "workspace": "日常生活",
+    "deviceName": "JosephDeng MacMini"
+  },
   "userMessage": "帮我规划一次 2026 年 9 月 18 日到 9 月 24 日的关西家庭旅行。同行 4 人，爸爸膝盖不好，妈妈不吃生食，预算 28000 元。请查询天气、路线、预算、门票、文件和日历草稿，但不要真实预订。",
   "agent": {
     "name": "WorkBuddy"

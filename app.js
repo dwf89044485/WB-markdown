@@ -86,6 +86,28 @@ function setupDemoControls(){
   updateDirectorControls();
 }
 
+function inferWorkspaceName(){
+  try {
+    const pathname = decodeURIComponent(window.location.pathname || '');
+    const segments = pathname.split('/').filter(Boolean);
+    if (segments.length >= 2) return segments[segments.length - 2];
+  } catch (_) {}
+  return '';
+}
+
+function setupNavMeta(){
+  const nav = scenario.nav || {};
+  const title = (nav.title || '').trim() || '项目需求讨论';
+  const workspace = (nav.workspace || '').trim() || inferWorkspaceName() || '工作空间';
+  const deviceName = (nav.deviceName || '').trim() || '设备名称';
+  const subtitle = `${workspace} · ${deviceName}`;
+
+  const titleEl = document.getElementById('navTitle');
+  const subtitleEl = document.getElementById('navSubtitle');
+  if (titleEl) titleEl.textContent = title;
+  if (subtitleEl) subtitleEl.textContent = subtitle;
+}
+
 function scrollToBottom(){
   const c = $('#conv');
   c.scrollTop = c.scrollHeight;
@@ -703,6 +725,7 @@ function initializePlayback(){
   fastRender = false;
   currentDirectorIndex = -1;
   directorRuntime = { rows: [] };
+  setupNavMeta();
   resetPlaybackDom();
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();

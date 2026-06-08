@@ -174,7 +174,13 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
   justify-content:center;
   flex-shrink:0;
   cursor:pointer;
+  position:relative;
 }
+.nav-menu-btn::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.nav-menu-btn:active::after{background:rgba(0,0,0,0.04);}
 .nav-menu-btn,
 .capsule-btn{border:none;}
 
@@ -193,8 +199,13 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
   justify-content:center;
   background:none;
   cursor:pointer;
+  position:relative;
 }
-.capsule-btn:active{background:rgba(0,0,0,0.05);}
+.capsule-btn::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.capsule-btn:active::after{background:rgba(0,0,0,0.05);}
 .capsule-divider{
   width:1px;
   height:20px;

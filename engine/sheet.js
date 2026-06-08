@@ -39,7 +39,7 @@ export function renderTodo(todo) {
 export function renderSearchItem(text) {
   const row = document.createElement('div');
   row.className = 's-sub';
-  const icon = svgFromRegistry('wb-webdesign.svg', 'tool-svg tool-svg-website');
+  const icon = svgFromRegistry('wb-website.svg', 'tool-svg tool-svg-website');
   row.innerHTML = `<div class="s-sub-ico">${icon}</div><span class="s-sub-txt">${escapeHtml(text)}</span>`;
   return row;
 }

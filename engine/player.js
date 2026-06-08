@@ -537,7 +537,12 @@ function applyUrlPlaybackOverrides() {
   const modeParam = params.get('mode');
   if (modeParam === 'flat') displayMode = 'flat';
   // standalone 模式：全屏渲染，去掉手机壳、步进器
-  if (params.get('standalone') === '1') {
+  // URL 参数 standalone=1 强制开启，standalone=0 强制关闭，不传则自动检测
+  const standaloneParam = params.get('standalone');
+  const isStandalone = standaloneParam === '1' ? true
+    : standaloneParam === '0' ? false
+    : /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isStandalone) {
     document.body.classList.add('is-standalone');
   }
 

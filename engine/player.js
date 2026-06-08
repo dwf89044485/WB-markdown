@@ -539,13 +539,7 @@ function applyUrlPlaybackOverrides() {
   const modeParam = params.get('mode');
   if (modeParam === 'flat') displayMode = 'flat';
 
-  // standalone 参数支持手动覆盖自动识别：1=强制手机纯内容，0=强制桌面演示壳
-  const standaloneParam = params.get('standalone');
-  if (standaloneParam === '1' || standaloneParam === '0') {
-    const enabled = standaloneParam === '1';
-    document.documentElement.classList.toggle('is-standalone', enabled);
-    if (document.body) document.body.classList.toggle('is-standalone', enabled);
-  }
+  // standalone 参数由 index.html 在首屏前处理，这里不再重复切 class
 
   const legacySpeed = params.get('typeSpeed');
   if (tpsRaw === null && legacySpeed !== null && legacySpeed !== '') {

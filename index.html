@@ -16,11 +16,9 @@
 (function(){
   var params = new URLSearchParams(location.search);
   var sp = params.get('standalone');
-  var ua = navigator.userAgent || '';
-  var uaHandset = /iPhone|iPod|Android.*Mobile|Windows Phone|Mobile/i.test(ua);
-  var mqHandset = window.matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
-  var standalone = sp === '1' ? true : sp === '0' ? false : (uaHandset || mqHandset);
-  document.documentElement.classList.toggle('is-standalone', standalone);
+  var root = document.documentElement;
+  if (sp === '1') root.classList.add('force-standalone');
+  if (sp === '0') root.classList.add('force-desktop');
 })();
 </script>
 </head>

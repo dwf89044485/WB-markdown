@@ -9,7 +9,7 @@
   --sheet-radius:34px;
   --sheet-side-padding:20px;
   --sheet-body-left:20px;
-  --sheet-guide-left:34px;
+  --sheet-guide-left:32px;
 }
 
 /* ── OVERLAY ─────────────────────────────────────────────── */
@@ -117,7 +117,7 @@
 .s-ico{
   width:24px;height:24px;flex:0 0 24px;
   display:flex;align-items:center;justify-content:center;
-  background:transparent;border-radius:0;
+  background:#fff;border-radius:6px;
   margin-top:0;z-index:2;
 }
 .s-ico-img{
@@ -197,7 +197,7 @@
 .s-sub-ico{
   width:24px;height:24px;flex:0 0 24px;
   display:flex;align-items:center;justify-content:center;
-  background:transparent;border-radius:0;z-index:2;
+  background:#fff;border-radius:6px;z-index:2;
 }
 .s-todo-tool{display:none;}
 .s-sub-txt{

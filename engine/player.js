@@ -588,10 +588,9 @@ function setupDemoControls() {
   // ── 显示 commit hash ──────────────────────────────────
   const hashEl = document.getElementById('ctrlCommitHash');
   if (hashEl) {
-    // 优先用 Vercel 环境变量（部署时注入），fallback 到本地 COMMIT_HASH 文件
-    const vercelHash = document.querySelector('meta[name="commit-hash"]')?.getAttribute('content');
-    if (vercelHash) {
-      hashEl.textContent = vercelHash;
+    const metaHash = document.querySelector('meta[name="commit-hash"]')?.getAttribute('content');
+    if (metaHash && metaHash !== '__COMMIT_HASH__') {
+      hashEl.textContent = metaHash;
     } else {
       fetch('./COMMIT_HASH')
         .then(r => r.text())

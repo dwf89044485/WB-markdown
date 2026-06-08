@@ -8,11 +8,10 @@ body{flex-direction:column;gap:14px;}
 .demo-controls{
   width:min(720px,calc(100vw - 32px));
   display:flex;
+  flex-direction:column;
   align-items:center;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
-  padding:10px 12px;
+  gap:6px;
+  padding:8px 12px;
   border:.5px solid rgba(0,0,0,.08);
   border-radius:16px;
   background:rgba(255,255,255,.82);
@@ -20,6 +19,13 @@ body{flex-direction:column;gap:14px;}
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+}
+.control-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
 }
 .stepper-control{display:flex;align-items:center;gap:7px;}
 .stepper-info{

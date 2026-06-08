@@ -172,16 +172,18 @@ async function runFlatAction(container, action) {
   }
 }
 
-// ── Display mode toggle ───────────────────────────────────
-function toggleDisplayMode() {
-  displayMode = displayMode === 'grouped' ? 'flat' : 'grouped';
+// ── Display mode toggle (tab) ─────────────────────────────
+function toggleDisplayMode(mode) {
+  displayMode = mode;
   const phoneShell = document.querySelector('.phone-shell');
   if (phoneShell) {
     phoneShell.classList.toggle('mode-flat', displayMode === 'flat');
     phoneShell.classList.toggle('mode-grouped', displayMode === 'grouped');
   }
-  const btn = document.getElementById('ctrlModeToggle');
-  if (btn) btn.textContent = displayMode === 'flat' ? '分组模式' : '平铺模式';
+  const groupBtn = document.getElementById('ctrlModeGrouped');
+  const flatBtn = document.getElementById('ctrlModeFlat');
+  if (groupBtn) groupBtn.classList.toggle('is-active', displayMode === 'grouped');
+  if (flatBtn) flatBtn.classList.toggle('is-active', displayMode === 'flat');
   restartPlayback();
 }
 
@@ -565,10 +567,15 @@ function setupDemoControls() {
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();
 
-  const modeBtn = document.getElementById('ctrlModeToggle');
-  if (modeBtn) {
-    modeBtn.textContent = displayMode === 'flat' ? '分组模式' : '平铺模式';
-    modeBtn.onclick = toggleDisplayMode;
+  const groupBtn = document.getElementById('ctrlModeGrouped');
+  const flatBtn = document.getElementById('ctrlModeFlat');
+  if (groupBtn) {
+    groupBtn.classList.toggle('is-active', displayMode === 'grouped');
+    groupBtn.onclick = () => toggleDisplayMode('grouped');
+  }
+  if (flatBtn) {
+    flatBtn.classList.toggle('is-active', displayMode === 'flat');
+    flatBtn.onclick = () => toggleDisplayMode('flat');
   }
 
   updateDirectorControls();

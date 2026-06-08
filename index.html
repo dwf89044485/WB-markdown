@@ -117,7 +117,10 @@
     <span>tokens/s</span>
   </label>
   <button id="ctrlReplay" type="button">刷新重放</button>
-  <button id="ctrlModeToggle" type="button">平铺模式</button>
+  <div class="mode-tabs" role="tablist">
+    <button id="ctrlModeGrouped" type="button" role="tab" aria-selected="false">分组模式</button>
+    <button id="ctrlModeFlat" type="button" role="tab" aria-selected="true">平铺模式</button>
+  </div>
 </div>
 
 <script src="./scenario.js"></script>

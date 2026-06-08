@@ -195,23 +195,24 @@
   margin:10px -2px 14px;
   border-radius:var(--md-radius-md);
   border:.5px solid var(--md-border);
-  overflow:visible;
+  overflow-x:auto;
   max-width:100%;
   background:var(--md-surface);
   box-shadow:var(--md-shadow-card);
   -webkit-overflow-scrolling:touch;
 }
 .md-node .tbl-wrap{margin:7px -2px 11px;border-radius:11px;}
-.tbl-wrap{overflow:visible;max-width:100%;}
+.md-node .tbl-wrap .tbl{min-width:360px;}
+.tbl-wrap{overflow-x:auto;max-width:100%;}
 .md .tbl{
   width:100%;
   min-width:0;
   border-collapse:separate;
   border-spacing:0;
-  table-layout:fixed;
+  table-layout:auto;
 }
 .md-node .tbl{min-width:0;}
-.tbl{width:100%;min-width:0;table-layout:fixed;}
+.tbl{width:100%;min-width:0;table-layout:auto;}
 .md .tbl th{
   position:sticky;top:0;
   background:var(--md-surface-soft);

@@ -180,7 +180,11 @@
 /* only active during playback; final visual keeps original classes */
 .is-hidden{display:none !important;}
 
-/* ── PLAYBACK ENTRANCE ANIMATIONS ───────────────────────── */
+/* ── FLAT MODE ───────────────────────────────────────────── */
+.mode-flat .flat-container{padding:0 0 4px;}
+.mode-flat .flat-container > .step-detail-link:first-child{margin-top:0;}
+.mode-flat .flat-container > *{margin-bottom:2px;}
+
 .message-enter{animation:messageIn .34s cubic-bezier(.2,.8,.2,1) both;}
 .agent-enter{animation:agentIn .36s cubic-bezier(.2,.8,.2,1) both;}
 .node-enter{animation:agentIn .28s cubic-bezier(.2,.8,.2,1) both;}

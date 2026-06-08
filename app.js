@@ -2,6 +2,7 @@ const scenario = window.WORKBUDDY_SCENARIO;
 const INLINE_ICONS = window.WORKBUDDY_INLINE_ICONS || {};
 const ICON_ALIASES = window.WORKBUDDY_ICON_ALIASES || {};
 const $ = (sel, root=document) => root.querySelector(sel);
+let displayMode = 'grouped'; // 'grouped' | 'flat'
 let activePlayId = 0;
 let fastRender = false;
 let directorTimeline = [];
@@ -41,6 +42,10 @@ function applyUrlPlaybackOverrides(){
     const value = Number(tpsRaw);
     if (Number.isFinite(value)) scenario.playback.tokensPerSecond = value;
   }
+  // mode 参数：flat（平铺模式） / grouped（分组模式，默认）
+  const modeParam = params.get('mode');
+  if (modeParam === 'flat') displayMode = 'flat';
+
   // 兼容旧版参数：typeSpeed 是 ms/字符，这里换算成 tokens/s。
   const legacySpeed = params.get('typeSpeed');
   if (tpsRaw === null && legacySpeed !== null && legacySpeed !== '') {
@@ -83,6 +88,13 @@ function setupDemoControls(){
   if (prev) prev.onclick = () => directorPrevStep();
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();
+
+  const modeBtn = document.getElementById('ctrlModeToggle');
+  if (modeBtn) {
+    modeBtn.textContent = displayMode === 'flat' ? '分组模式' : '平铺模式';
+    modeBtn.onclick = toggleDisplayMode;
+  }
+
   updateDirectorControls();
 }
 
@@ -287,9 +299,9 @@ async function typeClone(source, target){
   }
 }
 
-async function appendHTML(row, html){
-  const container = $('.step-detail-inner', row);
-  await appendHTMLTypedTo(container, html);
+async function appendHTML(row, html, container){
+  const target = container || $('.step-detail-inner', row);
+  await appendHTMLTypedTo(target, html);
 }
 
 async function appendMarkdown(row, markdown){
@@ -350,12 +362,13 @@ function normalizeActions(actions) {
   return result;
 }
 
-async function runStatusGroup(row, actions){
+async function runStatusGroup(row, actions, container){
+  const detailIn = container || $('.step-detail-inner', row);
   const firstFrames = actions[0].frames || [];
   const completedLabels = [];
   const completedFinalFrames = [];
   const initialTitle = actions.map(toDoneLabel).join('、');
-  const line = createStatusLine(row, joinLabels([toRunningLabel(actions[0])]), firstFrames[0] ? [firstFrames[0]] : [], initialTitle);
+  const line = createStatusLineIn(detailIn, joinLabels([toRunningLabel(actions[0])]), firstFrames[0] ? [firstFrames[0]] : [], initialTitle);
 
   for (let index = 0; index < actions.length; index++) {
     const action = actions[index];
@@ -395,6 +408,31 @@ async function runNodeAction(row, action){
   if (action.type === 'markdown') await appendMarkdown(row, action.markdown);
 }
 
+async function runFlatAction(container, action){
+  if (!container) return;
+  if (action.type === 'status') await runStatusGroup(null, [action], container);
+  if (action.type === 'statusGroup') await runStatusGroup(null, action.actions, container);
+  if (action.type === 'html') await appendHTML(null, action.html, container);
+  if (action.type === 'markdown') {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'md md-node';
+    container.appendChild(wrapper);
+    await appendHTMLTypedTo(wrapper, markdownToHtml(action.markdown));
+  }
+}
+
+function toggleDisplayMode(){
+  displayMode = displayMode === 'grouped' ? 'flat' : 'grouped';
+  const phoneShell = document.querySelector('.phone-shell');
+  if (phoneShell) {
+    phoneShell.classList.toggle('mode-flat', displayMode === 'flat');
+    phoneShell.classList.toggle('mode-grouped', displayMode === 'grouped');
+  }
+  const btn = document.getElementById('ctrlModeToggle');
+  if (btn) btn.textContent = displayMode === 'flat' ? '分组模式' : '平铺模式';
+  restartPlayback();
+}
+
 function directorActionLabel(action){
   if (action.type === 'status') return toDoneLabel(action);
   if (action.type === 'statusGroup') return action.actions.map(toDoneLabel).join('、');
@@ -409,31 +447,60 @@ function buildDirectorTimeline(){
   timeline.push({ label:'WorkBuddy 出现', run:showAgentShell });
   timeline.push({ label:'思考过程', run:showThinkingLoading });
 
-  scenario.nodes.forEach((node, nodeIndex) => {
+  if (displayMode === 'flat') {
+    // 平铺模式：跳过节点卡片，所有 action 直接渲染到一个平铺容器
+    let containerReady = false;
     timeline.push({
-      label:`节点 ${nodeIndex + 1} 出现`,
+      label:'创建平铺容器',
       run: async () => {
-        directorRuntime.rows[nodeIndex] = createStep(node);
+        const container = document.createElement('div');
+        container.className = 'flat-container';
+        $('#stepsList').appendChild(container);
+        directorRuntime.flatContainer = container;
+        containerReady = true;
         await sleep(playback('stepDelay', 470));
       }
     });
-    const actions = normalizeActions(node.actions);
-    actions.forEach((action, actionIndex) => {
-      const isLastAction = actionIndex === actions.length - 1;
-      timeline.push({
-        label:`节点 ${nodeIndex + 1} · ${directorActionLabel(action)}`,
-        run: async () => {
-          const row = directorRuntime.rows[nodeIndex];
-          await runNodeAction(row, action);
-          if (isLastAction) {
-            setStepIcon(row, true);
-            row.classList.remove('open');
-            await sleep(playback('stepDelay', 470));
+    scenario.nodes.forEach((node) => {
+      const actions = normalizeActions(node.actions);
+      actions.forEach((action) => {
+        timeline.push({
+          label: directorActionLabel(action),
+          run: async () => {
+            if (!containerReady) return;
+            await runFlatAction(directorRuntime.flatContainer, action);
           }
-        }
+        });
       });
     });
-  });
+  } else {
+    // 分组模式（现有逻辑）
+    scenario.nodes.forEach((node, nodeIndex) => {
+      timeline.push({
+        label:`节点 ${nodeIndex + 1} 出现`,
+        run: async () => {
+          directorRuntime.rows[nodeIndex] = createStep(node);
+          await sleep(playback('stepDelay', 470));
+        }
+      });
+      const actions = normalizeActions(node.actions);
+      actions.forEach((action, actionIndex) => {
+        const isLastAction = actionIndex === actions.length - 1;
+        timeline.push({
+          label:`节点 ${nodeIndex + 1} · ${directorActionLabel(action)}`,
+          run: async () => {
+            const row = directorRuntime.rows[nodeIndex];
+            await runNodeAction(row, action);
+            if (isLastAction) {
+              setStepIcon(row, true);
+              row.classList.remove('open');
+              await sleep(playback('stepDelay', 470));
+            }
+          }
+        });
+      });
+    });
+  }
 
   timeline.push({ label:'任务耗时与最终汇报', run:renderFinal });
   return timeline;
@@ -724,7 +791,12 @@ function initializePlayback(){
   directorBusy = false;
   fastRender = false;
   currentDirectorIndex = -1;
-  directorRuntime = { rows: [] };
+  directorRuntime = { rows: [], flatContainer: null };
+  const phoneShell = document.querySelector('.phone-shell');
+  if (phoneShell) {
+    phoneShell.classList.toggle('mode-flat', displayMode === 'flat');
+    phoneShell.classList.toggle('mode-grouped', displayMode === 'grouped');
+  }
   setupNavMeta();
   resetPlaybackDom();
   directorTimeline = buildDirectorTimeline();
@@ -853,10 +925,24 @@ function renderSheet(frameRefs, explicitTitle){
   const frame = frames[0] || fallback;
   const title = explicitTitle || [...new Set(frames.map(f => f.title).filter(Boolean))].join('、') || frame.title || '过程';
   const events = frames.flatMap(f => f.events || []);
-  const lastTodosFrame = [...frames].reverse().find(f => f.todos && f.todos.length);
-  const todos = lastTodosFrame ? lastTodosFrame.todos : [];
 
-  $('#sheetTitle').textContent = '过程';
+  // 支持新格式（todoOverrides + baseline）和旧格式（todos 完整数组）兼容
+  const baseline = scenario.todosBaseline || [];
+  const lastTodosFrame = [...frames].reverse().find(f =>
+    (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
+  );
+  let todos = [];
+  if (lastTodosFrame) {
+    if (lastTodosFrame.todoOverrides !== undefined) {
+      const overrideMap = {};
+      (lastTodosFrame.todoOverrides || []).forEach(o => { overrideMap[o.index] = o.status; });
+      todos = baseline.map((text, i) => ({ text, status: overrideMap[i] || 'todo' }));
+    } else {
+      // 兼容旧格式
+      todos = lastTodosFrame.todos;
+    }
+  }
+
   const sheet = $('#sheet');
   if (sheet) sheet.dataset.sheetContext = title;
   const body = $('#sheetBody');

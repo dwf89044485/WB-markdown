@@ -14,6 +14,15 @@ window.WORKBUDDY_SCENARIO = {
   "agent": {
     "name": "WorkBuddy"
   },
+  "todosBaseline": [
+    "任务理解与分解：明确需求、约束和输出格式",
+    "联网搜索：签证/入境政策、交通卡、景点开放情况",
+    "天气趋势与穿衣建议",
+    "汇率与预算换算",
+    "城际交通与路线时间",
+    "生成关西主要地点图片",
+    "整合信息，输出完整旅行方案文档"
+  ],
   "thinking": {
     "type": "status",
     "runningText": "正在思考",
@@ -66,36 +75,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "active"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "todo"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "todo"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "todo"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "todo"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"active"}]
     },
     "F1.b": {
       "title": "创建待办",
@@ -106,240 +86,37 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "todo"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "todo"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "todo"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "todo"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"}]
     },
     "F1.c": {
       "title": "搜索网页",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "active"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "todo"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "todo"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "todo"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"active"}]
     },
     "F1.d": {
       "title": "搜索网页",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "active"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "todo"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "todo"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"active"}]
     },
     "F1.e": {
       "title": "搜索网页",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "active"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "todo"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"active"}]
     },
     "F1.f": {
       "title": "搜索网页",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "active"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F1.g": {
       "title": "搜索网页",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "todo"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"}]
     },
     "F2.a": {
       "title": "生成图片",
       "events": [],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "active"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F2.b": {
       "title": "生成图片",
@@ -349,36 +126,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "active"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F2.c": {
       "title": "生成图片",
@@ -392,36 +140,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "active"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F2.d": {
       "title": "生成图片",
@@ -435,36 +154,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "done"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "todo"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"}]
     },
     "F2.e": {
       "title": "更新待办",
@@ -475,36 +165,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "done"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "active"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
     },
     "F2.f": {
       "title": "更新待办",
@@ -515,36 +176,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "done"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "active"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
     },
     "F3.1a": {
       "title": "调用技能",
@@ -778,36 +410,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "done"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "active"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
     },
     "F3.6b": {
       "title": "更新待办",
@@ -818,36 +421,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todos": [
-        {
-          "text": "任务理解与分解：明确需求、约束和输出格式",
-          "status": "done"
-        },
-        {
-          "text": "联网搜索：签证/入境政策、交通卡、景点开放情况",
-          "status": "done"
-        },
-        {
-          "text": "天气趋势与穿衣建议",
-          "status": "done"
-        },
-        {
-          "text": "汇率与预算换算",
-          "status": "done"
-        },
-        {
-          "text": "城际交通与路线时间",
-          "status": "done"
-        },
-        {
-          "text": "生成关西主要地点图片",
-          "status": "done"
-        },
-        {
-          "text": "整合信息，输出完整旅行方案文档",
-          "status": "done"
-        }
-      ]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"done"}]
     }
   },
   "nodes": [
@@ -905,6 +479,7 @@ window.WORKBUDDY_SCENARIO = {
       "id": "n3",
       "title": "整合信息，输出完整旅行方案文档",
       "actions": [
+        {"type": "markdown", "markdown": "现在我来整合所有信息，生成完整的方案文档"},
         {"type": "status", "runningText": "正在调用技能", "doneText": "调用技能", "frames": ["F3.1a", "F3.1b"]},
         {"type": "status", "runningText": "正在创建文件", "doneText": "创建文件", "frames": ["F3.2a", "F3.2b", "F3.2c", "F3.2d", "F3.2e"]},
         {"type": "status", "runningText": "正在搜索文件", "doneText": "搜索文件", "frames": ["F3.3a", "F3.3b", "F3.3c"]},

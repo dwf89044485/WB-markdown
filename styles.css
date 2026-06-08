@@ -51,18 +51,18 @@ body{
 
 /* NAV BAR */
 .nav-bar{
-  background:linear-gradient(to bottom,rgba(255,255,255,0.92) 0%,rgba(255,255,255,0.72) 60%,rgba(255,255,255,0) 100%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  backdrop-filter:blur(24px) saturate(180%);
+  background:linear-gradient(to bottom,rgba(255,255,255,0.85) 0%,rgba(255,255,255,0.45) 55%,rgba(255,255,255,0) 100%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%);
   display:flex;
   align-items:center;
   gap:8px;
   padding:8px 16px;
+  padding-bottom:28px;
   flex-shrink:0;
   position:relative;
   z-index:10;
   margin-bottom:-20px;
-  padding-bottom:28px;
 }
 .nav-center{
   flex:1;
@@ -257,9 +257,9 @@ body{
   top:-40px;
   left:0;right:0;
   height:40px;
-  background:linear-gradient(to top,rgba(255,255,255,0.92) 0%,rgba(255,255,255,0.72) 60%,rgba(255,255,255,0) 100%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  backdrop-filter:blur(24px) saturate(180%);
+  background:linear-gradient(to top,rgba(255,255,255,0.85) 0%,rgba(255,255,255,0.45) 55%,rgba(255,255,255,0) 100%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%);
   pointer-events:none;
   z-index:1;
 }

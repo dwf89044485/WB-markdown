@@ -204,6 +204,7 @@
   flex:1;min-width:0;
   font-size:14px;line-height:1.48;font-weight:500;
   color:#2c2c2e;letter-spacing:-.18px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .s-sub-txt.active{color:#111114;font-weight:600;}
 .s-sub .spin{animation:spin 1.1s linear infinite;}

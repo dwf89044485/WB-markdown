@@ -34,7 +34,7 @@ html.is-standalone .user-msg-wrap{padding-left:16px;padding-right:16px;}
 html.force-standalone .agent-msg,
 html.is-standalone .agent-msg{padding-left:16px;padding-right:16px;}
 html.force-standalone .composer,
-html.is-standalone .composer{padding:0 12px calc(10px + env(safe-area-inset-bottom));}
+html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom));}
 
 /* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
 @media (max-width:900px){
@@ -54,7 +54,7 @@ html.is-standalone .composer{padding:0 12px calc(10px + env(safe-area-inset-bott
   html:not(.force-desktop) .demo-controls{display:none;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:16px;padding-right:16px;}
   html:not(.force-desktop) .agent-msg{padding-left:16px;padding-right:16px;}
-  html:not(.force-desktop) .composer{padding:0 12px calc(10px + env(safe-area-inset-bottom));}
+  html:not(.force-desktop) .composer{padding:0 12px max(12px, env(safe-area-inset-bottom));}
 }
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */

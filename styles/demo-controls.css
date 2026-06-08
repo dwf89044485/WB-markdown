@@ -107,7 +107,7 @@ body{flex-direction:column;gap:14px;}
   box-shadow:none;
 }
 
-@media (max-height:920px){
+@media (max-height:920px) and (min-width:901px){
   body{padding:10px;}
   .phone-shell{transform:scale(.92);transform-origin:center top;margin-bottom:-58px;}
 }

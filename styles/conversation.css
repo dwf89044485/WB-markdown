@@ -18,6 +18,7 @@
 
 /* ── AGENT WRAPPER ───────────────────────────────────────── */
 .agent-msg{padding:6px 26px 4px;}
+.agent-msg > * + *{margin-top:8px;}
 
 /* ── AGENT HEADER ────────────────────────────────────────── */
 .agent-header{display:flex;align-items:center;gap:10px;}
@@ -35,7 +36,6 @@
 
 /* ── EXEC AREA ───────────────────────────────────────────── */
 .exec-area{overflow:hidden;transition:max-height 0.38s cubic-bezier(0.4,0,0.2,1);}
-.exec-area > * + *{margin-top:8px;}
 .exec-area.open{max-height:2000px;}
 .exec-area.closed{max-height:0;}
 

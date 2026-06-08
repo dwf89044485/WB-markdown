@@ -1136,7 +1136,7 @@ body{flex-direction:column;gap:14px;}
 
 /* v9 — overlay polish + icon placement + no markdown scrollbars */
 :root{
-  --sheet-inset:16px;
+  --sheet-inset:0;
   --sheet-radius:34px;
   --sheet-side-padding:20px;
   --sheet-body-left:20px;

@@ -1,0 +1,223 @@
+/* ============================================================
+   SHEET — Bottom Sheet · Tool Event Rows · Todo List
+           Sheet Vars · Sheet Layout
+   ============================================================ */
+
+/* ── SHEET CSS VARS ──────────────────────────────────────── */
+:root{
+  --sheet-inset:16px;
+  --sheet-radius:34px;
+  --sheet-side-padding:20px;
+  --sheet-body-left:20px;
+  --sheet-guide-left:34px;
+}
+
+/* ── OVERLAY ─────────────────────────────────────────────── */
+.sheet-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,0.30);
+  backdrop-filter:blur(1.5px);
+  -webkit-backdrop-filter:blur(1.5px);
+  z-index:200;
+  display:none;opacity:0;
+  transition:opacity 0.28s ease;
+  border-radius:47px;
+  align-items:flex-end;
+  padding:0 var(--sheet-inset) var(--sheet-inset);
+}
+.sheet-overlay.vis{display:flex;}
+.sheet-overlay.show{opacity:1;}
+
+/* ── BOTTOM SHEET ────────────────────────────────────────── */
+.bottom-sheet{
+  background:#fff;
+  width:100%;
+  border-radius:var(--sheet-radius);
+  padding-bottom:18px;
+  transform:translateY(100%);
+  transition:transform 0.36s cubic-bezier(0.32,0.72,0,1);
+  max-height:calc(100% - 92px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 30px 64px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.08);
+}
+.sheet-overlay.show .bottom-sheet{transform:translateY(0);}
+
+.sheet-handle{
+  width:72px;height:6px;background:#d7d7dc;
+  margin:11px auto 0;border-radius:99px;flex-shrink:0;
+}
+.sheet-hdr{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 20px 10px;
+  border-bottom:none;
+  flex-shrink:0;
+}
+.sheet-ttl{
+  font-size:22px;
+  line-height:1.18;
+  font-weight:780;
+  color:#111114;
+  letter-spacing:-0.58px;
+  text-align:center;
+}
+.sheet-x{
+  position:absolute;
+  right:14px;top:8px;
+  width:48px;height:48px;
+  border-radius:50%;
+  background:#f6f6f8;
+  color:#111114;
+  border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.04);
+}
+.sheet-x svg{width:21px;height:21px;}
+.sheet-body{
+  position:relative;
+  padding:8px var(--sheet-side-padding) 24px var(--sheet-body-left);
+  overflow-y:auto;
+  overflow-x:hidden;
+  flex:1;
+  color:#1c1c1e;
+  -webkit-overflow-scrolling:touch;
+}
+.sheet-body::-webkit-scrollbar{width:0;height:0;display:none;}
+
+/* Vertical guide line behind events */
+.sheet-body::before{
+  content:"";
+  position:absolute;
+  left:calc(var(--sheet-guide-left) + 0px);
+  top:18px;
+  bottom:24px;
+  width:1px;
+  background:#e5e5ea;
+  z-index:0;
+}
+.sheet-body:empty::before{display:none;}
+
+/* ── TOOL EVENT ROW ──────────────────────────────────────── */
+.s-row,
+.s-sub{
+  position:relative;
+  z-index:1;
+}
+.s-row{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:8px 0 12px;
+}
+.s-ico{
+  width:24px;height:24px;flex:0 0 24px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border-radius:0;
+  margin-top:0;z-index:2;
+}
+.s-ico-img{
+  width:24px;height:24px;
+  background:transparent;border-radius:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#3c3c43;
+}
+.s-ico,.s-ico-img{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.s-ico-img .tool-svg{display:block;}
+.s-content{flex:1;min-width:0;padding-top:0;}
+.s-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  row-gap:4px;
+}
+.s-text{
+  flex:0 1 auto;min-width:0;
+  font-size:15px;line-height:1.42;font-weight:600;
+  color:#1c1c1e;letter-spacing:-0.24px;
+  display:inline-flex;align-items:center;
+}
+.s-text.dim{
+  font-size:15px;line-height:1.42;font-weight:500;
+  color:#8e8e93;letter-spacing:-0.22px;
+  display:inline-flex;align-items:center;
+}
+.s-row-chevron{
+  margin-left:auto;font-size:21px;line-height:1;color:#9b9ba1;transform:translateY(1px);
+}
+
+/* ── EVENT CARD ──────────────────────────────────────────── */
+.event-card{
+  margin:7px 0 0;
+  padding:0;border:0;
+  border-radius:12px;
+  background:transparent;
+  box-shadow:none;
+  color:#5b5b61;
+  font-size:13.5px;line-height:1.42;letter-spacing:-.15px;
+}
+.event-card-title{display:none;}
+.event-card-body{
+  color:#5b5b61;font-size:13.5px;line-height:1.5;letter-spacing:-.16px;white-space:pre-wrap;
+}
+.sheet-empty{
+  position:relative;z-index:1;
+  margin-left:38px;padding:8px 0 16px;
+  font-size:15px;color:#8e8e93;
+}
+
+/* Tool-type icon tint overrides */
+.tool-warning .s-ico{align-items:flex-start;}
+.tool-warning .s-ico-img{transform:translateY(1px);}
+.tool-debug .s-ico-img,
+.tool-terminal .s-ico-img,
+.tool-view .s-ico-img,
+.tool-edit .s-ico-img,
+.tool-agent .s-ico-img,
+.tool-plan .s-ico-img,
+.tool-search .s-ico-img,
+.tool-website .s-ico-img,
+.tool-skill .s-ico-img,
+.tool-image .s-ico-img{opacity:.94;}
+
+/* ── TODO / SUB ROWS ─────────────────────────────────────── */
+.s-sub{
+  display:flex;align-items:center;
+  gap:12px;padding:6px 0;margin:0;
+}
+.s-sub-ico{
+  width:24px;height:24px;flex:0 0 24px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border-radius:0;z-index:2;
+}
+.s-todo-tool{display:none;}
+.sub-empty{
+  width:18px;height:18px;border-radius:50%;
+  border:1.6px solid #dedee3;box-sizing:border-box;
+}
+.sub-ok{
+  width:18px;height:18px;border-radius:50%;
+  background:#20B26C;
+  display:flex;align-items:center;justify-content:center;
+}
+.sub-ok svg{color:#fff;}
+.sub-loading{
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+.sub-loading svg{width:18px;height:18px;animation:spin 1.1s linear infinite;}
+.s-sub-txt{
+  flex:1;min-width:0;
+  font-size:14px;line-height:1.48;font-weight:500;
+  color:#2c2c2e;letter-spacing:-.18px;
+}
+.s-sub-txt.active{color:#111114;font-weight:600;}

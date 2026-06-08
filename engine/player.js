@@ -17,7 +17,7 @@ const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 
 // ── State ──────────────────────────────────────────────────
-let displayMode = 'grouped'; // 'grouped' | 'flat'
+let displayMode = 'flat'; // 'grouped' | 'flat'
 let execOpen = true;
 let stepsOpen = true;
 let stepSeq = 0;

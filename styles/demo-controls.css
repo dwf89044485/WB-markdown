@@ -93,6 +93,14 @@ body{flex-direction:column;gap:14px;}
   box-shadow:0 2px 8px rgba(0,122,255,.25);
 }
 .mode-tabs button:not(.is-active):hover{color:#1c1c1e;}
+
+/* ── Commit hash ────────────────────────────────────────── */
+.commit-hash{
+  font-size:10px;
+  color:#b1b1b6;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:-.2px;
+}
 .demo-controls button:disabled{
   opacity:.38;
   cursor:not-allowed;

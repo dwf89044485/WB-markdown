@@ -579,6 +579,15 @@ function setupDemoControls() {
   }
 
   updateDirectorControls();
+
+  // ── 显示 commit hash ──────────────────────────────────
+  const hashEl = document.getElementById('ctrlCommitHash');
+  if (hashEl) {
+    fetch('./COMMIT_HASH')
+      .then(r => r.text())
+      .then(h => { hashEl.textContent = h.trim(); })
+      .catch(() => {});
+  }
 }
 
 // ── Playback lifecycle ────────────────────────────────────

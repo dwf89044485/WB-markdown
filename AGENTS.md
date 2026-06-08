@@ -6,22 +6,22 @@
 
 本项目为 WorkBuddy 动态原型，采用以下文件结构：
 
-| 文件/目录 | 职责 |
-| --- | --- |
-| `index.html` | 手机壳、导航、输入框、对话容器、底部浮层等视觉骨架 |
-| `styles/base.css` | Reset、phone-shell、status-bar、nav-bar、glass 按钮系统、composer |
-| `styles/conversation.css` | User/agent 消息气泡、timing-bar、exec-area、step-row、status-line、playback 动画 |
-| `styles/markdown.css` | CSS 变量 tokens（设计系统源头）、.md 阅读系统、table、typewriter 动效、response-actions |
-| `styles/sheet.css` | Bottom sheet、工具事件行（s-row）、todo 列表、sheet CSS 变量 |
-| `styles/demo-controls.css` | 演示控制台（.demo-controls）、media query |
-| `scenario.js` | 剧本数据：playback / nav / nodes / sheetFrames / final / todosBaseline |
-| `engine/core.js` | 播放状态（activePlayId、fastRender）、sleep、playback 参数读取 |
-| `engine/markdown.js` | Markdown parser（escapeHtml、inlineMarkdown、markdownToHtml） |
-| `engine/icons.js` | 图标系统（SVG 注册表、tool icon 推断、status line 渲染） |
-| `engine/typewriter.js` | Token 流式输出（typeText、appendHTMLTypedTo） |
-| `engine/sheet.js` | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo） |
-| `engine/player.js` | 播放引擎主入口（Director timeline、步进控制、final render、displayMode） |
-| `icons-inline.js` | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取** |
+| 文件/目录                      | 职责                                                                    |
+| -------------------------- | --------------------------------------------------------------------- |
+| `index.html`               | 手机壳、导航、输入框、对话容器、底部浮层等视觉骨架                                             |
+| `styles/base.css`          | Reset、phone-shell、status-bar、nav-bar、glass 按钮系统、composer              |
+| `styles/conversation.css`  | User/agent 消息气泡、timing-bar、exec-area、step-row、status-line、playback 动画 |
+| `styles/markdown.css`      | CSS 变量 tokens（设计系统源头）、.md 阅读系统、table、typewriter 动效、response-actions   |
+| `styles/sheet.css`         | Bottom sheet、工具事件行（s-row）、todo 列表、sheet CSS 变量                        |
+| `styles/demo-controls.css` | 演示控制台（.demo-controls）、media query                                     |
+| `scenario.js`              | 剧本数据：playback / nav / nodes / sheetFrames / final / todosBaseline     |
+| `engine/core.js`           | 播放状态（activePlayId、fastRender）、sleep、scrollToBottom、playback 参数读取      |
+| `engine/markdown.js`       | Markdown parser（escapeHtml、inlineMarkdown、markdownToHtml）             |
+| `engine/icons.js`          | 图标系统（SVG 注册表、tool icon 推断、status line 渲染）                             |
+| `engine/typewriter.js`     | Token 流式输出（typeText、appendHTMLTypedTo）                                |
+| `engine/sheet.js`          | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo）                  |
+| `engine/player.js`         | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）              |
+| `icons-inline.js`          | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取**                                   |
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
 

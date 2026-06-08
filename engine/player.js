@@ -528,21 +528,29 @@ function directorPrevStep() {
 function applyUrlPlaybackOverrides() {
   const params = new URLSearchParams(location.search);
   scenario.playback = scenario.playback || {};
+
   const tpsRaw = params.get('tokensPerSecond');
   if (tpsRaw !== null && tpsRaw !== '') {
     const value = Number(tpsRaw);
     if (Number.isFinite(value)) scenario.playback.tokensPerSecond = value;
+  }
+
   // mode 参数：flat（平铺模式） / grouped（分组模式，默认）
   const modeParam = params.get('mode');
   if (modeParam === 'flat') displayMode = 'flat';
-  // standalone 模式：全屏渲染，去掉手机壳、步进器
-  // 实际判断已在 index.html 的 <head> script 中提前执行，这里不再重复处理
+
+  // standalone 参数支持手动覆盖自动识别：1=强制手机纯内容，0=强制桌面演示壳
+  const standaloneParam = params.get('standalone');
+  if (standaloneParam === '1' || standaloneParam === '0') {
+    const enabled = standaloneParam === '1';
+    document.documentElement.classList.toggle('is-standalone', enabled);
+    if (document.body) document.body.classList.toggle('is-standalone', enabled);
+  }
 
   const legacySpeed = params.get('typeSpeed');
   if (tpsRaw === null && legacySpeed !== null && legacySpeed !== '') {
     const value = Number(legacySpeed);
     if (Number.isFinite(value) && value > 0) scenario.playback.tokensPerSecond = Math.round(1000 / value);
-  }
   }
 }
 

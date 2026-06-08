@@ -16,9 +16,11 @@
 (function(){
   var params = new URLSearchParams(location.search);
   var sp = params.get('standalone');
-  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  var standalone = sp === '1' ? true : sp === '0' ? false : isMobile;
-  if (standalone) document.documentElement.classList.add('is-standalone');
+  var ua = navigator.userAgent || '';
+  var uaHandset = /iPhone|iPod|Android.*Mobile|Windows Phone|Mobile/i.test(ua);
+  var mqHandset = window.matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
+  var standalone = sp === '1' ? true : sp === '0' ? false : (uaHandset || mqHandset);
+  document.documentElement.classList.toggle('is-standalone', standalone);
 })();
 </script>
 </head>

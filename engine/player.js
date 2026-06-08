@@ -543,6 +543,7 @@ function applyUrlPlaybackOverrides() {
     const value = Number(legacySpeed);
     if (Number.isFinite(value) && value > 0) scenario.playback.tokensPerSecond = Math.round(1000 / value);
   }
+  }
 }
 
 function setupDemoControls() {

@@ -532,19 +532,11 @@ function applyUrlPlaybackOverrides() {
   if (tpsRaw !== null && tpsRaw !== '') {
     const value = Number(tpsRaw);
     if (Number.isFinite(value)) scenario.playback.tokensPerSecond = value;
-  }
   // mode 参数：flat（平铺模式） / grouped（分组模式，默认）
   const modeParam = params.get('mode');
   if (modeParam === 'flat') displayMode = 'flat';
   // standalone 模式：全屏渲染，去掉手机壳、步进器
-  // URL 参数 standalone=1 强制开启，standalone=0 强制关闭，不传则自动检测
-  const standaloneParam = params.get('standalone');
-  const isStandalone = standaloneParam === '1' ? true
-    : standaloneParam === '0' ? false
-    : /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isStandalone) {
-    document.body.classList.add('is-standalone');
-  }
+  // 实际判断已在 index.html 的 <head> script 中提前执行，这里不再重复处理
 
   const legacySpeed = params.get('typeSpeed');
   if (tpsRaw === null && legacySpeed !== null && legacySpeed !== '') {

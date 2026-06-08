@@ -12,6 +12,15 @@
 <link rel="stylesheet" href="./styles/markdown.css">
 <link rel="stylesheet" href="./styles/sheet.css">
 <link rel="stylesheet" href="./styles/demo-controls.css">
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var sp = params.get('standalone');
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var standalone = sp === '1' ? true : sp === '0' ? false : isMobile;
+  if (standalone) document.documentElement.classList.add('is-standalone');
+})();
+</script>
 </head>
 <body>
 <div class="phone-shell">

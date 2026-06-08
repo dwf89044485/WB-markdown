@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="commit-hash" content="__COMMIT_HASH__">
 <title>WorkBuddy — Agent 对话流动态原型</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +22,7 @@
   if (sp === '0') root.classList.add('force-desktop');
 })();
 </script>
+<script src="./commit-hash.js"></script>
 </head>
 <body>
 <div class="phone-shell">
@@ -39,7 +41,8 @@
       </svg>
     </div>
   </div>
-  <!-- Nav Bar -->
+  <div class="conversation" id="conv">
+  <!-- Nav Bar (sticky inside conversation) -->
   <header class="nav-bar">
     <button class="glass-btn nav-menu-btn" type="button" aria-label="菜单">
       <span class="glass-layer lg-layer-one"></span>
@@ -73,7 +76,6 @@
       </button>
     </div>
   </header>
-  <div class="conversation" id="conv">
     <div class="user-msg-wrap is-hidden" id="userMsgWrap"><div class="user-bubble" id="userBubble"></div></div>
     <div class="agent-msg is-hidden" id="agentMsg">
       <div class="agent-header">
@@ -130,6 +132,7 @@
     <button id="ctrlModeGrouped" type="button" role="tab" aria-selected="false">子节点聚合</button>
     <button id="ctrlModeFlat" type="button" role="tab" aria-selected="true">子节点平铺</button>
   </div>
+  <meta name="commit-hash" content="__COMMIT_HASH__">
   <span id="ctrlCommitHash" class="commit-hash"></span>
 </div>
 

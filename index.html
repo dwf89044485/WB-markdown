@@ -117,23 +117,35 @@
   </div>
 </div>
 <div class="demo-controls" aria-label="演示参数控制">
-  <div class="stepper-control" aria-label="步进控制">
-    <button id="ctrlPrevStep" type="button" class="ghost-btn">上一步</button>
-    <button id="ctrlAutoStep" type="button">停止</button>
-    <button id="ctrlNextStep" type="button" class="ghost-btn">下一步</button>
-    <span id="ctrlStepInfo" class="stepper-info">0/0</span>
+  <!-- 第 1 行：步进器 -->
+  <div class="control-row">
+    <div class="stepper-control" aria-label="步进控制">
+      <button id="ctrlPrevStep" type="button" class="ghost-btn">上一步</button>
+      <button id="ctrlAutoStep" type="button">停止</button>
+      <button id="ctrlNextStep" type="button" class="ghost-btn">下一步</button>
+      <span id="ctrlStepInfo" class="stepper-info">0/0</span>
+    </div>
   </div>
-  <label class="speed-control">输出速度
-    <input id="ctrlTokensPerSecond" type="number" min="20" max="1000" step="20" value="200" inputmode="numeric">
-    <span>tokens/s</span>
-  </label>
-  <button id="ctrlReplay" type="button">刷新重放</button>
-  <div class="mode-tabs" role="tablist">
-    <button id="ctrlModeGrouped" type="button" role="tab" aria-selected="false">子节点聚合</button>
-    <button id="ctrlModeFlat" type="button" role="tab" aria-selected="true">子节点平铺</button>
+
+  <!-- 第 2 行：输出速度 + 刷新 -->
+  <div class="control-row">
+    <label class="speed-control">输出速度
+      <input id="ctrlTokensPerSecond" type="number" min="20" max="1000" step="20" value="200" inputmode="numeric">
+      <span>tokens/s</span>
+    </label>
+    <button id="ctrlReplay" type="button">刷新重放</button>
   </div>
+
+  <!-- 第 3 行：子节点 tab + hash -->
+  <div class="control-row">
+    <div class="mode-tabs" role="tablist">
+      <button id="ctrlModeGrouped" type="button" role="tab" aria-selected="false">子节点聚合</button>
+      <button id="ctrlModeFlat" type="button" role="tab" aria-selected="true">子节点平铺</button>
+    </div>
+    <span id="ctrlCommitHash" class="commit-hash"></span>
+  </div>
+
   <meta name="commit-hash" content="__COMMIT_HASH__">
-  <span id="ctrlCommitHash" class="commit-hash"></span>
 </div>
 
 <script src="./scenario.js"></script>

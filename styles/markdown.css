@@ -86,15 +86,15 @@
   letter-spacing:-0.35px;
   line-height:1.3;
 }
-.md h2 + p{margin-top:2px;}
-.md h3 + ul{margin-top:2px;}
+.md h2 + p{margin-top:4px;}
+.md h3 + ul{margin-top:4px;}
 
 /* ── PARAGRAPH / STRONG / LINK ───────────────────────────── */
-.md p{margin:0 0 11px;}
+.md p{margin:0 0 8px;}
 .md-node p{margin-bottom:8px;}
 .md strong{font-weight:720;color:var(--md-heading);}
 .md a{color:var(--md-accent);text-decoration:none;}
-.md hr{border:0;height:.5px;background:var(--md-border);margin:18px 0 4px;}
+.md hr{border:0;height:.5px;background:var(--md-border);margin:14px 0 4px;}
 
 /* ── LISTS ───────────────────────────────────────────────── */
 .md ul{list-style:none;padding:0;margin:0 0 var(--md-space-6);}
@@ -120,7 +120,7 @@
 
 /* ── BLOCKQUOTE ──────────────────────────────────────────── */
 .md blockquote{
-  margin:16px 0 4px;
+  margin:14px 0 4px;
   padding:12px 13px 12px 14px;
   border-left:3px solid var(--md-warning);
   border-radius:12px;
@@ -136,7 +136,7 @@
   gap:9px;
   width:100%;
   padding:12px 13px;
-  margin:7px 0 16px;
+  margin:7px 0 14px;
   border:.5px solid var(--md-accent-border);
   border-radius:var(--md-radius-lg);
   background:linear-gradient(180deg,var(--md-accent-soft),rgba(0,122,255,0.035));
@@ -159,7 +159,7 @@
   gap:12px;
   width:100%;
   padding:13px 14px;
-  margin:10px 0 16px;
+  margin:10px 0 14px;
   background:var(--md-surface);
   border:0.5px solid var(--md-border);
   border-radius:var(--md-radius-sm);
@@ -192,7 +192,7 @@
 
 /* ── TABLES ──────────────────────────────────────────────── */
 .md .tbl-wrap{
-  margin:10px -2px 14px;
+  margin:10px -2px 12px;
   border-radius:var(--md-radius-md);
   border:.5px solid var(--md-border);
   overflow-x:auto;
@@ -201,7 +201,7 @@
   box-shadow:var(--md-shadow-card);
   -webkit-overflow-scrolling:touch;
 }
-.md-node .tbl-wrap{margin:7px 0 11px;border-radius:11px;}
+.md-node .tbl-wrap{margin:7px 0 10px;border-radius:11px;}
 .md-node .tbl-wrap .tbl{min-width:360px;}
 .tbl-wrap{overflow-x:auto;max-width:100%;}
 .md .tbl{
@@ -241,7 +241,7 @@
 .md .tbl th,.md .tbl td{font-size:12.5px;padding:8px 8px;}
 .md-node .tbl th,.md-node .tbl td{font-size:11.5px;padding:7px 7px;}
 .md .tbl tr:last-child td{border-bottom:none;}
-.md .tbl-wrap + h3{margin-top:18px;}
+.md .tbl-wrap + h3{margin-top:16px;}
 
 /* ── CODE ────────────────────────────────────────────────── */
 .md code{

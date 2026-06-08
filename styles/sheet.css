@@ -112,7 +112,7 @@
   display:flex;
   align-items:flex-start;
   gap:12px;
-  padding:8px 0 12px;
+  padding:8px 0;
 }
 .s-ico{
   width:24px;height:24px;flex:0 0 24px;
@@ -192,7 +192,7 @@
 /* ── TODO / SUB ROWS ─────────────────────────────────────── */
 .s-sub{
   display:flex;align-items:flex-start;
-  gap:2px;padding:2px 0 2px 36px;margin:0;
+  gap:2px;padding:4px 0 4px 36px;margin:0;
 }
 .s-sub-ico{
   width:24px;height:24px;flex:0 0 24px;

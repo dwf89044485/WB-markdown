@@ -1,0 +1,29 @@
+# Version control
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation
+README.md
+docs
+
+# CI/CD
+.github
+
+# Environment
+.env
+.env.local
+
+# Docker itself
+.with

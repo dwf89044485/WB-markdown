@@ -28,7 +28,7 @@ html.is-standalone .sheet-overlay{display:none;}
 /* ── STATUS BAR ──────────────────────────────────────────── */
 .status-bar{
   height:54px;
-  background:#fff;
+  background:#fafafa;
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
@@ -111,7 +111,7 @@ html.is-standalone .sheet-overlay{display:none;}
   border-top-color:rgba(255,255,255,0.82);
   border-left-color:rgba(255,255,255,0.62);
   border-right-color:rgba(255,255,255,0.36);
-  background:#fff;
+  background:#fafafa;
   box-shadow:0 7px 30px rgba(2,6,23,0.075),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(255,255,255,0.12);
   transition:transform .2s ease, box-shadow .2s ease;
 }
@@ -189,7 +189,7 @@ html.is-standalone .sheet-overlay{display:none;}
   height:46px;
   border-radius:24px;
   overflow:hidden;
-  background:#fff;
+  background:#fafafa;
   box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
   display:flex;
   align-items:center;

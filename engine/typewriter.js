@@ -2,7 +2,7 @@
 // TYPEWRITER — Token streaming output engine
 // ============================================================
 
-import { sleep, playback, fastRender, currentTokensPerSecond } from './core.js';
+import { sleep, playback, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
 import { markdownToHtml } from './markdown.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -51,11 +51,6 @@ function cloneEmptyNode(node) {
   if (node.nodeType === Node.TEXT_NODE) return document.createTextNode('');
   if (node.nodeType !== Node.ELEMENT_NODE) return node.cloneNode(false);
   return node.cloneNode(false);
-}
-
-function scrollToBottom() {
-  const c = $('#conv');
-  if (c) c.scrollTop = c.scrollHeight;
 }
 
 export async function appendHTMLTypedTo(container, html) {

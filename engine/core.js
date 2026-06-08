@@ -33,3 +33,8 @@ export function playback(key, fallback) {
 export function currentTokensPerSecond() {
   return Math.min(1000, Math.max(20, Math.round(playback('tokensPerSecond', 200))));
 }
+
+export function scrollToBottom() {
+  const c = document.querySelector('#conv');
+  if (c) c.scrollTop = c.scrollHeight;
+}

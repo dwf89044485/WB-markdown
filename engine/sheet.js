@@ -3,52 +3,16 @@
 // ============================================================
 
 import { escapeHtml } from './markdown.js';
-import { ICONS, renderToolIcon, renderActionIcon } from './icons.js';
+import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent } from './icons.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 
 export function renderEvent(event) {
-  const key = (event.icon || event.text || '').includes('⚠') || /失败|异常/i.test(event.text || '') ? 'warning' : null;
+  const isWarn = isWarningEvent(event);
+  const toolKey = isWarn ? 'warning' : inferToolIconKey(event);
   const row = document.createElement('div');
   const showChevron = /执行命令/.test(event.text || '');
-
-  // Re-import to avoid circular — use inline version
-  const isWarn = /⚠|失败|异常/i.test(`${event.icon || ''} ${event.text || ''} ${event.dim || ''} ${event.card?.title || ''}`);
-  const iconHTML = isWarn
-    ? ICONS.warn
-    : (() => {
-        // inline inferToolIconKey logic
-        const raw = `${event.icon || ''} ${event.text || ''} ${event.dim || ''} ${event.card?.title || ''}`;
-        let k = 'tools';
-        if (/🧠|思考|Sub Coding Agent|嵌套子对话|Subagent|agent/i.test(raw)) k = 'agent';
-        else if (/🖼|图片|image/i.test(raw)) k = 'image';
-        else if (/📖|技能|skill|docx/i.test(raw)) k = 'skill';
-        else if (/⚠|失败|异常|debug|排查/i.test(raw)) k = 'debug';
-        else if (/✏|编辑|创建文件|patch|改写|rewrite/i.test(raw)) k = 'edit';
-        else if (/👀|读取|查看|view|read/i.test(raw)) k = 'view';
-        else if (/🖥|执行命令|terminal|python|cd \/sessions/i.test(raw)) k = 'terminal';
-        else if (/☐|☑|待办|计划|更新计划|todo/i.test(raw)) k = 'plan';
-        else if (/网页|网站|联网|入境|交通卡|天气|汇率|路线/i.test(raw)) k = 'website';
-        else if (/🔍|搜索|search/i.test(raw)) k = 'search';
-        return renderToolIcon(event);
-      })();
-
-  const toolKey = (() => {
-    const raw = `${event.icon || ''} ${event.text || ''} ${event.dim || ''} ${event.card?.title || ''}`;
-    if (/⚠|失败|异常/i.test(raw)) return 'warning';
-    if (/🧠|思考|Sub Coding Agent|嵌套子对话|Subagent|agent/i.test(raw)) return 'agent';
-    if (/🖼|图片|image/i.test(raw)) return 'image';
-    if (/📖|技能|skill|docx/i.test(raw)) return 'skill';
-    if (/⚠|失败|异常|debug|排查/i.test(raw)) return 'debug';
-    if (/✏|编辑|创建文件|patch|改写|rewrite/i.test(raw)) return 'edit';
-    if (/👀|读取|查看|view|read/i.test(raw)) return 'view';
-    if (/🖥|执行命令|terminal|python|cd \/sessions/i.test(raw)) return 'terminal';
-    if (/☐|☑|待办|计划|更新计划|todo/i.test(raw)) return 'plan';
-    if (/网页|网站|联网|入境|交通卡|天气|汇率|路线/i.test(raw)) return 'website';
-    if (/🔍|搜索|search/i.test(raw)) return 'search';
-    return 'tools';
-  })();
 
   row.className = `s-row tool-${toolKey}`;
   row.innerHTML = `

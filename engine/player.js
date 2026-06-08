@@ -5,7 +5,8 @@
 import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
-  sleep, playback, currentTokensPerSecond, CANCELLED
+  sleep, playback, currentTokensPerSecond, CANCELLED,
+  scrollToBottom
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon } from './icons.js';
@@ -28,10 +29,6 @@ let directorBusy = false;
 let pauseRequested = false;
 
 // ── Helpers ───────────────────────────────────────────────
-function scrollToBottom() {
-  const c = $('#conv');
-  if (c) c.scrollTop = c.scrollHeight;
-}
 
 function truncate(str, n = 24) {
   return str.length > n ? str.slice(0, n) + '...' : str;

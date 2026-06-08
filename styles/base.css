@@ -112,6 +112,11 @@ html.is-standalone .sheet-overlay{display:none;}
   border-left-color:rgba(255,255,255,0.62);
   border-right-color:rgba(255,255,255,0.36);
   background:#fff;
+  box-shadow:0 7px 30px rgba(2,6,23,0.075),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(255,255,255,0.12);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.glass-btn:active,
+.glass-capsule:active{transform:scale(.985);}
 .glass-layer,
 .glass-layer-inner{pointer-events:none;position:absolute;border-radius:inherit;inset:0;}
 .glass-layer-inner{inset:1px;}

@@ -158,7 +158,7 @@ body{
 .conversation::-webkit-scrollbar{width:0;}
 
 /* USER MESSAGE */
-.user-msg-wrap{display:flex;justify-content:flex-end;padding:3px 16px;margin-bottom:4px;}
+.user-msg-wrap{display:flex;justify-content:flex-end;padding:3px 26px;margin-bottom:4px;}
 .user-bubble{
   max-width:82%;background:#e9e9eb;
   border-radius:18px 18px 5px 18px;
@@ -166,7 +166,7 @@ body{
 }
 
 /* AGENT WRAPPER */
-.agent-msg{padding:6px 16px 4px;}
+.agent-msg{padding:6px 26px 4px;}
 
 /* AGENT HEADER */
 .agent-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}

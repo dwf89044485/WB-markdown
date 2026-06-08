@@ -39,7 +39,7 @@ html.is-standalone .phone-shell{
 html.force-standalone .status-bar,
 html.is-standalone .status-bar{display:none;}
 html.force-standalone .nav-bar,
-html.is-standalone .nav-bar{padding-top:0;}
+html.is-standalone .nav-bar{top:0;padding-top:0;}
 html.force-standalone .conversation,
 html.is-standalone .conversation{padding-top:54px;}
 html.is-standalone .demo-controls{display:none;}
@@ -67,7 +67,7 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
     box-shadow:none;
   }
   html:not(.force-desktop) .status-bar{display:none;}
-  html:not(.force-desktop) .nav-bar{padding-top:0;}
+  html:not(.force-desktop) .nav-bar{top:0;padding-top:0;}
   html:not(.force-desktop) .conversation{padding-top:54px;}
   html:not(.force-desktop) .demo-controls{display:none;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:16px;padding-right:16px;}
@@ -120,12 +120,12 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
 /* ── NAV BAR ─────────────────────────────────────────────── */
 .nav-bar{
   position:absolute;
-  top:0;left:0;right:0;
+  top:54px;left:0;right:0;
   z-index:50;
   display:flex;
   align-items:center;
   gap:8px;
-  padding:54px 16px 8px;
+  padding:8px 16px;
   pointer-events:none;
   /* 背景白色从顶部不透明渐变到中间以下透明 */
   background:linear-gradient(to bottom, #fafafa 0%, #fafafa 60%, rgba(250,250,250,0) 100%);

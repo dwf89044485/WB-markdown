@@ -10,13 +10,52 @@ body{
   display:flex;align-items:center;justify-content:center;padding:24px;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
-html.is-standalone body,body.is-standalone{display:block;padding:0;background:#fafafa;min-height:100dvh;}
-html.is-standalone .phone-shell,body.is-standalone .phone-shell{width:100%;height:100dvh;border-radius:0;box-shadow:none;}
-html.is-standalone .status-bar,body.is-standalone .status-bar{display:none;}
-html.is-standalone .demo-controls,body.is-standalone .demo-controls{display:none;}
-html.is-standalone .user-msg-wrap,body.is-standalone .user-msg-wrap{padding-left:16px;padding-right:16px;}
-html.is-standalone .agent-msg,body.is-standalone .agent-msg{padding-left:16px;padding-right:16px;}
-html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
+/* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
+html.force-standalone body,
+html.is-standalone body{
+  display:block;
+  padding:0;
+  background:#fafafa;
+  min-height:100dvh;
+}
+html.force-standalone .phone-shell,
+html.is-standalone .phone-shell{
+  width:100%;
+  height:100dvh;
+  border-radius:0;
+  box-shadow:none;
+}
+html.force-standalone .status-bar,
+html.is-standalone .status-bar{display:none;}
+html.force-standalone .demo-controls,
+html.is-standalone .demo-controls{display:none;}
+html.force-standalone .user-msg-wrap,
+html.is-standalone .user-msg-wrap{padding-left:16px;padding-right:16px;}
+html.force-standalone .agent-msg,
+html.is-standalone .agent-msg{padding-left:16px;padding-right:16px;}
+html.force-standalone .composer,
+html.is-standalone .composer{padding:0 12px calc(10px + env(safe-area-inset-bottom));}
+
+/* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
+@media (max-width:900px){
+  html:not(.force-desktop) body{
+    display:block;
+    padding:0;
+    background:#fafafa;
+    min-height:100dvh;
+  }
+  html:not(.force-desktop) .phone-shell{
+    width:100%;
+    height:100dvh;
+    border-radius:0;
+    box-shadow:none;
+  }
+  html:not(.force-desktop) .status-bar{display:none;}
+  html:not(.force-desktop) .demo-controls{display:none;}
+  html:not(.force-desktop) .user-msg-wrap{padding-left:16px;padding-right:16px;}
+  html:not(.force-desktop) .agent-msg{padding-left:16px;padding-right:16px;}
+  html:not(.force-desktop) .composer{padding:0 12px calc(10px + env(safe-area-inset-bottom));}
+}
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */
 .phone-shell{
@@ -128,8 +167,8 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
 .lg-capsule-layer-three{box-shadow:inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -8px 14px rgba(255,255,255,0.08);}
 
 .nav-menu-btn{
-  width:46px;
-  height:46px;
+  width:42px;
+  height:42px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -147,8 +186,8 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
 .capsule-btn{
   position:relative;
   z-index:2;
-  width:46px;
-  height:46px;
+  width:42px;
+  height:42px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -196,8 +235,8 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
   align-items:center;
 }
 .composer-side-btn{
-  width:46px;
-  height:46px;
+  width:42px;
+  height:42px;
   display:flex;
   align-items:center;
   justify-content:center;

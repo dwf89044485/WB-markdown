@@ -71,10 +71,10 @@
 .step-label{flex:1;font-size:14.5px;color:#1c1c1e;line-height:1.3;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .step-chevron{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#c7c7cc;flex-shrink:0;transition:transform 0.22s cubic-bezier(0.4,0,0.2,1);}
 .step-row.open .step-chevron{transform:rotate(180deg);}
-.step-detail{overflow-y:auto;overflow-x:auto;max-height:0;transition:max-height 0.28s cubic-bezier(0.4,0,0.2,1);}
+.step-detail{overflow-x:auto;overflow-y:auto;max-height:0;transition:max-height 0.28s cubic-bezier(0.4,0,0.2,1);}
 .step-row.open .step-detail{max-height:2000px;}
-.step-detail-inner{padding:2px 0 10px 30px;overflow-x:auto;}
-.step-detail-inner.md-node{padding:2px 0 10px var(--md-node-indent);}
+.step-detail-inner{padding:2px 0 10px;}
+.step-detail-inner.md-node{padding:2px 0 10px;}
 .step-detail-p{font-size:13.5px;color:rgba(60,60,67,0.75);line-height:1.5;letter-spacing:-0.1px;margin-bottom:5px;}
 
 /* ── STATUS LINE ─────────────────────────────────────────── */

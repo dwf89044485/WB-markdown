@@ -201,7 +201,7 @@
   box-shadow:var(--md-shadow-card);
   -webkit-overflow-scrolling:touch;
 }
-.md-node .tbl-wrap{margin:7px -2px 11px;border-radius:11px;}
+.md-node .tbl-wrap{margin:7px 0 11px;border-radius:11px;}
 .md-node .tbl-wrap .tbl{min-width:360px;}
 .tbl-wrap{overflow-x:auto;max-width:100%;}
 .md .tbl{

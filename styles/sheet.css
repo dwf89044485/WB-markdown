@@ -192,7 +192,7 @@
 /* ── TODO / SUB ROWS ─────────────────────────────────────── */
 .s-sub{
   display:flex;align-items:flex-start;
-  gap:6px;padding:2px 0 2px 36px;margin:0;
+  gap:4px;padding:2px 0 2px 36px;margin:0;
 }
 .s-sub-ico{
   width:24px;height:24px;flex:0 0 24px;

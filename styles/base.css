@@ -196,7 +196,7 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
   align-items:center;
 }
 .composer-side-btn{
-  width:48px;
+  width:46px;
   height:46px;
   display:flex;
   align-items:center;
@@ -205,6 +205,7 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
   border:none;
   background:none;
   cursor:pointer;
+  border-radius:50%;
 }
 .composer-side-btn:active{background:rgba(0,0,0,0.04);}
 .composer-placeholder{

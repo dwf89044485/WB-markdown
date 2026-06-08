@@ -4,14 +4,28 @@
 
 ## 项目架构
 
-本项目为 WorkBuddy 动态原型，采用四层拆分：
+本项目为 WorkBuddy 动态原型，采用以下文件结构：
 
-| 文件            | 职责                                               |
-| ------------- | ------------------------------------------------ |
-| `index.html`  | 手机壳、导航、输入框、对话容器、底部浮层等视觉骨架                        |
-| `styles.css`  | 视觉 CSS + 运行态辅助类（扫光、事件卡片等）                        |
-| `scenario.js` | 节点、子事件、状态行、浮层快照、待办状态等剧本数据                        |
-| `app.js`      | 播放引擎：节点出现、状态行推进、浮层帧切换、节点自动塌缩、收尾 timing-bar 和正文输出 |
+| 文件/目录 | 职责 |
+| --- | --- |
+| `index.html` | 手机壳、导航、输入框、对话容器、底部浮层等视觉骨架 |
+| `styles/base.css` | Reset、phone-shell、status-bar、nav-bar、glass 按钮系统、composer |
+| `styles/conversation.css` | User/agent 消息气泡、timing-bar、exec-area、step-row、status-line、playback 动画 |
+| `styles/markdown.css` | CSS 变量 tokens（设计系统源头）、.md 阅读系统、table、typewriter 动效、response-actions |
+| `styles/sheet.css` | Bottom sheet、工具事件行（s-row）、todo 列表、sheet CSS 变量 |
+| `styles/demo-controls.css` | 演示控制台（.demo-controls）、media query |
+| `scenario.js` | 剧本数据：playback / nav / nodes / sheetFrames / final / todosBaseline |
+| `engine/core.js` | 播放状态（activePlayId、fastRender）、sleep、playback 参数读取 |
+| `engine/markdown.js` | Markdown parser（escapeHtml、inlineMarkdown、markdownToHtml） |
+| `engine/icons.js` | 图标系统（SVG 注册表、tool icon 推断、status line 渲染） |
+| `engine/typewriter.js` | Token 流式输出（typeText、appendHTMLTypedTo） |
+| `engine/sheet.js` | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo） |
+| `engine/player.js` | 播放引擎主入口（Director timeline、步进控制、final render、displayMode） |
+| `icons-inline.js` | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取** |
+
+> **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
+
+> **本地开发**：使用 `python3 -m http.server 8080` 或 VS Code Live Server，通过 `http://localhost:8080` 访问，不要直接双击 HTML（`engine/` 模块用 ES Module，`file://` 协议不支持）。
 
 **关键设计约束：**
 
@@ -20,10 +34,7 @@
 3. 浮层不是累积日志：每条状态行绑定自己的最后一帧，点击时展示对应快照。
 4. timing-bar 只在全部节点结束后出现。
 5. 旧实现里的节点3删除项未迁入：不再出现"原生中文字符重写整个文件"和"已调用工具"。
-
-> **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
-
-> **本地开发**：使用 `python3 -m http.server 8080` 或 VS Code Live Server，通过 `http://localhost:8080` 访问，不要直接双击 HTML（`engine/` 模块用 ES Module，`file://` 协议不支持）。
+6. todos 数据：`scenario.js` 里 `todosBaseline` 是文本基准，各 sheetFrame 用 `todoOverrides` 只记录 status 变更，engine/sheet.js 的 `renderSheet` 合并两者渲染完整列表。
 
 ## Git 工作流
 

@@ -244,8 +244,13 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
   border:none;
   background:none;
   cursor:pointer;
+  position:relative;
 }
-.composer-side-btn:active{background:rgba(0,0,0,0.04);border-radius:50%;background-clip:content-box;padding:2px;}
+.composer-side-btn::after{
+  content:"";position:absolute;inset:2px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
 .composer-placeholder{
   flex:1;
   text-align:center;

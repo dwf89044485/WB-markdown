@@ -129,6 +129,7 @@ async function runStatusGroup(row, actions, container) {
 
     for (const frameId of frames) {
       line.dataset.frames = completedFinalFrames.concat(frameId).join(',');
+      line.dataset.sheetTitle = completedLabels.concat(toDoneLabel(action)).join('、');
       await sleep(playback('frameDelay', 520));
     }
 

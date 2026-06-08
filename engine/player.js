@@ -524,7 +524,7 @@ function directorPrevStep() {
   jumpDirectorTo(currentDirectorIndex - 1);
 }
 
-// ── Demo controls setup ───────────────────────────────────
+// ── URL 参数 ────────────────────────────────────────────────
 function applyUrlPlaybackOverrides() {
   const params = new URLSearchParams(location.search);
   scenario.playback = scenario.playback || {};
@@ -536,6 +536,10 @@ function applyUrlPlaybackOverrides() {
   // mode 参数：flat（平铺模式） / grouped（分组模式，默认）
   const modeParam = params.get('mode');
   if (modeParam === 'flat') displayMode = 'flat';
+  // standalone 模式：全屏渲染，去掉手机壳、步进器
+  if (params.get('standalone') === '1') {
+    document.body.classList.add('is-standalone');
+  }
 
   const legacySpeed = params.get('typeSpeed');
   if (tpsRaw === null && legacySpeed !== null && legacySpeed !== '') {

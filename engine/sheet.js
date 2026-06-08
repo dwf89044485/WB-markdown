@@ -44,6 +44,28 @@ export function renderSearchItem(text) {
   return row;
 }
 
+function renderOutput(output) {
+  switch (output.type) {
+    case 'search':
+      return renderSearchItem(output.text);
+    default:
+      return document.createElement('div');
+  }
+}
+
+function computeTodoSnapshot(frames, baseline) {
+  const lastOverrideFrame = [...frames].reverse().find(f =>
+    (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
+  );
+  if (!lastOverrideFrame) return [];
+  if (lastOverrideFrame.todoOverrides !== undefined) {
+    const overrideMap = {};
+    (lastOverrideFrame.todoOverrides || []).forEach(o => { overrideMap[o.index] = o.status; });
+    return baseline.map((text, i) => ({ text, status: overrideMap[i] || 'todo' }));
+  }
+  return lastOverrideFrame.todos;
+}
+
 export function renderFileCard(card) {
   const title = escapeHtml(card.title || '');
   const meta = escapeHtml(card.meta || '');
@@ -77,27 +99,15 @@ export function renderSheet(frameRefs, explicitTitle) {
   const frame = frames[0] || fallback;
   const title = explicitTitle || [...new Set(frames.map(f => f.title).filter(Boolean))].join('、') || frame.title || '过程';
 
-  // 支持新格式（todoOverrides + baseline）和旧格式（todos 完整数组）兼容
   const baseline = scenario.todosBaseline || [];
-  const lastTodosFrame = [...frames].reverse().find(f =>
-    (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
-  );
-  let todos = [];
-  if (lastTodosFrame) {
-    if (lastTodosFrame.todoOverrides !== undefined) {
-      const overrideMap = {};
-      (lastTodosFrame.todoOverrides || []).forEach(o => { overrideMap[o.index] = o.status; });
-      todos = baseline.map((text, i) => ({ text, status: overrideMap[i] || 'todo' }));
-    } else {
-      todos = lastTodosFrame.todos;
-    }
-  }
+  const todos = computeTodoSnapshot(frames, baseline);
 
   const sheet = $('#sheet');
   if (sheet) sheet.dataset.sheetContext = title;
   const body = $('#sheetBody');
   body.innerHTML = '';
-  const hasContent = frames.some(f => (f.events && f.events.length) || (f.searchItems && f.searchItems.length)) || todos.length;
+
+  const hasContent = frames.some(f => (f.events && f.events.length)) || todos.length;
   if (!hasContent) {
     const empty = document.createElement('div');
     empty.className = 'sheet-empty';
@@ -105,10 +115,22 @@ export function renderSheet(frameRefs, explicitTitle) {
     body.appendChild(empty);
     return;
   }
-  // 按帧顺序渲染：每帧的 events，然后紧跟该帧的 searchItems
+
+  // 按帧顺序渲染：逐 event 渲染，然后渲染 event 的 outputs（如果有）
+  // 兼容旧格式：如果帧有 searchItems 且 events 无 outputs，回退到帧级渲染
   for (const f of frames) {
-    if (f.events) f.events.forEach(e => body.appendChild(renderEvent(e)));
-    if (f.searchItems) f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
+    if (f.events) {
+      for (const ev of f.events) {
+        body.appendChild(renderEvent(ev));
+        if (ev.outputs) {
+          ev.outputs.forEach(out => body.appendChild(renderOutput(out)));
+        }
+      }
+    }
+    // 旧格式兼容：帧级别的 searchItems（仅当 events 中无 outputs 时）
+    if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
+      f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
+    }
   }
   todos.forEach(t => body.appendChild(renderTodo(t)));
 }

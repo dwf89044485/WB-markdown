@@ -154,8 +154,19 @@ body{
 }
 
 /* CONVERSATION */
-.conversation{flex:1;overflow-y:auto;padding:12px 0 8px;background:#fff;}
+.conversation{flex:1;overflow-y:auto;padding:12px 0 8px;background:#fff;position:relative;}
 .conversation::-webkit-scrollbar{width:0;}
+.conversation::before{
+  content:"";
+  position:sticky;
+  top:0;
+  left:0;right:0;
+  height:24px;
+  background:linear-gradient(to bottom,rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+  pointer-events:none;
+  z-index:5;
+  display:block;
+}
 
 /* USER MESSAGE */
 .user-msg-wrap{display:flex;justify-content:flex-end;padding:3px 16px;margin-bottom:4px;}

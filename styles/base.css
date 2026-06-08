@@ -38,10 +38,6 @@ html.is-standalone .phone-shell{
 }
 html.force-standalone .status-bar,
 html.is-standalone .status-bar{display:none;}
-html.force-standalone .nav-bar,
-html.is-standalone .nav-bar{top:0;padding-top:0;}
-html.force-standalone .conversation,
-html.is-standalone .conversation{padding-top:54px;}
 html.is-standalone .demo-controls{display:none;}
 html.force-standalone .user-msg-wrap,
 html.is-standalone .user-msg-wrap{padding-left:16px;padding-right:16px;}
@@ -51,7 +47,7 @@ html.force-standalone .composer,
 html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom));}
 
 /* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
-@media (max-width:900px){
+@media (max-width:580px){
   html:not(.force-desktop) body{
     display:block;
     padding:0;
@@ -67,8 +63,6 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
     box-shadow:none;
   }
   html:not(.force-desktop) .status-bar{display:none;}
-  html:not(.force-desktop) .nav-bar{top:0;padding-top:0;}
-  html:not(.force-desktop) .conversation{padding-top:54px;}
   html:not(.force-desktop) .demo-controls{display:none;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:16px;padding-right:16px;}
   html:not(.force-desktop) .agent-msg{padding-left:16px;padding-right:16px;}
@@ -119,8 +113,8 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
 
 /* ── NAV BAR ─────────────────────────────────────────────── */
 .nav-bar{
-  position:absolute;
-  top:54px;left:0;right:0;
+  position:sticky;
+  top:0;
   z-index:50;
   display:flex;
   align-items:center;

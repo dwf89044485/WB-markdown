@@ -36,5 +36,8 @@ export function currentTokensPerSecond() {
 
 export function scrollToBottom() {
   const c = document.querySelector('#conv');
-  if (c) c.scrollTop = c.scrollHeight;
+  if (!c) return;
+  // 用户主动往上翻了（距底部超过 80px），不强制滚动
+  if (c.scrollTop + c.clientHeight < c.scrollHeight - 80) return;
+  c.scrollTop = c.scrollHeight;
 }

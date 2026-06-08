@@ -174,7 +174,7 @@ body{
 
 /* TIMING BAR */
 .timing-bar{display:flex;align-items:center;gap:6px;padding:0 0 8px;cursor:pointer;user-select:none;}
-.timing-text{font-size:13px;color:#6c6c70;white-space:nowrap;letter-spacing:-0.1px;}
+.timing-text{font-size:14.5px;color:#6c6c70;white-space:nowrap;letter-spacing:-0.1px;}
 .timing-arrow{
   width:14px;height:14px;display:flex;align-items:center;justify-content:center;
   color:#8e8e93;transition:transform 0.25s ease;
@@ -188,7 +188,7 @@ body{
 
 /* THINKING LINK */
 .thinking-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 0 10px;cursor:pointer;border:none;background:none;}
-.thinking-btn span{font-size:14px;color:#6c6c70;letter-spacing:-0.1px;}
+.thinking-btn span{font-size:14.5px;color:#6c6c70;letter-spacing:-0.1px;}
 .thinking-btn svg{width:14px;height:14px;color:#6c6c70;transition:transform 0.2s ease;}
 .thinking-btn.open svg{transform:rotate(90deg);}
 
@@ -216,7 +216,7 @@ body{
 .step-row.open .step-detail{max-height:2000px;}
 .step-detail-inner{padding:2px 0 10px 30px;}
 .step-detail-p{font-size:13.5px;color:rgba(60,60,67,0.75);line-height:1.5;letter-spacing:-0.1px;margin-bottom:5px;}
-.step-detail-link{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;color:#6c6c70;cursor:pointer;border:none;background:none;padding:0;letter-spacing:-0.1px;margin-bottom:5px;}
+.step-detail-link{display:inline-flex;align-items:center;gap:5px;font-size:14.5px;color:#6c6c70;cursor:pointer;border:none;background:none;padding:0;letter-spacing:-0.1px;margin-bottom:5px;}
 .step-detail-link:active{color:#007AFF;}
 
 /* MAIN CONTENT */

@@ -170,6 +170,7 @@ html.is-standalone .composer,body.is-standalone .composer{padding:0 12px 16px;}
   padding:0 26px 32px;
   flex-shrink:0;
   position:relative;
+  background:#fafafa;
 }
 .composer::before{
   content:"";

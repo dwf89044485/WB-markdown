@@ -90,28 +90,92 @@ window.WORKBUDDY_SCENARIO = {
     },
     "F1.c": {
       "title": "搜索网页",
-      "events": [],
+      "events": [
+        {
+          "icon": "🔍",
+          "text": "搜索网页",
+          "dim": "正在搜索签证/入境政策、交通卡信息"
+        }
+      ],
       "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"active"}]
     },
     "F1.d": {
       "title": "搜索网页",
-      "events": [],
+      "events": [
+        {
+          "icon": "🔍",
+          "text": "搜索网页",
+          "dim": "正在查询天气趋势与穿衣建议"
+        }
+      ],
       "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"active"}]
     },
     "F1.e": {
       "title": "搜索网页",
-      "events": [],
+      "events": [
+        {
+          "icon": "🔍",
+          "text": "搜索网页",
+          "dim": "正在查询汇率与预算换算"
+        }
+      ],
       "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"active"}]
     },
     "F1.f": {
       "title": "搜索网页",
-      "events": [],
+      "events": [
+        {
+          "icon": "🔍",
+          "text": "搜索网页",
+          "dim": "正在查询城际交通与路线时间"
+        }
+      ],
       "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F1.g": {
       "title": "搜索网页",
-      "events": [],
+      "events": [
+        {
+          "icon": "🔍",
+          "text": "搜索网页",
+          "dim": "10项搜索已完成"
+        }
+      ],
+      "searchItems": [
+        "大阪关西-Top500件大阪关西 - 2026年2月更新",
+        "2026年06月东京地铁卡销量排行榜前10名-爱美",
+        "一篇文章带你了解日本交通，电车、新干线、JR P",
+        "日本自由行游记7:D1-购买ICOCA交通卡，聊聊日",
+        "HARUKA一张票，从关西机场直达神户!这篇攻略",
+        "2026东大寺门票，奈良东大寺游玩攻略，东大寺游览",
+        "2026年赴日旅游大变革!签证涨价安全预警，先看",
+        "奈良东大寺游玩攻略-东大寺门票多少钱/价格表",
+        "香港人，去了京都跟奈良两县，直言不讳:京都跟奈",
+        "2026京都伏见稻荷大社旅游攻略之主殿-主殿图文"
+      ],
       "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"}]
+    },
+    "F1.h": {
+      "title": "更新待办",
+      "events": [
+        {
+          "icon": "☑️",
+          "text": "更新待办",
+          "dim": "搜索信息已收集完毕，更新任务进度"
+        }
+      ],
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+    },
+    "F1.i": {
+      "title": "更新待办",
+      "events": [
+        {
+          "icon": "☑️",
+          "text": "更新待办",
+          "dim": "搜索信息已收集完毕，更新任务进度"
+        }
+      ],
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F2.a": {
       "title": "生成图片",
@@ -463,6 +527,12 @@ window.WORKBUDDY_SCENARIO = {
           "runningText": "正在搜索网页",
           "doneText": "搜索网页",
           "frames": ["F1.c", "F1.d", "F1.e", "F1.f", "F1.g"]
+        },
+        {
+          "type": "status",
+          "runningText": "正在更新待办",
+          "doneText": "更新待办",
+          "frames": ["F1.h", "F1.i"]
         }
       ]
     },

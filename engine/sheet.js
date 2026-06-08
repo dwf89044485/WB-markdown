@@ -3,7 +3,7 @@
 // ============================================================
 
 import { escapeHtml } from './markdown.js';
-import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent } from './icons.js';
+import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent, svgFromRegistry } from './icons.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -33,6 +33,14 @@ export function renderTodo(todo) {
   row.className = 's-sub';
   const statusIcon = todo.status === 'done' ? ICONS.todoOk : todo.status === 'active' ? ICONS.todoSpin : ICONS.todoEmpty;
   row.innerHTML = `<div class="s-sub-ico">${statusIcon}</div><span class="s-sub-txt ${todo.status === 'active' ? 'active' : ''}">${escapeHtml(todo.text)}</span>`;
+  return row;
+}
+
+export function renderSearchItem(text) {
+  const row = document.createElement('div');
+  row.className = 's-sub';
+  const icon = svgFromRegistry('wb-webdesign.svg', 'tool-svg tool-svg-website');
+  row.innerHTML = `<div class="s-sub-ico">${icon}</div><span class="s-sub-txt">${escapeHtml(text)}</span>`;
   return row;
 }
 
@@ -69,6 +77,7 @@ export function renderSheet(frameRefs, explicitTitle) {
   const frame = frames[0] || fallback;
   const title = explicitTitle || [...new Set(frames.map(f => f.title).filter(Boolean))].join('、') || frame.title || '过程';
   const events = frames.flatMap(f => f.events || []);
+  const searchItems = frames.flatMap(f => f.searchItems || []);
 
   // 支持新格式（todoOverrides + baseline）和旧格式（todos 完整数组）兼容
   const baseline = scenario.todosBaseline || [];
@@ -97,6 +106,7 @@ export function renderSheet(frameRefs, explicitTitle) {
     body.appendChild(empty);
   }
   events.forEach(e => body.appendChild(renderEvent(e)));
+  searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
   todos.forEach(t => body.appendChild(renderTodo(t)));
 }
 

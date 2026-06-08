@@ -3,11 +3,20 @@
    ============================================================ */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+html{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
-  background:#fafafa;min-height:100dvh;
+  background:#fafafa;
+  min-height:100dvh;
+  height:100dvh;
   display:flex;align-items:center;justify-content:center;padding:24px;
+  overflow:hidden;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
@@ -17,6 +26,8 @@ html.is-standalone body{
   padding:0;
   background:#fafafa;
   min-height:100dvh;
+  height:100dvh;
+  overflow:hidden;
 }
 html.force-standalone .phone-shell,
 html.is-standalone .phone-shell{
@@ -43,6 +54,8 @@ html.is-standalone .composer{padding:0 12px max(12px, env(safe-area-inset-bottom
     padding:0;
     background:#fafafa;
     min-height:100dvh;
+    height:100dvh;
+    overflow:hidden;
   }
   html:not(.force-desktop) .phone-shell{
     width:100%;

@@ -69,6 +69,7 @@ docs: 更新 API 文档
 ```
 已提交：{commit message}
 hash：{短 hash（7 位）}
+版本链路：{prehash（7 位）} → {currhash（7 位）}
 ```
 
 ### 推送冲突处理

@@ -31,7 +31,6 @@
   --cv-main-content-padding-bottom:var(--spacing-8);
   --cv-flat-padding-bottom:var(--spacing-8);
   --cv-flat-stack-gap:var(--spacing-12);
-  --cv-tool-call-gap:2px;
 }
 
 /* ── CONVERSATION ────────────────────────────────────────── */
@@ -135,7 +134,6 @@
   border:none;
   border-radius:0;
   padding:var(--cv-status-padding-y) 0;
-  margin-bottom:var(--cv-tool-call-gap,4px);
   gap:4px;
 }
 .phone-shell.tool-call-flat .step-detail-link.is-running,
@@ -145,10 +143,6 @@
 .phone-shell.tool-call-flat .status-chevron{
   margin-left:0;
   padding-left:4px;
-}
-.phone-shell.tool-call-flat .step-detail-link:last-child,
-.phone-shell.tool-call-flat .step-detail-link:last-of-type{
-  margin-bottom:0;
 }
 
 .status-fragments{

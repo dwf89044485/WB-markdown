@@ -154,11 +154,12 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   justify-content:center;
   gap:5px;
 }
+/* 版本指示圆点 — 每次 git commit 前改此颜色，用户刷页面即可知是否为最新部署 */
 .status-version-dot{
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#ff3b30;
+  background:#ff9500;
   flex-shrink:0;
 }
 .status-time{

@@ -1,11 +1,12 @@
 # Commit Hash 显示机制
 
-> 本文档说明项目里"页面右下角显示 7 位 commit hash"这套机制的设计与实现。
-> 用户用这个 hash 验证当前看到的页面是否就是最新提交的版本。
+> **唯一目标**：让用户在页面右下角看到的 hash，与本次 commit 产生的 hash 一致——这样用户就能确认"我现在看到的页面就是刚刚提交的版本"。
+>
+> 位数本身无所谓，但**三处必须严格相同**：commit-hash.js 截多少位，vercel-build.sh 注入多少位，AI 报告给用户多少位。
 
 ## 用户使用方式
 
-1. AI 完成代码变更后自动 `git commit && git push`，并在对话里报告 `hash: xxxxxxx`
+1. AI 完成代码变更后自动 `git commit && git push`，并在对话里报告 hash
 2. 用户打开页面（本地 server 或 Vercel 线上），看右下角显示的 hash
 3. 两个 hash 一致 = 当前看到的就是最新版
 
@@ -20,6 +21,29 @@
 - 本地：`.git/` 可访问 → 优先走 fetch 链路
 - 线上：Vercel 不上传 `.git/` → fetch 全部 404 → 自动 fallback 到 meta 值
 
+## hash 长度对齐（**最重要**）
+
+三个位置**必须始终保持完全相同的位数**。当前统一为 **8 位**：
+
+| 位置 | 当前值 |
+| --- | --- |
+| `commit-hash.js` | `const SHORT = 8`（用 `slice(0, SHORT)` 截断） |
+| `vercel-build.sh` | `cut -c1-8` |
+| AI 报告给用户的 hash（见 AGENTS.md 提交后的动作） | `git rev-parse HEAD \| cut -c1-8` |
+
+### 不变量
+
+> **如果改长度，三处必须同时改。** 任何一处对不上，用户在页面看到的 hash 就和 AI 报的对不上，整个机制就废了。
+
+### 禁止使用的写法
+
+❌ `git rev-parse --short HEAD`
+❌ `git rev-parse --short=N HEAD`
+
+这两种写法只是"**至少** N 位"，仓库规模增长到前缀有歧义时 git 会自动加长返回结果（例如本来 7 位变 8 位）。一旦自动变长，AI 报给用户的 hash 就会比页面截断后的多出几位，对不上。
+
+**只能用 `cut -c1-N`** 这种"硬截断"写法，保证三端长度永远一致。
+
 ## 文件分工
 
 ### `commit-hash.js`
@@ -33,14 +57,12 @@
 
 实现细节：
 - 全部 fetch 加 `cache: 'no-store'`，避免浏览器缓存导致显示旧值
-- 始终截取前 7 位
+- 始终截取前 `SHORT` 位（见上方"hash 长度对齐"）
 - 暴露 `window.commitHashReady` (Promise)，供其他模块统一消费，避免重复 fetch
 
 ### `vercel-build.sh`
 
-仅做一件事：把 `index.html` 里的 `__COMMIT_HASH__` 占位符替换成 `${VERCEL_GIT_COMMIT_SHA:0:7}`。
-
-不再写任何文件（早期版本会写 `COMMIT_HASH` 文件，已废弃）。
+仅做一件事：把 `index.html` 里的 `__COMMIT_HASH__` 占位符替换成 `$VERCEL_GIT_COMMIT_SHA` 经 `cut -c1-8` 截断后的值。
 
 ### `index.html`
 
@@ -69,11 +91,23 @@
 
 如果本地启动 server 换成其他不暴露 `.git/` 的方案（如某些静态 server），fetch 会全部失败，页面会显示 `dev`，不影响功能但失去验证意义。
 
-### 为什么不输出 prehash → currhash 这种两段式
-
-旧版 AGENTS.md 曾要求 AI 同时报告 `prehash → currhash`，是为了绕过当时本地 hash 永远滞后一个版本的限制。本方案让本地实时显示最新 HEAD，单一 hash 即可校对，已废除这种冗余报告格式。
-
 ## 排查指南
+
+### AI 报的 hash 和页面显示的位数不一致
+
+**这是最常见的故障，本质是三处长度对齐被破坏了。**
+
+立即检查这三处的位数是否相同：
+
+```bash
+grep "SHORT" commit-hash.js              # 期望：const SHORT = N
+grep "cut -c1" vercel-build.sh           # 期望：cut -c1-N
+grep "cut -c1" AGENTS.md                 # 期望：cut -c1-N
+```
+
+任意一处的 N 不同 → 改成统一值（不需要纠结 N 是 7 还是 8 还是其他，只要相同即可）。
+
+如果是 AI 报错了 hash（用了 `--short` 而不是 `cut -c1-N`），让它重新跑一次 `git rev-parse HEAD | cut -c1-N`。
 
 ### 本地页面 hash 显示 `dev` 或为空
 
@@ -84,7 +118,7 @@
 ### 本地页面 hash 不是最新
 
 - 强制刷新（⌘+Shift+R）排除浏览器缓存
-- 终端跑 `git rev-parse --short=7 HEAD` 确认本地仓库确实在最新 commit
+- 终端跑 `git rev-parse HEAD | cut -c1-8` 确认本地仓库确实在最新 commit
 
 ### 线上页面 hash 还是 `__COMMIT_HASH__` 字符串
 
@@ -97,3 +131,4 @@
 - ❌ 不要重新引入被 git 跟踪的 `COMMIT_HASH` 文件
 - ❌ 不要在前端做"我是不是在 Vercel"的环境判断（破坏自动分流）
 - ❌ 不要屏蔽或重写 `python3 -m http.server` 对 `.git/` 的访问
+- ❌ 不要使用 `git rev-parse --short` 报告 hash（用 `cut -c1-N`，原因见上方"hash 长度对齐"）

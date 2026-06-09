@@ -68,10 +68,12 @@ docs: 更新 API 文档
 
 ```
 已提交：{commit message}
-hash：{短 hash（7 位）}
+hash：{短 hash（8 位）}
 ```
 
-`hash` 取 `git rev-parse --short=7 HEAD`（即本次新生成的 commit hash）。
+`hash` 必须取 `git rev-parse HEAD | cut -c1-8`，**始终固定 8 位**，与 `commit-hash.js` 的 `SHORT = 8` 和 `vercel-build.sh` 的 `cut -c1-8` 保持一致。
+
+不要使用 `git rev-parse --short HEAD` 或 `--short=N`——这两种写法只是"至少 N 位"，仓库规模增长时会自动变长，破坏三端一致。
 
 ### 推送冲突处理
 
@@ -86,7 +88,7 @@ hash：{短 hash（7 位）}
 
 ### Commit hash 显示机制
 
-页面右下角显示的 7 位 hash 用于让用户验证当前页面是否最新版本。机制详见 `docs/commit-hash.md`。
+页面右下角显示的 8 位 hash 用于让用户验证当前页面是否最新版本。机制详见 `docs/commit-hash.md`。
 
 **禁止改动**：
 

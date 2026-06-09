@@ -8,12 +8,12 @@
 //
 // 设计要点：
 //   · 全部 fetch 加 cache: 'no-store'，避免浏览器缓存旧值
-//   · 始终截取前 7 位
+//   · 始终截取前 8 位（与 vercel-build.sh 的 cut -c1-8、AGENTS.md 报告口径完全一致）
 //   · 暴露 window.commitHashReady (Promise) 供其他模块统一消费
 //   · 自动写入 window.COMMIT_HASH + #ctrlCommitHash 元素
 
 (function () {
-  const SHORT = 7;
+  const SHORT = 8;
   const FALLBACK = 'dev';
 
   function shorten(sha) {
@@ -39,7 +39,7 @@
     if (!m) {
       // 分离 HEAD 状态：HEAD 文件本身就是一个 SHA
       const sha = shorten(head);
-      if (/^[0-9a-f]{7}/i.test(sha)) return sha;
+      if (/^[0-9a-f]{8}/i.test(sha)) return sha;
       return null;
     }
     const ref = m[1];

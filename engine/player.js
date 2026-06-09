@@ -206,7 +206,14 @@ async function renderFinal() {
 
 // ── User / agent appearance ───────────────────────────────
 async function showUserMessage() {
+  // 先设置基础文本
   $('#userBubble').textContent = scenario.userMessage;
+  // 异步获取 hash 并追加到用户消息末尾
+  if (window.commitHashReady) {
+    window.commitHashReady.then((h) => {
+      $('#userBubble').textContent = scenario.userMessage + '  ' + h;
+    });
+  }
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');

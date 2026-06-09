@@ -5,7 +5,7 @@
    ============================================================ */
 
 :root{
---cv-conversation-padding-top:var(--spacing-80);
+--cv-conversation-padding-top:var(--spacing-100);
   --cv-conversation-padding-bottom:var(--spacing-24);
   --cv-msg-gutter-x:var(--spacing-26);
   --cv-user-wrap-padding-y:var(--spacing-4);

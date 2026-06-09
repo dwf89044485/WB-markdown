@@ -100,7 +100,7 @@
 .md-node p{margin-bottom:var(--md-space-4);}
 .md strong{font-weight:720;color:var(--md-heading);}
 .md a{color:var(--md-accent);text-decoration:none;}
-.md hr{border:0;height:.5px;background:var(--md-border);margin:var(--spacing-6) 0 var(--spacing-10);}
+.md hr{border:0;height:.5px;background:var(--md-border);margin:var(--spacing-6) 0 20px;}
 
 /* ── LISTS ───────────────────────────────────────────────── */
 .md ul{list-style:none;padding:0;margin:0 0 var(--md-space-6);}

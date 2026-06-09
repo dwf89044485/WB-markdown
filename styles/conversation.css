@@ -19,7 +19,7 @@
   --cv-timing-gap:var(--spacing-4);
   --cv-thinking-inline-gap:var(--spacing-4);
   --cv-thinking-padding-top:var(--spacing-4);
-  --cv-thinking-padding-bottom:var(--spacing-8);
+  --cv-thinking-padding-bottom:var(--spacing-4);
   --cv-thinking-loading-indicator-offset:var(--spacing-4);
   --cv-status-gap:var(--spacing-4);
   --cv-status-padding-y:var(--spacing-8);

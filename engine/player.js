@@ -9,7 +9,7 @@ import {
   scrollToBottom
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
-import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon } from './icons.js';
+import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { renderSheet, openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 
@@ -18,7 +18,7 @@ const $ = (sel, root = document) => root.querySelector(sel);
 
 // ── State ──────────────────────────────────────────────────
 const displayMode = 'flat';
-let toolCallStyle = 'card'; // 'card' | 'flat'
+let toolCallStyle = 'card'; // 'card' | 'flat' | 'stack'
 let execOpen = true;
 let stepsOpen = true;
 let stepSeq = 0;
@@ -114,6 +114,9 @@ async function runStatusGroup(row, actions, container) {
   }
 
   line.classList.remove('is-running');
+  if (toolCallStyle === 'stack') {
+    collapseToStack(line, completedLabels);
+  }
   await sleep(Math.floor(playbackDelay('stepDelay', 470) * 0.55));
 }
 
@@ -468,14 +471,37 @@ function syncToolCallStyleUI() {
   if (!shell) return;
   shell.classList.toggle('tool-call-card', toolCallStyle === 'card');
   shell.classList.toggle('tool-call-flat', toolCallStyle === 'flat');
+  shell.classList.toggle('tool-call-stack', toolCallStyle === 'stack');
   const btnCard = document.getElementById('ctrlToolCard');
   const btnFlat = document.getElementById('ctrlToolFlat');
+  const btnStack = document.getElementById('ctrlToolStack');
   if (btnCard) btnCard.className = 'ghost-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
   if (btnFlat) btnFlat.className = 'ghost-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+  if (btnStack) btnStack.className = 'ghost-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
 }
+
+function collapseToStack(line, labels) {
+  if (!labels || !labels.length) return;
+  line.innerHTML = statusStackHTML(labels) + '<span class="status-chevron">›</span>';
+}
+
 export function toggleToolCallStyle(mode) {
   toolCallStyle = mode;
   syncToolCallStyleUI();
+
+  // 重渲染所有已有 status line
+  document.querySelectorAll('.step-detail-link[data-labels]').forEach(link => {
+    let labels;
+    try { labels = JSON.parse(link.dataset.labels || '[]'); } catch (_) { labels = []; }
+    const isRunning = link.classList.contains('is-running');
+
+    if (!isRunning && toolCallStyle === 'stack') {
+      collapseToStack(link, labels);
+    } else {
+      setStatusLineLabels(link, labels);
+      if (isRunning) link.classList.add('is-running');
+    }
+  });
 }
 
 function setupDemoControls() {
@@ -505,8 +531,10 @@ function setupDemoControls() {
   // ── 工具调用样式切换 ───────────────────────────────────
   const toolCard = document.getElementById('ctrlToolCard');
   const toolFlat = document.getElementById('ctrlToolFlat');
+  const toolStack = document.getElementById('ctrlToolStack');
   if (toolCard) toolCard.onclick = () => toggleToolCallStyle('card');
   if (toolFlat) toolFlat.onclick = () => toggleToolCallStyle('flat');
+  if (toolStack) toolStack.onclick = () => toggleToolCallStyle('stack');
 
   // ── 同步初始工具调用样式 UI ──────────────────────────
   syncToolCallStyleUI();

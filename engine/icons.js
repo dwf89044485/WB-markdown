@@ -91,6 +91,19 @@ export function statusLineHTML(labels) {
   return `<span class="status-fragments">${parts}</span><span class="status-chevron">›</span>`;
 }
 
+export function statusStackHTML(labels) {
+  const icons = labels.map(l => `
+    <span class="stack-icon-wrap">
+      <span class="status-icon">${renderStatusToolIcon(l)}</span>
+    </span>
+  `).join('');
+  return `<span class="status-stack">
+    <span class="status-stack-icons">${icons}</span>
+    <span class="status-stack-count">已执行 ${labels.length} 项任务</span>
+  </span>`;
+}
+
 export function setStatusLineLabels(line, labels) {
   line.innerHTML = statusLineHTML(labels);
+  line.dataset.labels = JSON.stringify((labels || []).map(l => String(l || '').trim()));
 }

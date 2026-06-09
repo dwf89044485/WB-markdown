@@ -301,12 +301,14 @@
 .response-action-btn{
   appearance:none;border:0;background:transparent;padding:0;margin:0;
   display:inline-flex;align-items:center;justify-content:center;gap:4px;
-  width:22px;height:22px;color:#8e8e93;cursor:pointer;
+  width:28px;height:28px;color:#8e8e93;cursor:pointer;
   border-radius:8px;-webkit-tap-highlight-color:transparent;
+  font-size:0;line-height:0;
 }
 .response-action-btn span{
   position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
 }
+.response-action-btn:hover{background:rgba(0,0,0,.06);}
 .response-action-btn:active{background:rgba(0,0,0,.045);}
 .response-action-btn .action-svg{width:18px;height:18px;color:#8e8e93;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}

@@ -5,11 +5,33 @@
 
 /* ── SHEET CSS VARS ──────────────────────────────────────── */
 :root{
-  --sheet-inset:0;
-  --sheet-radius:34px;
-  --sheet-side-padding:20px;
-  --sheet-body-left:20px;
-  --sheet-guide-left:30px;
+  --sheet-inset:var(--spacing-0);
+  --sheet-radius:var(--spacing-34);
+  --sheet-side-padding:var(--spacing-20);
+  --sheet-body-left:var(--spacing-20);
+  --sheet-guide-left:var(--spacing-30);
+
+  --sheet-bottom-padding:var(--spacing-16);
+  --sheet-handle-margin-top:var(--spacing-12);
+  --sheet-body-padding-top:var(--spacing-8);
+  --sheet-body-padding-bottom:var(--spacing-24);
+  --sheet-guide-top:var(--spacing-16);
+  --sheet-guide-bottom:var(--spacing-24);
+
+  --sheet-row-gap:var(--spacing-12);
+  --sheet-row-padding-y:var(--spacing-8);
+  --sheet-line-gap:var(--spacing-8);
+  --sheet-line-row-gap:var(--spacing-4);
+
+  --sheet-event-card-margin-top:var(--spacing-8);
+  --sheet-empty-margin-left:var(--spacing-38);
+  --sheet-empty-padding-top:var(--spacing-8);
+  --sheet-empty-padding-bottom:var(--spacing-16);
+
+  --sheet-sub-gap:var(--spacing-4);
+  --sheet-sub-padding-top:var(--spacing-8);
+  --sheet-sub-padding-bottom:var(--spacing-8);
+  --sheet-sub-padding-left:var(--spacing-36);
 }
 
 /* ── OVERLAY ─────────────────────────────────────────────── */
@@ -33,7 +55,7 @@
   background:#fff;
   width:100%;
   border-radius:var(--sheet-radius);
-  padding-bottom:18px;
+  padding-bottom:var(--sheet-bottom-padding);
   transform:translateY(100%);
   transition:transform 0.36s cubic-bezier(0.32,0.72,0,1);
   max-height:calc(100% - 92px);
@@ -46,12 +68,12 @@
 
 .sheet-handle{
   width:72px;height:6px;background:#d7d7dc;
-  margin:11px auto 0;border-radius:99px;flex-shrink:0;
+  margin:var(--sheet-handle-margin-top) auto 0;border-radius:99px;flex-shrink:0;
 }
 
 .sheet-body{
   position:relative;
-  padding:8px var(--sheet-side-padding) 24px var(--sheet-body-left);
+  padding:var(--sheet-body-padding-top) var(--sheet-side-padding) var(--sheet-body-padding-bottom) var(--sheet-body-left);
   overflow-y:auto;
   overflow-x:hidden;
   flex:1;
@@ -64,9 +86,9 @@
 .sheet-body::before{
   content:"";
   position:absolute;
-  left:calc(var(--sheet-guide-left) + 0px);
-  top:18px;
-  bottom:24px;
+  left:calc(var(--sheet-guide-left) + var(--spacing-0));
+  top:var(--sheet-guide-top);
+  bottom:var(--sheet-guide-bottom);
   width:1px;
   background:#e5e5ea;
   z-index:0;
@@ -82,8 +104,8 @@
 .s-row{
   display:flex;
   align-items:flex-start;
-  gap:12px;
-  padding:8px 0;
+  gap:var(--sheet-row-gap);
+  padding:var(--sheet-row-padding-y) 0;
 }
 .s-ico{
   width:24px;height:24px;flex:0 0 24px;
@@ -107,9 +129,9 @@
 .s-line{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:var(--sheet-line-gap);
   flex-wrap:wrap;
-  row-gap:4px;
+  row-gap:var(--sheet-line-row-gap);
 }
 .s-text{
   flex:0 1 auto;min-width:0;
@@ -128,7 +150,7 @@
 
 /* ── EVENT CARD ──────────────────────────────────────────── */
 .event-card{
-  margin:7px 0 0;
+  margin:var(--sheet-event-card-margin-top) 0 0;
   padding:0;border:0;
   border-radius:12px;
   background:transparent;
@@ -142,7 +164,7 @@
 }
 .sheet-empty{
   position:relative;z-index:1;
-  margin-left:38px;padding:8px 0 16px;
+  margin-left:var(--sheet-empty-margin-left);padding:var(--sheet-empty-padding-top) 0 var(--sheet-empty-padding-bottom);
   font-size:15px;color:#8e8e93;
 }
 
@@ -163,7 +185,7 @@
 /* ── TODO / SUB ROWS ─────────────────────────────────────── */
 .s-sub{
   display:flex;align-items:flex-start;
-  gap:2px;padding:4px 0 4px 36px;margin:0;
+  gap:var(--sheet-sub-gap);padding:var(--sheet-sub-padding-top) 0 var(--sheet-sub-padding-bottom) var(--sheet-sub-padding-left);margin:0;
 }
 .s-sub-ico{
   width:24px;height:24px;flex:0 0 24px;

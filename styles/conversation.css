@@ -162,14 +162,14 @@
 @keyframes wbSweep{to{transform:translateX(115%);}}
 
 .status-fragments{
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  flex:1;
   min-width:0;
   gap:0;
   max-width:100%;
   vertical-align:middle;
   flex-wrap:nowrap;
+  width:fit-content;
 }
 .status-fragment{
   display:inline-flex;
@@ -224,6 +224,7 @@
   padding-right:0;
   height:15px;
   color:#999;
+  align-self:center;
 }
 .status-line-enter{animation:agentIn .22s cubic-bezier(.2,.8,.2,1) both;}
 

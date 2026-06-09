@@ -2,7 +2,7 @@
 // TYPEWRITER — Token streaming output engine
 // ============================================================
 
-import { sleep, playback, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
+import { sleep, playback, playbackDelay, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
 import { markdownToHtml } from './markdown.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -70,7 +70,7 @@ export async function appendHTMLTypedTo(container, html) {
       c.classList.remove('typing-block-enter');
     }
   }
-  await sleep(playback('stepDelay', 470));
+  await sleep(playbackDelay('stepDelay', 470));
 }
 
 export async function appendHTML(row, html, container) {

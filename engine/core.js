@@ -34,6 +34,13 @@ export function currentTokensPerSecond() {
   return Math.min(1000, Math.max(20, Math.round(playback('tokensPerSecond', 200))));
 }
 
+export function playbackDelay(key, fallback) {
+  const base = playback(key, fallback);
+  if (key !== 'frameDelay' && key !== 'stepDelay') return base;
+  const tps = currentTokensPerSecond();
+  return Math.max(0, Math.round(base * (200 / tps)));
+}
+
 export function scrollToBottom() {
   const c = document.querySelector('#conv');
   if (!c) return;

@@ -5,7 +5,7 @@
 import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
-  sleep, playback, currentTokensPerSecond, CANCELLED,
+  sleep, playback, playbackDelay, currentTokensPerSecond, CANCELLED,
   scrollToBottom
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
@@ -101,7 +101,7 @@ async function runStatusGroup(row, actions, container) {
     for (const frameId of frames) {
       line.dataset.frames = completedFinalFrames.concat(frameId).join(',');
       line.dataset.sheetTitle = completedLabels.concat(toDoneLabel(action)).join('、');
-      await sleep(playback('frameDelay', 520));
+      await sleep(playbackDelay('frameDelay', 520));
     }
 
     completedLabels.push(toDoneLabel(action));
@@ -110,11 +110,11 @@ async function runStatusGroup(row, actions, container) {
     line.dataset.frames = completedFinalFrames.join(',');
     line.dataset.sheetTitle = completedLabels.join('、');
 
-    if (index < actions.length - 1) await sleep(Math.floor(playback('stepDelay', 470) * 0.3));
+    if (index < actions.length - 1) await sleep(Math.floor(playbackDelay('stepDelay', 470) * 0.3));
   }
 
   line.classList.remove('is-running');
-  await sleep(Math.floor(playback('stepDelay', 470) * 0.55));
+  await sleep(Math.floor(playbackDelay('stepDelay', 470) * 0.55));
 }
 
 async function runStatus(row, action) {
@@ -148,7 +148,7 @@ async function runThinkingStatus() {
   const line = createStatusLineIn(mount, joinLabels([toRunningLabel(action)]), frames[0] ? [frames[0]] : [], toDoneLabel(action));
   for (const frameId of frames) {
     line.dataset.frames = frameId;
-    await sleep(playback('frameDelay', 520));
+    await sleep(playbackDelay('frameDelay', 520));
   }
   setStatusLineLabels(line, [toDoneLabel(action)]);
   line.dataset.frames = frames.length ? frames[frames.length - 1] : '';
@@ -156,7 +156,7 @@ async function runThinkingStatus() {
   line.classList.remove('is-running');
   stepsList.classList.remove('is-hidden');
   scrollToBottom();
-  await sleep(playback('stepDelay', 470));
+  await sleep(playbackDelay('stepDelay', 470));
 }
 
 // ── Final render ──────────────────────────────────────────
@@ -191,7 +191,7 @@ function renderFinalActions() {
 async function renderFinal() {
   renderTiming();
   collapseProcessIntoTiming();
-  await sleep(playback('stepDelay', 470));
+  await sleep(playbackDelay('stepDelay', 470));
   const main = $('#mainMd');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
@@ -305,7 +305,7 @@ function buildDirectorTimeline() {
       $('#stepsList').appendChild(container);
       directorRuntime.flatContainer = container;
       containerReady = true;
-      await sleep(playback('stepDelay', 470));
+      await sleep(playbackDelay('stepDelay', 470));
     }
   });
   scenario.nodes.forEach((node) => {

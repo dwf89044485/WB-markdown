@@ -21,17 +21,17 @@
   --cv-thinking-padding-top:var(--spacing-4);
   --cv-thinking-padding-bottom:var(--spacing-8);
   --cv-thinking-loading-indicator-offset:var(--spacing-4);
-  --cv-thinking-status-padding-y:var(--spacing-4);
+  --cv-thinking-status-padding-y:var(--spacing-0);
   --cv-step-row-gap:var(--spacing-10);
   --cv-step-head-gap:var(--spacing-8);
   --cv-step-head-padding-y:var(--spacing-8);
   --cv-step-head-padding-x:var(--spacing-4);
-  --cv-step-detail-padding-top:var(--spacing-4);
+  --cv-step-detail-padding-top:var(--spacing-8);
   --cv-step-detail-padding-bottom:var(--spacing-8);
   --cv-step-detail-stack-gap:var(--spacing-8);
   --cv-step-paragraph-margin-bottom:var(--spacing-4);
   --cv-status-gap:var(--spacing-4);
-  --cv-status-padding-y:var(--spacing-4);
+  --cv-status-padding-y:var(--spacing-0);
   --cv-status-radius:var(--spacing-4);
   --cv-status-fragment-gap:var(--spacing-4);
   --cv-status-separator-width:var(--spacing-8);
@@ -116,6 +116,7 @@
 .step-detail-inner{padding:var(--cv-step-detail-padding-top) 0 var(--cv-step-detail-padding-bottom);}
 .step-detail-inner > * + *{margin-top:var(--cv-step-detail-stack-gap);}
 .step-detail-inner.md-node{padding:var(--cv-step-detail-padding-top) 0 var(--cv-step-detail-padding-bottom);}
+.step-detail-inner.md-node > :is(h2,h3,p,ul,ol,blockquote,hr,.tbl-wrap,.doc-link-card,.file-card){margin-top:0;margin-bottom:0;}
 .step-detail-p{font-size:13.5px;color:rgba(60,60,67,0.75);line-height:1.5;letter-spacing:-0.1px;margin-bottom:var(--cv-step-paragraph-margin-bottom);}
 
 /* ── STATUS LINE ─────────────────────────────────────────── */

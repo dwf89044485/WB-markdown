@@ -55,7 +55,7 @@ body{
   --spacing-92:92px;
   --spacing-100:100px;
 
-  --standalone-conversation-padding-top:var(--spacing-54);
+  --standalone-conversation-padding-top:var(--spacing-100);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
   --standalone-composer-padding-bottom:var(--spacing-12);

@@ -1,3 +1,4 @@
 {
-  "buildCommand": "./vercel-build.sh"
+  "buildCommand": "./vercel-build.sh",
+  "outputDirectory": "."
 }

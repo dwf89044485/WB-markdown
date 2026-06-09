@@ -69,7 +69,13 @@ docs: 更新 API 文档
 ```
 已提交：{commit message}
 hash：{短 hash（7 位）}
+版本链路：{prehash（7 位）} → {currhash（7 位）}
 ```
+
+其中：
+
+- `prehash` 固定取 `git rev-parse --short=7 HEAD^1`
+- `currhash` 固定取 `git rev-parse --short=7 HEAD`
 
 ### 推送冲突处理
 

@@ -26,7 +26,7 @@
   --cv-step-head-gap:var(--spacing-8);
   --cv-step-head-padding-y:var(--spacing-14);
   --cv-step-head-padding-x:var(--spacing-4);
-  --cv-step-detail-padding-top:0;
+  --cv-step-detail-padding-top:var(--spacing-4);
   --cv-step-detail-padding-bottom:var(--spacing-14);
   --cv-step-detail-stack-gap:var(--spacing-14);
   --cv-step-paragraph-margin-bottom:var(--spacing-4);
@@ -79,8 +79,8 @@
 
 /* ── THINKING ────────────────────────────────────────────── */
 .thinking-btn{display:inline-flex;align-items:center;gap:var(--cv-thinking-inline-gap);padding:var(--cv-thinking-padding-top) 0 var(--cv-thinking-padding-bottom);cursor:pointer;border:none;background:none;}
-.thinking-btn span{font-size:14.5px;color:#6c6c70;letter-spacing:-0.1px;}
-.thinking-btn svg{width:14px;height:14px;color:#6c6c70;transition:transform 0.2s ease;}
+.thinking-btn span{font-size:14.5px;color:#999;letter-spacing:-0.1px;}
+.thinking-btn svg{width:14px;height:14px;color:#999;transition:transform 0.2s ease;}
 .thinking-btn.open svg{transform:rotate(90deg);}
 .thinking-btn.is-loading svg{display:none;}
 .thinking-btn.is-loading::after{
@@ -130,7 +130,7 @@
   align-items:center;
   gap:var(--cv-status-gap);
   font-size:14.5px;
-  color:#6c6c70;
+  color:#999;
   cursor:pointer;
   border:none;
   background:none;
@@ -182,7 +182,7 @@
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  opacity:.84;
+  opacity:1;
 }
 .status-icon .tool-svg{
   width:16px;
@@ -216,7 +216,7 @@
   padding-left:var(--cv-status-chevron-padding-left);
   padding-right:0;
   height:15px;
-  color:#8e8e93;
+  color:#999;
 }
 .status-line-enter{animation:agentIn .22s cubic-bezier(.2,.8,.2,1) both;}
 

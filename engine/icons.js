@@ -88,7 +88,7 @@ export function statusLineHTML(labels) {
     const sep = index > 0 ? '<span class="status-sep"> </span>' : '';
     return `${sep}<span class="status-fragment"><span class="status-icon">${renderStatusToolIcon(label)}</span><span class="status-label-text">${label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span></span>`;
   }).join('');
-  return `<span class="status-fragments">${parts}<span class="status-chevron">›</span></span>`;
+  return `<span class="status-fragments">${parts}</span><span class="status-chevron">›</span>`;
 }
 
 export function setStatusLineLabels(line, labels) {

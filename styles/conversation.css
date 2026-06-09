@@ -159,7 +159,6 @@
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);
   animation:wbSweep 1.15s ease-in-out infinite;pointer-events:none;
 }
-.step-detail-link.is-running .status-fragments::after{display:none;}
 @keyframes wbSweep{to{transform:translateX(115%);}}
 
 .status-fragments{

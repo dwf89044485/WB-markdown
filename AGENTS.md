@@ -36,6 +36,14 @@
 5. 旧实现里的节点3删除项未迁入：不再出现"原生中文字符重写整个文件"和"已调用工具"。
 6. todos 数据：`scenario.js` 里 `todosBaseline` 是文本基准，各 sheetFrame 用 `todoOverrides` 只记录 status 变更，engine/sheet.js 的 `renderSheet` 合并两者渲染完整列表。
 
+### 执行区间距架构约束（conversation）
+
+1. 外层间距只由 `.agent-msg` 的 `gap` 控制，变量为 `--cv-agent-stack-gap`（用于 header / timing / exec / main 的顶层模块间距）。
+2. 内层间距只由执行区容器控制，变量为 `--cv-exec-stack-gap`（用于 `.exec-area` 与 `.flat-container` 内部条目间距）。
+3. 禁止用子级 `margin-bottom` 参与跨层间距（例如 `thinking-mount` 不得再给 `exec -> main` 叠加间距）。
+4. `#timingMount` 为空时必须隐藏（`#timingMount:empty { display:none; }`），避免空容器占位导致假间距。
+5. 间距值必须走 token；禁止在结构间距上新增硬编码 px（如 `<hr>` 的下边距也应使用 token）。
+
 ## Git 工作流
 
 **每次做完一件事就提交并推送**，不等用户说。提交范围只包含本次任务直接相关的文件。

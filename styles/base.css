@@ -205,8 +205,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   z-index:-1;
   -webkit-backdrop-filter:blur(20px);
   backdrop-filter:blur(20px);
-  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
-  mask-image:linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
   pointer-events:none;
 }
 .nav-bar > *{pointer-events:auto;}

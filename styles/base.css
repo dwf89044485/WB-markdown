@@ -62,7 +62,7 @@ body{
   --nav-bar-gap:var(--spacing-8);
   --nav-bar-padding-top:var(--spacing-8);
   --nav-bar-padding-x:var(--spacing-16);
-  --nav-bar-padding-bottom:var(--spacing-16);
+  --nav-bar-padding-bottom:30px;
   --nav-center-margin-left:var(--spacing-8);
   --nav-center-gap:var(--spacing-2);
 

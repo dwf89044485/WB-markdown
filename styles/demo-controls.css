@@ -28,6 +28,7 @@ body{flex-direction:column;gap:14px;}
   flex-wrap:wrap;
 }
 .stepper-control{display:flex;align-items:center;gap:7px;}
+.stepper-sep{width:1px;height:14px;background:#d1d1d6;flex-shrink:0;}
 .stepper-info{
   min-width:42px;
   text-align:center;
@@ -77,6 +78,11 @@ body{flex-direction:column;gap:14px;}
   color:#1c1c1e;
   border:.5px solid #d1d1d6;
   box-shadow:none;
+}
+.demo-controls button.ghost-btn.is-active{
+  background:#007AFF;
+  color:#fff;
+  border-color:#007AFF;
 }
 .demo-controls button.is-playing{background:#ff3b30;box-shadow:0 4px 12px rgba(255,59,48,.18);}
 

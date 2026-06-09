@@ -18,6 +18,7 @@ const $ = (sel, root = document) => root.querySelector(sel);
 
 // ── State ──────────────────────────────────────────────────
 const displayMode = 'flat';
+let toolCallStyle = 'card'; // 'card' | 'flat'
 let execOpen = true;
 let stepsOpen = true;
 let stepSeq = 0;
@@ -461,6 +462,22 @@ function applyUrlPlaybackOverrides() {
   }
 }
 
+// ── Tool call style (card / flat) ──────────────────────────
+function syncToolCallStyleUI() {
+  const shell = document.querySelector('.phone-shell');
+  if (!shell) return;
+  shell.classList.toggle('tool-call-card', toolCallStyle === 'card');
+  shell.classList.toggle('tool-call-flat', toolCallStyle === 'flat');
+  const btnCard = document.getElementById('ctrlToolCard');
+  const btnFlat = document.getElementById('ctrlToolFlat');
+  if (btnCard) btnCard.className = 'ghost-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
+  if (btnFlat) btnFlat.className = 'ghost-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+}
+export function toggleToolCallStyle(mode) {
+  toolCallStyle = mode;
+  syncToolCallStyleUI();
+}
+
 function setupDemoControls() {
   const tps = document.getElementById('ctrlTokensPerSecond');
   const replay = document.getElementById('ctrlReplay');
@@ -484,6 +501,15 @@ function setupDemoControls() {
   if (prev) prev.onclick = () => directorPrevStep();
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();
+
+  // ── 工具调用样式切换 ───────────────────────────────────
+  const toolCard = document.getElementById('ctrlToolCard');
+  const toolFlat = document.getElementById('ctrlToolFlat');
+  if (toolCard) toolCard.onclick = () => toggleToolCallStyle('card');
+  if (toolFlat) toolFlat.onclick = () => toggleToolCallStyle('flat');
+
+  // ── 同步初始工具调用样式 UI ──────────────────────────
+  syncToolCallStyleUI();
 
   updateDirectorControls();
 

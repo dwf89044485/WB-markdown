@@ -159,7 +159,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#FF9500;
+  background:#AF52DE;
   flex-shrink:0;
 }
 .status-time{
@@ -202,8 +202,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   z-index:-1;
   -webkit-backdrop-filter:blur(20px);
   backdrop-filter:blur(20px);
-  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
-  mask-image:linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
   pointer-events:none;
 }
 .nav-bar > *{pointer-events:auto;}

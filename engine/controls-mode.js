@@ -15,16 +15,9 @@
   }
 
   // ── commit hash ──────────────────────────────────────
+  // 数据来源统一由 commit-hash.js 提供（window.commitHashReady）
   const hashEl = document.getElementById('ctrlCommitHash');
-  if (hashEl) {
-    const metaHash = document.querySelector('meta[name="commit-hash"]')?.getAttribute('content');
-    if (metaHash && metaHash !== '__COMMIT_HASH__') {
-      hashEl.textContent = metaHash;
-    } else {
-      fetch('./COMMIT_HASH')
-        .then(r => r.text())
-        .then(h => { hashEl.textContent = h.trim(); })
-        .catch(() => {});
-    }
+  if (hashEl && window.commitHashReady) {
+    window.commitHashReady.then((h) => { hashEl.textContent = h; });
   }
 })();

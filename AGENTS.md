@@ -69,13 +69,9 @@ docs: 更新 API 文档
 ```
 已提交：{commit message}
 hash：{短 hash（7 位）}
-版本链路：{prehash（7 位）} → {currhash（7 位）}
 ```
 
-其中：
-
-- `prehash` 固定取 `git rev-parse --short=7 HEAD^1`
-- `currhash` 固定取 `git rev-parse --short=7 HEAD`
+`hash` 取 `git rev-parse --short=7 HEAD`（即本次新生成的 commit hash）。
 
 ### 推送冲突处理
 
@@ -88,21 +84,25 @@ hash：{短 hash（7 位）}
 - 用户明确说「先不提交」「等一下再推」
 - 当前改动明显是多步任务的中间状态，后续还有关联改动未完成
 
-### COMMIT_HASH 机制（**重要：不要试图"修复"**）
+### Commit hash 显示机制（**重要：不要试图"修复"**）
 
-项目已有完整的 commit hash 显示机制，**禁止**改动：
+页面上的 7 位 hash 用于让用户验证当前页面是否为最新版本。机制非常简单：
 
-- **线上（Vercel）**：`vercel-build.sh` 在构建时用 `$VERCEL_GIT_COMMIT_SHA`（部署时的 currhash）覆盖根目录 `COMMIT_HASH` 文件 + `index.html` 里的 `__COMMIT_HASH__` 占位符。线上页面显示的就是 currhash，不存在"落后一个版本"的问题。
-- **本地**：`commit-hash.js` 读 `COMMIT_HASH` 文件 fallback。本地内容不需要保证准确，不影响线上。
-- **AI 提交时报告 prehash → currhash**（按上方"提交后的动作"格式）已足够让用户对照线上版本。
+- **本地 server**：`commit-hash.js` 直接 `fetch('.git/HEAD')` → 解析 ref → `fetch('.git/refs/heads/<branch>')` → 取前 7 位。每次刷新页面就是最新 HEAD，无需任何同步。
+- **线上 Vercel**：`vercel-build.sh` 在构建时把 `${VERCEL_GIT_COMMIT_SHA:0:7}` 写进 `index.html` 的 `<meta name="commit-hash">` 占位符。Vercel 不会上传 `.git` 目录，前端 fetch 自然 404，于是退回 meta 值，**两端自动分流，无需环境判断**。
+- **packed-refs fallback**：若某天 `git gc` 把 loose ref 收进 `.git/packed-refs`，`commit-hash.js` 会自动 fallback 解析 packed-refs。
 
 **禁止行为**（历史教训）：
 
-- ❌ 写 `post-commit` / `pre-commit` 等 git hook 去自动更新 `COMMIT_HASH` 文件——这会形成"hash 写入 → 内容变 → 新 hash → 再写入"的死循环，已经导致过 fork bomb 把用户进程槽吃光、整机崩溃。
-- ❌ 试图让本地 `COMMIT_HASH` 文件 "永远等于 HEAD"——任何把 hash 写入被 git 跟踪文件的方案都不可能稳定，因为写入动作本身会改变 commit 内容。
-- ❌ 把 `COMMIT_HASH` 加入 `.gitignore` 后再用 hook 维护——同样会引入新的 hook 维护成本，毫无必要。
+- ❌ 写 `post-commit` / `pre-commit` 等 git hook 去自动维护任何 hash 文件——曾经导致过 fork bomb 把用户进程槽吃光、整机崩溃。
+- ❌ 重新引入被 git 跟踪的 `COMMIT_HASH` 文件——它已被本方案彻底移除，任何"hash 写入跟踪文件"的方案物理上都无法稳定。
+- ❌ 把 `.git/` 加入特殊处理或屏蔽——`python3 -m http.server` 默认暴露 `.git/` 是本方案的关键依赖（线上 Vercel 不暴露，所以无安全风险）。
 
-**如果未来发现 hash 显示有问题**：先看 `vercel-build.sh` 是否在 Vercel 构建时正常执行；不要碰 hook、不要碰本地 `COMMIT_HASH` 文件。
+**如果未来发现 hash 显示有问题**：
+
+1. 先在浏览器直接访问 `http://localhost:8080/.git/HEAD`，看是否能拿到 ref。
+2. 线上看 Vercel 构建日志，确认 `vercel-build.sh` 是否替换了 `__COMMIT_HASH__` 占位符。
+3. **不要碰 hook、不要新增 hash 文件**。
 
 ## 回复规范
 

@@ -564,9 +564,10 @@ window.WORKBUDDY_SCENARIO = {
   ],
   "final": {
     "timing": "执行过程 10m21s",
-    "markdown": `所有任务已完成！已为您生成完整旅行方案。
+    "markdown": `---
 
----
+
+所有任务已完成！已为您生成完整旅行方案。
 
 ## 方案概要
 

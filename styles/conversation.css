@@ -60,7 +60,7 @@
 .agent-name{font-size:15px;font-weight:600;color:#1c1c1e;letter-spacing:-0.3px;}
 
 /* ── TIMING BAR ──────────────────────────────────────────── */
-.timing-bar{display:flex;align-items:center;gap:var(--cv-timing-gap);cursor:pointer;user-select:none;}
+.timing-bar{display:flex;align-items:center;gap:var(--cv-timing-gap);cursor:pointer;user-select:none;margin-bottom:var(--spacing-2);}
 .timing-text{font-size:14.5px;color:#6c6c70;white-space:nowrap;letter-spacing:-0.1px;}
 .timing-arrow{
   width:14px;height:14px;display:flex;align-items:center;justify-content:center;

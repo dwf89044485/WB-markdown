@@ -74,7 +74,7 @@ export async function appendHTMLTypedTo(container, html) {
 }
 
 export async function appendHTML(row, html, container) {
-  const target = container || $('.step-detail-inner', row);
+  const target = container || row;
   await appendHTMLTypedTo(target, html);
 }
 

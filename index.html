@@ -30,7 +30,7 @@
   <div class="status-bar">
     <div class="status-time-wrap">
       <p class="status-time">9:41</p>
-      <!-- 版本指示圆点：每次提交改颜色，用户刷新可见，用于确认部署是否更新 -->
+      <!-- 版本指示圆点：git 前改色，提交后告知用户 -->
       <span class="status-version-dot"></span>
     </div>
     <div class="status-icons-wide" aria-hidden="true">
@@ -138,12 +138,8 @@
     <button id="ctrlReplay" type="button">刷新重放</button>
   </div>
 
-  <!-- 第 3 行：子节点 tab + hash -->
+  <!-- 第 3 行：hash -->
   <div class="control-row">
-    <div class="mode-tabs" role="tablist">
-      <button id="ctrlModeGrouped" type="button" role="tab" aria-selected="false">子节点聚合</button>
-      <button id="ctrlModeFlat" type="button" role="tab" aria-selected="true">子节点平铺</button>
-    </div>
     <span id="ctrlCommitHash" class="commit-hash"></span>
   </div>
 </div>

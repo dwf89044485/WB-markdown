@@ -80,26 +80,6 @@ body{flex-direction:column;gap:14px;}
 }
 .demo-controls button.is-playing{background:#ff3b30;box-shadow:0 4px 12px rgba(255,59,48,.18);}
 
-/* ── Mode tabs ────────────────────────────────────────── */
-.mode-tabs{display:flex;border:.5px solid #d1d1d6;border-radius:999px;overflow:hidden;}
-.mode-tabs button{
-  all:unset;
-  height:28px;
-  padding:0 14px;
-  font-size:12px;
-  font-weight:600;
-  color:#6e6e73;
-  cursor:pointer;
-  background:transparent;
-  transition:background .15s,color .15s;
-}
-.mode-tabs button.is-active{
-  background:#007AFF;
-  color:#fff;
-  box-shadow:0 2px 8px rgba(0,122,255,.25);
-}
-.mode-tabs button:not(.is-active):hover{color:#1c1c1e;}
-
 /* ── Commit hash ────────────────────────────────────────── */
 .commit-hash{
   font-size:10px;

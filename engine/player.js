@@ -17,7 +17,7 @@ const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 
 // ── State ──────────────────────────────────────────────────
-let displayMode = 'flat'; // 'grouped' | 'flat'
+const displayMode = 'flat';
 let execOpen = true;
 let stepsOpen = true;
 let stepSeq = 0;
@@ -55,31 +55,6 @@ function splitStatusLabels(text) {
   return clean ? clean.split('、').map(s => s.trim()).filter(Boolean) : [];
 }
 
-function setStepIcon(row, done) {
-  const icon = $('.step-state-icon', row);
-  icon.className = done ? 'step-state-icon ico-ok' : 'step-state-icon ico-spin';
-  icon.innerHTML = done ? ICONS.ok : ICONS.spin;
-}
-
-// ── Step row ──────────────────────────────────────────────
-function createStep(node) {
-  const id = `dyn-step-${++stepSeq}`;
-  const row = document.createElement('div');
-  row.className = 'step-row open node-enter';
-  row.id = id;
-  row.innerHTML = `
-    <div class="step-hd" onclick="toggleStep('${id}')">
-      <div class="step-state-icon ico-spin">${ICONS.spin}</div>
-      <span class="step-label">${truncate(node.title)}</span>
-      <div class="step-chevron">${ICONS.chevron}</div>
-    </div>
-    <div class="step-detail"><div class="step-detail-inner md md-node"></div></div>
-  `;
-  $('#stepsList').appendChild(row);
-  scrollToBottom();
-  return row;
-}
-
 // ── Status line ───────────────────────────────────────────
 function createStatusLineIn(container, text, frameIds, title) {
   const btn = document.createElement('button');
@@ -91,10 +66,6 @@ function createStatusLineIn(container, text, frameIds, title) {
   container.appendChild(btn);
   scrollToBottom();
   return btn;
-}
-
-function createStatusLine(row, text, frameIds, title) {
-  return createStatusLineIn($('.step-detail-inner', row), text, frameIds, title);
 }
 
 // ── Action normalization ──────────────────────────────────
@@ -112,12 +83,11 @@ function normalizeActions(actions) {
 
 // ── Status group runner ───────────────────────────────────
 async function runStatusGroup(row, actions, container) {
-  const detailIn = container || ($('.step-detail-inner', row));
   const firstFrames = actions[0].frames || [];
   const completedLabels = [];
   const completedFinalFrames = [];
   const initialTitle = actions.map(toDoneLabel).join('、');
-  const line = createStatusLineIn(detailIn, joinLabels([toRunningLabel(actions[0])]), firstFrames[0] ? [firstFrames[0]] : [], initialTitle);
+  const line = createStatusLineIn(container, joinLabels([toRunningLabel(actions[0])]), firstFrames[0] ? [firstFrames[0]] : [], initialTitle);
 
   for (let index = 0; index < actions.length; index++) {
     const action = actions[index];
@@ -150,15 +120,6 @@ async function runStatus(row, action) {
   await runStatusGroup(row, [action]);
 }
 
-// ── Node action runner ────────────────────────────────────
-async function runNodeAction(row, action) {
-  if (!row) return;
-  if (action.type === 'status') await runStatus(row, action);
-  if (action.type === 'statusGroup') await runStatusGroup(row, action.actions);
-  if (action.type === 'html') await appendHTML(row, action.html);
-  if (action.type === 'markdown') await appendMarkdown(row, action.markdown);
-}
-
 // ── Flat mode action runner ───────────────────────────────
 async function runFlatAction(container, action) {
   if (!container) return;
@@ -171,31 +132,6 @@ async function runFlatAction(container, action) {
     container.appendChild(wrapper);
     await appendHTMLTypedTo(wrapper, markdownToHtml(action.markdown));
   }
-}
-
-// ── Display mode toggle (tab) ─────────────────────────────
-function syncDisplayModeUI() {
-  const phoneShell = document.querySelector('.phone-shell');
-  if (phoneShell) {
-    phoneShell.classList.toggle('mode-flat', displayMode === 'flat');
-    phoneShell.classList.toggle('mode-grouped', displayMode === 'grouped');
-  }
-  const groupBtn = document.getElementById('ctrlModeGrouped');
-  const flatBtn = document.getElementById('ctrlModeFlat');
-  if (groupBtn) {
-    groupBtn.classList.toggle('is-active', displayMode === 'grouped');
-    groupBtn.setAttribute('aria-selected', displayMode === 'grouped' ? 'true' : 'false');
-  }
-  if (flatBtn) {
-    flatBtn.classList.toggle('is-active', displayMode === 'flat');
-    flatBtn.setAttribute('aria-selected', displayMode === 'flat' ? 'true' : 'false');
-  }
-}
-
-function toggleDisplayMode(mode) {
-  displayMode = mode;
-  syncDisplayModeUI();
-  restartPlayback();
 }
 
 // ── Thinking ──────────────────────────────────────────────
@@ -358,60 +294,31 @@ function buildDirectorTimeline() {
   timeline.push({ label: 'WorkBuddy 出现', run: showAgentShell });
   timeline.push({ label: '思考过程', run: showThinkingLoading });
 
-  if (displayMode === 'flat') {
-    // 平铺模式：跳过节点卡片，所有 action 直接渲染到一个平铺容器
-    let containerReady = false;
-    timeline.push({
-      label: '创建平铺容器',
-      run: async () => {
-        const container = document.createElement('div');
-        container.className = 'flat-container';
-        $('#stepsList').appendChild(container);
-        directorRuntime.flatContainer = container;
-        containerReady = true;
-        await sleep(playback('stepDelay', 470));
-      }
-    });
-    scenario.nodes.forEach((node) => {
-      const actions = normalizeActions(node.actions);
-      actions.forEach((action) => {
-        timeline.push({
-          label: directorActionLabel(action),
-          run: async () => {
-            if (!containerReady) return;
-            await runFlatAction(directorRuntime.flatContainer, action);
-          }
-        });
-      });
-    });
-  } else {
-    // 分组模式（默认）
-    scenario.nodes.forEach((node, nodeIndex) => {
+  // 平铺模式：跳过节点卡片，所有 action 直接渲染到一个平铺容器
+  let containerReady = false;
+  timeline.push({
+    label: '创建平铺容器',
+    run: async () => {
+      const container = document.createElement('div');
+      container.className = 'flat-container';
+      $('#stepsList').appendChild(container);
+      directorRuntime.flatContainer = container;
+      containerReady = true;
+      await sleep(playback('stepDelay', 470));
+    }
+  });
+  scenario.nodes.forEach((node) => {
+    const actions = normalizeActions(node.actions);
+    actions.forEach((action) => {
       timeline.push({
-        label: `节点 ${nodeIndex + 1} 出现`,
+        label: directorActionLabel(action),
         run: async () => {
-          directorRuntime.rows[nodeIndex] = createStep(node);
-          await sleep(playback('stepDelay', 470));
+          if (!containerReady) return;
+          await runFlatAction(directorRuntime.flatContainer, action);
         }
       });
-      const actions = normalizeActions(node.actions);
-      actions.forEach((action, actionIndex) => {
-        const isLastAction = actionIndex === actions.length - 1;
-        timeline.push({
-          label: `节点 ${nodeIndex + 1} · ${directorActionLabel(action)}`,
-          run: async () => {
-            const row = directorRuntime.rows[nodeIndex];
-            await runNodeAction(row, action);
-            if (isLastAction) {
-              setStepIcon(row, true);
-              row.classList.remove('open');
-              await sleep(playback('stepDelay', 470));
-            }
-          }
-        });
-      });
     });
-  }
+  });
 
   timeline.push({ label: '任务耗时与最终汇报', run: renderFinal });
   return timeline;
@@ -545,10 +452,6 @@ function applyUrlPlaybackOverrides() {
     if (Number.isFinite(value)) scenario.playback.tokensPerSecond = value;
   }
 
-  // mode 参数：flat（平铺模式） / grouped（分组模式，默认）
-  const modeParam = params.get('mode');
-  if (modeParam === 'flat') displayMode = 'flat';
-
   // standalone 参数由 index.html 在首屏前处理，这里不再重复切 class
 
   const legacySpeed = params.get('typeSpeed');
@@ -582,16 +485,6 @@ function setupDemoControls() {
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();
 
-  const groupBtn = document.getElementById('ctrlModeGrouped');
-  const flatBtn = document.getElementById('ctrlModeFlat');
-  if (groupBtn) {
-    groupBtn.onclick = () => toggleDisplayMode('grouped');
-  }
-  if (flatBtn) {
-    flatBtn.onclick = () => toggleDisplayMode('flat');
-  }
-
-  syncDisplayModeUI();
   updateDirectorControls();
 
   // ── 显示 commit hash ──────────────────────────────────
@@ -610,7 +503,6 @@ function initializePlayback() {
   setFastRender(false);
   currentDirectorIndex = -1;
   directorRuntime = { rows: [] };
-  syncDisplayModeUI();
   setupNavMeta();
   resetPlaybackDom();
   directorTimeline = buildDirectorTimeline();

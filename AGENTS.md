@@ -101,24 +101,13 @@ hash：{短 hash（8 位）}
 
 ### 版本指示圆点
 
-状态栏时间 `9:41` 右侧有一个 7px 彩色圆点（`.status-version-dot`），用于让用户直观确认页面是否已部署最新代码。
+`.status-version-dot`（状态栏时间右侧）用于用户确认线上页面是否最新代码。
 
-- **git commit 前**：把 `styles/base.css` 中 `.status-version-dot` 的 `background` 换成下一种颜色。颜色按固定序列循环，列表如下：
+**git commit 前**（必须执行）：
+1. 打开 `styles/base.css`，搜索 `=== VERSION DOT`
+2. 把 `.status-version-dot { background: #xxxxxx }` 改成另一种颜色（任意，不重复上次即可）
 
-  | 颜色                    | 色值        |
-  | ---------------------- | ---------- |
-  | 红色（当前）               | `#ff3b30` |
-  | 橙色                    | `#ff9500` |
-  | 黄色                    | `#ffcc00` |
-  | 绿色                    | `#34c759` |
-  | 蓝色                    | `#007aff` |
-  | 靛蓝                    | `#5856d6` |
-  | 紫色                    | `#af52de` |
-
-  每次取序列中下一个颜色，到达末尾回到红色重新循环。
-
-- **git commit 后**：告知用户 hash 的同时，告知圆点当前颜色（"这次圆点是 XX 色"）。
-- 用户刷新页面后，看到圆点颜色与告知的一致，即确认部署已更新。
+**git commit 后**：在对话中告知用户 `hash: xxxxxxxx`，同时说明 `圆点颜色：XX色（#xxxxxx）`。
 
 ## 回复规范
 

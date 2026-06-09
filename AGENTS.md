@@ -84,25 +84,18 @@ hash：{短 hash（7 位）}
 - 用户明确说「先不提交」「等一下再推」
 - 当前改动明显是多步任务的中间状态，后续还有关联改动未完成
 
-### Commit hash 显示机制（**重要：不要试图"修复"**）
+### Commit hash 显示机制
 
-页面上的 7 位 hash 用于让用户验证当前页面是否为最新版本。机制非常简单：
+页面右下角显示的 7 位 hash 用于让用户验证当前页面是否最新版本。机制详见 `docs/commit-hash.md`。
 
-- **本地 server**：`commit-hash.js` 直接 `fetch('.git/HEAD')` → 解析 ref → `fetch('.git/refs/heads/<branch>')` → 取前 7 位。每次刷新页面就是最新 HEAD，无需任何同步。
-- **线上 Vercel**：`vercel-build.sh` 在构建时把 `${VERCEL_GIT_COMMIT_SHA:0:7}` 写进 `index.html` 的 `<meta name="commit-hash">` 占位符。Vercel 不会上传 `.git` 目录，前端 fetch 自然 404，于是退回 meta 值，**两端自动分流，无需环境判断**。
-- **packed-refs fallback**：若某天 `git gc` 把 loose ref 收进 `.git/packed-refs`，`commit-hash.js` 会自动 fallback 解析 packed-refs。
+**禁止改动**：
 
-**禁止行为**（历史教训）：
+- 不要写任何 git hook 维护 hash 文件
+- 不要重新引入被 git 跟踪的 `COMMIT_HASH` 文件
+- 不要在前端做"我是不是在 Vercel"的环境判断
+- 不要屏蔽 `python3 -m http.server` 对 `.git/` 的访问
 
-- ❌ 写 `post-commit` / `pre-commit` 等 git hook 去自动维护任何 hash 文件——曾经导致过 fork bomb 把用户进程槽吃光、整机崩溃。
-- ❌ 重新引入被 git 跟踪的 `COMMIT_HASH` 文件——它已被本方案彻底移除，任何"hash 写入跟踪文件"的方案物理上都无法稳定。
-- ❌ 把 `.git/` 加入特殊处理或屏蔽——`python3 -m http.server` 默认暴露 `.git/` 是本方案的关键依赖（线上 Vercel 不暴露，所以无安全风险）。
-
-**如果未来发现 hash 显示有问题**：
-
-1. 先在浏览器直接访问 `http://localhost:8080/.git/HEAD`，看是否能拿到 ref。
-2. 线上看 Vercel 构建日志，确认 `vercel-build.sh` 是否替换了 `__COMMIT_HASH__` 占位符。
-3. **不要碰 hook、不要新增 hash 文件**。
+如果用户报告 hash 显示有问题，先看 `docs/commit-hash.md` 的"排查指南"。
 
 ## 回复规范
 

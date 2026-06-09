@@ -97,13 +97,9 @@ export function renderSheet(frameRefs, explicitTitle) {
   const frames = getFrames(frameRefs);
   const fallback = { title: '过程', events: [], todos: [] };
   const frame = frames[0] || fallback;
-  const title = explicitTitle || [...new Set(frames.map(f => f.title).filter(Boolean))].join('、') || frame.title || '过程';
-
   const baseline = scenario.todosBaseline || [];
   const todos = computeTodoSnapshot(frames, baseline);
 
-  const sheet = $('#sheet');
-  if (sheet) sheet.dataset.sheetContext = title;
   const body = $('#sheetBody');
   body.innerHTML = '';
 

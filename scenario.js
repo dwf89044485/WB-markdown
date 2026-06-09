@@ -564,9 +564,7 @@ window.WORKBUDDY_SCENARIO = {
   ],
   "final": {
     "timing": "执行过程 10m21s",
-    "markdown": `所有任务已完成！以下是为你生成的完整旅行方案文档：
-
-<a href="computer:///sessions/6a2189a4ac3de7901dffaee8/workspace/日本关西家庭旅行方案_v1.docx" style="color:#007AFF;text-decoration:none;">查看日本关西家庭旅行方案 v1.0</a>
+    "markdown": `所有任务已完成！已为您生成完整旅行方案。
 
 ---
 

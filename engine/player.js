@@ -174,8 +174,7 @@ async function runFlatAction(container, action) {
 }
 
 // ── Display mode toggle (tab) ─────────────────────────────
-function toggleDisplayMode(mode) {
-  displayMode = mode;
+function syncDisplayModeUI() {
   const phoneShell = document.querySelector('.phone-shell');
   if (phoneShell) {
     phoneShell.classList.toggle('mode-flat', displayMode === 'flat');
@@ -183,8 +182,19 @@ function toggleDisplayMode(mode) {
   }
   const groupBtn = document.getElementById('ctrlModeGrouped');
   const flatBtn = document.getElementById('ctrlModeFlat');
-  if (groupBtn) groupBtn.classList.toggle('is-active', displayMode === 'grouped');
-  if (flatBtn) flatBtn.classList.toggle('is-active', displayMode === 'flat');
+  if (groupBtn) {
+    groupBtn.classList.toggle('is-active', displayMode === 'grouped');
+    groupBtn.setAttribute('aria-selected', displayMode === 'grouped' ? 'true' : 'false');
+  }
+  if (flatBtn) {
+    flatBtn.classList.toggle('is-active', displayMode === 'flat');
+    flatBtn.setAttribute('aria-selected', displayMode === 'flat' ? 'true' : 'false');
+  }
+}
+
+function toggleDisplayMode(mode) {
+  displayMode = mode;
+  syncDisplayModeUI();
   restartPlayback();
 }
 
@@ -575,14 +585,13 @@ function setupDemoControls() {
   const groupBtn = document.getElementById('ctrlModeGrouped');
   const flatBtn = document.getElementById('ctrlModeFlat');
   if (groupBtn) {
-    groupBtn.classList.toggle('is-active', displayMode === 'grouped');
     groupBtn.onclick = () => toggleDisplayMode('grouped');
   }
   if (flatBtn) {
-    flatBtn.classList.toggle('is-active', displayMode === 'flat');
     flatBtn.onclick = () => toggleDisplayMode('flat');
   }
 
+  syncDisplayModeUI();
   updateDirectorControls();
 
   // ── 显示 commit hash ──────────────────────────────────
@@ -601,6 +610,7 @@ function initializePlayback() {
   setFastRender(false);
   currentDirectorIndex = -1;
   directorRuntime = { rows: [] };
+  syncDisplayModeUI();
   setupNavMeta();
   resetPlaybackDom();
   directorTimeline = buildDirectorTimeline();

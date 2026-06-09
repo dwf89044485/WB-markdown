@@ -13,24 +13,24 @@
 
   --sheet-bottom-padding:var(--spacing-16);
   --sheet-handle-margin-top:var(--spacing-12);
-  --sheet-body-padding-top:var(--spacing-10);
+  --sheet-body-padding-top:var(--spacing-12);
   --sheet-body-padding-bottom:var(--spacing-24);
   --sheet-guide-top:var(--spacing-16);
   --sheet-guide-bottom:var(--spacing-24);
 
-  --sheet-row-gap:var(--spacing-14);
-  --sheet-row-padding-y:var(--spacing-10);
+  --sheet-row-gap:var(--spacing-16);
+  --sheet-row-padding-y:var(--spacing-12);
   --sheet-line-gap:var(--spacing-8);
   --sheet-line-row-gap:var(--spacing-4);
 
-  --sheet-event-card-margin-top:var(--spacing-10);
+  --sheet-event-card-margin-top:var(--spacing-12);
   --sheet-empty-margin-left:var(--spacing-38);
   --sheet-empty-padding-top:var(--spacing-8);
   --sheet-empty-padding-bottom:var(--spacing-16);
 
-  --sheet-sub-gap:var(--spacing-6);
-  --sheet-sub-padding-top:var(--spacing-10);
-  --sheet-sub-padding-bottom:var(--spacing-10);
+  --sheet-sub-gap:var(--spacing-8);
+  --sheet-sub-padding-top:var(--spacing-12);
+  --sheet-sub-padding-bottom:var(--spacing-12);
   --sheet-sub-padding-left:var(--spacing-36);
 }
 

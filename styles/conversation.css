@@ -207,6 +207,9 @@
   gap:var(--cv-flat-stack-gap);
 }
 .flat-container .step-detail-link{margin:0;}
+.flat-container > .md-node{display:flow-root;}
+.flat-container > .md-node > :first-child{margin-top:0;}
+.flat-container > .md-node > :last-child{margin-bottom:0;}
 
 .message-enter{animation:messageIn .34s cubic-bezier(.2,.8,.2,1) both;}
 .agent-enter{animation:agentIn .36s cubic-bezier(.2,.8,.2,1) both;}

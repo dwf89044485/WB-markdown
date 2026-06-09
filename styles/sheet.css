@@ -18,8 +18,9 @@
   --sheet-guide-top:var(--spacing-16);
   --sheet-guide-bottom:var(--spacing-24);
 
+  --sheet-stack-gap:var(--spacing-12);
   --sheet-row-gap:var(--spacing-16);
-  --sheet-row-padding-y:var(--spacing-12);
+  --sheet-row-padding-y:var(--spacing-0);
   --sheet-line-gap:var(--spacing-8);
   --sheet-line-row-gap:var(--spacing-4);
 
@@ -29,8 +30,8 @@
   --sheet-empty-padding-bottom:var(--spacing-16);
 
   --sheet-sub-gap:var(--spacing-8);
-  --sheet-sub-padding-top:var(--spacing-12);
-  --sheet-sub-padding-bottom:var(--spacing-12);
+  --sheet-sub-padding-top:var(--spacing-0);
+  --sheet-sub-padding-bottom:var(--spacing-0);
   --sheet-sub-padding-left:var(--spacing-36);
 }
 
@@ -77,6 +78,9 @@
   overflow-y:auto;
   overflow-x:hidden;
   flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:var(--sheet-stack-gap);
   color:#1c1c1e;
   -webkit-overflow-scrolling:touch;
 }

@@ -129,6 +129,7 @@
 .step-detail-link{
   display:flex;
   align-items:center;
+  justify-content:space-between;
   width:100%;
   font-size:14.5px;
   color:#999;
@@ -169,7 +170,7 @@
   max-width:100%;
   vertical-align:middle;
   flex-wrap:nowrap;
-  width:fit-content;
+  flex-shrink:0;
 }
 .status-fragment{
   display:inline-flex;
@@ -218,13 +219,11 @@
   display:inline-flex;
   align-items:center;
   line-height:1;
-  margin-left:auto;
   flex-shrink:0;
   padding-left:8px;
   padding-right:0;
   height:15px;
   color:#999;
-  align-self:center;
 }
 .status-line-enter{animation:agentIn .22s cubic-bezier(.2,.8,.2,1) both;}
 

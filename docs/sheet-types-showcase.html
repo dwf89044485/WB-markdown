@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sheet 内容类型展示</title>
+<link rel="stylesheet" href="../styles/base.css">
+<link rel="stylesheet" href="../styles/sheet.css">
+<style>
+  /* ── 展示页独立样式（不覆盖 sheet 样式，只管理页面布局）─ */
+  body{
+    background:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+    padding:40px;color:#1c1c1e;
+    display:block;align-items:initial;justify-content:initial;min-height:auto;height:auto;overflow:auto;
+  }
+  h1{font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px}
+  .subtitle{font-size:15px;color:#8e8e93;margin-bottom:36px;font-weight:400}
+  h2{
+    font-size:20px;font-weight:640;margin:48px 0 16px;padding-bottom:10px;
+    border-bottom:1px solid #e5e5ea;letter-spacing:-.2px;
+  }
+  h2:first-of-type{margin-top:0}
+  h3{
+    font-size:15px;font-weight:600;color:#48484a;margin:28px 0 10px;letter-spacing:-.15px;
+  }
+  .type-badge{
+    display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;
+    background:#e5e5ea;color:#636366;margin-left:8px;vertical-align:middle;
+  }
+  .type-desc{
+    font-size:13px;color:#8e8e93;margin:0 0 12px;line-height:1.45;
+  }
+
+  /* ── Sheet 容器 mock ──────────────────────────── */
+  .sheet-mock{
+    width:390px;background:#fff;border-radius:20px;
+    box-shadow:0 4px 24px rgba(0,0,0,.08);margin-bottom:32px;
+  }
+  .sheet-handle-mock{
+    padding-top:10px;
+  }
+  .sheet-handle-mock::after{
+    content:"";display:block;width:48px;height:5px;background:#d7d7dc;
+    border-radius:99px;margin:0 auto;
+  }
+  .sheet-mock .sheet-body{
+    padding-top:10px;
+    gap:8px;
+  }
+
+  /* ── Type label ────────────────────────────── */
+  .type-label{
+    font-size:12px;font-weight:600;color:#8e8e93;background:#f2f2f7;
+    padding:2px 8px;border-radius:4px;letter-spacing:-.1px;
+  }
+
+  /* ── 逐行进场动画 ────────────────────────────── */
+  .ar{animation:fadeSlideIn 0.35s ease both}
+  @keyframes fadeSlideIn{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .ar:nth-child(1){animation-delay:0s}
+  .ar:nth-child(2){animation-delay:0.25s}
+  .ar:nth-child(3){animation-delay:0.5s}
+  .ar:nth-child(4){animation-delay:0.75s}
+  .ar:nth-child(5){animation-delay:1s}
+  .ar:nth-child(6){animation-delay:1.25s}
+  .ar:nth-child(7){animation-delay:1.5s}
+  .ar:nth-child(8){animation-delay:1.75s}
+  .ar:nth-child(9){animation-delay:2s}
+  .ar:nth-child(10){animation-delay:2.25s}
+
+  /* ── Todo demo spinning animation ────────────── */
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<h1>Sheet 内容类型展示</h1>
+<p class="subtitle">基于 scenario.js · 共用 project 现有 sheet.css · 共 5 大类 18 子类型</p>
+
+<!-- ============================================================ -->
+<!-- 一、事件行 -->
+<!-- ============================================================ -->
+<h2>一、事件行 <span class="type-badge">E1-E13 · 13 种</span></h2>
+<p class="type-desc">每行代表一个工具调用事件。整行一次性出现：icon + 标题行 + 可选 dim 说明 + 可选 chevron + 可选 event card。</p>
+
+
+<h3>E1 · 思考过程 <span class="type-badge">🧠 agent</span></h3>
+<p class="type-desc">带 event card，card 内展示思考标题和正文。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f2f2f7"/><text x="12" y="16" text-anchor="middle" font-size="13">🧠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">思考过程</span></div>
+        <div class="event-card">
+          <div class="event-card-title">需求识别</div>
+          <div class="event-card-body">用户期望的是一个能在回答中展示思考细节的交互原型……</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>E1 · 思考过程（多帧递进） <span class="type-badge">🧠 agent</span></h3>
+<p class="type-desc">跨帧 card 标题和正文逐步变化：需求识别 → 过程规划 → 识别关键点。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f2f2f7"/><text x="12" y="16" text-anchor="middle" font-size="13">🧠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">思考过程</span></div>
+        <div class="event-card">
+          <div class="event-card-title">需求识别</div>
+          <div class="event-card-body">第一帧：识别用户需求，分析核心目标</div>
+        </div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f2f2f7"/><text x="12" y="16" text-anchor="middle" font-size="13">🧠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">思考过程</span></div>
+        <div class="event-card">
+          <div class="event-card-title">过程规划</div>
+          <div class="event-card-body">第二帧：制定执行方案，列出所需步骤</div>
+        </div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f2f2f7"/><text x="12" y="16" text-anchor="middle" font-size="13">🧠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">思考过程</span></div>
+        <div class="event-card">
+          <div class="event-card-title">识别关键点</div>
+          <div class="event-card-body">第三帧：提取需要重点关注的技术要点</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E2 · 创建待办 <span class="type-badge">☐ plan</span></h3>
+<p class="type-desc">plan 类型。dim 行显示任务摘要。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f0fe"/><text x="12" y="16" text-anchor="middle" font-size="14" fill="#1967d2">☐</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">创建待办</span><span class="s-text dim">任务理解与分解、签证/入境政策查询、交通卡信息查询、天气查询与行程规划</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E3 · 搜索网页 <span class="type-badge">🔍 website</span></h3>
+<p class="type-desc">dim 逐帧变化：正在搜索 → 已完成。最后帧可带 outputs（搜索结果列表）。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索网页</span><span class="s-text dim">正在搜索签证/入境政策、交通卡信息</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索网页</span><span class="s-text dim">正在搜索天气信息、当地语言助手</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索网页</span><span class="s-text dim">10 项搜索已完成</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>E3 · 搜索网页（带结果输出） <span class="type-badge">🔍 website + O1 search</span></h3>
+<p class="type-desc">最终帧 event 带 outputs，下方逐条展示搜索结果。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索网页</span><span class="s-text dim">10 项搜索已完成</span></div>
+      </div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">日本旅游签证申请条件及所需材料</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">JR Pass 交通卡使用指南及购买方式</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">东京 7 日天气预报 — 出行最佳时间</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">日本当地语言翻译应用推荐</div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E4 · 更新待办 <span class="type-badge">☑️ plan</span></h3>
+<p class="type-desc">状态变更通知。dim 显示哪个待办发生了什么变化。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13" fill="#34a853">☑️</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">更新待办</span><span class="s-text dim">「查询日本签证与入境政策」已完成</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13" fill="#34a853">☑️</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">更新待办</span><span class="s-text dim">「查询天气与行程规划」已完成</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E5 · 生成图片 <span class="type-badge">🖼 image</span></h3>
+<p class="type-desc">跨帧累计已生成图片数量。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fce8e6"/><text x="12" y="16" text-anchor="middle" font-size="13">🖼</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">生成图片</span><span class="s-text dim">1 个</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fce8e6"/><text x="12" y="16" text-anchor="middle" font-size="13">🖼</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">生成图片</span><span class="s-text dim">2 个</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E6 · 调用技能 <span class="type-badge">📖 skill</span></h3>
+<p class="type-desc">带 event card（Skill card：title + body）。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fff3e0"/><text x="12" y="16" text-anchor="middle" font-size="13">📖</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">调用技能</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Skill card</div>
+          <div class="event-card-body">docx · 创建和编辑 Word 文档，支持添加段落、表格、图片等元素。用于生成结构化的文档报告。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E7 · 文件创建失败 <span class="type-badge">⚠ debug</span></h3>
+<p class="type-desc">warning 事件。`isWarning=true`，icon 风格变为警告样式。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fce8e6"/><text x="12" y="16" text-anchor="middle" font-size="14" fill="#d93025">⚠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">文件创建失败</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fce8e6"/><text x="12" y="16" text-anchor="middle" font-size="13">⚠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">文件创建失败</span><span class="s-text dim">正在重试中（1/3）</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fce8e6"/><text x="12" y="16" text-anchor="middle" font-size="13">⚠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">文件创建失败</span><span class="s-text dim">已修复异常，重写脚本中…</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E8 · 创建文件 <span class="type-badge">✏ edit</span></h3>
+<p class="type-desc">dim 显示文件名。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f0fe"/><text x="12" y="16" text-anchor="middle" font-size="13">✏</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">创建文件</span><span class="s-text dim">src/generators/docx_generator.js</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E9 · 读取文件 <span class="type-badge">👀 view</span></h3>
+<p class="type-desc">dim 显示文件路径。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f3e8fd"/><text x="12" y="16" text-anchor="middle" font-size="13">👀</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">读取文件</span><span class="s-text dim">src/generators/docx_generator.js</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E10 · 编辑文件 <span class="type-badge">✏ edit</span></h3>
+<p class="type-desc">带 event card 显示 patch 详情（Edit patch）。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f0fe"/><text x="12" y="16" text-anchor="middle" font-size="13">✏</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">编辑文件</span><span class="s-text dim">修正脚本中的异常字符</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Edit patch</div>
+          <div class="event-card-body">+1 -1 · 修正脚本中的异常字符。移除文件头部多余的「」符号。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E11 · 搜索文件 <span class="type-badge">🔍 search</span></h3>
+<p class="type-desc">本地文件搜索（区别于 E3 联网搜索）。dim 显示搜索关键词。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索文件</span><span class="s-text dim">自然|自然语言|翻译|transport</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索文件</span><span class="s-text dim">找到 3 个匹配文件</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E12 · 执行命令 <span class="type-badge">🖥 terminal</span></h3>
+<p class="type-desc">带 chevron 箭头（`›`），dim 显示命令内容。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8eaed"/><text x="12" y="16" text-anchor="middle" font-size="12">🖥</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">执行命令</span><span class="s-text dim">pip install python-docx</span></div>
+      </div>
+      <div class="s-row-chevron">›</div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8eaed"/><text x="12" y="16" text-anchor="middle" font-size="12">🖥</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">执行命令</span><span class="s-text dim">python src/generators/docx_generator.py</span></div>
+      </div>
+      <div class="s-row-chevron">›</div>
+    </div>
+  </div>
+</div>
+
+
+<h3>E13 · 委派 Subagent <span class="type-badge">🐱 ↳ agent</span></h3>
+<p class="type-desc">两个 event 组合：第一个 Sub Coding Agent 派遣，第二个子结果返回（↳ icon + card）。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f3e8fd"/><text x="12" y="15" text-anchor="middle" font-size="11">🐱</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">Sub Coding Agent</span><span class="s-text dim">重写 docx 生成器脚本</span></div>
+      </div>
+    </div>
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f3e8fd"/><text x="12" y="15" text-anchor="middle" font-size="12">↳</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">嵌套子对话流</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Subagent result</div>
+          <div class="event-card-body">重写 docx generator script，修复异常字符问题，使用 python-docx 库实现标准生成流程。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 二、搜索结果输出 -->
+<!-- ============================================================ -->
+<h2>二、搜索结果输出 <span class="type-badge">O1 · 1 种</span></h2>
+<p class="type-desc">附属于搜索事件（E3）的输出。每条为一行，网站 icon + 标题文本。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f5e9"/><text x="12" y="16" text-anchor="middle" font-size="13">🔍</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">搜索网页</span><span class="s-text dim">10 项搜索已完成</span></div>
+      </div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">日本旅游签证申请条件及所需材料</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">JR Pass 交通卡使用指南及购买方式</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">东京 7 日天气预报 — 出行最佳时间</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#e8eaed"/><text x="12" y="15" text-anchor="middle" font-size="9" fill="#5f6368">🌐</text></svg></div></div>
+      <div class="s-sub-txt">日本当地语言翻译应用推荐</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 三、待办事项 -->
+<!-- ============================================================ -->
+<h2>三、待办事项 <span class="type-badge">T1-T3 · 3 种状态</span></h2>
+<p class="type-desc">全部条目一次列出，状态图标逐个动画：空心圆(未开始) → 蓝色旋转(执行中) → 绿色勾选(已完成)。</p>
+
+<h3>初始状态：全部未开始</h3>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">任务理解与分解</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询日本签证与入境政策</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询交通卡信息</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询天气与行程规划</div>
+    </div>
+    <div class="s-sub ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">整理旅行攻略</div>
+    </div>
+  </div>
+</div>
+
+<h3>状态变化动画演示 <span class="type-badge">todo → active → done · 循环</span></h3>
+<p class="type-desc">逐个切换：条目 1 旋转中 → 条目 1 完成 → 条目 2 旋转中 → ……</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line" id="todoDemoBody">
+    <div class="s-sub" id="todoDemo0">
+      <div class="s-ico"><div class="s-ico-img" id="todoIco0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#007aff" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt active">任务理解与分解</div>
+    </div>
+    <div class="s-sub" id="todoDemo1">
+      <div class="s-ico"><div class="s-ico-img" id="todoIco1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询日本签证与入境政策</div>
+    </div>
+    <div class="s-sub" id="todoDemo2">
+      <div class="s-ico"><div class="s-ico-img" id="todoIco2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询交通卡信息</div>
+    </div>
+    <div class="s-sub" id="todoDemo3">
+      <div class="s-ico"><div class="s-ico-img" id="todoIco3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">查询天气与行程规划</div>
+    </div>
+    <div class="s-sub" id="todoDemo4">
+      <div class="s-ico"><div class="s-ico-img" id="todoIco4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg></div></div>
+      <div class="s-sub-txt">整理旅行攻略</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var spinHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#007aff" stroke-width="2" stroke-dasharray="56 16"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1.1s" repeatCount="indefinite"/></circle></svg>';
+  var doneHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#34c759"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+  var emptyHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#c7c7cc" stroke-width="2"/></svg>';
+  var activeHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#007aff" stroke-width="2"/></svg>';
+
+  function setIco(id, h) { document.getElementById('todoIco' + id).innerHTML = h; }
+  function setActive(id) { document.getElementById('todoDemo' + id).querySelector('.s-sub-txt').className = 's-sub-txt active'; }
+  function setNormal(id) { document.getElementById('todoDemo' + id).querySelector('.s-sub-txt').className = 's-sub-txt'; }
+
+  var step = 0, total = 5;
+  function resetAll() {
+    for (var i = 0; i < total; i++) { setIco(i, emptyHTML); setNormal(i); }
+  }
+  function advance() {
+    if (step >= total * 2) { resetAll(); step = 0; return; }
+    var idx = Math.floor(step / 2);
+    if (step % 2 === 0) { setIco(idx, spinHTML); setActive(idx); }
+    else { setIco(idx, doneHTML); setNormal(idx); }
+    step++;
+  }
+  resetAll();
+  setInterval(advance, 1200);
+})();
+</script>
+
+
+<!-- ============================================================ -->
+<!-- 四、子卡片 -->
+<!-- ============================================================ -->
+<h2>四、子卡片 <span class="type-badge">C1-C4 · 4 种</span></h2>
+<p class="type-desc">附属在事件行内部。事件行先出现，card 随后展开。</p>
+
+<h3>C1 · 思考卡片 <span class="type-badge">🧠</span></h3>
+<p class="type-desc">纯文字，标题+正文。title 在 CSS 中 `display:none`，仅显 body。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f2f2f7"/><text x="12" y="16" text-anchor="middle" font-size="13">🧠</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">思考过程</span></div>
+        <div class="event-card">
+          <div class="event-card-title">过程规划</div>
+          <div class="event-card-body">1. 分析用户需求：用户需要一个交互式演示原型<br>2. 制定实现方案：使用 HTML/CSS/JS 构建手机壳界面<br>3. 规划实现步骤：先搭骨架，再填充数据，最后完善交互</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>C2 · Skill card <span class="type-badge">📖</span></h3>
+<p class="type-desc">技能名称 + 功能描述。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fff3e0"/><text x="12" y="16" text-anchor="middle" font-size="13">📖</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">调用技能</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Skill card</div>
+          <div class="event-card-body">docx · 创建和编辑 Word 文档，支持添加段落、表格、图片等元素。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>C3 · Edit patch <span class="type-badge">✏</span></h3>
+<p class="type-desc">文件差异摘要：`+N -M` 格式。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e8f0fe"/><text x="12" y="16" text-anchor="middle" font-size="13">✏</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">编辑文件</span><span class="s-text dim">修正脚本中的异常字符</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Edit patch</div>
+          <div class="event-card-body">+1 -1 · 修正脚本中的异常字符。移除文件头部多余的特殊符号。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>C4 · Subagent result <span class="type-badge">↳</span></h3>
+<p class="type-desc">子任务执行结果描述。</p>
+<div class="sheet-mock">
+  <div class="sheet-handle-mock"></div>
+  <div class="sheet-body guide-line">
+    <div class="s-row ar">
+      <div class="s-ico"><div class="s-ico-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f3e8fd"/><text x="12" y="15" text-anchor="middle" font-size="12">↳</text></svg></div></div>
+      <div class="s-content">
+        <div class="s-line"><span class="s-text">嵌套子对话流</span></div>
+        <div class="event-card">
+          <div class="event-card-title">Subagent result</div>
+          <div class="event-card-body">重写 docx generator script，修复异常字符问题，使用 python-docx 库实现标准生成流程，已完成测试验证。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="margin-top:60px;padding:20px 0;border-top:1px solid #e5e5ea;font-size:13px;color:#aeaeb2;">
+  共 18 种子类型 · 基于 scenario.js 数据版本 · 样式引用 project 现有 <code>base.css</code> + <code>sheet.css</code>
+</footer>
+
+</body>
+</html>

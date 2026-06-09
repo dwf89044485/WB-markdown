@@ -70,7 +70,7 @@ body{
   --composer-padding-bottom:var(--spacing-32);
   --composer-fade-height:var(--spacing-40);
 
-  --status-icon-color:#007aff;
+  --status-icon-color:#000;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
@@ -152,6 +152,14 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:flex;
   align-items:center;
   justify-content:center;
+  gap:5px;
+}
+.status-version-dot{
+  display:inline-block;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#ff3b30;
+  flex-shrink:0;
 }
 .status-time{
   font-family:'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;

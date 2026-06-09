@@ -54,7 +54,14 @@ export function svgFromRegistry(file, className = 'tool-svg', title = '') {
   const resolved = ICON_ALIASES[file] || file;
   const raw = INLINE_ICONS[resolved];
   if (!raw) return '';
-  const labelled = raw.replace(/<svg\b/, `<svg class="${className}" aria-hidden="true" focusable="false"`);
+  // 把 SVG 内部的固定颜色改成 currentColor，让 CSS 能控制图标颜色
+  // 保留 fill="none" / stroke="none" / currentColor 本身
+  const modified = raw
+    .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
+    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"')
+    .replace(/fill="rgba\([^)]+\)"/gi, 'fill="currentColor"')
+    .replace(/stroke="rgba\([^)]+\)"/gi, 'stroke="currentColor"');
+  const labelled = modified.replace(/<svg\b/, `<svg class="${className}" aria-hidden="true" focusable="false"`);
   return labelled;
 }
 

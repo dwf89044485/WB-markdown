@@ -87,8 +87,8 @@
   content:"";width:12px;height:12px;border-radius:50%;border:1.4px solid #d1d1d6;border-top-color:#5e5ce6;
   animation:spin 1.1s linear infinite;display:inline-block;margin-left:var(--cv-thinking-loading-indicator-offset);
 }
-.thinking-mount{}/* was: padding:0 0 8px */
-.thinking-mount .step-detail-link{padding:6px 10px;margin-bottom:6px;}
+.thinking-mount{padding:4px 0;}/* was: padding:0 0 8px */
+.thinking-mount .step-detail-link{padding:6px 10px;margin-bottom:4px;}
 .thinking-mount .step-detail-link:last-child{margin-bottom:0;}
 
 /* ── STEPS LIST ──────────────────────────────────────────── */
@@ -133,11 +133,11 @@
   font-size:14.5px;
   color:#999;
   cursor:pointer;
-  border:1px solid #e5e5ea;
+  border:1px solid #f2f2f7;
   border-radius:16px;
   padding:6px 10px;
   letter-spacing:-0.1px;
-  margin-bottom:6px;
+  margin-bottom:4px;
   text-align:left;
   line-height:1.3;
   background:none;

@@ -92,15 +92,15 @@
   letter-spacing:-0.35px;
   line-height:1.3;
 }
-.md h2 + p{margin-top:4px;}
-.md h3 + ul{margin-top:4px;}
+.md h2 + p{margin-top:var(--md-space-2);}
+.md h3 + ul{margin-top:var(--md-space-2);}
 
 /* ── PARAGRAPH / STRONG / LINK ───────────────────────────── */
-.md p{margin:0 0 8px;}
-.md-node p{margin-bottom:8px;}
+.md p{margin:0 0 var(--md-space-4);}
+.md-node p{margin-bottom:var(--md-space-4);}
 .md strong{font-weight:720;color:var(--md-heading);}
 .md a{color:var(--md-accent);text-decoration:none;}
-.md hr{border:0;height:.5px;background:var(--md-border);margin:14px 0 4px;}
+.md hr{border:0;height:.5px;background:var(--md-border);margin:var(--md-space-7) 0 var(--md-space-2);}
 
 /* ── LISTS ───────────────────────────────────────────────── */
 .md ul{list-style:none;padding:0;margin:0 0 var(--md-space-6);}
@@ -126,7 +126,7 @@
 
 /* ── BLOCKQUOTE ──────────────────────────────────────────── */
 .md blockquote{
-  margin:14px 0 4px;
+  margin:var(--md-space-7) 0 var(--md-space-2);
   padding:12px 13px 12px 14px;
   border-left:3px solid var(--md-warning);
   border-radius:12px;

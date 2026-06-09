@@ -14,7 +14,7 @@
   --cv-user-bubble-padding-x:var(--spacing-14);
   --cv-agent-padding-top:var(--spacing-8);
   --cv-agent-padding-bottom:var(--spacing-4);
-  --cv-agent-stack-gap:var(--spacing-16);
+  --cv-agent-stack-gap:var(--spacing-12);
   --cv-agent-header-gap:var(--spacing-8);
   --cv-timing-gap:var(--spacing-4);
   --cv-thinking-inline-gap:var(--spacing-4);
@@ -66,6 +66,7 @@
   color:#8e8e93;transition:transform 0.25s ease;
 }
 .timing-arrow.collapsed{transform:rotate(180deg);}
+#timingMount:empty{display:none;}
 
 /* ── EXEC AREA ───────────────────────────────────────────── */
 .exec-area{overflow:hidden;transition:max-height 0.38s cubic-bezier(0.4,0,0.2,1);}

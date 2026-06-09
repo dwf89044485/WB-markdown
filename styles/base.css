@@ -51,11 +51,12 @@ body{
   --spacing-54:54px;
   --spacing-62:62px;
   --spacing-72:72px;
+  --spacing-74:74px;
   --spacing-80:80px;
   --spacing-92:92px;
   --spacing-100:100px;
 
---standalone-conversation-padding-top:var(--spacing-80);
+--standalone-conversation-padding-top:var(--spacing-74);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
   --standalone-composer-padding-bottom:var(--spacing-12);
@@ -64,7 +65,7 @@ body{
   --nav-bar-gap:var(--spacing-8);
   --nav-bar-padding-top:var(--spacing-8);
   --nav-bar-padding-x:var(--spacing-16);
-  --nav-bar-padding-bottom:30px;
+  --nav-bar-padding-bottom:24px;
   --nav-center-margin-left:var(--spacing-8);
   --nav-center-gap:var(--spacing-2);
 
@@ -161,7 +162,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#AF52DE;
+  background:#FF9500;
   flex-shrink:0;
 }
 .status-time{

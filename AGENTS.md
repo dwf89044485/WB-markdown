@@ -88,6 +88,22 @@ hash：{短 hash（7 位）}
 - 用户明确说「先不提交」「等一下再推」
 - 当前改动明显是多步任务的中间状态，后续还有关联改动未完成
 
+### COMMIT_HASH 机制（**重要：不要试图"修复"**）
+
+项目已有完整的 commit hash 显示机制，**禁止**改动：
+
+- **线上（Vercel）**：`vercel-build.sh` 在构建时用 `$VERCEL_GIT_COMMIT_SHA`（部署时的 currhash）覆盖根目录 `COMMIT_HASH` 文件 + `index.html` 里的 `__COMMIT_HASH__` 占位符。线上页面显示的就是 currhash，不存在"落后一个版本"的问题。
+- **本地**：`commit-hash.js` 读 `COMMIT_HASH` 文件 fallback。本地内容不需要保证准确，不影响线上。
+- **AI 提交时报告 prehash → currhash**（按上方"提交后的动作"格式）已足够让用户对照线上版本。
+
+**禁止行为**（历史教训）：
+
+- ❌ 写 `post-commit` / `pre-commit` 等 git hook 去自动更新 `COMMIT_HASH` 文件——这会形成"hash 写入 → 内容变 → 新 hash → 再写入"的死循环，已经导致过 fork bomb 把用户进程槽吃光、整机崩溃。
+- ❌ 试图让本地 `COMMIT_HASH` 文件 "永远等于 HEAD"——任何把 hash 写入被 git 跟踪文件的方案都不可能稳定，因为写入动作本身会改变 commit 内容。
+- ❌ 把 `COMMIT_HASH` 加入 `.gitignore` 后再用 hook 维护——同样会引入新的 hook 维护成本，毫无必要。
+
+**如果未来发现 hash 显示有问题**：先看 `vercel-build.sh` 是否在 Vercel 构建时正常执行；不要碰 hook、不要碰本地 `COMMIT_HASH` 文件。
+
 ## 回复规范
 
 每次回复必须以 `🎯` 作为第一行，正文从第二行开始。

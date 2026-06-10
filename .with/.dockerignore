@@ -1,0 +1,23 @@
+# Git — 只排除大文件目录，保留 HEAD/refs 供构建时注入 commit hash
+.git/objects/
+.git/pack/
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+AGENTS.md
+README.md
+
+# CI/CD
+.github
+
+# Misc
+tmp
+temp

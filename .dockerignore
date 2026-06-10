@@ -1,6 +1,6 @@
-# Version control
-.git
-.gitignore
+# Git — 只排除大文件目录，保留 HEAD/refs 供前端读取 commit hash
+.git/objects/
+.git/pack/
 
 # IDE
 .vscode

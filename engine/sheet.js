@@ -343,14 +343,16 @@ function initSheetDrag() {
     if (!isExpanded) {
       // 40%: 整个面板都可拖
       e.preventDefault();
-      dragState = { resize: true, startY: touch.clientY, startH: rect.height,
+      dragState = { resize: true, startExpanded: false,
+        startY: touch.clientY, startH: rect.height,
         containerH: sheet.parentElement.getBoundingClientRect().height };
       return;
     }
 
     // 80%: 内容在顶部时才可能折叠
     if (body.scrollTop > 0) return;
-    dragState = { resize: false, startY: touch.clientY, startH: rect.height,
+    dragState = { resize: false, startExpanded: true,
+      startY: touch.clientY, startH: rect.height,
       containerH: sheet.parentElement.getBoundingClientRect().height };
   };
 
@@ -373,8 +375,8 @@ function initSheetDrag() {
     const h = Math.max(0, dragState.startH + dy);
     const pct = Math.min(80, Math.max(10, (h / dragState.containerH) * 100));
 
-    // 40% + 下拖超过阈值 → 关闭 sheet
-    if (!isExpanded && dy < -40) { // 40 = ~0.5 倍 handle 高度的触觉反馈阈值
+    // 40% + 下拖超过阈值 → 关闭 sheet（基于拖拽起始状态，避免折叠过程中误关）
+    if (!dragState.startExpanded && dy < -40) {
       dragState = null;
       closeSheet();
       return;

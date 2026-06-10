@@ -1,5 +1,4 @@
 {
   "buildCommand": "./vercel-build.sh",
-  "outputDirectory": ".",
-  "cleanUrls": true
+  "outputDirectory": "."
 }

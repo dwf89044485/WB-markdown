@@ -145,11 +145,10 @@
       <div class="tbl-fs-title">表格</div>
       <div class="tbl-fs-actions" id="tblFsActions">
         <button class="tbl-fs-btn" data-action="copy" aria-label="复制"></button>
-        <button class="tbl-fs-btn" data-action="rotate" aria-label="横竖切换"></button>
         <button class="tbl-fs-btn" data-action="share" aria-label="分享"></button>
       </div>
     </div>
-    <div class="tbl-fs-content" id="tblFsContent"></div>
+    <div class="tbl-fs-content md" id="tblFsContent"></div>
   </div>
 </div> <!-- /phone-shell -->
 
@@ -258,15 +257,13 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   }
 
   var FS_COPY = fsIcon('wb-copy.svg');
-  var FS_SWITCH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" width="22" height="22" style="display:block"><path fill="currentColor" d="M4 11a7 7 0 0 1 7-7v2.2l4-3.2-4-3.2v2.4a9 9 0 0 0-9 9H4zm14 0a7 7 0 0 1-7 7v-2.2l-4 3.2 4 3.2v-2.4a9 9 0 0 0 9-9h-2z"/></svg>';
-  var FS_SHARE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" width="22" height="22" style="display:block"><path fill="currentColor" d="M11 3.5l6 5.5-1.2 1.1L12 6.8v7.9h-2V6.8L6.2 10.1 5 9z"/><path fill="currentColor" d="M4 14v4h14v-4h2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4h2z"/></svg>';
+  var FS_SHARE = fsIcon('wb-share.svg');
 
   /* ── 初始化按钮图标 ──────────────────────────────────── */
   var actionBtns = document.querySelectorAll('.tbl-fs-btn[data-action]');
   actionBtns.forEach(function(b){
     var a = b.getAttribute('data-action');
     if (a === 'copy') b.innerHTML = FS_COPY || COPY_SVG;
-    else if (a === 'rotate') b.innerHTML = FS_SWITCH;
     else if (a === 'share') b.innerHTML = FS_SHARE;
   });
 
@@ -325,13 +322,6 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       btn.style.color = '';
       btn.classList.remove('is-checked');
     }, 1000);
-  });
-
-  /* ── 横竖切换 ─────────────────────────────────────────── */
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.tbl-fs-btn[data-action="rotate"]');
-    if (!btn) return;
-    shell.classList.toggle('tbl-landscape');
   });
 
   /* ── 分享（占位） ─────────────────────────────────────── */

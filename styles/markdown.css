@@ -490,20 +490,6 @@
   padding:16px;
   background:#fff;
 }
-.tbl-fs-content .tbl-outer{
-  margin:0;
-  box-shadow:none;
-  border-radius:8px;
-}
-.tbl-fs-content .tbl-toolbar{display:none;}
-.tbl-fs-content .tbl-wrap{overflow-x:visible;}
-.tbl-fs-content table.tbl{width:100%;min-width:auto;}
-.tbl-fs-content table.tbl th,
-.tbl-fs-content table.tbl td{
-  white-space:normal;
-  word-break:break-word;
-}
-
 /* ── LANDSCAPE (phone shell physically wide) ────────────── */
 /* 手机壳真的变成横屏尺寸：852x393，内容区域跟着变宽 */
 .phone-shell.tbl-landscape{

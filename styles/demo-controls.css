@@ -57,7 +57,7 @@
 .dc-segment,
 .dc-speed-track,
 .dc-icon-btn{
-  border-radius:calc(var(--dc-control-radius) + 2px);
+  border-radius:var(--dc-control-radius);
 }
 
 /* ── Label ─────────────────────────────────────────────────── */
@@ -137,7 +137,7 @@
   height:var(--dc-control-height);
   padding:0;
   border:0;
-  border-radius:calc(var(--dc-control-radius) + 2px);
+  border-radius:var(--dc-control-radius);
   background:transparent;
   color:rgba(0,0,0,.7);
   font-size:13px;
@@ -365,25 +365,70 @@
   height:852px;
   background:#fff;
   border-radius:20px;
-  border:2px dashed #ddd;
+  border:1px solid #ececec;
   display:flex;
-  align-items:center;
-  justify-content:center;
+  overflow:hidden;
 }
 
 .design-notes-inner{
-  display:flex;
-  align-items:center;
-  justify-content:center;
   width:100%;
   height:100%;
+  padding:20px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
 }
 
 .design-notes-placeholder{
+  margin:auto;
   font-size:15px;
   font-weight:400;
   color:#bbb;
-  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
+}
+
+.design-note-card{
+  background:#f8f8f8;
+  border-radius:12px;
+  border:1px solid #eee;
+  padding:14px 14px 12px;
+}
+
+.design-notes-title{
+  font-size:14px;
+  font-weight:600;
+  line-height:1.45;
+  color:#111;
+  margin:0 0 8px;
+}
+
+.design-notes-body{
+  margin:0;
+  font-size:13px;
+  line-height:1.65;
+  color:#434343;
+}
+
+.design-notes-list{
+  margin:10px 0 0;
+  padding-left:18px;
+}
+
+.design-notes-list li{
+  font-size:13px;
+  line-height:1.6;
+  color:#434343;
+}
+
+.design-notes-error{
+  background:#fff4f4;
+  border:1px solid #ffcaca;
+  color:#b42318;
+  border-radius:10px;
+  padding:12px;
+  font-size:13px;
+  line-height:1.5;
 }
 
 /* ── Media query: compact layout on short screens ─────────── */

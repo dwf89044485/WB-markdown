@@ -144,6 +144,22 @@
       <div class="pc-handle"></div>
     </div>
   </div>
+  <!-- Table Fullscreen Overlay -->
+  <div class="tbl-fullscreen-overlay" id="tblOverlay">
+    <div class="tbl-fs-nav">
+      <button class="tbl-fs-back" id="tblFsBack">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 4L7 11l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>返回</span>
+      </button>
+      <div class="tbl-fs-title">表格</div>
+      <div class="tbl-fs-actions" id="tblFsActions">
+        <button class="tbl-fs-btn" data-action="copy" aria-label="复制"></button>
+        <button class="tbl-fs-btn" data-action="rotate" aria-label="横竖切换"></button>
+        <button class="tbl-fs-btn" data-action="share" aria-label="分享"></button>
+      </div>
+    </div>
+    <div class="tbl-fs-content" id="tblFsContent"></div>
+  </div>
 </div> <!-- /phone-shell -->
 
 <div class="demo-controls" aria-label="演示参数控制">
@@ -232,6 +248,108 @@
       btn.innerHTML = COPY_SVG;
       btn.style.color = '';
     }, 1000);
+  });
+})();
+
+/* ── 表格全屏查看 ───────────────────────────────────────── */
+(function(){
+  var shell = document.getElementById('phone-shell');
+  var overlay = document.getElementById('tblOverlay');
+  var content = document.getElementById('tblFsContent');
+  var fsBack = document.getElementById('tblFsBack');
+
+  /* ── 获取注册表中图标 ────────────────────────────────── */
+  var INLINE = window.WORKBUDDY_INLINE_ICONS || {};
+  function fsIcon(file) {
+    var raw = INLINE[file];
+    if (!raw) return '';
+    return raw
+      .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
+      .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
+  }
+
+  var FS_COPY = fsIcon('wb-copy.svg');
+  var FS_SWITCH = fsIcon('switch.svg');
+  var FS_SHARE = fsIcon('wb-share.svg');
+
+  /* ── 初始化按钮图标 ──────────────────────────────────── */
+  var actionBtns = document.querySelectorAll('.tbl-fs-btn[data-action]');
+  actionBtns.forEach(function(b){
+    var a = b.getAttribute('data-action');
+    if (a === 'copy') b.innerHTML = FS_COPY || COPY_SVG;
+    else if (a === 'rotate') b.innerHTML = FS_SWITCH;
+    else if (a === 'share') b.innerHTML = FS_SHARE;
+  });
+
+  /* ── 全屏入口 ────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.tbl-btn.tbl-maximize');
+    if (!btn) return;
+    var outer = btn.closest('.tbl-outer');
+    if (!outer) return;
+    var table = outer.querySelector('table');
+    if (!table) return;
+    /* 克隆表格 HTML 放入内容区 */
+    content.innerHTML = '<div class="tbl-outer"><div class="tbl-wrap">' + table.outerHTML + '</div></div>';
+    /* 切换横屏 + 显示浮层 */
+    shell.classList.add('tbl-landscape');
+    overlay.classList.add('is-active');
+  });
+
+  /* ── 返回 ─────────────────────────────────────────────── */
+  function closeFullscreen(){
+    overlay.classList.remove('is-active');
+    shell.classList.remove('tbl-landscape');
+    content.innerHTML = '';
+  }
+  fsBack.addEventListener('click', closeFullscreen);
+
+  /* ── 复制 ─────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.tbl-fs-btn[data-action="copy"]');
+    if (!btn) return;
+    var tbl = content.querySelector('table');
+    if (!tbl) return;
+    var txt = '';
+    tbl.querySelectorAll('tr').forEach(function(row){
+      var cells = row.querySelectorAll('th, td');
+      txt += Array.from(cells).map(function(c){ return c.innerText.trim(); }).join('\t') + '\n';
+    });
+    var text = txt.trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(function(){});
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    /* 反馈 */
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="22" height="22" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
+    btn.style.color = '#34C759';
+    btn.classList.add('is-checked');
+    setTimeout(function(){
+      btn.innerHTML = orig;
+      btn.style.color = '';
+      btn.classList.remove('is-checked');
+    }, 1000);
+  });
+
+  /* ── 横竖切换 ─────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.tbl-fs-btn[data-action="rotate"]');
+    if (!btn) return;
+    shell.classList.toggle('tbl-landscape');
+  });
+
+  /* ── 分享（占位） ─────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.tbl-fs-btn[data-action="share"]');
+    if (!btn) return;
+    /* 暂不做交互 */
   });
 })();
 </script>

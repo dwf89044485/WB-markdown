@@ -313,11 +313,15 @@ function resetPlaybackDom() {
   const stepsList = $('#stepsList');
   const main = $('#mainMd');
   const overlay = $('#overlay');
+  const tblOverlay = $('#tblOverlay');
+  const phoneShell = $('#phone-shell');
 
   execOpen = true;
   stepsOpen = true;
   stepSeq = 0;
   if (overlay) overlay.className = 'sheet-overlay';
+  if (tblOverlay) tblOverlay.classList.remove('is-active');
+  if (phoneShell) phoneShell.classList.remove('tbl-landscape');
   if (userBubble) userBubble.textContent = '';
   if (userWrap) userWrap.className = 'user-msg-wrap is-hidden';
   if (agent) agent.className = 'agent-msg is-hidden';

@@ -392,3 +392,123 @@
 /* ── SCROLLBAR SUPPRESSION ───────────────────────────────── */
 .md,.md *{scrollbar-width:none;}
 .md::-webkit-scrollbar,.md *::-webkit-scrollbar{display:none;}
+
+/* ============================================================
+   TABLE FULLSCREEN OVERLAY — 全屏查看表格
+   ============================================================ */
+
+/* ── OVERLAY CONTAINER ──────────────────────────────────── */
+.tbl-fullscreen-overlay{
+  position:absolute;inset:0;
+  z-index:300;
+  display:none;
+  flex-direction:column;
+  background:#fff;
+  animation:tbl-fs-in .28s ease;
+}
+.tbl-fullscreen-overlay.is-active{
+  display:flex;
+}
+@keyframes tbl-fs-in{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+/* ── NAV BAR ────────────────────────────────────────────── */
+.tbl-fs-nav{
+  display:flex;
+  align-items:center;
+  height:52px;
+  padding:0 16px;
+  flex-shrink:0;
+  border-bottom:.5px solid #e5e5ea;
+  background:#fff;
+}
+.tbl-fs-back{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 8px 4px 4px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:500;
+  color:#007aff;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s ease;
+}
+.tbl-fs-back:hover{background:rgba(0,122,255,.08);}
+.tbl-fs-back:active{background:rgba(0,122,255,.12);}
+.tbl-fs-back span{font-size:15px;line-height:1;}
+
+.tbl-fs-title{
+  flex:1;
+  text-align:center;
+  font-size:15px;
+  font-weight:600;
+  color:#1c1c1e;
+}
+
+/* ── ACTION BUTTONS ─────────────────────────────────────── */
+.tbl-fs-actions{
+  display:flex;
+  align-items:center;
+  gap:2px;
+}
+.tbl-fs-btn{
+  width:36px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  border-radius:8px;
+  color:#007aff;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s ease,color .12s ease;
+}
+.tbl-fs-btn svg{
+  display:block;
+  width:22px;
+  height:22px;
+}
+.tbl-fs-btn:hover{background:rgba(0,122,255,.08);}
+.tbl-fs-btn:active{background:rgba(0,122,255,.12);}
+.tbl-fs-btn.is-checked{color:#34C759;}
+.tbl-fs-btn[data-action="share"]{opacity:.45;cursor:default;}
+
+/* ── CONTENT AREA ───────────────────────────────────────── */
+.tbl-fs-content{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:16px;
+  background:#fff;
+}
+.tbl-fs-content .tbl-outer{
+  margin:0;
+  box-shadow:none;
+  border-radius:8px;
+}
+.tbl-fs-content .tbl-toolbar{display:none;}
+.tbl-fs-content .tbl-wrap{overflow-x:visible;}
+.tbl-fs-content table.tbl{width:100%;min-width:auto;}
+.tbl-fs-content table.tbl th,
+.tbl-fs-content table.tbl td{
+  white-space:normal;
+  word-break:break-word;
+}
+
+/* ── LANDSCAPE ROTATION (phone shell) ───────────────────── */
+.phone-shell.tbl-landscape{
+  overflow:visible;
+  transform:rotate(90deg);
+  transform-origin:center center;
+  transition:transform .35s cubic-bezier(.32,.72,0,1);
+}
+.phone-shell.tbl-landscape .tbl-fullscreen-overlay{border-radius:0;overflow:hidden;}

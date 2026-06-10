@@ -67,7 +67,7 @@ export function markdownToHtml(markdown) {
       while (i < lines.length && lines[i].trim().includes('|')) {
         rows.push(splitTable(lines[i++]));
       }
-      const toolbar = `<div class="tbl-toolbar"><span class="tbl-toolbar-title">表格</span><div class="tbl-toolbar-actions"><button class="tbl-btn tbl-copy" aria-label="复制">${SVG_COPY}</button><button class="tbl-btn tbl-download" aria-label="下载" disabled>${SVG_DOWNLOAD}</button><button class="tbl-btn tbl-maximize" aria-label="全屏" disabled>${SVG_MAXIMIZE}</button></div></div>`;
+      const toolbar = `<div class="tbl-toolbar"><span class="tbl-toolbar-title">表格</span><div class="tbl-toolbar-actions"><button class="tbl-btn tbl-copy" aria-label="复制">${SVG_COPY}</button><button class="tbl-btn tbl-download" aria-label="下载" disabled>${SVG_DOWNLOAD}</button><button class="tbl-btn tbl-maximize" aria-label="全屏">${SVG_MAXIMIZE}</button></div></div>`;
       out.push(`<div class="tbl-outer">${toolbar}<div class="tbl-wrap"><table class="tbl"><thead><tr>${header.map(h => `<th>${inlineMarkdown(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${inlineMarkdown(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`);
       continue;
     }

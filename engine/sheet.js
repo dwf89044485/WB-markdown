@@ -316,9 +316,9 @@ export function maybeClose(e) {
   if (e.target === $('#overlay')) closeSheet();
 }
 
-// ── Drag handle: expand/collapse sheet 40% ↔ 80% ────────
-// 拖拽触发区域 = sheet 顶部 60px（覆盖 handle + 上下间距），触控落入此区域视为 resize 手势
-const DRAG_ZONE_HEIGHT = 60;
+// ── Drag interaction ──────────────────────────────────────
+// 40%: 面板任意位置操控——上拖展开、下拖关闭
+// 80%: 内容在顶部时下拖折叠；不在顶部时正常滚动
 let dragState = null;
 
 function resetSheetHeight() {
@@ -329,17 +329,17 @@ function resetSheetHeight() {
 }
 
 function initSheetDrag() {
+  const sheet = $('#sheet');
   const body = $('#sheetBody');
   if (!sheet || !body) return;
 
   const onStart = (e) => {
     const touch = e.touches ? e.touches[0] : e;
     const rect = sheet.getBoundingClientRect();
-    const offsetY = touch.clientY - rect.top;
     const isExpanded = sheet.classList.contains('expanded');
 
     if (!isExpanded) {
-      if (offsetY >= DRAG_ZONE_HEIGHT) return;
+      // 40%: 整个面板都可拖
       e.preventDefault();
       dragState = { resize: true, startY: touch.clientY, startH: rect.height,
         containerH: sheet.parentElement.getBoundingClientRect().height };
@@ -358,7 +358,7 @@ function initSheetDrag() {
     const dy = dragState.startY - y;
     const isExpanded = sheet.classList.contains('expanded');
 
-    // 80% + 首次上拖 → 非折叠手势，释放
+    // 80%: 首次上拖则释放（走滚动）
     if (isExpanded && !dragState.resize) {
       if (dy >= 0) { dragState = null; return; }
       dragState.resize = true;
@@ -369,7 +369,15 @@ function initSheetDrag() {
     e.preventDefault();
     sheet.style.transition = 'none';
     const h = Math.max(0, dragState.startH + dy);
-    const pct = Math.min(80, Math.max(40, (h / dragState.containerH) * 100));
+    const pct = Math.min(80, Math.max(10, (h / dragState.containerH) * 100));
+
+    // 40% + 下拖超过阈值 → 关闭 sheet
+    if (!isExpanded && dy < -40) { // 40 = ~0.5 倍 handle 高度的触觉反馈阈值
+      dragState = null;
+      closeSheet();
+      return;
+    }
+
     sheet.style.height = pct + '%';
     sheet.classList.toggle('expanded', pct >= 70);
   };
@@ -387,7 +395,6 @@ function initSheetDrag() {
       sheet.style.height = '40%';
       sheet.classList.remove('expanded');
     }
-    // 清除过渡避免干扰后续流式高度变化
     sheet.addEventListener('transitionend', function h() {
       sheet.style.transition = '';
       sheet.removeEventListener('transitionend', h);
@@ -398,7 +405,7 @@ function initSheetDrag() {
   document.addEventListener('mousemove', onMove);
   document.addEventListener('mouseup', onEnd);
   sheet.addEventListener('touchstart', onStart, { passive: false });
-  document.addEventListener('touchmove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
   document.addEventListener('touchend', onEnd);
 }
 

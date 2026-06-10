@@ -495,17 +495,16 @@
 .phone-shell.tbl-landscape{
   width:852px;
   height:393px;
-  position:fixed;
-  left:30px;
-  top:14px;
-  z-index:500;
-  margin:0;
+  flex-shrink:0;
+  align-self:flex-start;
+  margin-left:-14px;
+  margin-bottom:459px;
   transition:width .35s cubic-bezier(.32,.72,0,1),
-              height .35s cubic-bezier(.32,.72,0,1);
+              height .35s cubic-bezier(.32,.72,0,1),
+              margin-bottom .35s cubic-bezier(.32,.72,0,1);
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;
-  overflow:hidden;
 }
 /* 横屏下隐藏所有原本的 UI（顶部状态栏、对话流、底部输入框、上下浮层） */
 .phone-shell.tbl-landscape > .status-bar,

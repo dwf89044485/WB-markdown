@@ -4,7 +4,7 @@
 
 import { escapeHtml } from './markdown.js';
 import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent, svgFromRegistry } from './icons.js';
-import { sleep, playbackDelay } from './core.js';
+import { sleep, playbackDelay, playback, currentTokensPerSecond, fastRender } from './core.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -139,6 +139,23 @@ function applyTodoOverridesToDom(overrides, todoElements) {
   }
 }
 
+// ── Typewriter for thinking card body ─────────────────────
+async function typeCardBody(target, text) {
+  if (!text) return;
+  if (fastRender) {
+    target.textContent = text;
+    return;
+  }
+  const chunkSize = Math.max(1, Math.floor(playback('chunkSize', 1)));
+  const interval = (1000 * chunkSize) / currentTokensPerSecond();
+  for (let i = 0; i < text.length; i += chunkSize) {
+    const chunk = text.slice(i, i + chunkSize);
+    target.textContent += chunk;
+    scrollSheetBody();
+    await sleep(chunk.trim() ? interval : Math.max(1, interval * 0.35));
+  }
+}
+
 // ── Streaming sheet content renderer ──────────────────────
 async function streamSheetContent(frames, baseline, todoElements) {
   const body = $('#sheetBody');
@@ -153,15 +170,26 @@ async function streamSheetContent(frames, baseline, todoElements) {
         if (renderedKeys.has(key)) continue;
         renderedKeys.add(key);
 
-        body.appendChild(renderEvent(ev));
-        scrollSheetBody();
+        // Thinking events: render with empty card body, then stream body text
+        const isThinking = ev.icon === '🧠' || ev.text === '思考过程';
+        if (isThinking && ev.card && ev.card.body) {
+          const evShell = { ...ev };
+          evShell.card = { ...ev.card, body: '' };
+          body.appendChild(renderEvent(evShell));
+          scrollSheetBody();
+          const cardBody = body.lastElementChild.querySelector('.event-card-body');
+          if (cardBody) await typeCardBody(cardBody, ev.card.body);
+        } else {
+          body.appendChild(renderEvent(ev));
+          scrollSheetBody();
 
-        // Outputs（e.g. search results）appear one by one
-        if (ev.outputs) {
-          for (const out of ev.outputs) {
-            body.appendChild(renderOutput(out));
-            scrollSheetBody();
-            await sleep(Math.round(frameDelay * 0.25));
+          // Outputs（e.g. search results）appear one by one
+          if (ev.outputs) {
+            for (const out of ev.outputs) {
+              body.appendChild(renderOutput(out));
+              scrollSheetBody();
+              await sleep(Math.round(frameDelay * 0.25));
+            }
           }
         }
       }

@@ -175,6 +175,8 @@
   width:var(--speed-progress);
   background:rgba(0,0,0,.75);
   border-radius:inherit;
+  border-top-right-radius:0;
+  border-bottom-right-radius:0;
   corner-shape:inherit;
   pointer-events:none;
 }

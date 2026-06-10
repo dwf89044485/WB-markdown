@@ -59,7 +59,7 @@ body{
 --standalone-conversation-padding-top:var(--spacing-74);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
-  --standalone-composer-padding-bottom:var(--spacing-32);
+  --standalone-composer-padding-bottom:var(--spacing-12);
 
   --nav-bar-top-offset:var(--spacing-54);
   --nav-bar-gap:var(--spacing-8);
@@ -169,7 +169,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#4A90D9;
+  background:#E67E22;
   flex-shrink:0;
 }
 .status-time{

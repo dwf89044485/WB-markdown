@@ -136,7 +136,7 @@
 
 /* ── TOOL CALL STYLE: card ────────────────────────────────── */
 .phone-shell.tool-call-card .step-detail-link{
-  padding:calc(var(--cv-status-padding-y) - 1px) var(--cv-status-padding-x);
+  padding:7px var(--cv-status-padding-x);
 }
 
 /* ── TOOL CALL STYLE: flat ────────────────────────────────── */

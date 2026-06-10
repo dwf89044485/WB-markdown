@@ -189,6 +189,30 @@ git push
 
 **git commit 后**：在对话中告知用户 `hash: xxxxxxxx`，同时说明 `圆点颜色：XX色（#xxxxxx）`。
 
+## 部署到 pages.woa.com
+
+本项目部署在 https://workbuddy-markdown.pages.woa.com。
+
+用户说 **"更新pages"** 时，立即执行部署脚本，不等用户确认：
+
+```bash
+bash scripts/deploy-pages.sh
+```
+
+部署脚本会收集 19 个文件（index.html、engine/*.js、styles/*.css 等）打包上传。全文本文件，无需 base64 编码。
+
+另外也有 Python 版可直接调用：
+
+```bash
+python3 scripts/deploy-pages.py && \
+curl -X PUT https://pages.woa.com/api/sites/workbuddy-markdown.pages.woa.com \
+  -H "X-Api-Key: $OA_PAGES_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @/tmp/pages_payload.json
+```
+
+API Key 已配置在环境变量 `OA_PAGES_API_KEY` 中。
+
 ## 回复规范
 
 每次回复必须以 `🎯` 作为第一行，正文从第二行开始。

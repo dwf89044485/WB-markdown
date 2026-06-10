@@ -104,7 +104,6 @@ export function getFrames(refs) {
 function scrollSheetBody() {
   const body = $('#sheetBody');
   if (!body) return;
-  // 用户主动往上翻了（距底部超过 32px），不强制滚动
   if (body.scrollTop + body.clientHeight < body.scrollHeight - 32) return;
   body.scrollTop = body.scrollHeight;
 }
@@ -157,27 +156,30 @@ async function typeCardBody(target, text) {
 }
 
 // ── Streaming sheet content renderer ──────────────────────
-async function streamSheetContent(frames, baseline, todoElements) {
+//
+// 流式顺序：事件行从顶向下逐帧出现 → 首个带待办数据的帧出现时，
+// 待办骨架出现在底部 → 后续帧更新待办状态 → 事件行始终插在待办上方
+//
+async function streamSheetContent(frames, baseline) {
   const body = $('#sheetBody');
   const frameDelay = playbackDelay('frameDelay', 520);
   const renderedKeys = new Set();
-  const firstTodo = todoElements.length ? todoElements[0].row : null;
+  let todoElements = [];
+  let firstTodo = null;
 
-  // Helper: insert row before first todo（keep todos anchored at bottom）
   const insert = (row) => {
     if (firstTodo) body.insertBefore(row, firstTodo);
     else body.appendChild(row);
   };
 
   for (const f of frames) {
-    // ── Render events (whole row, deduped by key) ──
+    // ── Render new events（deduped by key）──
     if (f.events) {
       for (const ev of f.events) {
         const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
         if (renderedKeys.has(key)) continue;
         renderedKeys.add(key);
 
-        // Thinking events: render with empty card body, then stream body text
         const isThinking = ev.icon === '🧠' || ev.text === '思考过程';
         if (isThinking && ev.card && ev.card.body) {
           const evShell = { ...ev };
@@ -191,7 +193,6 @@ async function streamSheetContent(frames, baseline, todoElements) {
           insert(renderEvent(ev));
           scrollSheetBody();
 
-          // Outputs（e.g. search results）appear one by one
           if (ev.outputs) {
             for (const out of ev.outputs) {
               insert(renderOutput(out));
@@ -209,7 +210,19 @@ async function streamSheetContent(frames, baseline, todoElements) {
       scrollSheetBody();
     }
 
-    // ── Apply todo overrides（DOM-level mutation, no re-render）──
+    // ── First frame with todo data: render skeleton at bottom ──
+    const hasFrameTodos = (f.todoOverrides !== undefined) || (f.todos && f.todos.length > 0);
+    if (!todoElements.length && hasFrameTodos) {
+      todoElements = renderTodoSkeleton(frames, baseline);
+      if (todoElements.length) {
+        firstTodo = todoElements[0].row;
+        todoElements.forEach(t => body.appendChild(t.row));
+        scrollSheetBody();
+        await sleep(Math.round(frameDelay * 0.4));
+      }
+    }
+
+    // ── Apply todo overrides（DOM-level mutation）──
     if (f.todoOverrides && todoElements.length) {
       applyTodoOverridesToDom(f.todoOverrides, todoElements);
       await sleep(Math.round(frameDelay * 0.4));
@@ -247,20 +260,14 @@ export async function openSheet(frameRefs, explicitTitle) {
     return;
   }
 
-  // Phase 1: Render todo skeleton（all items visible at once）
-  const todoElements = renderTodoSkeleton(frames, baseline);
-  if (todoElements.length) {
-    todoElements.forEach(t => body.appendChild(t.row));
-  }
-
-  // Show sheet overlay
+  // Show sheet overlay (body starts empty)
   const ov = $('#overlay');
   ov.className = 'sheet-overlay vis';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   ov.className = 'sheet-overlay vis show';
 
-  // Phase 2: Stream frame content progressively
-  await streamSheetContent(frames, baseline, todoElements);
+  // Stream all content: events first, todos appear at bottom when their data arrives
+  await streamSheetContent(frames, baseline);
 }
 
 // ── Close sheet ───────────────────────────────────────────

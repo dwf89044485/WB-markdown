@@ -19,10 +19,10 @@ export async function typeText(target, text) {
     return;
   }
   const chunkSize = Math.max(1, Math.floor(playback('chunkSize', 1)));
-  const interval = typeIntervalForChunk(chunkSize);
   target.parentElement && target.parentElement.classList.add('typing-active');
   for (let i = 0; i < text.length; i += chunkSize) {
     const chunk = text.slice(i, i + chunkSize);
+    const interval = typeIntervalForChunk(chunkSize);
     target.textContent += chunk;
     scrollToBottom();
     await sleep(chunk.trim() ? interval : Math.max(1, interval * 0.35));

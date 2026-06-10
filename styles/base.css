@@ -9,6 +9,7 @@ html{
   height:100%;
   overflow:hidden;
   overscroll-behavior:none;
+  background:#fafafa;
 }
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
@@ -169,7 +170,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#4A90D9;
+  background:#E8A87C;
   flex-shrink:0;
 }
 .status-time{

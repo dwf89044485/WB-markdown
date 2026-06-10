@@ -452,7 +452,8 @@
 .tbl-fs-actions{
   display:flex;
   align-items:center;
-  gap:2px;
+  gap:12px;
+  padding-right:4px;
 }
 .tbl-fs-btn{
   width:36px;

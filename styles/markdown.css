@@ -504,11 +504,24 @@
   word-break:break-word;
 }
 
-/* ── LANDSCAPE ROTATION (phone shell) ───────────────────── */
+/* ── LANDSCAPE (phone shell physically wide) ────────────── */
+/* 手机壳真的变成横屏尺寸：852x393，内容区域跟着变宽 */
 .phone-shell.tbl-landscape{
-  overflow:visible;
-  transform:rotate(90deg);
-  transform-origin:center center;
-  transition:transform .35s cubic-bezier(.32,.72,0,1);
+  width:852px;
+  height:393px;
+  transition:width .35s cubic-bezier(.32,.72,0,1),
+              height .35s cubic-bezier(.32,.72,0,1);
 }
-.phone-shell.tbl-landscape .tbl-fullscreen-overlay{border-radius:0;overflow:hidden;}
+.phone-shell.tbl-landscape .tbl-fullscreen-overlay{
+  border-radius:0;
+  overflow:hidden;
+}
+/* 横屏下隐藏所有原本的 UI（顶部状态栏、对话流、底部输入框、上下浮层） */
+.phone-shell.tbl-landscape > .status-bar,
+.phone-shell.tbl-landscape > #conv,
+.phone-shell.tbl-landscape > .conversation,
+.phone-shell.tbl-landscape > .composer,
+.phone-shell.tbl-landscape > .sheet-overlay,
+.phone-shell.tbl-landscape > .phone-controls{
+  display:none;
+}

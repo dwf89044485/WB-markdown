@@ -31,7 +31,7 @@ export function playback(key, fallback) {
 }
 
 export function currentTokensPerSecond() {
-  return Math.min(1000, Math.max(20, Math.round(playback('tokensPerSecond', 200))));
+  return Math.min(1500, Math.max(20, Math.round(playback('tokensPerSecond', 200))));
 }
 
 export function playbackDelay(key, fallback) {

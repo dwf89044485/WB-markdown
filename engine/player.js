@@ -654,7 +654,7 @@ function bindPanelControls(root) {
     if (percent <= 50) {
       mappedValue = Math.round(50 + (percent / 50) * 150);
     } else {
-      mappedValue = Math.round(200 + ((percent - 50) / 50) * 800);
+      mappedValue = Math.round(200 + ((percent - 50) / 50) * 1300);
     }
     scenario.playback.tokensPerSecond = mappedValue;
     speedSlider.style.setProperty('--speed-progress', progress);

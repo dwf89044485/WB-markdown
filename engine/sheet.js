@@ -161,6 +161,13 @@ async function streamSheetContent(frames, baseline, todoElements) {
   const body = $('#sheetBody');
   const frameDelay = playbackDelay('frameDelay', 520);
   const renderedKeys = new Set();
+  const firstTodo = todoElements.length ? todoElements[0].row : null;
+
+  // Helper: insert row before first todo（keep todos anchored at bottom）
+  const insert = (row) => {
+    if (firstTodo) body.insertBefore(row, firstTodo);
+    else body.appendChild(row);
+  };
 
   for (const f of frames) {
     // ── Render events (whole row, deduped by key) ──
@@ -175,18 +182,19 @@ async function streamSheetContent(frames, baseline, todoElements) {
         if (isThinking && ev.card && ev.card.body) {
           const evShell = { ...ev };
           evShell.card = { ...ev.card, body: '' };
-          body.appendChild(renderEvent(evShell));
+          const row = renderEvent(evShell);
+          insert(row);
           scrollSheetBody();
-          const cardBody = body.lastElementChild.querySelector('.event-card-body');
+          const cardBody = row.querySelector('.event-card-body');
           if (cardBody) await typeCardBody(cardBody, ev.card.body);
         } else {
-          body.appendChild(renderEvent(ev));
+          insert(renderEvent(ev));
           scrollSheetBody();
 
           // Outputs（e.g. search results）appear one by one
           if (ev.outputs) {
             for (const out of ev.outputs) {
-              body.appendChild(renderOutput(out));
+              insert(renderOutput(out));
               scrollSheetBody();
               await sleep(Math.round(frameDelay * 0.25));
             }
@@ -197,7 +205,7 @@ async function streamSheetContent(frames, baseline, todoElements) {
 
     // Legacy compat: frame-level searchItems
     if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
-      f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
+      f.searchItems.forEach(item => insert(renderSearchItem(item)));
       scrollSheetBody();
     }
 

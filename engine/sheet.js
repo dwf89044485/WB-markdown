@@ -266,7 +266,8 @@ export async function openSheet(frameRefs, explicitTitle) {
     return;
   }
 
-  // Show sheet overlay (body starts empty)
+  // Show sheet overlay (body starts empty, height at 40%)
+  resetSheetHeight();
   const ov = $('#overlay');
   ov.className = 'sheet-overlay vis';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -279,6 +280,7 @@ export async function openSheet(frameRefs, explicitTitle) {
 // ── Close sheet ───────────────────────────────────────────
 export function closeSheet() {
   const ov = $('#overlay');
+  resetSheetHeight();
   ov.className = 'sheet-overlay vis';
   ov.addEventListener('transitionend', function h() {
     ov.className = 'sheet-overlay';
@@ -289,3 +291,69 @@ export function closeSheet() {
 export function maybeClose(e) {
   if (e.target === $('#overlay')) closeSheet();
 }
+
+// ── Drag handle: expand/collapse sheet 40% ↔ 80% ────────
+let dragState = null;
+
+function resetSheetHeight() {
+  const sheet = $('#sheet');
+  if (!sheet) return;
+  sheet.classList.remove('expanded');
+  sheet.style.height = '';
+}
+
+function initSheetDrag() {
+  const sheet = $('#sheet');
+  const handle = sheet ? sheet.querySelector('.sheet-handle') : null;
+  if (!sheet || !handle) return;
+
+  const onStart = (e) => {
+    e.preventDefault();
+    dragState = {
+      startY: e.touches ? e.touches[0].clientY : e.clientY,
+      startH: sheet.getBoundingClientRect().height,
+      containerH: sheet.parentElement.getBoundingClientRect().height
+    };
+    sheet.style.transition = 'none';
+  };
+
+  const onMove = (e) => {
+    if (!dragState) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    const dy = dragState.startY - y; // positive = drag up = expand
+    const h = Math.max(0, dragState.startH + dy);
+    const pct = Math.min(80, Math.max(20, (h / dragState.containerH) * 100));
+    sheet.style.height = pct + '%';
+  };
+
+  const onEnd = () => {
+    if (!dragState) return;
+    const currentH = sheet.getBoundingClientRect().height;
+    const pct = (currentH / dragState.containerH) * 100;
+    dragState = null;
+    sheet.style.transition = 'height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1)';
+    if (pct > 58) {
+      sheet.style.height = '80%';
+      sheet.classList.add('expanded');
+    } else {
+      sheet.style.height = '40%';
+      sheet.classList.remove('expanded');
+    }
+  };
+
+  handle.addEventListener('mousedown', onStart);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+  handle.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
+}
+
+// Initialize drag on first sheet render
+(function () {
+  const check = () => {
+    if ($('#sheet')) { initSheetDrag(); return; }
+    requestAnimationFrame(check);
+  };
+  check();
+})();

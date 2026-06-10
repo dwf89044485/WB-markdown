@@ -6,8 +6,7 @@
 html{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
-  height:100vh;
-  height:100dvh;
+  height:100%;
   overflow:hidden;
   overscroll-behavior:none;
   background:#fafafa;
@@ -15,9 +14,7 @@ html{
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
   background:#fafafa;
-  min-height:100vh;
   min-height:100dvh;
-  height:100vh;
   height:100dvh;
   display:flex;align-items:center;justify-content:center;padding:24px;
   overflow:hidden;
@@ -63,7 +60,7 @@ body{
 --standalone-conversation-padding-top:var(--spacing-74);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
-  --standalone-composer-padding-bottom:24px;
+  --standalone-composer-padding-bottom:10px;
 
   --nav-bar-top-offset:var(--spacing-54);
   --nav-bar-gap:var(--spacing-8);
@@ -86,13 +83,14 @@ html.is-standalone body{
   display:block;
   padding:0;
   background:#fafafa;
-  height:var(--actual-height, 100dvh);
+  min-height:100dvh;
+  height:100dvh;
   overflow:hidden;
 }
 html.force-standalone .phone-shell,
 html.is-standalone .phone-shell{
   width:100%;
-  height:100%;
+  height:100dvh;
   border-radius:0;
   box-shadow:none;
   background:#fafafa;
@@ -105,17 +103,15 @@ html.force-standalone .conversation,
 html.is-standalone .conversation{padding-top:var(--standalone-conversation-padding-top);}
 html.force-standalone .design-notes,
 html.is-standalone .design-notes{display:none;}
-html.force-standalone .layout-main,
-html.is-standalone .layout-main{height:100%;}
 html.force-standalone .left-area,
-html.is-standalone .left-area{width:100%;height:100%;}
+html.is-standalone .left-area{width:100%;}
 html.is-standalone .demo-controls{display:none;}
 html.force-standalone .user-msg-wrap,
 html.is-standalone .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
 html.force-standalone .agent-msg,
 html.is-standalone .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
 html.force-standalone .composer,
-html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) var(--standalone-composer-padding-bottom);}
+html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
 
 /* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
 @media (max-width:900px){
@@ -123,26 +119,26 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) var(
     display:block;
     padding:0;
     background:#fafafa;
-    height:var(--actual-height, 100dvh);
+    min-height:100dvh;
+    height:100dvh;
     overflow:hidden;
   }
   html:not(.force-desktop) .phone-shell{
     width:100%;
-    height:100%;
+    height:100dvh;
     border-radius:0;
     box-shadow:none;
     background:#fafafa;
   }
   html:not(.force-desktop) .status-bar{display:none;}
   html:not(.force-desktop) .nav-bar{top:0;padding-top:0;}
-  html:not(.force-desktop) .layout-main{height:100%;}
-  html:not(.force-desktop) .left-area{width:100%;height:100%;}
   html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
   html:not(.force-desktop) .design-notes,
   html:not(.force-desktop) .demo-controls{display:none;}
+  html:not(.force-desktop) .left-area{width:100%;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
-  html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) var(--standalone-composer-padding-bottom);}
+  html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
   html:not(.force-desktop) .layout-main{padding:0;gap:0;}
 }
 
@@ -177,7 +173,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) var(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#FF9F0A;
+  background:#FF9500;
   flex-shrink:0;
 }
 .status-time{

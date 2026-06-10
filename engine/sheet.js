@@ -117,6 +117,8 @@ function checkSheetOverflow() {
     const targetPct = Math.min(80, Math.ceil(contentPct + 3));
     if (targetPct > sheetPct) {
       sheet.style.height = targetPct + '%';
+      // 展开后重滚到底部，避免浏览器扩展 clientHeight 时滚动位漂移
+      body.scrollTop = body.scrollHeight;
     }
   });
 }

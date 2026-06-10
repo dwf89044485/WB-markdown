@@ -79,7 +79,10 @@
   function applyHash(hash) {
     window.COMMIT_HASH = hash;
     const el = document.getElementById('ctrlCommitHash');
-    if (el) el.textContent = hash;
+    if (!el) return;
+    const valueEl = el.querySelector('.dc-hash-value');
+    if (valueEl) valueEl.textContent = hash;
+    else el.textContent = hash;
   }
 
   // 暴露给其他模块复用，避免重复 fetch

@@ -14,7 +14,65 @@ import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
+const designNotes = window.WORKBUDDY_DESIGN_NOTES || {};
 const $ = (sel, root = document) => root.querySelector(sel);
+
+function resolveDesignNotes(stepIndex) {
+  const intro = designNotes.intro || null;
+  const byStep = designNotes.byStep || {};
+
+  const normalized = Number.isInteger(stepIndex) ? stepIndex : -1;
+  if (normalized >= 0 && Object.prototype.hasOwnProperty.call(byStep, normalized)) {
+    return byStep[normalized];
+  }
+
+  if (normalized >= 0) {
+    const nearest = Object.keys(byStep)
+      .map((key) => Number(key))
+      .filter((key) => Number.isFinite(key) && key <= normalized)
+      .sort((a, b) => b - a)[0];
+    if (nearest !== undefined) return byStep[nearest];
+  }
+
+  return intro;
+}
+
+function renderDesignNotesError(err) {
+  const container = document.querySelector('.design-notes-inner');
+  if (!container) return;
+  const message = escapeHtml(String(err?.message || err || '未知错误'));
+  container.innerHTML = `<div class="design-notes-error">右侧说明渲染失败：${message}</div>`;
+}
+
+function renderDesignNotes(stepIndex) {
+  const container = document.querySelector('.design-notes-inner');
+  if (!container) return;
+
+  try {
+    const note = resolveDesignNotes(stepIndex);
+    if (!note) {
+      container.innerHTML = '<span class="design-notes-placeholder">交互设计说明</span>';
+      return;
+    }
+
+    const title = escapeHtml(note.title || '交互设计说明');
+    const body = note.body ? `<p class="design-notes-body">${escapeHtml(note.body)}</p>` : '';
+    const items = Array.isArray(note.items) && note.items.length
+      ? `<ul class="design-notes-list">${note.items.map((item) => `<li>${escapeHtml(String(item))}</li>`).join('')}</ul>`
+      : '';
+
+    container.innerHTML = `
+      <article class="design-note-card">
+        <h3 class="design-notes-title">${title}</h3>
+        ${body}
+        ${items}
+      </article>
+    `;
+  } catch (err) {
+    renderDesignNotesError(err);
+    throw err;
+  }
+}
 
 function panelRoots() {
   const roots = [document];
@@ -362,6 +420,7 @@ async function runDirectorStep(index) {
   if (!step) return false;
   await step.run();
   currentDirectorIndex = index;
+  renderDesignNotes(currentDirectorIndex);
   updateDirectorControls();
   return true;
 }
@@ -491,6 +550,7 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
     for (let i = 0; i <= capped; i++) {
       await runDirectorStep(i);
     }
+    renderDesignNotes(currentDirectorIndex);
   } catch (err) {
     if (err !== CANCELLED) throw err;
   } finally {
@@ -744,6 +804,7 @@ function initializePlayback() {
   directorRuntime = { rows: [] };
   setupNavMeta();
   resetPlaybackDom();
+  renderDesignNotes(currentDirectorIndex);
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();
 }

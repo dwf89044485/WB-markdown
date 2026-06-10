@@ -54,6 +54,7 @@
   .dc-segment,
   .dc-speed-track,
   .dc-icon-btn{
+    border-radius:calc(var(--dc-control-radius) + 2px);
     corner-shape:squircle;
   }
 }

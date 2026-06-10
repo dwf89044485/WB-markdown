@@ -360,8 +360,10 @@ function updateDirectorControls() {
 async function runDirectorStep(index) {
   const step = directorTimeline[index];
   if (!step) return false;
+  console.log(`[step] ${index} START label="${step.label}" cdi=${currentDirectorIndex}`);
   await step.run();
   currentDirectorIndex = index;
+  console.log(`[step] ${index} DONE cdi=${currentDirectorIndex}`);
   updateDirectorControls();
   return true;
 }
@@ -488,10 +490,13 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
     directorTimeline = buildDirectorTimeline();
     currentDirectorIndex = -1;
     const capped = Math.min(targetIndex, directorTimeline.length - 1);
+    console.log(`[jump] rebuild 0..${capped} (timeline length=${directorTimeline.length})`);
     for (let i = 0; i <= capped; i++) {
       await runDirectorStep(i);
     }
+    console.log(`[jump] rebuild DONE cdi=${currentDirectorIndex}`);
   } catch (err) {
+    console.log(`[jump] CANCELLED during rebuild cdi=${currentDirectorIndex}`);
     if (err !== CANCELLED) throw err;
   } finally {
     setFastRender(false);

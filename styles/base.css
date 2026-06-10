@@ -93,6 +93,7 @@ html.is-standalone .phone-shell{
   height:100dvh;
   border-radius:0;
   box-shadow:none;
+  background:#fafafa;
 }
 html.force-standalone .status-bar,
 html.is-standalone .status-bar{display:none;}
@@ -127,6 +128,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     height:100dvh;
     border-radius:0;
     box-shadow:none;
+    background:#fafafa;
   }
   html:not(.force-desktop) .status-bar{display:none;}
   html:not(.force-desktop) .nav-bar{top:0;padding-top:0;}
@@ -170,7 +172,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#E8A87C;
+  background:#FF9500;
   flex-shrink:0;
 }
 .status-time{

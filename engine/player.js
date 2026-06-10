@@ -405,15 +405,16 @@ function toggleDirectorAuto() {
 async function directorNextStep() {
   if (currentDirectorIndex >= directorTimeline.length - 1) return;
 
-  // 正在播放中 → 跳过当前步（fast-render 完成），再正常运行下一步
+  // 正在播放中 → 跳过当前步（取消旧链），再正常运行下一步
   if (directorBusy || autoPlaying) {
     stopDirectorAuto();
-    setFastRender(true);
+    incrementPlayId(); // 取消旧链所有 pending sleep → 旧步抛出 CANCELLED → 旧链解旋
 
-    // 让被拦截的旧调用链完成当前步（所有 sleep 瞬间返回，typewriter 直接刷完）
+    // 给旧链一个 tick 完成解旋（catch → finally → directorBusy = false）
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    setFastRender(false);
+    // 旧步因 CANCELLED 中断，currentDirectorIndex 未更新，手动推进一个索引
+    currentDirectorIndex = Math.min(currentDirectorIndex + 1, directorTimeline.length - 1);
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {

@@ -16,6 +16,15 @@ import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 
+function panelRoots() {
+  const roots = [document];
+  const phonePanel = document.getElementById('phoneControls');
+  if (phonePanel && phonePanel.classList.contains('is-open')) {
+    roots.push(phonePanel);
+  }
+  return roots;
+}
+
 // ── State ──────────────────────────────────────────────────
 const displayMode = 'flat';
 let toolCallStyle = 'card'; // 'card' | 'flat' | 'stack'
@@ -206,14 +215,7 @@ async function renderFinal() {
 
 // ── User / agent appearance ───────────────────────────────
 async function showUserMessage() {
-  // 先设置基础文本
   $('#userBubble').textContent = scenario.userMessage;
-  // 异步获取 hash 并追加到用户消息末尾
-  if (window.commitHashReady) {
-    window.commitHashReady.then((h) => {
-      $('#userBubble').textContent = scenario.userMessage + '  ' + h;
-    });
-  }
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
@@ -337,19 +339,21 @@ function buildDirectorTimeline() {
 
 // ── Director controls ─────────────────────────────────────
 function updateDirectorControls() {
-  const prev = document.getElementById('ctrlPrevStep');
-  const auto = document.getElementById('ctrlAutoStep');
-  const next = document.getElementById('ctrlNextStep');
   const total = directorTimeline.length || 0;
   const atStart = currentDirectorIndex < 0;
   const atEnd = total > 0 && currentDirectorIndex >= total - 1;
-  if (prev) prev.disabled = atStart;
-  if (next) next.disabled = atEnd;
-  if (auto) {
-    auto.disabled = directorBusy && !autoPlaying;
-    auto.textContent = '自动播放';
-    auto.classList.toggle('is-active', autoPlaying);
-  }
+  panelRoots().forEach(root => {
+    const prev = root.querySelector('#ctrlPrevStep');
+    const auto = root.querySelector('#ctrlAutoStep');
+    const next = root.querySelector('#ctrlNextStep');
+    if (prev) prev.disabled = atStart;
+    if (next) next.disabled = atEnd;
+    if (auto) {
+      auto.disabled = directorBusy && !autoPlaying;
+      auto.textContent = '自动播放';
+      auto.classList.toggle('is-active', autoPlaying);
+    }
+  });
 }
 
 async function runDirectorStep(index) {
@@ -407,25 +411,7 @@ async function directorNextStep() {
 
   // 正在播放中 → 跳过当前步，再正常运行下一步
   if (directorBusy || autoPlaying) {
-    stopDirectorAuto();
-    incrementPlayId(); // 取消旧链
-    await new Promise(resolve => setTimeout(resolve, 0)); // 等旧链解旋
-
-    // 清理 stepsList（工具调用区），但保留 user/agent/thinking 不动
-    const stepsList = document.getElementById('stepsList');
-    if (stepsList) stepsList.innerHTML = '';
-    directorRuntime = { rows: [] };
-
-    // 从 0 快速重建到跳过步的完成态
-    const targetStep = Math.min(currentDirectorIndex + 1, directorTimeline.length - 1);
-    setFastRender(true);
-    currentDirectorIndex = -1;
-    directorTimeline = buildDirectorTimeline();
-    const capped = Math.min(targetStep, directorTimeline.length - 1);
-    for (let i = 0; i <= capped; i++) {
-      await runDirectorStep(i);
-    }
-    setFastRender(false);
+    await jumpDirectorTo(currentDirectorIndex + 1, { force: true, keepUserShell: true });
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {
@@ -456,15 +442,13 @@ async function directorNextStep() {
   }
 }
 
-async function jumpDirectorTo(targetIndex, force = false) {
+async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = false } = {}) {
   if (!force && directorBusy) return;
 
   const wasBusy = directorBusy;
   stopDirectorAuto();
   incrementPlayId();
 
-  // 如果是从播放中强制跳转，需要让被 CANCELLED 中断的上一次调用
-  // 链完全解旋（catch → finally 跑完），避免 directorBusy 被旧 finally 误写
   if (wasBusy) {
     await new Promise(resolve => setTimeout(resolve, 0));
   }
@@ -473,7 +457,21 @@ async function jumpDirectorTo(targetIndex, force = false) {
   setFastRender(true);
   updateDirectorControls();
   try {
-    resetPlaybackDom();
+    if (keepUserShell) {
+      const overlay = document.getElementById('overlay');
+      const stepsList = document.getElementById('stepsList');
+      const main = document.getElementById('mainMd');
+      const execArea = document.getElementById('execArea');
+      if (overlay) overlay.className = 'sheet-overlay';
+      if (stepsList) { stepsList.innerHTML = ''; stepsList.className = 'steps-list open'; }
+      if (main) main.innerHTML = '';
+      if (execArea) execArea.className = 'exec-area open is-hidden';
+      execOpen = true;
+      stepsOpen = true;
+      scrollToBottom();
+    } else {
+      resetPlaybackDom();
+    }
     directorRuntime = { rows: [] };
     directorTimeline = buildDirectorTimeline();
     currentDirectorIndex = -1;
@@ -492,7 +490,7 @@ async function jumpDirectorTo(targetIndex, force = false) {
 
 function directorPrevStep() {
   if (currentDirectorIndex < 0) return;
-  jumpDirectorTo(currentDirectorIndex - 1, true);
+  jumpDirectorTo(currentDirectorIndex - 1, { force: true });
 }
 
 // ── URL 参数 ────────────────────────────────────────────────
@@ -522,12 +520,14 @@ function syncToolCallStyleUI() {
   shell.classList.toggle('tool-call-card', toolCallStyle === 'card');
   shell.classList.toggle('tool-call-flat', toolCallStyle === 'flat');
   shell.classList.toggle('tool-call-stack', toolCallStyle === 'stack');
-  const btnCard = document.getElementById('ctrlToolCard');
-  const btnFlat = document.getElementById('ctrlToolFlat');
-  const btnStack = document.getElementById('ctrlToolStack');
-  if (btnCard) btnCard.className = 'dc-seg-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
-  if (btnFlat) btnFlat.className = 'dc-seg-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
-  if (btnStack) btnStack.className = 'dc-seg-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
+  panelRoots().forEach(root => {
+    const btnCard = root.querySelector('#ctrlToolCard');
+    const btnFlat = root.querySelector('#ctrlToolFlat');
+    const btnStack = root.querySelector('#ctrlToolStack');
+    if (btnCard) btnCard.className = 'dc-seg-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
+    if (btnFlat) btnFlat.className = 'dc-seg-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+    if (btnStack) btnStack.className = 'dc-seg-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
+  });
 }
 
 function collapseToStack(line, labels) {
@@ -554,13 +554,14 @@ export function toggleToolCallStyle(mode) {
   });
 }
 
-function setupDemoControls() {
-  const speedSlider = document.getElementById('ctrlSpeedSlider');
+function bindPanelControls(root) {
+  const $r = (sel) => root.querySelector(sel);
+  const speedSlider = $r('#ctrlSpeedSlider');
   const speedTrack = speedSlider ? speedSlider.closest('.dc-speed-track') : null;
-  const replay = document.getElementById('ctrlReplay');
-  const prev = document.getElementById('ctrlPrevStep');
-  const auto = document.getElementById('ctrlAutoStep');
-  const next = document.getElementById('ctrlNextStep');
+  const replay = $r('#ctrlReplay');
+  const prev = $r('#ctrlPrevStep');
+  const auto = $r('#ctrlAutoStep');
+  const next = $r('#ctrlNextStep');
   if (!speedSlider || !replay) return;
 
   const syncSpeed = () => {
@@ -571,7 +572,6 @@ function setupDemoControls() {
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
     const visualPercent = Math.max(12.8, percent);
     const progress = `${visualPercent}%`;
-    // 分两段映射：滑块 0% → 50，50% → 200，100% → 1000
     let mappedValue;
     if (percent <= 50) {
       mappedValue = Math.round(50 + (percent / 50) * 150);
@@ -593,25 +593,82 @@ function setupDemoControls() {
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();
 
-  // ── 工具调用样式切换 ───────────────────────────────────
-  const toolCard = document.getElementById('ctrlToolCard');
-  const toolFlat = document.getElementById('ctrlToolFlat');
-  const toolStack = document.getElementById('ctrlToolStack');
+  const toolCard = $r('#ctrlToolCard');
+  const toolFlat = $r('#ctrlToolFlat');
+  const toolStack = $r('#ctrlToolStack');
   if (toolCard) toolCard.onclick = () => toggleToolCallStyle('card');
   if (toolFlat) toolFlat.onclick = () => toggleToolCallStyle('flat');
   if (toolStack) toolStack.onclick = () => toggleToolCallStyle('stack');
+}
 
-  // ── 同步初始工具调用样式 UI ──────────────────────────
+function setupDemoControls() {
+  bindPanelControls(document);
   syncToolCallStyleUI();
-
   updateDirectorControls();
 
-  // ── 显示 commit hash ──────────────────────────────────
-  // 数据来源统一由 commit-hash.js 提供（window.commitHashReady）
-  const hashEl = document.getElementById('ctrlCommitHash');
-  if (hashEl && window.commitHashReady) {
-    window.commitHashReady.then((h) => { hashEl.textContent = h; });
+  // Phone drawer wiring
+  const navCenter = document.querySelector('.nav-center');
+  const phonePanel = document.getElementById('phoneControls');
+  if (navCenter && phonePanel) {
+    navCenter.addEventListener('click', (e) => {
+      e.stopPropagation();
+      togglePhoneControls();
+    });
+    phonePanel.querySelector('.pc-backdrop')?.addEventListener('click', closePhoneControls);
   }
+}
+
+// ── Phone drawer ──────────────────────────────────────────
+function openPhoneControls() {
+  const phonePanel = document.getElementById('phoneControls');
+  const pcBody = document.getElementById('pcBody');
+  const source = document.querySelector('.demo-controls');
+  if (!phonePanel || !pcBody || !source) return;
+
+  pcBody.innerHTML = '';
+  const dcMain = source.querySelector('.dc-main');
+  if (dcMain) pcBody.appendChild(dcMain.cloneNode(true));
+  const dcHash = source.querySelector('.dc-hash');
+  if (dcHash) {
+    const hashClone = dcHash.cloneNode(true);
+    const srcVal = dcHash.querySelector('.dc-hash-value');
+    const cloneVal = hashClone.querySelector('.dc-hash-value');
+    if (srcVal && cloneVal) cloneVal.textContent = srcVal.textContent;
+    pcBody.appendChild(hashClone);
+  }
+
+  bindPanelControls(phonePanel);
+
+  // Sync speed slider
+  const srcSpeed = source.querySelector('#ctrlSpeedSlider');
+  const phoneSpeed = phonePanel.querySelector('#ctrlSpeedSlider');
+  if (srcSpeed && phoneSpeed) {
+    phoneSpeed.value = srcSpeed.value;
+    const progress = srcSpeed.style.getPropertyValue('--speed-progress');
+    phoneSpeed.style.setProperty('--speed-progress', progress);
+    const phoneTrack = phoneSpeed.closest('.dc-speed-track');
+    if (phoneTrack) phoneTrack.style.setProperty('--speed-progress', progress);
+  }
+
+  syncToolCallStyleUI();
+  updateDirectorControls();
+  phonePanel.classList.add('is-open');
+}
+
+function closePhoneControls() {
+  const phonePanel = document.getElementById('phoneControls');
+  if (!phonePanel) return;
+  phonePanel.classList.remove('is-open');
+  setTimeout(() => {
+    const pcBody = document.getElementById('pcBody');
+    if (pcBody) pcBody.innerHTML = '';
+  }, 350);
+}
+
+function togglePhoneControls() {
+  const phonePanel = document.getElementById('phoneControls');
+  if (!phonePanel) return;
+  phonePanel.classList.contains('is-open') ? closePhoneControls() : openPhoneControls();
 }
 
 // ── Playback lifecycle ────────────────────────────────────

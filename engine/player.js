@@ -314,7 +314,7 @@ function resetPlaybackDom() {
   const main = $('#mainMd');
   const overlay = $('#overlay');
   const tblOverlay = $('#tblOverlay');
-  const phoneShell = $('#phone-shell');
+  const phoneShell = $('.phone-shell');
 
   execOpen = true;
   stepsOpen = true;

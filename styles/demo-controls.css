@@ -52,8 +52,6 @@
 
 @supports ((-webkit-mask-image:url("")) or (mask-image:url(""))) {
   .dc-pill,
-  .dc-segment,
-  .dc-speed-track,
   .dc-icon-btn{
     border-radius:0;
     -webkit-mask-image:var(--dc-squircle-mask);
@@ -131,6 +129,7 @@
   padding:0;
   gap:0;
   background:#EBEBEB;
+  overflow:hidden;
 }
 
 .dc-seg-btn{

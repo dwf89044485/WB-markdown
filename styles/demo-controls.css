@@ -60,6 +60,17 @@
   border-radius:var(--dc-control-radius);
 }
 
+@supports (corner-shape: squircle) {
+  .dc-pill,
+  .dc-segment,
+  .dc-speed-track,
+  .dc-icon-btn,
+  .dc-seg-btn{
+    border-radius:var(--dc-control-radius);
+    corner-shape:superellipse(2);
+  }
+}
+
 /* ── Label ─────────────────────────────────────────────────── */
 .dc-label{
   width:75px;
@@ -186,6 +197,7 @@
   width:var(--speed-progress);
   background:rgba(0,0,0,.75);
   border-radius:inherit;
+  corner-shape:inherit;
   pointer-events:none;
 }
 

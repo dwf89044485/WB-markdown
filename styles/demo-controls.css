@@ -2,36 +2,25 @@
    DEMO CONTROLS — Playback control bar outside phone shell
    ============================================================ */
 
-/* ── Main layout: phone top, panel below ──────────────────── */
+/* ── Main layout: phone left, panel right ──────────────────── */
 .layout-main{
-  width:100%;
   display:flex;
   flex-direction:row;
   align-items:flex-start;
-  justify-content:flex-start;
+  justify-content:center;
   gap:24px;
-  padding:14px 10px 14px 44px;
-}
-
-/* ── Left area: phone container, 550px, centered ────────── */
-.left-area{
-  width:550px;
-  flex-shrink:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:24px;
+  padding:14px 10px;
 }
 
 /* ── Panel container ───────────────────────────────────────── */
 .demo-controls{
   --dc-control-height:30px;
   --dc-control-radius:10px;
-  width:393px;
+  width:260px;
   display:flex;
   flex-direction:column;
   gap:20px;
-  padding:24px 20px 20px;
+  padding:36px 20px 20px;
   background:#fff;
   border-radius:20px;
   box-shadow:0 4px 20px rgba(0,0,0,.08);
@@ -41,23 +30,23 @@
 .dc-main{
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:24px;
 }
 
 /* ── Row ───────────────────────────────────────────────────── */
 .dc-row{
   width:100%;
   display:flex;
-  flex-direction:row;
-  align-items:center;
-  gap:16px;
+  flex-direction:column;
+  align-items:stretch;
+  gap:10px;
 }
 
 .dc-pill,
 .dc-segment,
 .dc-speed-track,
 .dc-icon-btn{
-  border-radius:calc(var(--dc-control-radius) + 6px);
+  border-radius:calc(var(--dc-control-radius) + 2px);
 }
 
 @supports (corner-shape: squircle) {
@@ -66,26 +55,25 @@
   .dc-speed-track,
   .dc-icon-btn,
   .dc-seg-btn{
+    border-radius:calc(var(--dc-control-radius) + 6px);
     corner-shape:superellipse(2);
   }
 }
 
 /* ── Label ─────────────────────────────────────────────────── */
 .dc-label{
-  width:75px;
-  flex-shrink:0;
+  width:auto;
   font-size:13px;
   font-weight:500;
   color:#000;
   line-height:22px;
   letter-spacing:0;
   white-space:nowrap;
-  text-align:right;
 }
 
 /* ── Pill buttons (Row 1: 上一步/自动播放/下一步) ─────────── */
 .dc-pills{
-  flex:1;
+  width:220px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -108,21 +96,18 @@
 }
 
 #ctrlPrevStep,
-#ctrlNextStep,
+#ctrlNextStep{
+  width:67px;
+}
+
 #ctrlAutoStep{
-  flex:1;
-  width:auto;
+  width:80px;
 }
 
 .dc-pill:disabled{
   opacity:1;
   cursor:default;
 }
-
-.dc-pill:hover:not(:disabled):not(.is-active){ background:#E2E2E2; }
-.dc-pill:active:not(:disabled):not(.is-active){ background:#DADADA; }
-.dc-pill.is-active:hover:not(:disabled){ background:#4A4A4A; }
-.dc-pill.is-active:active:not(:disabled){ background:#555; }
 
 .dc-pill.is-active{
   background:#3B3B3B;
@@ -132,7 +117,7 @@
 
 /* ── Segmented control (Row 2: 边框/文字/堆叠) ─────────────── */
 .dc-segment{
-  flex:1;
+  width:220px;
   display:flex;
   align-items:center;
   height:var(--dc-control-height);
@@ -147,7 +132,7 @@
   height:var(--dc-control-height);
   padding:0;
   border:0;
-  border-radius:calc(var(--dc-control-radius) + 6px);
+  border-radius:calc(var(--dc-control-radius) + 2px);
   background:transparent;
   color:rgba(0,0,0,.7);
   font-size:13px;
@@ -165,14 +150,9 @@
   font-weight:600;
 }
 
-.dc-seg-btn:hover:not(.is-active){ background:rgba(0,0,0,.06); }
-.dc-seg-btn:active:not(.is-active){ background:rgba(0,0,0,.1); }
-.dc-seg-btn.is-active:hover{ background:rgba(0,0,0,.82); }
-.dc-seg-btn.is-active:active{ background:rgba(0,0,0,.88); }
-
 /* ── Speed row (Row 3) ────────────────────────────────────── */
 .dc-speed{
-  flex:1;
+  width:220px;
   display:flex;
   align-items:center;
   gap:10px;
@@ -180,13 +160,12 @@
 
 .dc-speed-track{
   --speed-progress:81.6667%;
-  flex:1;
-  min-width:0;
+  width:180px;
   height:var(--dc-control-height);
   position:relative;
   overflow:hidden;
   background:#EBEBEB;
-  flex-shrink:1;
+  flex-shrink:0;
 }
 
 .dc-speed-track::before{
@@ -204,7 +183,7 @@
   content:'';
   position:absolute;
   top:50%;
-  left:clamp(0px, calc(var(--speed-progress) - 1.5px), calc(100% - 3px));
+  left:clamp(0px, calc(var(--speed-progress) - 13px), calc(100% - 3px));
   width:3px;
   height:14px;
   border-radius:2px;
@@ -284,121 +263,26 @@
 
 /* ── Hash ──────────────────────────────────────────────────── */
 .dc-hash{
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
+  width:220px;
+  align-self:center;
+  text-align:center;
   font-size:13px;
   line-height:22px;
-  font-weight:300;
-  color:#8e8e93;
+  font-weight:200;
+  color:#000;
   letter-spacing:0;
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
-}
-.dc-hash-value{
-  font-weight:300;
-}
-
-/* ── Phone top sheet ───────────────────────────────────────── */
-.phone-controls{
-  position:absolute;
-  inset:0;
-  z-index:100;
-  pointer-events:none;
-  visibility:hidden;
-  display:flex;
-  align-items:flex-start;
-}
-.phone-controls.is-open{
-  visibility:visible;
-}
-
-.pc-backdrop{display:none;}
-
-.pc-panel{
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  max-height:60%;
-  pointer-events:auto;
-  background:#fff;
-  border-radius:0 0 34px 34px;
-  box-shadow:0 4px 24px rgba(0,0,0,.15);
-  transform:translateY(-100%);
-  transition:transform .36s cubic-bezier(.32,.72,0,1);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  --dc-control-height:30px;
-  --dc-control-radius:10px;
-}
-.phone-controls.is-open .pc-panel{transform:translateY(0);}
-
-.pc-body{
-  flex:1;
-  overflow-y:auto;
-  padding:34px 20px 20px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
-}
-
-.pc-handle{
-  width:100%;
-  height:36px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-  cursor:ns-resize;
-  margin-bottom:max(12px, env(safe-area-inset-bottom));
-}
-.pc-handle::after{
-  content:"";
-  width:72px;height:6px;
-  background:#d7d7dc;
-  border-radius:99px;
-}
-
-.phone-controls [data-phone-hide]{display:none;}
-
-/* ── Design notes panel ───────────────────────────────────── */
-.design-notes{
-  flex:1;
-  min-width:280px;
-  height:852px;
-  background:#fff;
-  border-radius:20px;
-  border:2px dashed #ddd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.design-notes-inner{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  height:100%;
-}
-
-.design-notes-placeholder{
-  font-size:15px;
-  font-weight:400;
-  color:#bbb;
-  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
 }
 
 /* ── Media query: compact layout on short screens ─────────── */
 @media (max-height:920px) and (min-width:901px){
   .layout-main{padding:10px;gap:16px;}
-  .left-area{width:550px;}
   .phone-shell{transform:scale(.92);transform-origin:center top;}
-  .demo-controls{width:393px;padding:16px;}
-  .dc-main{gap:14px;}
-  .design-notes{height:784px;min-width:240px;}
+  .demo-controls{width:244px;padding:28px 16px 16px;}
+  .dc-main{gap:18px;}
+  .dc-pills,
+  .dc-segment,
+  .dc-speed,
+  .dc-hash{width:212px;}
+  .dc-speed-track{width:172px;}
 }

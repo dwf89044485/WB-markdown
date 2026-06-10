@@ -23,6 +23,14 @@
   if (sp === '0') root.classList.add('force-desktop');
 })();
 </script>
+<script>
+(function(){
+  function setHeight(){ document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px'); }
+  setHeight();
+  window.addEventListener('resize', setHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(setHeight, 100); });
+})();
+</script>
 <script src="./commit-hash.js"></script>
 </head>
 <body>

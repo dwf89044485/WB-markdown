@@ -361,6 +361,11 @@ function initSheetDrag() {
       sheet.style.height = '40%';
       sheet.classList.remove('expanded');
     }
+    // 清除过渡避免干扰后续流式高度变化
+    sheet.addEventListener('transitionend', function h() {
+      sheet.style.transition = '';
+      sheet.removeEventListener('transitionend', h);
+    });
   };
 
   sheet.addEventListener('mousedown', onStart);

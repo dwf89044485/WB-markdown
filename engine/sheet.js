@@ -100,12 +100,26 @@ export function getFrames(refs) {
   return refs.split(',').map(id => id.trim()).filter(Boolean).map(id => scenario.sheetFrames[id]).filter(Boolean);
 }
 
+// ── Auto-expand sheet when content overflows current height ─
+function checkSheetOverflow() {
+  const body = $('#sheetBody');
+  const sheet = $('#sheet');
+  if (!body || !sheet || dragState) return;
+  if (body.scrollHeight <= body.clientHeight) return;
+  const containerH = sheet.parentElement.getBoundingClientRect().height;
+  const sheetPct = (sheet.getBoundingClientRect().height / containerH) * 100;
+  if (sheetPct >= 80) return;
+  const targetPct = Math.min(80, Math.ceil((body.scrollHeight / containerH) * 100 + 3));
+  sheet.style.height = targetPct + '%';
+}
+
 // ── Sheet body auto-scroll ────────────────────────────────
 function scrollSheetBody() {
   const body = $('#sheetBody');
   if (!body) return;
   if (body.scrollTop + body.clientHeight < body.scrollHeight - 32) return;
   body.scrollTop = body.scrollHeight;
+  checkSheetOverflow();
 }
 
 // ── Get full todo list for skeleton rendering ─────────────

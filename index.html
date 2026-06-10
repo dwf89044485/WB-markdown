@@ -115,6 +115,14 @@
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
     <div class="bottom-sheet" id="sheet">
       <div class="sheet-handle"></div>
+      <button class="glass-btn sheet-close-btn" type="button" aria-label="关闭" onclick="closeSheet()">
+        <span class="glass-layer lg-layer-one"></span>
+        <span class="glass-layer lg-layer-two"></span>
+        <span class="glass-layer-inner lg-layer-three"></span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-icon">
+          <path d="M3 3l10 10M13 3L3 13" stroke="#1c1c1e" stroke-opacity="0.86" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
       <div class="sheet-body" id="sheetBody"></div>
     </div>
   </div>

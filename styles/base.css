@@ -70,7 +70,7 @@ body{
   --nav-center-margin-left:var(--spacing-8);
   --nav-center-gap:var(--spacing-2);
 
-  --composer-padding-x:var(--spacing-26);
+  --composer-padding-x:var(--spacing-20);
   --composer-padding-bottom:var(--spacing-32);
   --composer-fade-height:var(--spacing-40);
 
@@ -173,7 +173,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#BF5AF2;
+  background:#FF6B35;
   flex-shrink:0;
 }
 .status-time{

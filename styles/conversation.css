@@ -134,6 +134,11 @@
 }
 @keyframes wbSweep{to{transform:translateX(115%);}}
 
+/* ── TOOL CALL STYLE: card ────────────────────────────────── */
+.phone-shell.tool-call-card .step-detail-link{
+  padding:calc(var(--cv-status-padding-y) - 1px) var(--cv-status-padding-x);
+}
+
 /* ── TOOL CALL STYLE: flat ────────────────────────────────── */
 .phone-shell.tool-call-flat .step-detail-link{
   display:inline-flex;

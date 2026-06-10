@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="./styles/base.css">
 <link rel="stylesheet" href="./styles/conversation.css">
 <link rel="stylesheet" href="./styles/markdown.css">
@@ -26,6 +27,7 @@
 </head>
 <body>
 <div class="layout-main">
+<div class="left-area">
 <div class="phone-shell">
   <!-- Status Bar -->
   <div class="status-bar">
@@ -126,7 +128,16 @@
       <div class="sheet-body" id="sheetBody"></div>
     </div>
   </div>
-</div>
+  <!-- Phone Controls (top sheet inside phone) -->
+  <div class="phone-controls" id="phoneControls">
+    <div class="pc-backdrop"></div>
+    <div class="pc-panel">
+      <div class="pc-body" id="pcBody"></div>
+      <div class="pc-handle"></div>
+    </div>
+  </div>
+</div> <!-- /phone-shell -->
+
 <div class="demo-controls" aria-label="演示参数控制">
   <div class="dc-main">
     <!-- Row 1: Token 速度 -->
@@ -142,8 +153,8 @@
       </div>
     </div>
 
-    <!-- Row 2: 演示进度控制 -->
-    <div class="dc-row">
+    <!-- Row 2: 演示进度控制（手机内隐藏） -->
+    <div class="dc-row" data-phone-hide>
       <span class="dc-label">演示进度控制：</span>
       <div class="dc-pills">
         <button id="ctrlPrevStep" type="button" class="dc-pill" disabled>上一步</button>
@@ -164,7 +175,14 @@
   </div>
 
   <!-- Hash -->
-  <span id="ctrlCommitHash" class="dc-hash"></span>
+  <span id="ctrlCommitHash" class="dc-hash"><span class="dc-hash-label">Hash：</span><span class="dc-hash-value"></span></span>
+</div>
+</div> <!-- /left-area -->
+
+<div class="design-notes" aria-label="交互设计说明">
+  <div class="design-notes-inner">
+    <span class="design-notes-placeholder">交互设计说明</span>
+  </div>
 </div>
 </div><!-- /layout-main -->
 

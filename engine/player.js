@@ -105,7 +105,7 @@ async function runStatusGroup(row, actions, container) {
     }
 
     completedLabels.push(toDoneLabel(action));
-    if (frames.length) completedFinalFrames.push(frames[frames.length - 1]);
+    if (frames.length) completedFinalFrames.push(...frames);
     setStatusLineLabels(line, completedLabels);
     line.dataset.frames = completedFinalFrames.join(',');
     line.dataset.sheetTitle = completedLabels.join('、');
@@ -154,7 +154,7 @@ async function runThinkingStatus() {
     await sleep(playbackDelay('frameDelay', 520));
   }
   setStatusLineLabels(line, [toDoneLabel(action)]);
-  line.dataset.frames = frames.length ? frames[frames.length - 1] : '';
+  line.dataset.frames = frames.join(',');
   line.dataset.sheetTitle = toDoneLabel(action);
   line.classList.remove('is-running');
   stepsList.classList.remove('is-hidden');

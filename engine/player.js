@@ -343,9 +343,8 @@ function updateDirectorControls() {
   const total = directorTimeline.length || 0;
   const atStart = currentDirectorIndex < 0;
   const atEnd = total > 0 && currentDirectorIndex >= total - 1;
-  const locked = directorBusy || autoPlaying;
-  if (prev) prev.disabled = locked || atStart;
-  if (next) next.disabled = locked || atEnd;
+  if (prev) prev.disabled = atStart;
+  if (next) next.disabled = atEnd;
   if (auto) {
     auto.disabled = directorBusy && !autoPlaying;
     auto.textContent = '自动播放';
@@ -404,7 +403,31 @@ function toggleDirectorAuto() {
 }
 
 async function directorNextStep() {
-  if (directorBusy || autoPlaying || currentDirectorIndex >= directorTimeline.length - 1) return;
+  if (currentDirectorIndex >= directorTimeline.length - 1) return;
+
+  // 正在播放中 → 跳过当前步（fast-render 完成），再正常运行下一步
+  if (directorBusy || autoPlaying) {
+    const currentStep = currentDirectorIndex + 1; // 当前正在执行的步
+    await jumpDirectorTo(currentStep, true); // fast-render 到当前步，跳过动画
+
+    // jumpDirectorTo 结束后 fastRender 已关闭、directorBusy = false
+    // 继续播放下一步（正常速度）
+    if (currentDirectorIndex < directorTimeline.length - 1) {
+      directorBusy = true;
+      updateDirectorControls();
+      try {
+        await runDirectorStep(currentDirectorIndex + 1);
+      } catch (err) {
+        if (err !== CANCELLED) throw err;
+      } finally {
+        directorBusy = false;
+        updateDirectorControls();
+      }
+    }
+    return;
+  }
+
+  // 正常情况：单步播放
   directorBusy = true;
   updateDirectorControls();
   try {
@@ -417,10 +440,19 @@ async function directorNextStep() {
   }
 }
 
-async function jumpDirectorTo(targetIndex) {
-  if (directorBusy) return;
+async function jumpDirectorTo(targetIndex, force = false) {
+  if (!force && directorBusy) return;
+
+  const wasBusy = directorBusy;
   stopDirectorAuto();
   incrementPlayId();
+
+  // 如果是从播放中强制跳转，需要让被 CANCELLED 中断的上一次调用
+  // 链完全解旋（catch → finally 跑完），避免 directorBusy 被旧 finally 误写
+  if (wasBusy) {
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+
   directorBusy = true;
   setFastRender(true);
   updateDirectorControls();
@@ -443,8 +475,8 @@ async function jumpDirectorTo(targetIndex) {
 }
 
 function directorPrevStep() {
-  if (directorBusy || autoPlaying || currentDirectorIndex < 0) return;
-  jumpDirectorTo(currentDirectorIndex - 1);
+  if (currentDirectorIndex < 0) return;
+  jumpDirectorTo(currentDirectorIndex - 1, true);
 }
 
 // ── URL 参数 ────────────────────────────────────────────────

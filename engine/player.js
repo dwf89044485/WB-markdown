@@ -555,6 +555,7 @@ function setupDemoControls() {
 
   // ── 同步初始工具调用样式 UI ──────────────────────────
   syncToolCallStyleUI();
+  syncToolStyleToDropdown();
 
   updateDirectorControls();
 
@@ -564,6 +565,88 @@ function setupDemoControls() {
   if (hashEl && window.commitHashReady) {
     window.commitHashReady.then((h) => { hashEl.textContent = h; });
   }
+
+  // ── Nav dropdown ──────────────────────────────────────────
+  const navToggle = document.getElementById('navDropdownToggle');
+  const navDropdown = document.getElementById('navDropdown');
+  const ndSlider = document.getElementById('ndSpeedSlider');
+  const ndReplay = document.getElementById('ndReplay');
+  const ndToolCard = document.getElementById('ndToolCard');
+  const ndToolFlat = document.getElementById('ndToolFlat');
+  const ndToolStack = document.getElementById('ndToolStack');
+  const ndTrack = ndSlider ? ndSlider.closest('.nd-speed-track') : null;
+
+  // Toggle dropdown
+  if (navToggle && navDropdown) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navDropdown.classList.toggle('is-hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!navDropdown.classList.contains('is-hidden') && !navDropdown.contains(e.target) && !navToggle.contains(e.target)) {
+        navDropdown.classList.add('is-hidden');
+      }
+    });
+  }
+
+  // Sync nd slider with right panel
+  if (ndSlider) {
+    ndSlider.value = currentTokensPerSecond();
+    const ndSyncSpeed = () => {
+      const value = Math.round(Number(ndSlider.value));
+      const min = Number(ndSlider.min) || 0;
+      const max = Number(ndSlider.max) || 100;
+      const clamped = Math.min(max, Math.max(min, value));
+      const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
+      const progress = `${percent}%`;
+
+      // Sync to right panel
+      scenario.playback.tokensPerSecond = clamped;
+      const rightSlider = document.getElementById('ctrlSpeedSlider');
+      if (rightSlider) {
+        rightSlider.value = clamped;
+        const rightTrack = rightSlider.closest('.dc-speed-track');
+        const visualPercent = Math.max(12.8, percent);
+        const visualProgress = `${visualPercent}%`;
+        rightSlider.style.setProperty('--speed-progress', visualProgress);
+        if (rightTrack) rightTrack.style.setProperty('--speed-progress', visualProgress);
+      }
+
+      // Sync to dropdown
+      const visualPercentND = Math.max(12.8, percent);
+      const visualProgressND = `${visualPercentND}%`;
+      ndSlider.style.setProperty('--speed-progress', visualProgressND);
+      if (ndTrack) ndTrack.style.setProperty('--speed-progress', visualProgressND);
+    };
+    ndSlider.addEventListener('input', ndSyncSpeed);
+  }
+
+  if (ndReplay && typeof restartPlayback === 'function') {
+    ndReplay.onclick = () => restartPlayback();
+  }
+
+  // Sync right panel's speed changes to dropdown
+  const rightSlider = document.getElementById('ctrlSpeedSlider');
+  if (rightSlider && ndSlider) {
+    rightSlider.addEventListener('input', () => {
+      ndSlider.value = rightSlider.value;
+      ndSlider.dispatchEvent(new Event('input'));
+    });
+  }
+
+  // Tool call style sync (dropdown ↔ right panel)
+  function syncToolStyleToDropdown() {
+    if (ndToolCard) ndToolCard.className = 'nd-seg-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
+    if (ndToolFlat) ndToolFlat.className = 'nd-seg-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+    if (ndToolStack) ndToolStack.className = 'nd-seg-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
+  }
+
+  if (ndToolCard) ndToolCard.onclick = () => { toggleToolCallStyle('card'); syncToolStyleToDropdown(); };
+  if (ndToolFlat) ndToolFlat.onclick = () => { toggleToolCallStyle('flat'); syncToolStyleToDropdown(); };
+  if (ndToolStack) ndToolStack.onclick = () => { toggleToolCallStyle('stack'); syncToolStyleToDropdown(); };
+
+  // Initial sync
+  syncToolStyleToDropdown();
 }
 
 // ── Playback lifecycle ────────────────────────────────────

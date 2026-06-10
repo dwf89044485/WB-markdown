@@ -360,10 +360,8 @@ function updateDirectorControls() {
 async function runDirectorStep(index) {
   const step = directorTimeline[index];
   if (!step) return false;
-  console.log(`[step] ${index} START label="${step.label}" cdi=${currentDirectorIndex}`);
   await step.run();
   currentDirectorIndex = index;
-  console.log(`[step] ${index} DONE cdi=${currentDirectorIndex}`);
   updateDirectorControls();
   return true;
 }
@@ -415,18 +413,14 @@ async function directorNextStep() {
   // 正在播放中 → 跳过当前步，再正常运行下一步
   if (directorBusy || autoPlaying) {
     const mySeq = ++directorSkipSeq;
-    console.log(`[next] SKIP seq=${mySeq} cdi=${currentDirectorIndex} busy=${directorBusy} auto=${autoPlaying}`);
     await jumpDirectorTo(currentDirectorIndex + 1, { force: true, keepUserShell: true });
 
     // 如果已有更新的 skip 触发，此调用作废（避免重复跑下一步）
-    if (mySeq !== directorSkipSeq) {
-      console.log(`[next] STALE seq=${mySeq} (current=${directorSkipSeq}) — bailing`);
-      return;
-    }
+    if (mySeq !== directorSkipSeq) return;
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {
-      console.log(`[next] RUN step ${currentDirectorIndex + 1}`);
+      const token = activePlayId;
       directorBusy = true;
       updateDirectorControls();
       try {
@@ -434,15 +428,17 @@ async function directorNextStep() {
       } catch (err) {
         if (err !== CANCELLED) throw err;
       } finally {
-        directorBusy = false;
-        updateDirectorControls();
+        if (token === activePlayId) {
+          directorBusy = false;
+          updateDirectorControls();
+        }
       }
     }
     return;
   }
 
   // 正常情况：单步播放
-  console.log(`[next] NORMAL step ${currentDirectorIndex + 1}`);
+  const token = activePlayId;
   directorBusy = true;
   updateDirectorControls();
   try {
@@ -450,8 +446,10 @@ async function directorNextStep() {
   } catch (err) {
     if (err !== CANCELLED) throw err;
   } finally {
-    directorBusy = false;
-    updateDirectorControls();
+    if (token === activePlayId) {
+      directorBusy = false;
+      updateDirectorControls();
+    }
   }
 }
 
@@ -461,12 +459,12 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
   const wasBusy = directorBusy;
   stopDirectorAuto();
   incrementPlayId();
-  console.log(`[jump] to=${targetIndex} force=${force} keepShell=${keepUserShell} wasBusy=${wasBusy}`);
 
   if (wasBusy) {
     await new Promise(resolve => setTimeout(resolve, 0));
   }
 
+  const token = activePlayId;
   directorBusy = true;
   setFastRender(true);
   updateDirectorControls();
@@ -490,18 +488,17 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
     directorTimeline = buildDirectorTimeline();
     currentDirectorIndex = -1;
     const capped = Math.min(targetIndex, directorTimeline.length - 1);
-    console.log(`[jump] rebuild 0..${capped} (timeline length=${directorTimeline.length})`);
     for (let i = 0; i <= capped; i++) {
       await runDirectorStep(i);
     }
-    console.log(`[jump] rebuild DONE cdi=${currentDirectorIndex}`);
   } catch (err) {
-    console.log(`[jump] CANCELLED during rebuild cdi=${currentDirectorIndex}`);
     if (err !== CANCELLED) throw err;
   } finally {
     setFastRender(false);
-    directorBusy = false;
-    updateDirectorControls();
+    if (token === activePlayId) {
+      directorBusy = false;
+      updateDirectorControls();
+    }
   }
 }
 

@@ -161,7 +161,7 @@
 .dc-speed-track{
   --speed-progress:81.6667%;
   width:180px;
-  height:14px;
+  height:var(--dc-control-height);
   position:relative;
   overflow:hidden;
   background:#EBEBEB;
@@ -185,7 +185,7 @@
   top:50%;
   left:clamp(0px, calc(var(--speed-progress) - 13px), calc(100% - 3px));
   width:3px;
-  height:12px;
+  height:14px;
   border-radius:2px;
   background:#fff;
   transform:translateY(-50%);
@@ -206,7 +206,7 @@
 }
 
 .dc-speed input[type="range"]::-webkit-slider-runnable-track{
-  height:14px;
+  height:var(--dc-control-height);
   background:transparent;
   border:0;
 }
@@ -222,7 +222,7 @@
 }
 
 .dc-speed input[type="range"]::-moz-range-track{
-  height:14px;
+  height:var(--dc-control-height);
   background:transparent;
   border:0;
 }

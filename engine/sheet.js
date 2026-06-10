@@ -334,6 +334,9 @@ function initSheetDrag() {
   if (!sheet || !body) return;
 
   const onStart = (e) => {
+    // 不拦截 close button 的点击
+    if (e.target.closest('.sheet-close-btn')) return;
+
     const touch = e.touches ? e.touches[0] : e;
     const rect = sheet.getBoundingClientRect();
     const isExpanded = sheet.classList.contains('expanded');

@@ -63,7 +63,7 @@ body{
 --standalone-conversation-padding-top:var(--spacing-74);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
-  --standalone-composer-padding-bottom:10px;
+  --standalone-composer-padding-bottom:24px;
 
   --nav-bar-top-offset:var(--spacing-54);
   --nav-bar-gap:var(--spacing-8);
@@ -115,7 +115,7 @@ html.is-standalone .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);pa
 html.force-standalone .agent-msg,
 html.is-standalone .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
 html.force-standalone .composer,
-html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
+html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) var(--standalone-composer-padding-bottom);}
 
 /* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
 @media (max-width:900px){
@@ -142,7 +142,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .demo-controls{display:none;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
-  html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
+  html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) var(--standalone-composer-padding-bottom);}
   html:not(.force-desktop) .layout-main{padding:0;gap:0;}
 }
 
@@ -176,7 +176,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#AF52DE;
+  background:#FFD60A;
   flex-shrink:0;
 }
 .status-time{

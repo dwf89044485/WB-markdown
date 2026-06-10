@@ -55,7 +55,7 @@
   .dc-speed-track,
   .dc-icon-btn,
   .dc-seg-btn{
-    border-radius:calc(var(--dc-control-radius) + 3px);
+    border-radius:calc(var(--dc-control-radius) + 4px);
     corner-shape:superellipse(2);
   }
 }
@@ -161,7 +161,7 @@
 .dc-speed-track{
   --speed-progress:81.6667%;
   width:180px;
-  height:var(--dc-control-height);
+  height:14px;
   position:relative;
   overflow:hidden;
   background:#EBEBEB;
@@ -206,7 +206,7 @@
 }
 
 .dc-speed input[type="range"]::-webkit-slider-runnable-track{
-  height:var(--dc-control-height);
+  height:14px;
   background:transparent;
   border:0;
 }
@@ -222,7 +222,7 @@
 }
 
 .dc-speed input[type="range"]::-moz-range-track{
-  height:var(--dc-control-height);
+  height:14px;
   background:transparent;
   border:0;
 }

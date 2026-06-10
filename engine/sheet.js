@@ -100,17 +100,25 @@ export function getFrames(refs) {
   return refs.split(',').map(id => id.trim()).filter(Boolean).map(id => scenario.sheetFrames[id]).filter(Boolean);
 }
 
-// ── Auto-expand sheet when content overflows current height ─
+// ── Auto-expand sheet when content outgrows 40% ──────────
 function checkSheetOverflow() {
   const body = $('#sheetBody');
   const sheet = $('#sheet');
   if (!body || !sheet || dragState) return;
-  if (body.scrollHeight <= body.clientHeight) return;
-  const containerH = sheet.parentElement.getBoundingClientRect().height;
-  const sheetPct = (sheet.getBoundingClientRect().height / containerH) * 100;
-  if (sheetPct >= 80) return;
-  const targetPct = Math.min(80, Math.ceil((body.scrollHeight / containerH) * 100 + 3));
-  sheet.style.height = targetPct + '%';
+
+  requestAnimationFrame(() => {
+    const containerH = sheet.parentElement.getBoundingClientRect().height;
+    const contentPct = (body.scrollHeight / containerH) * 100;
+    if (contentPct <= 42) return; // fits in 40% with buffer
+
+    const sheetPct = (sheet.getBoundingClientRect().height / containerH) * 100;
+    if (sheetPct >= 80) return;
+
+    const targetPct = Math.min(80, Math.ceil(contentPct + 3));
+    if (targetPct > sheetPct) {
+      sheet.style.height = targetPct + '%';
+    }
+  });
 }
 
 // ── Sheet body auto-scroll ────────────────────────────────

@@ -340,7 +340,6 @@ function updateDirectorControls() {
   const prev = document.getElementById('ctrlPrevStep');
   const auto = document.getElementById('ctrlAutoStep');
   const next = document.getElementById('ctrlNextStep');
-  const info = document.getElementById('ctrlStepInfo');
   const total = directorTimeline.length || 0;
   const atStart = currentDirectorIndex < 0;
   const atEnd = total > 0 && currentDirectorIndex >= total - 1;
@@ -349,12 +348,8 @@ function updateDirectorControls() {
   if (next) next.disabled = locked || atEnd;
   if (auto) {
     auto.disabled = directorBusy && !autoPlaying;
-    auto.textContent = autoPlaying ? '停止' : '自动播放';
-    auto.classList.toggle('is-playing', autoPlaying);
-  }
-  if (info) {
-    const current = Math.max(0, currentDirectorIndex + 1);
-    info.textContent = total ? `${current}/${total}` : '0/0';
+    auto.textContent = '自动播放';
+    auto.classList.toggle('is-active', autoPlaying);
   }
 }
 
@@ -482,9 +477,9 @@ function syncToolCallStyleUI() {
   const btnCard = document.getElementById('ctrlToolCard');
   const btnFlat = document.getElementById('ctrlToolFlat');
   const btnStack = document.getElementById('ctrlToolStack');
-  if (btnCard) btnCard.className = 'tab-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
-  if (btnFlat) btnFlat.className = 'tab-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
-  if (btnStack) btnStack.className = 'tab-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
+  if (btnCard) btnCard.className = 'dc-seg-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
+  if (btnFlat) btnFlat.className = 'dc-seg-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+  if (btnStack) btnStack.className = 'dc-seg-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
 }
 
 function collapseToStack(line, labels) {
@@ -512,26 +507,25 @@ export function toggleToolCallStyle(mode) {
 }
 
 function setupDemoControls() {
-  const speedGroup = document.getElementById('ctrlSpeedGroup');
+  const speedSlider = document.getElementById('ctrlSpeedSlider');
   const replay = document.getElementById('ctrlReplay');
   const prev = document.getElementById('ctrlPrevStep');
   const auto = document.getElementById('ctrlAutoStep');
   const next = document.getElementById('ctrlNextStep');
-  if (!speedGroup || !replay) return;
+  if (!speedSlider || !replay) return;
 
-  const activateSpeed = (value) => {
-    speedGroup.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.toggle('is-active', Number(btn.dataset.speed) === value);
-    });
-    scenario.playback.tokensPerSecond = value;
+  const syncSpeed = () => {
+    const value = Math.round(Number(speedSlider.value));
+    const min = Number(speedSlider.min) || 0;
+    const max = Number(speedSlider.max) || 100;
+    const clamped = Math.min(max, Math.max(min, value));
+    const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
+    scenario.playback.tokensPerSecond = clamped;
+    speedSlider.style.setProperty('--speed-progress', `${percent}%`);
   };
-  activateSpeed(currentTokensPerSecond());
-
-  speedGroup.addEventListener('click', (e) => {
-    const btn = e.target.closest('.speed-btn');
-    if (!btn) return;
-    activateSpeed(Number(btn.dataset.speed));
-  });
+  speedSlider.value = currentTokensPerSecond();
+  syncSpeed();
+  speedSlider.addEventListener('input', syncSpeed);
 
   replay.onclick = () => restartPlayback();
   if (prev) prev.onclick = () => directorPrevStep();

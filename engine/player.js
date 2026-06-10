@@ -413,13 +413,18 @@ async function directorNextStep() {
   // 正在播放中 → 跳过当前步，再正常运行下一步
   if (directorBusy || autoPlaying) {
     const mySeq = ++directorSkipSeq;
+    console.log(`[next] SKIP seq=${mySeq} cdi=${currentDirectorIndex} busy=${directorBusy} auto=${autoPlaying}`);
     await jumpDirectorTo(currentDirectorIndex + 1, { force: true, keepUserShell: true });
 
     // 如果已有更新的 skip 触发，此调用作废（避免重复跑下一步）
-    if (mySeq !== directorSkipSeq) return;
+    if (mySeq !== directorSkipSeq) {
+      console.log(`[next] STALE seq=${mySeq} (current=${directorSkipSeq}) — bailing`);
+      return;
+    }
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {
+      console.log(`[next] RUN step ${currentDirectorIndex + 1}`);
       directorBusy = true;
       updateDirectorControls();
       try {
@@ -435,6 +440,7 @@ async function directorNextStep() {
   }
 
   // 正常情况：单步播放
+  console.log(`[next] NORMAL step ${currentDirectorIndex + 1}`);
   directorBusy = true;
   updateDirectorControls();
   try {
@@ -453,6 +459,7 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
   const wasBusy = directorBusy;
   stopDirectorAuto();
   incrementPlayId();
+  console.log(`[jump] to=${targetIndex} force=${force} keepShell=${keepUserShell} wasBusy=${wasBusy}`);
 
   if (wasBusy) {
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -613,43 +620,50 @@ function setupDemoControls() {
 
   // Phone drawer wiring
   const navCenter = document.querySelector('.nav-center');
-  const phonePanel = document.getElementById('phoneControls');
-  if (navCenter && phonePanel) {
+  if (navCenter) {
     navCenter.addEventListener('click', (e) => {
       e.stopPropagation();
       togglePhoneControls();
     });
-
-    // Swipe up to close
-    const pcPanel = phonePanel.querySelector('.pc-panel');
-    if (pcPanel) {
-      let swipeY = 0, startY = 0, swiping = false;
-      pcPanel.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-        swiping = true;
-      }, { passive: true });
-      pcPanel.addEventListener('touchmove', (e) => {
-        if (!swiping) return;
-        const delta = e.touches[0].clientY - startY;
-        if (delta < 0) {
-          e.preventDefault();
-          swipeY = delta;
-          pcPanel.style.transition = 'none';
-          pcPanel.style.transform = `translateY(${delta}px)`;
-        }
-      }, { passive: false });
-      pcPanel.addEventListener('touchend', () => {
-        if (!swiping) return;
-        swiping = false;
-        pcPanel.style.transition = '';
-        if (swipeY < -60) {
-          closePhoneControls();
-        } else {
-          pcPanel.style.transform = '';
-        }
-      });
-    }
   }
+
+  // Swipe up to close (via document to avoid pointer-events: none issues)
+  let swipeY = 0, startY = 0, swiping = false;
+  document.addEventListener('touchstart', (e) => {
+    const panel = document.getElementById('phoneControls');
+    const pcPanel = panel?.querySelector('.pc-panel');
+    if (!pcPanel || !panel.classList.contains('is-open')) return;
+    if (!pcPanel.contains(e.target)) return;
+    if (['INPUT', 'BUTTON'].includes(e.target.tagName)) return;
+    startY = e.touches[0].clientY;
+    swiping = true;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!swiping) return;
+    const panel = document.getElementById('phoneControls');
+    const pcPanel = panel?.querySelector('.pc-panel');
+    if (!pcPanel) return;
+    const delta = e.touches[0].clientY - startY;
+    if (delta < 0) {
+      e.preventDefault();
+      swipeY = delta;
+      pcPanel.style.transition = 'none';
+      pcPanel.style.transform = `translateY(${delta}px)`;
+    }
+  }, { passive: false });
+  document.addEventListener('touchend', () => {
+    if (!swiping) return;
+    swiping = false;
+    const panel = document.getElementById('phoneControls');
+    const pcPanel = panel?.querySelector('.pc-panel');
+    if (!pcPanel) return;
+    pcPanel.style.transition = '';
+    if (swipeY < -60) {
+      closePhoneControls();
+    } else {
+      pcPanel.style.transform = '';
+    }
+  });
 }
 
 // ── Phone drawer ──────────────────────────────────────────
@@ -658,6 +672,13 @@ function openPhoneControls() {
   const pcBody = document.getElementById('pcBody');
   const source = document.querySelector('.demo-controls');
   if (!phonePanel || !pcBody || !source) return;
+
+  // Reset any inline transform left from previous swipe
+  const pcPanel = phonePanel.querySelector('.pc-panel');
+  if (pcPanel) {
+    pcPanel.style.transform = '';
+    pcPanel.style.transition = '';
+  }
 
   pcBody.innerHTML = '';
   const dcHash = source.querySelector('.dc-hash');
@@ -692,6 +713,12 @@ function openPhoneControls() {
 function closePhoneControls() {
   const phonePanel = document.getElementById('phoneControls');
   if (!phonePanel) return;
+  // Reset inline transform left from swipe drag
+  const pcPanel = phonePanel.querySelector('.pc-panel');
+  if (pcPanel) {
+    pcPanel.style.transform = '';
+    pcPanel.style.transition = '';
+  }
   phonePanel.classList.remove('is-open');
   setTimeout(() => {
     const pcBody = document.getElementById('pcBody');

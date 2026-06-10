@@ -506,6 +506,118 @@ export function toggleToolCallStyle(mode) {
   });
 }
 
+const SQUIRCLE_SELECTORS = ['.dc-pill', '.dc-segment', '.dc-seg-btn', '.dc-speed-track', '.dc-icon-btn'];
+const SQUIRCLE_NS = 'http://www.w3.org/2000/svg';
+const SQUIRCLE_EXPONENT = 5;
+const SQUIRCLE_STEPS = 96;
+let squircleSeq = 0;
+let squircleBindings = [];
+let squircleBindingsByElement = new Map();
+let squircleResizeObserver = null;
+let squircleWindowResizeHandler = null;
+
+function ensureSquircleDefs() {
+  let svgDefs = document.getElementById('squircle-defs');
+  if (!svgDefs) {
+    svgDefs = document.createElementNS(SQUIRCLE_NS, 'svg');
+    svgDefs.id = 'squircle-defs';
+    svgDefs.setAttribute('width', '0');
+    svgDefs.setAttribute('height', '0');
+    svgDefs.style.cssText = 'position:absolute;overflow:hidden;width:0;height:0;pointer-events:none;';
+    document.body.prepend(svgDefs);
+  }
+  return svgDefs;
+}
+
+function buildSuperellipsePath(width, height, n = SQUIRCLE_EXPONENT, steps = SQUIRCLE_STEPS) {
+  const cx = width / 2;
+  const cy = height / 2;
+  let d = '';
+  for (let i = 0; i <= steps; i++) {
+    const angle = (Math.PI * 2 * i) / steps;
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    const x = cx + cx * Math.sign(cosA) * Math.pow(Math.abs(cosA), 2 / n);
+    const y = cy + cy * Math.sign(sinA) * Math.pow(Math.abs(sinA), 2 / n);
+    const point = `${x.toFixed(3)},${y.toFixed(3)}`;
+    d += i === 0 ? `M ${point}` : ` L ${point}`;
+  }
+  return d + ' Z';
+}
+
+function updateSquircleBinding(binding) {
+  const rect = binding.element.getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height;
+  if (!width || !height) return;
+  binding.path.setAttribute('d', buildSuperellipsePath(width, height));
+  const clipRef = `url("#${binding.id}")`;
+  binding.element.style.clipPath = clipRef;
+  binding.element.style.webkitClipPath = clipRef;
+}
+
+function clearDemoControlSquircles() {
+  if (squircleResizeObserver) {
+    squircleResizeObserver.disconnect();
+    squircleResizeObserver = null;
+  }
+  if (squircleWindowResizeHandler) {
+    window.removeEventListener('resize', squircleWindowResizeHandler);
+    squircleWindowResizeHandler = null;
+  }
+
+  for (const binding of squircleBindings) {
+    if (binding.clipPath && binding.clipPath.parentNode) {
+      binding.clipPath.parentNode.removeChild(binding.clipPath);
+    }
+    if (binding.element) {
+      binding.element.style.removeProperty('clip-path');
+      binding.element.style.removeProperty('-webkit-clip-path');
+    }
+  }
+
+  squircleBindings = [];
+  squircleBindingsByElement = new Map();
+}
+
+function applyDemoControlSquircles() {
+  clearDemoControlSquircles();
+  const elements = SQUIRCLE_SELECTORS.flatMap(selector => Array.from(document.querySelectorAll(selector)));
+  if (!elements.length) return;
+
+  const svgDefs = ensureSquircleDefs();
+  for (const element of elements) {
+    const id = `sq-${++squircleSeq}`;
+    const clipPath = document.createElementNS(SQUIRCLE_NS, 'clipPath');
+    clipPath.id = id;
+    clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
+    const path = document.createElementNS(SQUIRCLE_NS, 'path');
+    clipPath.appendChild(path);
+    svgDefs.appendChild(clipPath);
+
+    const binding = { id, element, clipPath, path };
+    squircleBindings.push(binding);
+    squircleBindingsByElement.set(element, binding);
+    updateSquircleBinding(binding);
+  }
+
+  if ('ResizeObserver' in window) {
+    squircleResizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const binding = squircleBindingsByElement.get(entry.target);
+        if (binding) updateSquircleBinding(binding);
+      }
+    });
+    elements.forEach(element => squircleResizeObserver.observe(element));
+    return;
+  }
+
+  squircleWindowResizeHandler = () => {
+    squircleBindings.forEach(updateSquircleBinding);
+  };
+  window.addEventListener('resize', squircleWindowResizeHandler);
+}
+
 function setupDemoControls() {
   const speedSlider = document.getElementById('ctrlSpeedSlider');
   const replay = document.getElementById('ctrlReplay');
@@ -542,6 +654,7 @@ function setupDemoControls() {
 
   // ── 同步初始工具调用样式 UI ──────────────────────────
   syncToolCallStyleUI();
+  applyDemoControlSquircles();
 
   updateDirectorControls();
 

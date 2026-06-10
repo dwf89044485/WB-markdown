@@ -521,7 +521,8 @@ function setupDemoControls() {
     const max = Number(speedSlider.max) || 100;
     const clamped = Math.min(max, Math.max(min, value));
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
-    const progress = `${percent}%`;
+    const visualPercent = Math.max(12.8, percent);
+    const progress = `${visualPercent}%`;
     // 分两段映射：滑块 0% → 50，50% → 200，100% → 1000
     let mappedValue;
     if (percent <= 50) {

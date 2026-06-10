@@ -421,34 +421,31 @@
   height:52px;
   padding:0 16px;
   flex-shrink:0;
-  border-bottom:.5px solid #e5e5ea;
   background:#fff;
 }
 .tbl-fs-back{
   display:flex;
   align-items:center;
-  gap:4px;
-  padding:4px 8px 4px 4px;
+  padding:4px;
   border:none;
   background:transparent;
   cursor:pointer;
   border-radius:8px;
   font-size:15px;
   font-weight:500;
-  color:#007aff;
+  color:#000;
   -webkit-tap-highlight-color:transparent;
   transition:background .12s ease;
 }
-.tbl-fs-back:hover{background:rgba(0,122,255,.08);}
-.tbl-fs-back:active{background:rgba(0,122,255,.12);}
-.tbl-fs-back span{font-size:15px;line-height:1;}
+.tbl-fs-back:hover{background:rgba(0,0,0,.06);}
+.tbl-fs-back:active{background:rgba(0,0,0,.1);}
 
 .tbl-fs-title{
   flex:1;
   text-align:center;
   font-size:15px;
   font-weight:600;
-  color:#1c1c1e;
+  color:#000;
 }
 
 /* ── ACTION BUTTONS ─────────────────────────────────────── */
@@ -467,7 +464,7 @@
   background:transparent;
   cursor:pointer;
   border-radius:8px;
-  color:#007aff;
+  color:#000;
   -webkit-tap-highlight-color:transparent;
   transition:background .12s ease,color .12s ease;
 }
@@ -479,7 +476,6 @@
 .tbl-fs-btn:hover{background:rgba(0,122,255,.08);}
 .tbl-fs-btn:active{background:rgba(0,122,255,.12);}
 .tbl-fs-btn.is-checked{color:#34C759;}
-.tbl-fs-btn[data-action="share"]{opacity:.45;cursor:default;}
 
 /* ── CONTENT AREA ───────────────────────────────────────── */
 .tbl-fs-content{
@@ -487,7 +483,8 @@
   overflow-y:auto;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
-  padding:16px;
+  padding:0 16px;
+  margin-top:-4px;
   background:#fff;
 }
 /* ── LANDSCAPE (phone shell physically wide) ────────────── */

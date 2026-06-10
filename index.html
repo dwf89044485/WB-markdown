@@ -140,7 +140,6 @@
     <div class="tbl-fs-nav">
       <button class="tbl-fs-back" id="tblFsBack">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 4L7 11l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>返回</span>
       </button>
       <div class="tbl-fs-title">表格</div>
       <div class="tbl-fs-actions" id="tblFsActions">
@@ -239,6 +238,28 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     }, 1000);
   });
 
+  /* ── 对话流表格分享 ───────────────────────────────────── */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tbl-btn.tbl-share');
+    if (!btn) return;
+    var outer = btn.closest('.tbl-outer');
+    if (!outer) return;
+    var table = outer.querySelector('table');
+    if (!table) return;
+    var txt = '';
+    table.querySelectorAll('tr').forEach(function(row) {
+      var cells = row.querySelectorAll('th, td');
+      txt += Array.from(cells).map(function(c) { return c.innerText.trim(); }).join('\t') + '\n';
+    });
+    if (navigator.share) {
+      navigator.share({ text: txt.trim() }).catch(function(){});
+    } else {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt.trim()).catch(function(){});
+      }
+    }
+  });
+
 /* ── 表格全屏查看 ───────────────────────────────────────── */
 (function(){
   var shell = document.querySelector('.phone-shell');
@@ -328,7 +349,27 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.tbl-fs-btn[data-action="share"]');
     if (!btn) return;
-    /* 暂不做交互 */
+    var tbl = content.querySelector('table');
+    if (!tbl) return;
+    var txt = '';
+    tbl.querySelectorAll('tr').forEach(function(row){
+      var cells = row.querySelectorAll('th, td');
+      txt += Array.from(cells).map(function(c){ return c.innerText.trim(); }).join('\t') + '\n';
+    });
+    if (navigator.share) {
+      navigator.share({ text: txt.trim() }).catch(function(){});
+    } else {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt.trim()).catch(function(){});
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = txt.trim();
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    }
   });
 })();
 </script>

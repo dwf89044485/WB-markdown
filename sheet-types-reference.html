@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy — Sheet 内容类型图谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles/base.css">
+<link rel="stylesheet" href="./styles/conversation.css">
+<link rel="stylesheet" href="./styles/markdown.css">
+<link rel="stylesheet" href="./styles/sheet.css">
+<link rel="stylesheet" href="./styles/demo-controls.css">
+<style>
+/* ── 参考页布局 ──────────────────────────────────── */
+html{overflow:auto;}
+body{
+  min-height:100dvh;height:auto;
+  display:block;padding:40px;
+  overflow:visible;
+  background:#f0f0f2;
+}
+.page-title{
+  font-size:22px;font-weight:700;color:#1c1c1e;
+  margin-bottom:8px;padding-left:4px;
+}
+.page-subtitle{
+  font-size:14px;color:#8e8e93;margin-bottom:32px;padding-left:4px;
+}
+
+.sheet-section{
+  margin-bottom:40px;
+}
+.section-label{
+  font-size:15px;font-weight:600;color:#3c3c43;
+  margin-bottom:12px;padding-left:4px;
+  letter-spacing:-0.2px;
+}
+
+.sheet-row{
+  display:flex;flex-direction:row;
+  align-items:flex-end;  /* 底部对齐 */
+  gap:24px;flex-wrap:nowrap;
+  overflow-x:auto;
+  padding:0 4px;
+}
+
+/* ── Sheet 卡片容器 ──────────────────────────────── */
+.sheet-card-wrap{
+  width:390px;flex:0 0 390px;
+  position:relative;
+}
+.sheet-card-label{
+  display:block;text-align:center;
+  font-size:13px;color:#636366;
+  margin-top:8px;padding-bottom:4px;
+  letter-spacing:-0.1px;
+}
+
+/* 覆写 overlay 使其在参考页中可见 */
+.sheet-card-wrap .sheet-overlay{
+  position:relative;inset:auto;border-radius:0;
+  display:flex !important;opacity:1 !important;
+  padding:0;align-items:stretch;
+  background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+.sheet-card-wrap .bottom-sheet{
+  transform:translateY(0);
+  max-height:none;
+}
+
+/* 特殊：让 overlay 的背景透出 */
+.sheet-card-wrap .sheet-overlay{
+  background:transparent;
+}
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Sheet 内容类型图谱</h1>
+<p class="page-subtitle">工具调用状态行点击后浮层展示的所有内容类型 · 各组 bottom sheet 横向平铺底部对齐</p>
+
+<!-- ── 认知分析 ── -->
+<div class="sheet-section">
+  <div class="section-label">认知分析</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-thinking"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">思考过程</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 任务管理 ── -->
+<div class="sheet-section">
+  <div class="section-label">任务管理</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-create-todo"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">创建待办</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-update-todo"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">更新待办</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 信息获取 ── -->
+<div class="sheet-section">
+  <div class="section-label">信息获取</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-web-search"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">搜索网页</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-file-search"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">搜索文件</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 内容生成 ── -->
+<div class="sheet-section">
+  <div class="section-label">内容生成</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-image-gen"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">生成图片</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-skill"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">调用技能</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-subagent"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">委派 Subagent</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 文件操作 ── -->
+<div class="sheet-section">
+  <div class="section-label">文件操作</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-file-fail"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">文件创建失败</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-create-file"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">创建文件</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-read-file"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">读取文件</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-edit-file"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">编辑文件</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 命令执行 ── -->
+<div class="sheet-section">
+  <div class="section-label">命令执行</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-command"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">执行命令</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 子元素展示 ── -->
+<div class="sheet-section">
+  <div class="section-label">子元素展示</div>
+  <div class="sheet-row">
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-search-items"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">搜索结果条目</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-todo-states"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">待办三种状态</span>
+    </div>
+    <div class="sheet-card-wrap">
+      <div class="sheet-overlay vis show">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-body" id="body-empty"></div>
+        </div>
+      </div>
+      <span class="sheet-card-label">空状态</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 依赖 ── -->
+<script src="./scenario.js"></script>
+<script src="./icons-inline.js"></script>
+
+<!-- ── 渲染主脚本 ── -->
+<script type="module">
+import { getFrames, renderEvent, renderTodo, renderSearchItem } from './engine/sheet.js';
+import { ICONS } from './engine/icons.js';
+
+const scenario = window.WORKBUDDY_SCENARIO;
+const $ = (sel, root = document) => root.querySelector(sel);
+
+// ── 复用 renderSheet 内部的 computeTodoSnapshot 逻辑 ──
+function computeTodoSnapshot(frames, baseline) {
+  const lastOverrideFrame = [...frames].reverse().find(f =>
+    (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
+  );
+  if (!lastOverrideFrame) return [];
+  if (lastOverrideFrame.todoOverrides !== undefined) {
+    const overrideMap = {};
+    (lastOverrideFrame.todoOverrides || []).forEach(o => { overrideMap[o.index] = o.status; });
+    return baseline.map((text, i) => ({ text, status: overrideMap[i] || 'todo' }));
+  }
+  return lastOverrideFrame.todos;
+}
+
+// ── 一次性渲染所有 events+todos 到指定的 sheet body ──
+function renderToBody(body, frameRefs, extraEvents) {
+  const frames = getFrames(frameRefs);
+  const baseline = scenario.todosBaseline || [];
+  const todos = computeTodoSnapshot(frames, baseline);
+
+  // 渲染所有事件行
+  const allFrames = frames.slice();
+  for (const f of allFrames) {
+    if (f.events) {
+      for (const ev of f.events) {
+        body.appendChild(renderEvent(ev));
+        if (ev.outputs) {
+          ev.outputs.forEach(out => {
+            if (out.type === 'search') body.appendChild(renderSearchItem(out.text));
+          });
+        }
+      }
+    }
+    // 旧格式兼容
+    if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
+      f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
+    }
+  }
+
+  // 附加额外事件（用于非帧来源的手工渲染）
+  if (extraEvents) {
+    extraEvents.forEach(ev => body.appendChild(ev));
+  }
+
+  // 渲染待办
+  todos.forEach(t => body.appendChild(renderTodo(t)));
+}
+
+// ════════════════════════════════════════════════════
+//  1. 思考过程
+// ════════════════════════════════════════════════════
+renderToBody($('#body-thinking'), 'T.c');
+
+// ════════════════════════════════════════════════════
+//  2. 创建待办
+// ════════════════════════════════════════════════════
+renderToBody($('#body-create-todo'), 'F1.a');
+
+// ════════════════════════════════════════════════════
+//  3. 更新待办
+// ════════════════════════════════════════════════════
+renderToBody($('#body-update-todo'), 'F3.6a');
+
+// ════════════════════════════════════════════════════
+//  4. 搜索网页（含搜索结果 outputs）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-web-search'), 'F1.g');
+
+// ════════════════════════════════════════════════════
+//  5. 搜索文件
+// ════════════════════════════════════════════════════
+renderToBody($('#body-file-search'), 'F3.3b');
+
+// ════════════════════════════════════════════════════
+//  6. 生成图片
+// ════════════════════════════════════════════════════
+renderToBody($('#body-image-gen'), 'F2.d');
+
+// ════════════════════════════════════════════════════
+//  7. 调用技能（含 skill card）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-skill'), 'F3.1b');
+
+// ════════════════════════════════════════════════════
+//  8. 委派 Subagent（含 card）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-subagent'), 'F3.5c');
+
+// ════════════════════════════════════════════════════
+//  9. 文件创建失败（⚠️ warning）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-file-fail'), 'F3.2b');
+
+// ════════════════════════════════════════════════════
+// 10. 创建文件（⚠️→✏️）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-create-file'), 'F3.2c');
+
+// ════════════════════════════════════════════════════
+// 11. 读取文件（⚠️→✏️→👀+card）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-read-file'), 'F3.2d');
+
+// ════════════════════════════════════════════════════
+// 12. 编辑文件（⚠️→✏️→👀→✏️+patch card）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-edit-file'), 'F3.2e');
+
+// ════════════════════════════════════════════════════
+// 13. 执行命令（🖥️ ×3 + chevron）
+// ════════════════════════════════════════════════════
+renderToBody($('#body-command'), 'F3.4d');
+
+// ════════════════════════════════════════════════════
+// 14. 搜索结果条目（子元素展示）
+// ════════════════════════════════════════════════════
+(function(){
+  const body = $('#body-search-items');
+  ['大阪关西-Top500件大阪关西 - 2025年2月更新',
+   '2025年06月东京地铁卡销量排行榜前10名',
+   '一篇文章带你了解日本交通，电车、新干线、JR P']
+    .forEach(t => body.appendChild(renderSearchItem(t)));
+})();
+
+// ════════════════════════════════════════════════════
+// 15. 待办三种状态（todo / active / done）
+// ════════════════════════════════════════════════════
+(function(){
+  const body = $('#body-todo-states');
+  body.appendChild(renderTodo({ text: '调研日本入境政策', status: 'todo' }));
+  body.appendChild(renderTodo({ text: '查询关西天气趋势', status: 'active' }));
+  body.appendChild(renderTodo({ text: '整理旅行方案文档', status: 'done' }));
+})();
+
+// ════════════════════════════════════════════════════
+// 16. 空状态
+// ════════════════════════════════════════════════════
+(function(){
+  const body = $('#body-empty');
+  const empty = document.createElement('div');
+  empty.className = 'sheet-empty';
+  empty.textContent = '当前状态暂无新增事件。';
+  body.appendChild(empty);
+})();
+
+console.log('Sheet types reference rendered successfully.');
+</script>
+
+</body>
+</html>

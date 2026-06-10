@@ -1,0 +1,2 @@
+[     371ms] [LOG] Sheet types reference rendered successfully. @ http://localhost:8080/sheet-types-reference.html:433
+[    1633ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8080/favicon.ico:0

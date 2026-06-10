@@ -210,20 +210,20 @@ async function streamSheetContent(frames, baseline) {
       scrollSheetBody();
     }
 
-    // ── First frame with todo data: render skeleton at bottom ──
+    // ── Todo handling: first data frame renders skeleton, subsequent frames update ──
     const hasFrameTodos = (f.todoOverrides !== undefined) || (f.todos && f.todos.length > 0);
     if (!todoElements.length && hasFrameTodos) {
+      // First frame with todo data: render skeleton and apply current overrides in one shot
       todoElements = renderTodoSkeleton(frames, baseline);
       if (todoElements.length) {
         firstTodo = todoElements[0].row;
         todoElements.forEach(t => body.appendChild(t.row));
+        if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
         scrollSheetBody();
         await sleep(Math.round(frameDelay * 0.4));
       }
-    }
-
-    // ── Apply todo overrides（DOM-level mutation）──
-    if (f.todoOverrides && todoElements.length) {
+    } else if (f.todoOverrides && todoElements.length) {
+      // Subsequent frames: update existing DOM
       applyTodoOverridesToDom(f.todoOverrides, todoElements);
       await sleep(Math.round(frameDelay * 0.4));
     }

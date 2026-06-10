@@ -175,6 +175,7 @@
   width:var(--speed-progress);
   background:rgba(0,0,0,.75);
   border-radius:inherit;
+  corner-shape:inherit;
   pointer-events:none;
 }
 

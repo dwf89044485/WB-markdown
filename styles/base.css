@@ -163,7 +163,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#5E5CE6;
+  background:#FFD60A;
   flex-shrink:0;
 }
 .status-time{

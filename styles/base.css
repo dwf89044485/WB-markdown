@@ -9,6 +9,7 @@ html{
   height:100%;
   overflow:hidden;
   overscroll-behavior:none;
+  background:#fafafa;
 }
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
@@ -59,7 +60,7 @@ body{
 --standalone-conversation-padding-top:var(--spacing-74);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
-  --standalone-composer-padding-bottom:var(--spacing-12);
+  --standalone-composer-padding-bottom:10px;
 
   --nav-bar-top-offset:var(--spacing-54);
   --nav-bar-gap:var(--spacing-8);
@@ -70,7 +71,7 @@ body{
   --nav-center-gap:var(--spacing-2);
 
   --composer-padding-x:var(--spacing-26);
-  --composer-padding-bottom:var(--spacing-32);
+  --composer-padding-bottom:10px;
   --composer-fade-height:var(--spacing-40);
 
   --status-icon-color:#112233;
@@ -169,7 +170,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#E67E22;
+  background:#E8A87C;
   flex-shrink:0;
 }
 .status-time{

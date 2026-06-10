@@ -405,16 +405,27 @@ function toggleDirectorAuto() {
 async function directorNextStep() {
   if (currentDirectorIndex >= directorTimeline.length - 1) return;
 
-  // 正在播放中 → 跳过当前步（取消旧链），再正常运行下一步
+  // 正在播放中 → 跳过当前步，再正常运行下一步
   if (directorBusy || autoPlaying) {
     stopDirectorAuto();
-    incrementPlayId(); // 取消旧链所有 pending sleep → 旧步抛出 CANCELLED → 旧链解旋
+    incrementPlayId(); // 取消旧链
+    await new Promise(resolve => setTimeout(resolve, 0)); // 等旧链解旋
 
-    // 给旧链一个 tick 完成解旋（catch → finally → directorBusy = false）
-    await new Promise(resolve => setTimeout(resolve, 0));
+    // 清理 stepsList（工具调用区），但保留 user/agent/thinking 不动
+    const stepsList = document.getElementById('stepsList');
+    if (stepsList) stepsList.innerHTML = '';
+    directorRuntime = { rows: [] };
 
-    // 旧步因 CANCELLED 中断，currentDirectorIndex 未更新，手动推进一个索引
-    currentDirectorIndex = Math.min(currentDirectorIndex + 1, directorTimeline.length - 1);
+    // 从 0 快速重建到跳过步的完成态
+    const targetStep = Math.min(currentDirectorIndex + 1, directorTimeline.length - 1);
+    setFastRender(true);
+    currentDirectorIndex = -1;
+    directorTimeline = buildDirectorTimeline();
+    const capped = Math.min(targetStep, directorTimeline.length - 1);
+    for (let i = 0; i <= capped; i++) {
+      await runDirectorStep(i);
+    }
+    setFastRender(false);
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {

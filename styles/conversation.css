@@ -207,11 +207,11 @@
 .stack-icon-wrap:nth-child(n+2){
   margin-left:-5px;
 }
-.stack-icon-wrap:nth-child(1){z-index:1;}
-.stack-icon-wrap:nth-child(2){z-index:2;}
+.stack-icon-wrap:nth-child(1){z-index:5;}
+.stack-icon-wrap:nth-child(2){z-index:4;}
 .stack-icon-wrap:nth-child(3){z-index:3;}
-.stack-icon-wrap:nth-child(4){z-index:4;}
-.stack-icon-wrap:nth-child(5){z-index:5;}
+.stack-icon-wrap:nth-child(4){z-index:2;}
+.stack-icon-wrap:nth-child(5){z-index:1;}
 .status-stack-count{
   font-size:14.5px;
   color:#999;

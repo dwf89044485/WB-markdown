@@ -23,7 +23,7 @@
   padding:36px 20px 20px;
   background:#fff;
   border-radius:20px;
-  box-shadow:none;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
   font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
 }
 

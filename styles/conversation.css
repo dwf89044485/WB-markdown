@@ -106,7 +106,7 @@
   font-size:14.5px;
   color:#999;
   cursor:pointer;
-  border:1px solid #e5e5ea;
+  border:1px solid #ebebef;
   border-radius:var(--cv-status-radius);
   padding:var(--cv-status-padding-y) var(--cv-status-padding-x);
   letter-spacing:-0.1px;

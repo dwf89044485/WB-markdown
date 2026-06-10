@@ -39,12 +39,12 @@
 .sheet-overlay{
   position:absolute;inset:0;
   background:rgba(0,0,0,0.30);
-  backdrop-filter:blur(1.5px);
-  -webkit-backdrop-filter:blur(1.5px);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
   z-index:200;
   display:none;opacity:0;
   transition:opacity 0.28s ease;
-  border-radius:47px;
+  border-radius:0;
   align-items:flex-end;
   padding:0 var(--sheet-inset) var(--sheet-inset);
 }

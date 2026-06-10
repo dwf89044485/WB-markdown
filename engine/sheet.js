@@ -329,33 +329,49 @@ function resetSheetHeight() {
 }
 
 function initSheetDrag() {
-  const sheet = $('#sheet');
-  if (!sheet) return;
-
-  const inDragZone = (e) => {
-    const touch = e.touches ? e.touches[0] : e;
-    const rect = sheet.getBoundingClientRect();
-    return (touch.clientY - rect.top) < DRAG_ZONE_HEIGHT;
-  };
+  const body = $('#sheetBody');
+  if (!sheet || !body) return;
 
   const onStart = (e) => {
-    if (!inDragZone(e)) return;
-    e.preventDefault();
-    dragState = {
-      startY: e.touches ? e.touches[0].clientY : e.clientY,
-      startH: sheet.getBoundingClientRect().height,
-      containerH: sheet.parentElement.getBoundingClientRect().height
-    };
-    sheet.style.transition = 'none';
+    const touch = e.touches ? e.touches[0] : e;
+    const rect = sheet.getBoundingClientRect();
+    const offsetY = touch.clientY - rect.top;
+    const isExpanded = sheet.classList.contains('expanded');
+
+    if (!isExpanded) {
+      if (offsetY >= DRAG_ZONE_HEIGHT) return;
+      e.preventDefault();
+      dragState = { resize: true, startY: touch.clientY, startH: rect.height,
+        containerH: sheet.parentElement.getBoundingClientRect().height };
+      return;
+    }
+
+    // 80%: 内容在顶部时才可能折叠
+    if (body.scrollTop > 0) return;
+    dragState = { resize: false, startY: touch.clientY, startH: rect.height,
+      containerH: sheet.parentElement.getBoundingClientRect().height };
   };
 
   const onMove = (e) => {
     if (!dragState) return;
     const y = e.touches ? e.touches[0].clientY : e.clientY;
     const dy = dragState.startY - y;
+    const isExpanded = sheet.classList.contains('expanded');
+
+    // 80% + 首次上拖 → 非折叠手势，释放
+    if (isExpanded && !dragState.resize) {
+      if (dy >= 0) { dragState = null; return; }
+      dragState.resize = true;
+      e.preventDefault();
+    }
+
+    if (!dragState.resize) return;
+    e.preventDefault();
+    sheet.style.transition = 'none';
     const h = Math.max(0, dragState.startH + dy);
-    const pct = Math.min(80, Math.max(20, (h / dragState.containerH) * 100));
+    const pct = Math.min(80, Math.max(40, (h / dragState.containerH) * 100));
     sheet.style.height = pct + '%';
+    sheet.classList.toggle('expanded', pct >= 70);
   };
 
   const onEnd = () => {

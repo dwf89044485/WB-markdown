@@ -229,8 +229,7 @@
   text-align:left;
   border-bottom:.5px solid var(--md-border);
   font-size:var(--md-font-table-th);
-  white-space:normal;
-  word-break:break-word;
+  white-space:nowrap;
 }
 .md .tbl td{
   padding:9px 10px;
@@ -239,20 +238,17 @@
   font-size:var(--md-font-table-td);
   line-height:1.45;
   vertical-align:top;
-  white-space:normal;
-  word-break:break-word;
+  white-space:nowrap;
 }
 .md-node .tbl th{
   font-size:var(--md-font-node-table-th);
   padding:7px 7px;
-  white-space:normal;
-  word-break:break-word;
+  white-space:nowrap;
 }
 .md-node .tbl td{
   font-size:var(--md-font-node-table-td);
   padding:7px 7px;
-  white-space:normal;
-  word-break:break-word;
+  white-space:nowrap;
 }
 .md .tbl tr:last-child td{border-bottom:none;}
 .md .tbl-wrap + h3{margin-top:16px;}

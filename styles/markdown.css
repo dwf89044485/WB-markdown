@@ -209,7 +209,7 @@
 }
 .md-node .tbl-wrap{margin:7px 0 10px;border-radius:11px;}
 .md .tbl{
-  width:100%;
+  width:auto;
   border-collapse:separate;
   border-spacing:0;
   table-layout:auto;

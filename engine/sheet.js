@@ -210,22 +210,28 @@ async function streamSheetContent(frames, baseline) {
       scrollSheetBody();
     }
 
-    // ── Todo handling: first data frame renders skeleton, subsequent frames update ──
+    // ── Todo phase: only render/update on 创建待办 or 更新待办 frames ──
+    // Other phase frames (搜索网页, 生成图片, etc.) may carry todoOverrides but
+    // should NOT show todo changes mid-phase — the user sees progress at the end.
+    const isTodoPhase = f.title === '创建待办' || f.title === '更新待办';
     const hasFrameTodos = (f.todoOverrides !== undefined) || (f.todos && f.todos.length > 0);
-    if (!todoElements.length && hasFrameTodos) {
-      // First frame with todo data: render skeleton and apply current overrides in one shot
-      todoElements = renderTodoSkeleton(frames, baseline);
-      if (todoElements.length) {
-        firstTodo = todoElements[0].row;
-        todoElements.forEach(t => body.appendChild(t.row));
+
+    if (isTodoPhase && hasFrameTodos) {
+      if (!todoElements.length) {
+        // First todo phase: render skeleton and apply current overrides in one shot
+        todoElements = renderTodoSkeleton(frames, baseline);
+        if (todoElements.length) {
+          firstTodo = todoElements[0].row;
+          todoElements.forEach(t => body.appendChild(t.row));
+          if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
+          scrollSheetBody();
+          await sleep(Math.round(frameDelay * 0.4));
+        }
+      } else {
+        // Subsequent todo phases: update existing DOM with accumulated state
         if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
-        scrollSheetBody();
         await sleep(Math.round(frameDelay * 0.4));
       }
-    } else if (f.todoOverrides && todoElements.length) {
-      // Subsequent frames: update existing DOM
-      applyTodoOverridesToDom(f.todoOverrides, todoElements);
-      await sleep(Math.round(frameDelay * 0.4));
     }
 
     // ── Inter-frame delay ──

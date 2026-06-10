@@ -508,6 +508,7 @@ export function toggleToolCallStyle(mode) {
 
 function setupDemoControls() {
   const speedSlider = document.getElementById('ctrlSpeedSlider');
+  const speedTrack = speedSlider ? speedSlider.closest('.dc-speed-track') : null;
   const replay = document.getElementById('ctrlReplay');
   const prev = document.getElementById('ctrlPrevStep');
   const auto = document.getElementById('ctrlAutoStep');
@@ -520,8 +521,10 @@ function setupDemoControls() {
     const max = Number(speedSlider.max) || 100;
     const clamped = Math.min(max, Math.max(min, value));
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
+    const progress = `${percent}%`;
     scenario.playback.tokensPerSecond = clamped;
-    speedSlider.style.setProperty('--speed-progress', `${percent}%`);
+    speedSlider.style.setProperty('--speed-progress', progress);
+    if (speedTrack) speedTrack.style.setProperty('--speed-progress', progress);
   };
   speedSlider.value = currentTokensPerSecond();
   syncSpeed();

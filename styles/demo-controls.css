@@ -53,9 +53,10 @@
   .dc-pill,
   .dc-segment,
   .dc-speed-track,
-  .dc-icon-btn{
+  .dc-icon-btn,
+  .dc-seg-btn{
     border-radius:calc(var(--dc-control-radius) + 3px);
-    corner-shape:squircle;
+    corner-shape:superellipse(2);
   }
 }
 
@@ -131,6 +132,7 @@
   height:var(--dc-control-height);
   padding:0;
   border:0;
+  border-radius:var(--dc-control-radius);
   background:transparent;
   color:rgba(0,0,0,.7);
   font-size:13px;
@@ -157,11 +159,36 @@
 }
 
 .dc-speed-track{
+  --speed-progress:81.6667%;
   width:180px;
   height:var(--dc-control-height);
+  position:relative;
   overflow:hidden;
   background:#EBEBEB;
   flex-shrink:0;
+}
+
+.dc-speed-track::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:var(--speed-progress);
+  background:rgba(0,0,0,.75);
+  border-radius:inherit;
+  pointer-events:none;
+}
+
+.dc-speed-track::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:clamp(0px, calc(var(--speed-progress) - 13px), calc(100% - 3px));
+  width:3px;
+  height:12px;
+  border-radius:2px;
+  background:#fff;
+  transform:translateY(-50%);
+  pointer-events:none;
 }
 
 .dc-speed input[type="range"]{
@@ -170,11 +197,9 @@
   width:100%;
   height:100%;
   margin:0;
-  background:linear-gradient(
-    90deg,
-    rgba(0,0,0,.75) 0 var(--speed-progress, 81.6667%),
-    #EBEBEB var(--speed-progress, 81.6667%) 100%
-  );
+  position:relative;
+  z-index:1;
+  background:transparent;
   outline:none;
   cursor:pointer;
 }
@@ -188,12 +213,11 @@
 .dc-speed input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:2px;
-  height:10px;
-  border-radius:1px;
-  background:#fff;
+  width:18px;
+  height:var(--dc-control-height);
   border:0;
-  margin-top:10px;
+  background:transparent;
+  margin-top:0;
 }
 
 .dc-speed input[type="range"]::-moz-range-track{
@@ -203,11 +227,11 @@
 }
 
 .dc-speed input[type="range"]::-moz-range-thumb{
-  width:2px;
-  height:10px;
+  width:18px;
+  height:var(--dc-control-height);
   border:0;
-  border-radius:1px;
-  background:#fff;
+  border-radius:0;
+  background:transparent;
 }
 
 /* Icon button (refresh) */

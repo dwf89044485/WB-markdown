@@ -259,6 +259,7 @@
   display:block;
   width:14px;
   height:14px;
+  overflow:visible;
 }
 .md .tbl{
   width:auto;

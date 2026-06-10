@@ -127,8 +127,7 @@ function checkSheetOverflow() {
 function scrollSheetBody() {
   const body = $('#sheetBody');
   if (!body) return;
-  if (body.scrollTop + body.clientHeight < body.scrollHeight - 32) return;
-  body.scrollTop = body.scrollHeight;
+  // 内容展示在顶部（scrollTop = 0），超出的部分靠 checkSheetOverflow 自动展开
   checkSheetOverflow();
 }
 

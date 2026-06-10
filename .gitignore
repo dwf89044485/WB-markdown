@@ -16,3 +16,4 @@ server.log
 COMMIT_HASH
 .vercel
 .env*.local
+.gstack/

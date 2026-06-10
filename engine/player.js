@@ -407,10 +407,14 @@ async function directorNextStep() {
 
   // 正在播放中 → 跳过当前步（fast-render 完成），再正常运行下一步
   if (directorBusy || autoPlaying) {
-    const currentStep = currentDirectorIndex + 1; // 当前正在执行的步
-    await jumpDirectorTo(currentStep, true); // fast-render 到当前步，跳过动画
+    stopDirectorAuto();
+    setFastRender(true);
 
-    // jumpDirectorTo 结束后 fastRender 已关闭、directorBusy = false
+    // 让被拦截的旧调用链完成当前步（所有 sleep 瞬间返回，typewriter 直接刷完）
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    setFastRender(false);
+
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {
       directorBusy = true;

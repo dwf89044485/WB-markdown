@@ -86,7 +86,7 @@ html.is-standalone body{
   display:block;
   padding:0;
   background:#fafafa;
-  position:fixed;top:0;left:0;right:0;bottom:0;
+  height:var(--actual-height, 100dvh);
   overflow:hidden;
 }
 html.force-standalone .phone-shell,
@@ -123,7 +123,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:block;
     padding:0;
     background:#fafafa;
-    position:fixed;top:0;left:0;right:0;bottom:0;
+    height:var(--actual-height, 100dvh);
     overflow:hidden;
   }
   html:not(.force-desktop) .phone-shell{

@@ -275,7 +275,17 @@
   align-items:center;
   justify-content:center;
   flex-shrink:0;
+  position:relative;
   transition:background .12s ease;
+}
+
+/* Touch target extension for mobile: 30→44px without visual change */
+@media (pointer: coarse) {
+  .dc-icon-btn::after{
+    content:'';
+    position:absolute;
+    inset:-7px;
+  }
 }
 
 .dc-icon-btn:hover{ background:#E2E2E2; }

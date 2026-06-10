@@ -4,3 +4,6 @@
 # Vercel 部署不会上传 .git 目录，所以前端会自动 fallback 到此处注入的 meta 值。
 SHORT_SHA=$(printf '%s' "$VERCEL_GIT_COMMIT_SHA" | cut -c1-8)
 sed "s/__COMMIT_HASH__/$SHORT_SHA/g" index.html > index.html.tmp && mv index.html.tmp index.html
+
+# 删除 docs 目录（仅包含外部文档资源，非项目运行必需）
+rm -rf docs

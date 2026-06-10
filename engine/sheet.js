@@ -293,6 +293,8 @@ export function maybeClose(e) {
 }
 
 // ── Drag handle: expand/collapse sheet 40% ↔ 80% ────────
+// 拖拽触发区域 = sheet 顶部 60px（覆盖 handle + 上下间距），触控落入此区域视为 resize 手势
+const DRAG_ZONE_HEIGHT = 60;
 let dragState = null;
 
 function resetSheetHeight() {
@@ -304,10 +306,16 @@ function resetSheetHeight() {
 
 function initSheetDrag() {
   const sheet = $('#sheet');
-  const handle = sheet ? sheet.querySelector('.sheet-handle') : null;
-  if (!sheet || !handle) return;
+  if (!sheet) return;
+
+  const inDragZone = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    const rect = sheet.getBoundingClientRect();
+    return (touch.clientY - rect.top) < DRAG_ZONE_HEIGHT;
+  };
 
   const onStart = (e) => {
+    if (!inDragZone(e)) return;
     e.preventDefault();
     dragState = {
       startY: e.touches ? e.touches[0].clientY : e.clientY,
@@ -319,9 +327,8 @@ function initSheetDrag() {
 
   const onMove = (e) => {
     if (!dragState) return;
-    e.preventDefault();
     const y = e.touches ? e.touches[0].clientY : e.clientY;
-    const dy = dragState.startY - y; // positive = drag up = expand
+    const dy = dragState.startY - y;
     const h = Math.max(0, dragState.startH + dy);
     const pct = Math.min(80, Math.max(20, (h / dragState.containerH) * 100));
     sheet.style.height = pct + '%';
@@ -342,11 +349,11 @@ function initSheetDrag() {
     }
   };
 
-  handle.addEventListener('mousedown', onStart);
+  sheet.addEventListener('mousedown', onStart);
   document.addEventListener('mousemove', onMove);
   document.addEventListener('mouseup', onEnd);
-  handle.addEventListener('touchstart', onStart, { passive: false });
-  document.addEventListener('touchmove', onMove, { passive: false });
+  sheet.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('touchmove', onMove);
   document.addEventListener('touchend', onEnd);
 }
 

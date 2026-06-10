@@ -37,6 +37,7 @@ let currentDirectorIndex = -1;
 let autoPlaying = false;
 let directorBusy = false;
 let pauseRequested = false;
+let directorSkipSeq = 0;
 
 // ── Helpers ───────────────────────────────────────────────
 
@@ -411,7 +412,11 @@ async function directorNextStep() {
 
   // 正在播放中 → 跳过当前步，再正常运行下一步
   if (directorBusy || autoPlaying) {
+    const mySeq = ++directorSkipSeq;
     await jumpDirectorTo(currentDirectorIndex + 1, { force: true, keepUserShell: true });
+
+    // 如果已有更新的 skip 触发，此调用作废（避免重复跑下一步）
+    if (mySeq !== directorSkipSeq) return;
 
     // 继续播放下一步（正常速度）
     if (currentDirectorIndex < directorTimeline.length - 1) {
@@ -614,7 +619,36 @@ function setupDemoControls() {
       e.stopPropagation();
       togglePhoneControls();
     });
-    phonePanel.querySelector('.pc-backdrop')?.addEventListener('click', closePhoneControls);
+
+    // Swipe up to close
+    const pcPanel = phonePanel.querySelector('.pc-panel');
+    if (pcPanel) {
+      let swipeY = 0, startY = 0, swiping = false;
+      pcPanel.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        swiping = true;
+      }, { passive: true });
+      pcPanel.addEventListener('touchmove', (e) => {
+        if (!swiping) return;
+        const delta = e.touches[0].clientY - startY;
+        if (delta < 0) {
+          e.preventDefault();
+          swipeY = delta;
+          pcPanel.style.transition = 'none';
+          pcPanel.style.transform = `translateY(${delta}px)`;
+        }
+      }, { passive: false });
+      pcPanel.addEventListener('touchend', () => {
+        if (!swiping) return;
+        swiping = false;
+        pcPanel.style.transition = '';
+        if (swipeY < -60) {
+          closePhoneControls();
+        } else {
+          pcPanel.style.transform = '';
+        }
+      });
+    }
   }
 }
 
@@ -626,8 +660,6 @@ function openPhoneControls() {
   if (!phonePanel || !pcBody || !source) return;
 
   pcBody.innerHTML = '';
-  const dcMain = source.querySelector('.dc-main');
-  if (dcMain) pcBody.appendChild(dcMain.cloneNode(true));
   const dcHash = source.querySelector('.dc-hash');
   if (dcHash) {
     const hashClone = dcHash.cloneNode(true);
@@ -636,6 +668,8 @@ function openPhoneControls() {
     if (srcVal && cloneVal) cloneVal.textContent = srcVal.textContent;
     pcBody.appendChild(hashClone);
   }
+  const dcMain = source.querySelector('.dc-main');
+  if (dcMain) pcBody.appendChild(dcMain.cloneNode(true));
 
   bindPanelControls(phonePanel);
 

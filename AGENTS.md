@@ -25,6 +25,8 @@
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
 
+> **速度控制**：输出速度变量为 `scenario.playback.tokensPerSecond`，默认值 `200`。读取入口为 `engine/core.js` 的 `currentTokensPerSecond()`。UI 控件在 `index.html` 的 `#ctrlSpeedSlider`（range slider，20~1000，步进 10），当前值显示在 `#ctrlSpeedValue`。`typewriter.js` 用 `typeIntervalForChunk()` 实时读取该值；`core.js` 的 `playbackDelay()` 也按 `200 / tps` 缩放 `frameDelay` 和 `stepDelay`，所以调速对打字速度和步进间隔同时生效。
+
 > **本地开发**：使用 `python3 -m http.server 8080` 或 VS Code Live Server，通过 `http://localhost:8080` 访问，不要直接双击 HTML（`engine/` 模块用 ES Module，`file://` 协议不支持）。
 
 **关键设计约束：**
@@ -60,15 +62,58 @@
 
 ```
 <类型>(<范围>): <具体描述>
+<类型>(<大类>/<子模块>): <具体描述>   // 三层写法
+```
 
-示例：
-feat(auth): 添加用户登录功能
-fix(nav): 修复导航栏错位问题
-refactor(ui): 重构状态栏样式
-docs: 更新 API 文档
+**三层写法（推荐）**：当改动属于某个大类下的子模块时，用斜杠分隔：
+
+```
+fix(ui/nav): 修复导航栏错位问题
+fix(ui/sheet): 修复底部浮层关闭动画
+fix(ui/composer): 修复输入框 placeholder 颜色
+fix(ui/status-bar): 修复状态栏时间显示
+feat(ui/theme): 新增暗黑模式切换
+refactor(ui/conversation): 重构消息气泡间距
+```
+
+**常用大类**：
+- `ui` — 视觉/交互/样式相关（你主要用的）
+- `engine` — 播放引擎/核心逻辑
+- `scenario` — 剧本/数据
+- `build` — 构建/部署/配置
+
+**常用子模块**（以 `ui` 为例）：
+`nav`、`sheet`、`composer`、`status-bar`、`conversation`、`theme`、`markdown`、`demo-controls`、`icons`
+
+**如果改动涉及多个子模块**，大类后写 `*` 或直接写大类：
+
+```
+fix(ui/*): 统一调整所有圆角
+fix(ui): 修复多个组件的深色模式兼容问题
 ```
 
 常用类型：`feat`(新功能)、`fix`(修复)、`refactor`(重构)、`docs`(文档)、`style`(格式)、`test`(测试)
+
+### 回溯查找 UI 类改动
+
+由于你的工作以 UI/UX 体验优化为主，`ui` 类 commit 会非常多。以下命令帮你快速筛选：
+
+```bash
+# 查看所有 UI 类提交（按时间倒序）
+git log --oneline --grep="(ui"
+
+# 查看某个子模块的所有提交
+git log --oneline --grep="(ui/nav)"
+
+# 只看 fix 类型的 UI 提交
+git log --oneline --grep="fix(ui"
+
+# 统计各子模块的提交数量
+git log --oneline --grep="(ui" | grep -oP '\(ui/[^)]+\)' | sort | uniq -c | sort -rn
+
+# 查看某次 UI 改动的具体内容
+git show <hash> --stat
+```
 
 ### 提交后的动作
 

@@ -495,6 +495,11 @@
 .phone-shell.tbl-landscape{
   width:852px;
   height:393px;
+  position:fixed;
+  left:30px;
+  top:14px;
+  z-index:500;
+  margin:0;
   transition:width .35s cubic-bezier(.32,.72,0,1),
               height .35s cubic-bezier(.32,.72,0,1);
 }

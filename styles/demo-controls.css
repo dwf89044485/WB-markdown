@@ -52,7 +52,6 @@
 @supports (corner-shape: squircle) {
   .dc-pill,
   .dc-segment,
-  .dc-speed-track,
   .dc-icon-btn,
   .dc-seg-btn{
     border-radius:calc(var(--dc-control-radius) + 3px);
@@ -174,7 +173,7 @@
   inset:0 auto 0 0;
   width:var(--speed-progress);
   background:rgba(0,0,0,.75);
-  border-radius:inherit;
+  border-radius:var(--dc-control-radius);
   pointer-events:none;
 }
 

@@ -319,6 +319,7 @@ function initSheetDrag() {
 
   const onMove = (e) => {
     if (!dragState) return;
+    e.preventDefault();
     const y = e.touches ? e.touches[0].clientY : e.clientY;
     const dy = dragState.startY - y; // positive = drag up = expand
     const h = Math.max(0, dragState.startH + dy);

@@ -73,6 +73,7 @@
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;cursor:ns-resize;
   margin-top:6px;margin-bottom:12px;
+  touch-action:none;
 }
 .sheet-handle::after{
   content:"";

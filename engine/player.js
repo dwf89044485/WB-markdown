@@ -522,11 +522,20 @@ function setupDemoControls() {
     const clamped = Math.min(max, Math.max(min, value));
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
     const progress = `${percent}%`;
-    scenario.playback.tokensPerSecond = clamped;
+    // 分两段映射：滑块 0% → 50，50% → 200，100% → 1000
+    let mappedValue;
+    if (percent <= 50) {
+      mappedValue = Math.round(50 + (percent / 50) * 150);
+    } else {
+      mappedValue = Math.round(200 + ((percent - 50) / 50) * 800);
+    }
+    scenario.playback.tokensPerSecond = mappedValue;
     speedSlider.style.setProperty('--speed-progress', progress);
     if (speedTrack) speedTrack.style.setProperty('--speed-progress', progress);
   };
-  speedSlider.value = currentTokensPerSecond();
+  const sliderMin = Number(speedSlider.min) || 20;
+  const sliderMax = Number(speedSlider.max) || 1000;
+  speedSlider.value = Math.round(sliderMin + (sliderMax - sliderMin) * 0.5);
   syncSpeed();
   speedSlider.addEventListener('input', syncSpeed);
 

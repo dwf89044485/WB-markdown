@@ -11,7 +11,7 @@ import {
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
-import { renderSheet, openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
+import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -482,9 +482,9 @@ function syncToolCallStyleUI() {
   const btnCard = document.getElementById('ctrlToolCard');
   const btnFlat = document.getElementById('ctrlToolFlat');
   const btnStack = document.getElementById('ctrlToolStack');
-  if (btnCard) btnCard.className = 'ghost-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
-  if (btnFlat) btnFlat.className = 'ghost-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
-  if (btnStack) btnStack.className = 'ghost-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
+  if (btnCard) btnCard.className = 'tab-btn' + (toolCallStyle === 'card' ? ' is-active' : '');
+  if (btnFlat) btnFlat.className = 'tab-btn' + (toolCallStyle === 'flat' ? ' is-active' : '');
+  if (btnStack) btnStack.className = 'tab-btn' + (toolCallStyle === 'stack' ? ' is-active' : '');
 }
 
 function collapseToStack(line, labels) {
@@ -512,25 +512,28 @@ export function toggleToolCallStyle(mode) {
 }
 
 function setupDemoControls() {
-  const tps = document.getElementById('ctrlTokensPerSecond');
+  const speedGroup = document.getElementById('ctrlSpeedGroup');
   const replay = document.getElementById('ctrlReplay');
   const prev = document.getElementById('ctrlPrevStep');
   const auto = document.getElementById('ctrlAutoStep');
   const next = document.getElementById('ctrlNextStep');
-  if (!tps || !replay) return;
+  if (!speedGroup || !replay) return;
 
-  tps.value = currentTokensPerSecond();
-  const syncPlayback = () => {
-    const value = Math.min(1000, Math.max(20, Math.round(Number(tps.value) || 200)));
+  const activateSpeed = (value) => {
+    speedGroup.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('is-active', Number(btn.dataset.speed) === value);
+    });
     scenario.playback.tokensPerSecond = value;
-    tps.value = value;
   };
-  tps.addEventListener('change', syncPlayback);
-  tps.addEventListener('input', () => {
-    const value = Number(tps.value);
-    if (Number.isFinite(value)) scenario.playback.tokensPerSecond = Math.min(1000, Math.max(20, value));
+  activateSpeed(currentTokensPerSecond());
+
+  speedGroup.addEventListener('click', (e) => {
+    const btn = e.target.closest('.speed-btn');
+    if (!btn) return;
+    activateSpeed(Number(btn.dataset.speed));
   });
-  replay.onclick = () => { syncPlayback(); restartPlayback(); };
+
+  replay.onclick = () => restartPlayback();
   if (prev) prev.onclick = () => directorPrevStep();
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();

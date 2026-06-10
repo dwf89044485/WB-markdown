@@ -4,10 +4,12 @@
 
 import { escapeHtml } from './markdown.js';
 import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent, svgFromRegistry } from './icons.js';
+import { sleep, playbackDelay } from './core.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 
+// ── Event row ─────────────────────────────────────────────
 export function renderEvent(event) {
   const isWarn = isWarningEvent(event);
   const toolKey = isWarn ? 'warning' : inferToolIconKey(event);
@@ -28,6 +30,7 @@ export function renderEvent(event) {
   return row;
 }
 
+// ── Todo row ──────────────────────────────────────────────
 export function renderTodo(todo) {
   const row = document.createElement('div');
   row.className = 's-sub';
@@ -36,6 +39,7 @@ export function renderTodo(todo) {
   return row;
 }
 
+// ── Search result / output row ────────────────────────────
 export function renderSearchItem(text) {
   const row = document.createElement('div');
   row.className = 's-sub';
@@ -53,6 +57,7 @@ function renderOutput(output) {
   }
 }
 
+// ── Todo snapshot（保留，供 getFullTodoList 复用）─────────
 function computeTodoSnapshot(frames, baseline) {
   const lastOverrideFrame = [...frames].reverse().find(f =>
     (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
@@ -66,6 +71,7 @@ function computeTodoSnapshot(frames, baseline) {
   return lastOverrideFrame.todos;
 }
 
+// ── File card ─────────────────────────────────────────────
 export function renderFileCard(card) {
   const title = escapeHtml(card.title || '');
   const meta = escapeHtml(card.meta || '');
@@ -88,23 +94,116 @@ export function renderFileCard(card) {
 </a>`;
 }
 
+// ── Frame resolution ──────────────────────────────────────
 export function getFrames(refs) {
   if (!refs) return [];
   return refs.split(',').map(id => id.trim()).filter(Boolean).map(id => scenario.sheetFrames[id]).filter(Boolean);
 }
 
-export function renderSheet(frameRefs, explicitTitle) {
-  const frames = getFrames(frameRefs);
-  const fallback = { title: '过程', events: [], todos: [] };
-  const frame = frames[0] || fallback;
-  const baseline = scenario.todosBaseline || [];
-  const todos = computeTodoSnapshot(frames, baseline);
+// ── Sheet body auto-scroll ────────────────────────────────
+function scrollSheetBody() {
+  const body = $('#sheetBody');
+  if (!body) return;
+  // 用户主动往上翻了（距底部超过 32px），不强制滚动
+  if (body.scrollTop + body.clientHeight < body.scrollHeight - 32) return;
+  body.scrollTop = body.scrollHeight;
+}
 
+// ── Get full todo list for skeleton rendering ─────────────
+function getFullTodoList(frames, baseline) {
+  const snapshot = computeTodoSnapshot(frames, baseline);
+  return snapshot.map(t => ({ text: t.text, status: 'todo' }));
+}
+
+// ── Render todo skeleton（all items at once, all 'todo'）──
+function renderTodoSkeleton(frames, baseline) {
+  const items = getFullTodoList(frames, baseline);
+  if (!items.length) return [];
+  return items.map((item, index) => {
+    const row = renderTodo({ text: item.text, status: 'todo' });
+    return { index, row, text: item.text };
+  });
+}
+
+// ── Apply todo overrides to existing DOM elements ─────────
+function applyTodoOverridesToDom(overrides, todoElements) {
+  if (!overrides || !overrides.length) return;
+  for (const o of overrides) {
+    const el = todoElements[o.index];
+    if (!el || !el.row) continue;
+    const statusIcon = o.status === 'done' ? ICONS.todoOk : o.status === 'active' ? ICONS.todoSpin : ICONS.todoEmpty;
+    const icoEl = el.row.querySelector('.s-sub-ico');
+    const txtEl = el.row.querySelector('.s-sub-txt');
+    if (icoEl) icoEl.innerHTML = statusIcon;
+    if (txtEl) txtEl.className = 's-sub-txt' + (o.status === 'active' ? ' active' : '');
+  }
+}
+
+// ── Streaming sheet content renderer ──────────────────────
+async function streamSheetContent(frames, baseline, todoElements) {
+  const body = $('#sheetBody');
+  const frameDelay = playbackDelay('frameDelay', 520);
+  const renderedKeys = new Set();
+
+  for (const f of frames) {
+    // ── Render events (whole row, deduped by key) ──
+    if (f.events) {
+      for (const ev of f.events) {
+        const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
+        if (renderedKeys.has(key)) continue;
+        renderedKeys.add(key);
+
+        body.appendChild(renderEvent(ev));
+        scrollSheetBody();
+
+        // Outputs（e.g. search results）appear one by one
+        if (ev.outputs) {
+          for (const out of ev.outputs) {
+            body.appendChild(renderOutput(out));
+            scrollSheetBody();
+            await sleep(Math.round(frameDelay * 0.25));
+          }
+        }
+      }
+    }
+
+    // Legacy compat: frame-level searchItems
+    if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
+      f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
+      scrollSheetBody();
+    }
+
+    // ── Apply todo overrides（DOM-level mutation, no re-render）──
+    if (f.todoOverrides && todoElements.length) {
+      applyTodoOverridesToDom(f.todoOverrides, todoElements);
+      await sleep(Math.round(frameDelay * 0.4));
+    }
+
+    // ── Inter-frame delay ──
+    await sleep(frameDelay);
+  }
+}
+
+// ── Open sheet with streaming ─────────────────────────────
+export async function openSheet(frameRefs, explicitTitle) {
+  if (!frameRefs) {
+    const ov = $('#overlay');
+    ov.className = 'sheet-overlay vis';
+    requestAnimationFrame(() => requestAnimationFrame(() => { ov.className = 'sheet-overlay vis show'; }));
+    return;
+  }
+
+  const frames = getFrames(frameRefs);
+  const baseline = scenario.todosBaseline || [];
   const body = $('#sheetBody');
   body.innerHTML = '';
 
-  const hasContent = frames.some(f => (f.events && f.events.length)) || todos.length;
-  if (!hasContent) {
+  const hasEvents = frames.some(f => f.events && f.events.length);
+  const hasTodos = frames.some(f =>
+    (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
+  );
+
+  if (!hasEvents && !hasTodos) {
     const empty = document.createElement('div');
     empty.className = 'sheet-empty';
     empty.textContent = '当前状态暂无新增事件。';
@@ -112,32 +211,23 @@ export function renderSheet(frameRefs, explicitTitle) {
     return;
   }
 
-  // 按帧顺序渲染：逐 event 渲染，然后渲染 event 的 outputs（如果有）
-  // 兼容旧格式：如果帧有 searchItems 且 events 无 outputs，回退到帧级渲染
-  for (const f of frames) {
-    if (f.events) {
-      for (const ev of f.events) {
-        body.appendChild(renderEvent(ev));
-        if (ev.outputs) {
-          ev.outputs.forEach(out => body.appendChild(renderOutput(out)));
-        }
-      }
-    }
-    // 旧格式兼容：帧级别的 searchItems（仅当 events 中无 outputs 时）
-    if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
-      f.searchItems.forEach(item => body.appendChild(renderSearchItem(item)));
-    }
+  // Phase 1: Render todo skeleton（all items visible at once）
+  const todoElements = renderTodoSkeleton(frames, baseline);
+  if (todoElements.length) {
+    todoElements.forEach(t => body.appendChild(t.row));
   }
-  todos.forEach(t => body.appendChild(renderTodo(t)));
-}
 
-export function openSheet(frameRefs, explicitTitle) {
-  if (frameRefs) renderSheet(frameRefs, explicitTitle);
+  // Show sheet overlay
   const ov = $('#overlay');
   ov.className = 'sheet-overlay vis';
-  requestAnimationFrame(() => requestAnimationFrame(() => { ov.className = 'sheet-overlay vis show'; }));
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  ov.className = 'sheet-overlay vis show';
+
+  // Phase 2: Stream frame content progressively
+  await streamSheetContent(frames, baseline, todoElements);
 }
 
+// ── Close sheet ───────────────────────────────────────────
 export function closeSheet() {
   const ov = $('#overlay');
   ov.className = 'sheet-overlay vis';

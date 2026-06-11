@@ -382,12 +382,14 @@
   border-radius:2px;
 }
 .pc-handle::before{
-  transform:rotate(22deg);
+  transform:rotate(24deg);
   transform-origin:right center;
+  margin-right:-1px;
 }
 .pc-handle::after{
-  transform:rotate(-22deg);
+  transform:rotate(-24deg);
   transform-origin:left center;
+  margin-left:-1px;
 }
 
 .phone-controls [data-phone-hide]{display:none;}

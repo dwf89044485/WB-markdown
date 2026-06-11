@@ -40,27 +40,16 @@
 
 ### 表格交互专项说明
 
-表格是项目中交互最密集的组件之一，涉及以下文件：
+表格的渲染和交互涉及以下文件：
 
 | 关注点 | 文件 | 关键位置 |
 |--------|------|----------|
 | 表格渲染 & 工具栏 | `engine/markdown.js` | 第65-77行（`markdownToHtml` 中检测 `|` 分隔符 → 渲染 `tbl-outer` + `tbl-toolbar` + `<table>`） |
 | 工具栏按钮定义 | `engine/markdown.js` | 第73行（`tbl-copy`、`tbl-save-image`、`tbl-share`、`tbl-maximize`） |
-| SVG 图标常量 | `engine/markdown.js` | 第3-8行（`SVG_COPY`、`SVG_SAVE_IMAGE`、`SVG_DOWNLOAD`、`SVG_MAXIMIZE`、`SVG_SHARE`） |
 | 全屏展开样式 | `styles/markdown.css` | 第397行起（`.tbl-fullscreen-overlay` 全屏浮层、`.tbl-landscape` 横屏模式） |
 | 桌面端横屏 | `styles/markdown.css` | `.phone-shell.tbl-landscape`：手机壳变为 852×393，隐藏状态栏/对话流/输入框 |
 | 移动端全屏 | `styles/markdown.css` | `html:not(.force-desktop) .phone-shell.tbl-landscape`：竖向全屏，不旋转 |
 | 全屏 JS 交互 | **当前未绑定** | `tbl-maximize` 按钮的点击事件尚未实现，需在 `engine/player.js` 或 `engine/markdown.js` 中绑定 |
-
-**当前状态**：表格工具栏的 4 个按钮中，`tbl-copy`（复制）、`tbl-save-image`（保存图片）、`tbl-share`（分享）的点击事件已绑定；**`tbl-maximize`（全屏/展开表格）按钮尚未绑定点击事件**，CSS 全屏样式已就绪但 JS 交互未实现。
-
-**用户常用术语对照**：
-- "展开表格" = 点击 `tbl-maximize` 按钮进入全屏/横屏模式
-- "表格工具栏" = `tbl-toolbar`（`.tbl-toolbar`），位于表格上方
-- "全屏查看" = `.tbl-fullscreen-overlay` 浮层
-- "横屏模式" = `.tbl-landscape`，桌面端手机壳变宽，移动端竖向全屏
-
-**后续可能的扩展方向**：表格排序、列宽拖拽、单元格编辑、数据导出、响应式列隐藏等，这些交互主要在 `engine/markdown.js` 的表格渲染逻辑和 `styles/markdown.css` 的表格样式中扩展。
 
 ### 执行区间距架构约束（conversation）
 

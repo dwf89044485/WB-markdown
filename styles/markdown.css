@@ -386,6 +386,7 @@
   padding:0;gap:4px;
   font-size:13px;font-family:var(--md-font-family);font-weight:400;
   color:#97979B;letter-spacing:0;
+  flex-direction:row-reverse;
 }
 .response-action-source .action-img{width:32px;height:16px;display:block;}
 .response-action-source span{

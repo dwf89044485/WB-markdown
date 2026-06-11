@@ -272,7 +272,7 @@ function renderFinalActions() {
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
     </div>
-    <button class="response-action-btn response-action-source" type="button" aria-label="来源"><img class="action-img" src="./icons/wb-source.png" alt=""><span>来源</span></button>`;
+    <button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button>`;
   main.appendChild(wrap);
 
   // More popover

@@ -833,14 +833,6 @@ function openPhoneControls() {
   }
 
   pcBody.innerHTML = '';
-  const dcHash = source.querySelector('.dc-hash');
-  if (dcHash) {
-    const hashClone = dcHash.cloneNode(true);
-    const srcVal = dcHash.querySelector('.dc-hash-value');
-    const cloneVal = hashClone.querySelector('.dc-hash-value');
-    if (srcVal && cloneVal) cloneVal.textContent = srcVal.textContent;
-    pcBody.appendChild(hashClone);
-  }
   const dcMain = source.querySelector('.dc-main');
   if (dcMain) pcBody.appendChild(dcMain.cloneNode(true));
 

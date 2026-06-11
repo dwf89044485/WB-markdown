@@ -10,6 +10,7 @@ import {
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
+import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 
@@ -263,7 +264,8 @@ function renderFinalActions() {
     ['copy', '复制', RESPONSE_SVGS.copy],
     ['regenerate', '重新生成', RESPONSE_SVGS.refresh],
     ['share', '分享', RESPONSE_SVGS.share],
-    ['more', '更多', RESPONSE_SVGS.more]
+    ['more', '更多', RESPONSE_SVGS.more],
+    ['source', '来源', '<img class="action-img" src="./icons/wb-source.png" alt="">']
   ];
   wrap.innerHTML = `
     <div class="response-action-left" style="position:relative">
@@ -293,6 +295,51 @@ function renderFinalActions() {
       popover.classList.remove('is-open');
     }
   });
+
+  // 来源按钮
+  const sourceBtn = wrap.querySelector('.response-action-source');
+  if (sourceBtn) sourceBtn.onclick = openSourceSheet;
+}
+
+// ── 来源 Sheet ────────────────────────────────────────────
+function openSourceSheet() {
+  const items = [];
+  for (const key in scenario.sheetFrames) {
+    const f = scenario.sheetFrames[key];
+    if (f.events) {
+      for (const ev of f.events) {
+        if (ev.outputs) {
+          for (const out of ev.outputs) {
+            if (out.type === 'search') items.push(out.text);
+          }
+        }
+      }
+    }
+    if (f.searchItems) {
+      f.searchItems.forEach(t => items.push(t));
+    }
+  }
+  if (!items.length) return;
+  const unique = [...new Set(items)];
+
+  const body = $('#sheetBody');
+  body.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'sheet-source-title';
+  title.textContent = `搜索来源（${unique.length} 项）`;
+  body.appendChild(title);
+
+  unique.forEach(text => body.appendChild(renderSearchItem(text)));
+
+  // 重置 sheet 高度并显示浮层
+  const sheet = $('#sheet');
+  if (sheet) { sheet.classList.remove('expanded'); sheet.style.height = ''; }
+  const ov = $('#overlay');
+  ov.className = 'sheet-overlay vis';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    ov.className = 'sheet-overlay vis show';
+  }));
 }
 
 async function renderFinal() {

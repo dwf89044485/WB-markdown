@@ -107,6 +107,12 @@
   -webkit-overflow-scrolling:touch;
 }
 .sheet-body::-webkit-scrollbar{width:0;height:0;display:none;}
+
+.sheet-source-title{
+  padding:0 var(--sheet-body-left);
+  margin-bottom:var(--spacing-8);
+  font-size:15px;font-weight:600;color:#1c1c1e;letter-spacing:-.2px;
+}
 .bottom-sheet.expanded .sheet-body{overflow-y:auto;}
 
 /* Vertical guide line behind events */

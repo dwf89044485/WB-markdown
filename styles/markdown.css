@@ -246,6 +246,8 @@
   background:transparent;
   color:var(--md-text-muted);
   cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  outline:none;
   transition:background .12s ease, color .12s ease;
 }
 .md .tbl-btn:hover:not(:disabled){

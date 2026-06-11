@@ -254,8 +254,14 @@
   outline:none;
   transition:background .12s ease, color .12s ease;
 }
-.md .tbl-btn:hover:not(:disabled){
-  background:rgba(0,0,0,0.05);
+@media (hover: hover){
+  .md .tbl-btn:hover:not(:disabled){
+    background:rgba(0,0,0,0.05);
+    color:var(--md-text-primary);
+  }
+}
+.md .tbl-btn:active{
+  background:rgba(0,0,0,0.08);
   color:var(--md-text-primary);
 }
 .md .tbl-btn:disabled{
@@ -387,7 +393,7 @@
 .response-more-popover{
   position:absolute;
   bottom:calc(100% + 4px);
-  right:0;
+  left:0;
   display:flex;flex-direction:column;gap:20px;
   background:#fff;
   border-radius:20px;

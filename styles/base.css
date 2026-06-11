@@ -131,7 +131,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     background:#fafafa;
   }
   html:not(.force-desktop) .status-bar{display:none;}
-  html:not(.force-desktop) .nav-bar{top:0;padding-top:0;}
+  html:not(.force-desktop) .nav-bar{top:0;padding-top:var(--spacing-54);}
   html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
   html:not(.force-desktop) .design-notes,
   html:not(.force-desktop) .demo-controls{display:none;}

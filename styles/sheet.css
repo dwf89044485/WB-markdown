@@ -224,7 +224,9 @@
   width:24px;height:24px;flex:0 0 24px;
   display:flex;align-items:center;justify-content:center;
   background:#fff;border-radius:6px;z-index:2;
+  color:#3c3c43;
 }
+.s-sub-ico .tool-svg{display:block;}
 .s-todo-tool{display:none;}
 .s-sub-txt{
   flex:1;min-width:0;

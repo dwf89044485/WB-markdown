@@ -8,6 +8,7 @@ import { sleep, sleepDelay, currentTokensPerSecond, fastRender } from './core.js
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
+let sheetRenderToken = 0;
 
 // ── Event row ─────────────────────────────────────────────
 export function renderEvent(event) {
@@ -183,21 +184,26 @@ async function typeCardBody(target, text) {
 // 流式顺序：事件行从顶向下逐帧出现 → 首个带待办数据的帧出现时，
 // 待办骨架出现在底部 → 后续帧更新待办状态 → 事件行始终插在待办上方
 //
-async function streamSheetContent(frames, baseline) {
+async function streamSheetContent(frames, baseline, opts = {}) {
+  const { animated = true, renderToken } = opts;
   const body = $('#sheetBody');
   const renderedKeys = new Set();
   let todoElements = [];
   let firstTodo = null;
 
+  const isStale = () => renderToken !== sheetRenderToken;
   const insert = (row) => {
+    if (isStale()) return;
     if (firstTodo) body.insertBefore(row, firstTodo);
     else body.appendChild(row);
   };
 
   for (const f of frames) {
+    if (isStale()) return;
     // ── Render new events（deduped by key）──
     if (f.events) {
       for (const ev of f.events) {
+        if (isStale()) return;
         const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
         if (renderedKeys.has(key)) continue;
         renderedKeys.add(key);
@@ -210,28 +216,34 @@ async function streamSheetContent(frames, baseline) {
           insert(row);
           scrollSheetBody();
           const cardBody = row.querySelector('.event-card-body');
-          if (cardBody) await typeCardBody(cardBody, ev.card.body);
+          if (cardBody) {
+            if (animated) await typeCardBody(cardBody, ev.card.body);
+            else cardBody.textContent = ev.card.body;
+          }
         } else {
           insert(renderEvent(ev));
           scrollSheetBody();
 
           if (ev.outputs) {
             for (const out of ev.outputs) {
+              if (isStale()) return;
               insert(renderOutput(out));
               scrollSheetBody();
-              await sleepDelay('frameDelay', 520, 0.25);
+              if (animated) await sleepDelay('frameDelay', 520, 0.25);
             }
           }
         }
       }
     }
 
+    if (isStale()) return;
     // Legacy compat: frame-level searchItems
     if (f.searchItems && !f.events?.some(ev => ev.outputs)) {
       f.searchItems.forEach(item => insert(renderSearchItem(item)));
       scrollSheetBody();
     }
 
+    if (isStale()) return;
     // ── Todo phase: only render/update on 创建待办 or 更新待办 frames ──
     // Other phase frames (搜索网页, 生成图片, etc.) may carry todoOverrides but
     // should NOT show todo changes mid-phase — the user sees progress at the end.
@@ -247,26 +259,32 @@ async function streamSheetContent(frames, baseline) {
           todoElements.forEach(t => body.appendChild(t.row));
           if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
           scrollSheetBody();
-          await sleepDelay('frameDelay', 520, 0.4);
+          if (animated) await sleepDelay('frameDelay', 520, 0.4);
         }
       } else {
         // Subsequent todo phases: update existing DOM with accumulated state
         if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
-        await sleepDelay('frameDelay', 520, 0.4);
+        if (animated) await sleepDelay('frameDelay', 520, 0.4);
       }
     }
 
     // ── Inter-frame delay ──
-    await sleepDelay('frameDelay', 520);
+    if (animated) await sleepDelay('frameDelay', 520);
   }
 }
 
 // ── Open sheet with streaming ─────────────────────────────
-export async function openSheet(frameRefs, explicitTitle) {
+export async function openSheet(frameRefs, explicitTitle, options = {}) {
+  const renderToken = ++sheetRenderToken;
+  const replay = options.replay !== false;
+
   if (!frameRefs) {
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';
-    requestAnimationFrame(() => requestAnimationFrame(() => { ov.className = 'sheet-overlay vis show'; }));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (renderToken !== sheetRenderToken) return;
+      ov.className = 'sheet-overlay vis show';
+    }));
     return;
   }
 
@@ -293,14 +311,16 @@ export async function openSheet(frameRefs, explicitTitle) {
   const ov = $('#overlay');
   ov.className = 'sheet-overlay vis';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  if (renderToken !== sheetRenderToken) return;
   ov.className = 'sheet-overlay vis show';
 
-  // Stream all content: events first, todos appear at bottom when their data arrives
-  await streamSheetContent(frames, baseline);
+  // Running: replay animations; completed: render final static content immediately
+  await streamSheetContent(frames, baseline, { animated: replay, renderToken });
 }
 
 // ── Close sheet ───────────────────────────────────────────
 export function closeSheet() {
+  sheetRenderToken += 1;
   const ov = $('#overlay');
   resetSheetHeight();
   ov.className = 'sheet-overlay vis';

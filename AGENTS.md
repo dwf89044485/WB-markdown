@@ -226,6 +226,18 @@ curl -X PUT https://pages.woa.com/api/sites/workbuddy-markdown.pages.woa.com \
 
 API Key 已配置在环境变量 `OA_PAGES_API_KEY` 中。
 
+## 页面空白排查
+
+页面有框架（状态栏/输入框/右侧面板）但对话内容不加载 → JS 模块异常。
+
+**排查步骤：**
+1. **浏览器 F12 → Console** 看 JS 报错。ES Module 报错位置精确，直接指向问题行。
+2. **`node --check engine/player.js`** 检查主入口 module 有无语法错误。
+3. **检查 diff 残留**：编辑 `engine/player.js` 时，patch 可能把行号前缀（如 `253→ `）写入文件内容，导致 `SyntaxError`。全量搜索 `→` 字符。
+4. 其他 engine/\*.js 同理逐个 `node --check`。
+
+**原理：** `<script type="module">` 加载失败时浏览器不输出视觉反馈，仅 Console 报错。
+
 ## 回复规范
 
 每次回复必须以 `🎯` 作为第一行，正文从第二行开始。

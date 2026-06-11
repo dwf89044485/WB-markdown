@@ -347,7 +347,7 @@
 }
 .response-action-left{
   display:flex;align-items:center;gap:0;min-width:0;
-  margin-left:calc(-1 * var(--cv-msg-gutter-x));
+  margin-left:-9px;
 }
 .response-action-btn{
   appearance:none;border:0;background:transparent;padding:0;margin:0;

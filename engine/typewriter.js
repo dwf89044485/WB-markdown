@@ -2,10 +2,14 @@
 // TYPEWRITER — Token streaming output engine
 // ============================================================
 
-import { sleep, playback, playbackDelay, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
+import { sleep, sleepDelay, playback, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
 import { markdownToHtml } from './markdown.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
+
+export function optimalChunkSize() {
+  return Math.max(1, Math.ceil(currentTokensPerSecond() / 250));
+}
 
 export function typeIntervalForChunk(chunkSize) {
   return (1000 * chunkSize) / currentTokensPerSecond();
@@ -18,7 +22,7 @@ export async function typeText(target, text) {
     scrollToBottom();
     return;
   }
-  const chunkSize = Math.max(1, Math.floor(playback('chunkSize', 1)));
+  const chunkSize = optimalChunkSize();
   target.parentElement && target.parentElement.classList.add('typing-active');
   for (let i = 0; i < text.length; i += chunkSize) {
     const chunk = text.slice(i, i + chunkSize);
@@ -70,7 +74,7 @@ export async function appendHTMLTypedTo(container, html) {
       c.classList.remove('typing-block-enter');
     }
   }
-  await sleep(playbackDelay('stepDelay', 470));
+  await sleepDelay('stepDelay', 470);
 }
 
 export async function appendHTML(row, html, container) {

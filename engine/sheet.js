@@ -4,7 +4,7 @@
 
 import { escapeHtml } from './markdown.js';
 import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent, svgFromRegistry } from './icons.js';
-import { sleep, playbackDelay, playback, currentTokensPerSecond, fastRender } from './core.js';
+import { sleep, sleepDelay, playback, currentTokensPerSecond, fastRender } from './core.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -168,10 +168,10 @@ async function typeCardBody(target, text) {
     target.textContent = text;
     return;
   }
-  const chunkSize = Math.max(1, Math.floor(playback('chunkSize', 1)));
-  const interval = (1000 * chunkSize) / currentTokensPerSecond();
+  const chunkSize = Math.max(1, Math.ceil(currentTokensPerSecond() / 250));
   for (let i = 0; i < text.length; i += chunkSize) {
     const chunk = text.slice(i, i + chunkSize);
+    const interval = (1000 * chunkSize) / currentTokensPerSecond();
     target.textContent += chunk;
     scrollSheetBody();
     await sleep(chunk.trim() ? interval : Math.max(1, interval * 0.35));
@@ -185,7 +185,6 @@ async function typeCardBody(target, text) {
 //
 async function streamSheetContent(frames, baseline) {
   const body = $('#sheetBody');
-  const frameDelay = playbackDelay('frameDelay', 520);
   const renderedKeys = new Set();
   let todoElements = [];
   let firstTodo = null;
@@ -220,7 +219,7 @@ async function streamSheetContent(frames, baseline) {
             for (const out of ev.outputs) {
               insert(renderOutput(out));
               scrollSheetBody();
-              await sleep(Math.round(frameDelay * 0.25));
+              await sleepDelay('frameDelay', 520, 0.25);
             }
           }
         }
@@ -248,17 +247,17 @@ async function streamSheetContent(frames, baseline) {
           todoElements.forEach(t => body.appendChild(t.row));
           if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
           scrollSheetBody();
-          await sleep(Math.round(frameDelay * 0.4));
+          await sleepDelay('frameDelay', 520, 0.4);
         }
       } else {
         // Subsequent todo phases: update existing DOM with accumulated state
         if (f.todoOverrides) applyTodoOverridesToDom(f.todoOverrides, todoElements);
-        await sleep(Math.round(frameDelay * 0.4));
+        await sleepDelay('frameDelay', 520, 0.4);
       }
     }
 
     // ── Inter-frame delay ──
-    await sleep(frameDelay);
+    await sleepDelay('frameDelay', 520);
   }
 }
 

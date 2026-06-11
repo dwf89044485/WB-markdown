@@ -26,12 +26,31 @@ export function sleep(ms) {
   });
 }
 
+export function sleepDelay(key, fallback, scale = 1) {
+  if (fastRender) return Promise.resolve();
+  const token = activePlayId;
+  const base = playback(key, fallback);
+  const adjustedBase = Math.round(base * scale);
+  const start = performance.now();
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      if (token !== activePlayId) { reject(CANCELLED); return; }
+      const elapsed = performance.now() - start;
+      const tps = currentTokensPerSecond();
+      const target = Math.max(0, Math.round(adjustedBase * (200 / tps)));
+      if (elapsed >= target) { resolve(); return; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
 export function playback(key, fallback) {
   return (scenario.playback && Number.isFinite(scenario.playback[key])) ? scenario.playback[key] : fallback;
 }
 
 export function currentTokensPerSecond() {
-  return Math.min(1500, Math.max(20, Math.round(playback('tokensPerSecond', 200))));
+  return Math.min(1500, Math.max(5, Math.round(playback('tokensPerSecond', 200))));
 }
 
 export function playbackDelay(key, fallback) {

@@ -5,7 +5,7 @@
 import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
-  sleep, playback, playbackDelay, currentTokensPerSecond, CANCELLED,
+  sleep, sleepDelay, playback, currentTokensPerSecond, CANCELLED,
   scrollToBottom
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
@@ -169,7 +169,7 @@ async function runStatusGroup(row, actions, container) {
     for (const frameId of frames) {
       line.dataset.frames = completedFinalFrames.concat(frameId).join(',');
       line.dataset.sheetTitle = completedLabels.concat(toDoneLabel(action)).join('、');
-      await sleep(playbackDelay('frameDelay', 520));
+      await sleepDelay('frameDelay', 520);
     }
 
     completedLabels.push(toDoneLabel(action));
@@ -178,14 +178,14 @@ async function runStatusGroup(row, actions, container) {
     line.dataset.frames = completedFinalFrames.join(',');
     line.dataset.sheetTitle = completedLabels.join('、');
 
-    if (index < actions.length - 1) await sleep(Math.floor(playbackDelay('stepDelay', 470) * 0.3));
+    if (index < actions.length - 1) await sleepDelay('stepDelay', 470, 0.3);
   }
 
   line.classList.remove('is-running');
   if (toolCallStyle === 'stack') {
     collapseToStack(line, completedLabels);
   }
-  await sleep(Math.floor(playbackDelay('stepDelay', 470) * 0.55));
+  await sleepDelay('stepDelay', 470, 0.55);
 }
 
 async function runStatus(row, action) {
@@ -219,7 +219,7 @@ async function runThinkingStatus() {
   const line = createStatusLineIn(mount, joinLabels([toRunningLabel(action)]), frames[0] ? [frames[0]] : [], toDoneLabel(action));
   for (const frameId of frames) {
     line.dataset.frames = frameId;
-    await sleep(playbackDelay('frameDelay', 520));
+    await sleepDelay('frameDelay', 520);
   }
   setStatusLineLabels(line, [toDoneLabel(action)]);
   line.dataset.frames = frames.join(',');
@@ -227,7 +227,7 @@ async function runThinkingStatus() {
   line.classList.remove('is-running');
   stepsList.classList.remove('is-hidden');
   scrollToBottom();
-  await sleep(playbackDelay('stepDelay', 470));
+  await sleepDelay('stepDelay', 470);
 }
 
 // ── Final render ──────────────────────────────────────────
@@ -246,10 +246,10 @@ function renderFinalActions() {
   wrap.className = 'response-actions message-enter';
   const actions = [
     ['copy', '复制', 'action-copy'],
+    ['regenerate', '重新生成', 'action-regenerate'],
     ['like', '点赞', 'action-like'],
     ['dislike', '点踩', 'action-dislike'],
-    ['play', '播放', 'action-play'],
-    ['more', '更多', 'action-more']
+    ['share', '分享', 'action-share']
   ];
   wrap.innerHTML = `
     <div class="response-action-left">
@@ -262,7 +262,7 @@ function renderFinalActions() {
 async function renderFinal() {
   renderTiming();
   collapseProcessIntoTiming();
-  await sleep(playbackDelay('stepDelay', 470));
+  await sleepDelay('stepDelay', 470);
   const main = $('#mainMd');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
@@ -280,7 +280,7 @@ async function showUserMessage() {
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
   scrollToBottom();
-  await sleep(playback('userMessageDelay', 720));
+  await sleepDelay('userMessageDelay', 720);
 }
 
 async function showAgentShell() {
@@ -289,7 +289,7 @@ async function showAgentShell() {
   agent.classList.remove('is-hidden');
   agent.classList.add('agent-enter');
   scrollToBottom();
-  await sleep(playback('agentDelay', 520));
+  await sleepDelay('agentDelay', 520);
 }
 
 async function showThinkingLoading() {
@@ -382,7 +382,7 @@ function buildDirectorTimeline() {
       $('#stepsList').appendChild(container);
       directorRuntime.flatContainer = container;
       containerReady = true;
-      await sleep(playbackDelay('stepDelay', 470));
+      await sleepDelay('stepDelay', 470);
     }
   });
   scenario.nodes.forEach((node) => {
@@ -437,7 +437,7 @@ async function runDirectorAutoLoop(token) {
   setComposerGenerating(true);
   updateDirectorControls();
   try {
-    await sleep(playback('autoStartDelay', 420));
+    await sleepDelay('autoStartDelay', 420);
     while (!pauseRequested && autoPlaying && token === activePlayId && currentDirectorIndex < directorTimeline.length - 1) {
       await runDirectorStep(currentDirectorIndex + 1);
     }

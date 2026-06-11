@@ -262,7 +262,6 @@ function renderFinalActions() {
 async function renderFinal() {
   renderTiming();
   collapseProcessIntoTiming();
-  setComposerGenerating(false);
   await sleep(playbackDelay('stepDelay', 470));
   const main = $('#mainMd');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
@@ -271,6 +270,7 @@ async function renderFinal() {
   }
   renderFinalActions();
   scrollToBottom();
+  setComposerGenerating(false);
 }
 
 // ── User / agent appearance ───────────────────────────────
@@ -674,7 +674,9 @@ function bindPanelControls(root) {
     const max = Number(speedSlider.max) || 100;
     const clamped = Math.min(max, Math.max(min, value));
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
-    const visualPercent = Math.max(12.8, percent);
+    const trackWidth = speedTrack ? speedTrack.offsetWidth : 200;
+    const minPercent = Math.min(100, (23 / Math.max(1, trackWidth)) * 100);
+    const visualPercent = Math.max(minPercent, percent);
     const progress = `${visualPercent}%`;
     let mappedValue;
     if (percent <= 50) {

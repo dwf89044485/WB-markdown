@@ -1,6 +1,6 @@
-# Git — 只排除大文件目录，保留 HEAD/refs 供前端读取 commit hash
-.git/objects/
-.git/pack/
+# Version control
+.git
+.gitignore
 
 # IDE
 .vscode
@@ -12,18 +12,26 @@
 Thumbs.db
 
 # Logs
+logs
 *.log
 
 # Documentation
 README.md
 docs
+AGENTS.md
 
 # CI/CD
 .github
+.gitlab-ci.yml
 
 # Environment
 .env
 .env.local
+*.env
 
-# Docker itself
-.with
+# Misc
+.coverage
+.cache
+tmp
+temp
+node_modules

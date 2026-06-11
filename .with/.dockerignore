@@ -1,6 +1,6 @@
-# Git — 只排除大文件目录，保留 HEAD/refs 供构建时注入 commit hash
-.git/objects/
-.git/pack/
+# Version control
+.git
+.gitignore
 
 # IDE
 .vscode
@@ -12,12 +12,24 @@
 Thumbs.db
 
 # Documentation
-AGENTS.md
 README.md
+docs
+AGENTS.md
+DESIGN.md
 
 # CI/CD
 .github
+.gitlab-ci.yml
+
+# Environment
+.env
+.env.local
+*.env
 
 # Misc
+coverage
+.cache
 tmp
 temp
+scripts
+node_modules

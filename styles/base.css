@@ -194,7 +194,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#34C759;
+  background:#FF9500;
   flex-shrink:0;
 }
 .status-time{
@@ -401,7 +401,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 .composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
 .composer-stop-btn{display:none;cursor:pointer;}
 .composer-shell.is-generating .composer-stop-btn{display:flex;}
-.composer-shell.is-generating .composer-placeholder{display:none;}
+.composer-shell.is-generating .composer-placeholder{visibility:hidden;}
 .composer-stop-circle{
   width:32px;height:32px;border-radius:50%;
   background:rgba(0,0,0,0.7);
@@ -413,8 +413,15 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   animation:composer-stop-spin 4s linear infinite;
 }
 @keyframes composer-stop-spin{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
+  0%{transform:rotate(0deg);}
+  7.5%{transform:rotate(90deg);}
+  25%{transform:rotate(90deg);}
+  32.5%{transform:rotate(180deg);}
+  50%{transform:rotate(180deg);}
+  57.5%{transform:rotate(270deg);}
+  75%{transform:rotate(270deg);}
+  82.5%{transform:rotate(360deg);}
+  100%{transform:rotate(360deg);}
 }
 .composer-placeholder{
   flex:1;

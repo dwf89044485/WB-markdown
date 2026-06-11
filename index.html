@@ -260,6 +260,18 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     }
   });
 
+  /* ── 对话流表格保存图片 ───────────────────────────────── */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tbl-btn.tbl-save-image');
+    if (!btn) return;
+    var outer = btn.closest('.tbl-outer');
+    if (!outer) return;
+    var table = outer.querySelector('table');
+    if (!table) return;
+    // TODO: 实现表格保存为图片功能（html2canvas）
+    console.log('保存图片：待实现');
+  });
+
 /* ── 表格全屏查看 ───────────────────────────────────────── */
 (function(){
   var shell = document.querySelector('.phone-shell');

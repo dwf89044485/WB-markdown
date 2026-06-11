@@ -102,7 +102,7 @@ export function getFrames(refs) {
 }
 
 // ── Auto-expand sheet when content outgrows 40% ──────────
-function checkSheetOverflow() {
+export function checkSheetOverflow() {
   const body = $('#sheetBody');
   const sheet = $('#sheet');
   if (!body || !sheet || dragState) return;

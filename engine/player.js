@@ -246,6 +246,7 @@ function renderFinalActions() {
   wrap.className = 'response-actions message-enter';
   const actions = [
     ['copy', '复制', 'action-copy'],
+    ['save-image', '保存图片', 'image.svg'],
     ['like', '点赞', 'action-like'],
     ['dislike', '点踩', 'action-dislike'],
     ['play', '播放', 'action-play'],

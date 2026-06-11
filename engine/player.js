@@ -329,6 +329,36 @@ function renderFinalActions() {
     };
   }
 
+  // 分享按钮
+  const shareBtn = wrap.querySelector('.response-action-share');
+  if (shareBtn) {
+    shareBtn.onclick = async () => {
+      const text = scenario.final && scenario.final.markdown
+        ? scenario.final.markdown
+        : (scenario.final && scenario.final.html ? scenario.final.html : main.textContent || '');
+      const title = 'WorkBuddy';
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, text });
+        } else {
+          // fallback: 复制内容到剪贴板
+          await navigator.clipboard.writeText(text);
+          shareBtn.classList.add('is-copied');
+          shareBtn.innerHTML = RESPONSE_SVGS.done + '<span>已复制</span>';
+          setTimeout(() => {
+            shareBtn.classList.remove('is-copied');
+            shareBtn.innerHTML = RESPONSE_SVGS.share + '<span>分享</span>';
+          }, 3000);
+        }
+      } catch (e) {
+        // 用户取消分享或出错，不做处理
+        if (e.name !== 'AbortError') {
+          console.warn('分享失败:', e);
+        }
+      }
+    };
+  }
+
   // 重新生成按钮
   const regenerateBtn = wrap.querySelector('.response-action-regenerate');
   if (regenerateBtn) regenerateBtn.onclick = restartPlayback;

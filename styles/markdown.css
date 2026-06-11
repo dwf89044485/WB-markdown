@@ -377,6 +377,27 @@
 .response-cost svg circle,
 .response-cost svg rect{fill:#b1b1b6;fill-opacity:1;}
 
+/* ── RESPONSE MORE POPOVER ────────────────────────────────── */
+.response-more-popover{
+  position:absolute;
+  bottom:calc(100% + 4px);
+  right:0;
+  display:flex;gap:0;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  padding:4px;
+  opacity:0;
+  transform:translateY(4px) scale(.95);
+  transition:opacity .12s,transform .12s;
+  pointer-events:none;
+}
+.response-more-popover.is-open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
 /* ── SVG ICON SYSTEM ─────────────────────────────────────── */
 .tool-svg,
 .action-svg,
@@ -495,10 +516,20 @@
   flex-shrink:0;
   align-self:flex-start;
   margin-left:-14px;
-  margin-bottom:459px;
   transition:width .35s cubic-bezier(.32,.72,0,1),
               height .35s cubic-bezier(.32,.72,0,1),
+              margin-top .35s cubic-bezier(.32,.72,0,1),
               margin-bottom .35s cubic-bezier(.32,.72,0,1);
+}
+@media (min-width:901px){
+  .phone-shell.tbl-landscape{
+    margin-top:calc((852px - 393px)/2);
+    margin-bottom:calc((852px - 393px)/2);
+  }
+}
+html.force-desktop .phone-shell.tbl-landscape{
+  margin-top:calc((852px - 393px)/2);
+  margin-bottom:calc((852px - 393px)/2);
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;

@@ -522,12 +522,12 @@
               margin-bottom .35s cubic-bezier(.32,.72,0,1);
 }
 @media (min-width:901px){
-  .phone-shell.tbl-landscape{
+  .layout-main .left-area > .phone-shell.tbl-landscape{
     margin-top:calc((852px - 393px)/2);
     margin-bottom:calc((852px - 393px)/2);
   }
 }
-html.force-desktop .phone-shell.tbl-landscape{
+html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
   margin-top:calc((852px - 393px)/2);
   margin-bottom:calc((852px - 393px)/2);
 }

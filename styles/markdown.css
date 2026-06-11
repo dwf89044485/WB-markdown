@@ -350,7 +350,7 @@
   user-select:none;
 }
 .response-action-left{
-  display:flex;align-items:center;gap:0;min-width:0;
+  display:flex;align-items:center;gap:2px;min-width:0;
   margin-left:-9px;
 }
 .response-action-btn{
@@ -364,7 +364,6 @@
   position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
 }
 .response-action-btn:hover{background:rgba(0,0,0,.06);}
-.response-action-btn:active{background:rgba(0,0,0,.045);}
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 .response-cost{

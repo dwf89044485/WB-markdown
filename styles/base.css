@@ -145,12 +145,13 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 /* ── LANDSCAPE SIMULATION ────────────────────────────────── */
 /* 移动端竖屏状态下，用 CSS transform rotate(90deg) 模拟横屏。
    核心机制：
-   - @media (orientation: portrait) 仅在设备物理竖屏时生效
+   - @media (orientation: portrait) + (pointer: coarse) 仅在真实触屏设备竖屏时生效
    - 此时将 phone-shell 旋转 90° + 交换宽高，视觉上呈现横屏
    - 用户真横屏时，该媒体查询自动失效，phone-shell 恢复原生竖屏布局
    - phone-shell 已有的 transition 确保方向切换平滑过渡
+   - pointer: coarse 排除桌面浏览器窗口拉窄的场景
    本质上是 CSS 媒体查询的自动切换，无需 JS 干预。 */
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 900px) and (orientation: portrait) and (pointer: coarse) {
   html:not(.force-desktop) .phone-shell:not(.tbl-landscape) {
     position: fixed;
     width: 100dvh;

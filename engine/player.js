@@ -252,6 +252,7 @@ const RESPONSE_SVGS = (() => {
     cost: s(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14" viewBox="0 0 14 14"><clipPath id="clip_0"><rect width="14" height="14"/></clipPath><g clip-path="url(#clip_0)"><path fill="#000" fill-opacity="0.3" transform="matrix(0.707107 0.707107 -0.707107 0.707107 7.00086 -0.116119)" d="M9.6937 2.526Q9.6943 2.5243 9.695 2.5226L9.7239 2.4477L9.768 2.3355Q9.8079 2.2341 9.8184 2.2042Q10.1363 1.2942 9.4523 0.6102Q8.7683 -0.0738 7.8583 0.2441Q7.8284 0.2546 7.7266 0.2946L7.6113 0.34L7.5364 0.3688Q5.0315 1.3172 2.5232 0.3676L2.4479 0.3386L2.3354 0.2943Q2.2344 0.2546 2.2046 0.2442Q1.2944 -0.0739 0.6104 0.6103Q-0.0737 1.2944 0.2445 2.2046Q0.2549 2.2344 0.2948 2.3357L0.3399 2.4505L0.3687 2.5249Q1.3179 5.0309 0.3675 7.5403L0.3387 7.615L0.2947 7.7269Q0.2549 7.828 0.2444 7.8578Q-0.0737 8.768 0.6104 9.4521Q1.2945 10.1362 2.2047 9.8181Q2.2345 9.8076 2.3362 9.7676L2.4509 9.7225L2.5254 9.6937Q5.0315 8.7445 7.541 9.6951L7.6155 9.7239L7.7272 9.7678Q7.8281 9.8076 7.8578 9.818Q8.768 10.1362 9.4522 9.4521Q10.1364 8.768 9.8183 7.8578Q9.8079 7.8281 9.7677 7.7261L9.7224 7.6108L9.6936 7.536Q8.7459 5.0327 9.6937 2.526ZM8.6381 2.0289L8.6079 2.1071L8.6066 2.1105Q7.5009 5.0309 8.6078 7.9548L8.6393 8.0365L8.6849 8.1525Q8.7168 8.2334 8.7197 8.2418Q8.7966 8.4619 8.6294 8.6292Q8.4621 8.7964 8.242 8.7195Q8.2336 8.7165 8.153 8.6848L8.0345 8.6382L7.9532 8.6068Q5.0315 7.5001 2.1064 8.608L2.0251 8.6394L1.9096 8.6848Q1.8291 8.7165 1.8207 8.7195Q1.6006 8.7964 1.4333 8.6292Q1.2661 8.4619 1.343 8.2418Q1.3459 8.2334 1.3777 8.1527L1.4244 8.034L1.4558 7.9525Q2.5623 5.0309 1.4544 2.106L1.423 2.0246L1.3776 1.9091Q1.346 1.8289 1.343 1.8205Q1.2661 1.6004 1.4333 1.4331Q1.6005 1.2658 1.8207 1.3428Q1.8291 1.3457 1.9097 1.3774L2.0291 1.4244L2.1112 1.456Q5.0315 2.5615 7.9553 1.4546L8.037 1.4231L8.1531 1.3774Q8.2337 1.3457 8.2421 1.3427Q8.4622 1.2659 8.6294 1.4331Q8.7966 1.6003 8.7197 1.8204Q8.7168 1.8288 8.6849 1.9098L8.6381 2.0289Z" fill-rule="evenodd"/></g></svg>`, 'cost-svg'),
     more: s(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#000" transform="matrix(1 0 0 1 2 7)" d="M0 1C0 0.4477 0.4477 0 1 0C1.5523 0 2 0.4477 2 1C2 1.5523 1.5523 2 1 2C0.4477 2 0 1.5523 0 1ZM5 1C5 0.4477 5.4477 0 6 0C6.5523 0 7 0.4477 7 1C7 1.5523 6.5523 2 6 2C5.4477 2 5 1.5523 5 1ZM10 1C10 0.4477 10.4477 0 11 0C11.5523 0 12 0.4477 12 1C12 1.5523 11.5523 2 11 2C10.4477 2 10 1.5523 10 1Z"/></svg>`, 'action-svg'),
     ask: s(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><rect fill="#000" transform="matrix(1 0 0 1 12.6587 7.54688)" y="-0.6" width="2.7893" height="1.2"/><path fill="#000" transform="matrix(1 0 0 1 0.499878 0.913147)" d="M2.5436 4.1529Q2.7704 3.4988 3.0939 2.9191L1.3605 1.6922L2.0538 0.7127L3.7651 1.924Q4.3912 1.1522 5.1824 0.6689Q6.2776 0 7.5001 0Q8.4336 0 9.4374 0.4965Q10.3535 0.9496 11.1248 1.7094Q11.3075 1.8895 11.543 1.9112Q11.7488 1.9302 11.8901 1.8047L13.0742 0.7537L13.8708 1.6512L12.6867 2.7021Q12.1564 3.1729 11.4328 3.1061Q10.7706 3.045 10.2826 2.5643Q8.8978 1.2 7.5001 1.2Q5.6619 1.2 4.3968 3.0875Q4.0651 3.5824 3.8265 4.1548L11.2693 4.1661Q11.811 4.1669 12.2328 4.4922Q12.68 4.8371 12.7829 5.3839Q12.9401 6.2189 12.9401 7.0869Q12.9401 8.8297 12.3369 10.3436L13.9437 11.994L13.0839 12.8311L11.7737 11.4854Q11.1526 12.5171 10.2647 13.1978Q8.9917 14.1737 7.5001 14.1737Q6.023 14.1737 4.7587 13.2155Q3.8699 12.5419 3.2449 11.5156L1.6414 13.0776L0.8041 12.2181L2.6814 10.3893Q2.0859 8.9215 2.0611 7.2337L0 7.2337L0 6.0337L2.1188 6.0337Q2.2026 5.2944 2.406 4.5877L2.5311 4.1529L2.5436 4.1529ZM3.448 5.3543Q3.26 6.1929 3.26 7.0869Q3.26 8.8214 3.9406 10.2752Q4.5316 11.5377 5.4835 12.2591Q6.1583 12.7705 6.9001 12.9159L6.9001 7.1972L8.1001 7.1972L8.1001 12.916Q8.8521 12.7686 9.5347 12.2454Q10.4944 11.5096 11.0825 10.2257Q11.7401 8.7898 11.7401 7.0869Q11.7401 6.3308 11.6037 5.6059Q11.5586 5.3665 11.2675 5.3661L3.448 5.3543Z" fill-rule="evenodd"/></svg>`, 'action-svg'),
+    done: s(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#000" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>`, 'action-svg'),
   };
 })();
 
@@ -295,6 +296,42 @@ function renderFinalActions() {
       popover.classList.remove('is-open');
     }
   });
+
+  // 复制按钮
+  const copyBtn = wrap.querySelector('.response-action-copy');
+  if (copyBtn) {
+    let copyTimer = null;
+    copyBtn.onclick = async () => {
+      const text = scenario.final && scenario.final.markdown
+        ? scenario.final.markdown
+        : (scenario.final && scenario.final.html ? scenario.final.html : main.textContent || '');
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (_) {
+        // fallback: legacy clipboard
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (copyTimer) clearTimeout(copyTimer);
+      copyBtn.classList.add('is-copied');
+      copyBtn.innerHTML = RESPONSE_SVGS.done + '<span>已复制</span>';
+      copyTimer = setTimeout(() => {
+        copyBtn.classList.remove('is-copied');
+        copyBtn.innerHTML = RESPONSE_SVGS.copy + '<span>复制</span>';
+        copyTimer = null;
+      }, 3000);
+    };
+  }
+
+  // 重新生成按钮
+  const regenerateBtn = wrap.querySelector('.response-action-regenerate');
+  if (regenerateBtn) regenerateBtn.onclick = restartPlayback;
 
   // 来源按钮
   const sourceBtn = wrap.querySelector('.response-action-source');

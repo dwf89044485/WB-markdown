@@ -373,6 +373,8 @@
   .response-action-btn:hover{background:rgba(0,0,0,.06);}
 }
 .response-action-btn:active{background:rgba(0,0,0,.08);}
+.response-action-btn.is-copied .action-svg{color:#22c55e;opacity:1;}
+.response-action-btn.is-copied .action-svg path{fill:#22c55e;fill-opacity:1;}
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 

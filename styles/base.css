@@ -51,13 +51,14 @@ body{
   --spacing-47:47px;
   --spacing-54:54px;
   --spacing-62:62px;
+  --spacing-64:64px;
   --spacing-72:72px;
   --spacing-74:74px;
   --spacing-80:80px;
   --spacing-92:92px;
   --spacing-100:100px;
 
---standalone-conversation-padding-top:var(--spacing-74);
+  --standalone-conversation-padding-top:var(--spacing-64);
   --standalone-msg-gutter-x:var(--spacing-16);
   --standalone-composer-padding-x:var(--spacing-12);
   --standalone-composer-padding-bottom:10px;
@@ -131,7 +132,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     background:#fafafa;
   }
   html:not(.force-desktop) .status-bar{display:none;}
-  html:not(.force-desktop) .nav-bar{top:0;padding-top:var(--spacing-54);}
+  html:not(.force-desktop) .nav-bar{top:0;padding-top:10px;}
   html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
   html:not(.force-desktop) .design-notes,
   html:not(.force-desktop) .demo-controls{display:none;}

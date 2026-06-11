@@ -445,7 +445,7 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-portrait{
   width:100dvh;
   height:100dvw;
   transform-origin:top left;
-  transform:translateY(100dvh) rotate(90deg);
+  transform:translateX(100dvw) rotate(90deg);
 }
 html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape{
   width:100dvw;

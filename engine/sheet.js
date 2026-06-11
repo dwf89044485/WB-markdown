@@ -278,6 +278,21 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   const renderToken = ++sheetRenderToken;
   const replay = options.replay !== false;
 
+  // ── customRenderer mode: 直接渲染自定义内容，不走 frames ──
+  if (options.customRenderer) {
+    const body = $('#sheetBody');
+    body.innerHTML = '';
+    options.customRenderer(body);
+    resetSheetHeight();
+    const ov = $('#overlay');
+    ov.className = 'sheet-overlay vis';
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    if (renderToken !== sheetRenderToken) return;
+    ov.className = 'sheet-overlay vis show';
+    checkSheetOverflow();
+    return;
+  }
+
   if (!frameRefs) {
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';

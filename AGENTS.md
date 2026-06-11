@@ -33,10 +33,16 @@
 
 1. 不改视觉体系：沿用现有 class、圆角、字号、间距和组件结构。
 2. 不把剧本写死进 HTML：后续改剧本时主要改 `scenario.js`。
-3. 浮层不是累积日志：每条状态行绑定自己的最后一帧，点击时展示对应快照。
-4. timing-bar 只在全部节点结束后出现。
-5. 旧实现里的节点3删除项未迁入：不再出现"原生中文字符重写整个文件"和"已调用工具"。
-6. todos 数据：`scenario.js` 里 `todosBaseline` 是文本基准，各 sheetFrame 用 `todoOverrides` 只记录 status 变更，engine/sheet.js 的 `renderSheet` 合并两者渲染完整列表。
+3. timing-bar 只在全部节点结束后出现。
+4. 旧实现里的节点3删除项未迁入：不再出现"原生中文字符重写整个文件"和"已调用工具"。
+5. todos 数据：`scenario.js` 里 `todosBaseline` 是文本基准，各 sheetFrame 用 `todoOverrides` 只记录 status 变更，engine/sheet.js 的 `renderSheet` 合并两者渲染完整列表。
+
+6. **Sheet 浮层——必须使用现有框架，禁止重新造轮子。** 所有底部浮层必须走 `engine/sheet.js` 的统一渲染入口（`renderSheet`/`openSheet`），数据源必须走 `scenario.js` 的 `sheetFrames` 数组。**每条状态行只绑定自己的帧数据（`btn.dataset.frames`），点击时只展示对应帧的快照，禁止累积多条状态行的帧数据混入同一个 Sheet。** 禁止在 `index.html` 硬编码浮层结构，禁止在 `engine/player.js` 或其他引擎文件里单独写一套浮层渲染逻辑。如需新增浮层内容类型，按以下规则往现有框架里加：
+   - **数据** → 在 `scenario.js` 的 `nodes` 中对应 step 的 `sheetFrame` 字段追加新条目
+   - **渲染逻辑** → 在 `engine/sheet.js` 的 `renderSheet` 中新增 `case` 分支处理新类型
+   - **样式** → 在 `styles/sheet.css` 中扩展对应 class
+   - **交互** → 在 `engine/sheet.js` 的交互事件绑定中扩展
+   - 以上 4 个文件之外的任何位置出现浮层渲染代码，均视为违规。
 
 ### 表格交互专项说明
 
@@ -228,15 +234,7 @@ API Key 已配置在环境变量 `OA_PAGES_API_KEY` 中。
 
 ## 页面空白排查
 
-页面有框架（状态栏/输入框/右侧面板）但对话内容不加载 → JS 模块异常。
-
-**排查步骤：**
-1. **浏览器 F12 → Console** 看 JS 报错。ES Module 报错位置精确，直接指向问题行。
-2. **`node --check engine/player.js`** 检查主入口 module 有无语法错误。
-3. **检查 diff 残留**：编辑 `engine/player.js` 时，patch 可能把行号前缀（如 `253→ `）写入文件内容，导致 `SyntaxError`。全量搜索 `→` 字符。
-4. 其他 engine/\*.js 同理逐个 `node --check`。
-
-**原理：** `<script type="module">` 加载失败时浏览器不输出视觉反馈，仅 Console 报错。
+框架可见但内容不加载 → 看 `engine/`.js 文件有无语法错误，尤其检查 patch 残留行号（搜索 `→` 字符）。
 
 ## 回复规范
 

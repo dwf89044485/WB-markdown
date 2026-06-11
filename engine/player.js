@@ -12,7 +12,7 @@ import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
 import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
-import { openSheet, closeSheet, maybeClose, renderFileCard, checkSheetOverflow } from './sheet.js';
+import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const designNotes = window.WORKBUDDY_DESIGN_NOTES || {};
@@ -389,26 +389,15 @@ function openSourceSheet() {
   if (!items.length) return;
   const unique = [...new Set(items)];
 
-  const body = $('#sheetBody');
-  body.innerHTML = '';
-
-  const title = document.createElement('div');
-  title.className = 'sheet-source-title';
-  title.textContent = `搜索来源（${unique.length} 项）`;
-  body.appendChild(title);
-
-  unique.forEach(text => body.appendChild(renderSearchItem(text)));
-
-  // 重置 sheet 高度并显示浮层
-  const sheet = $('#sheet');
-  if (sheet) { sheet.classList.remove('expanded'); sheet.style.height = ''; }
-  const ov = $('#overlay');
-  ov.className = 'sheet-overlay vis';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    ov.className = 'sheet-overlay vis show';
-    // 内容渲染后检查是否需要自动展开
-    checkSheetOverflow();
-  }));
+  openSheet(null, null, {
+    customRenderer(body) {
+      const title = document.createElement('div');
+      title.className = 'sheet-source-title';
+      title.textContent = `搜索来源（${unique.length} 项）`;
+      body.appendChild(title);
+      unique.forEach(text => body.appendChild(renderSearchItem(text)));
+    }
+  });
 }
 
 async function renderFinal() {

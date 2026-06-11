@@ -361,7 +361,7 @@
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 .response-cost{
-  margin-left:0;
+  margin-left:6px;
   display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
   height:36px;padding:0;font-size:12px;line-height:1;font-weight:500;
   color:#b1b1b6;letter-spacing:-.12px;white-space:nowrap;

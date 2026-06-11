@@ -2,7 +2,7 @@
 // TYPEWRITER — Token streaming output engine
 // ============================================================
 
-import { sleep, sleepDelay, playback, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
+import { sleep, sleepDelay, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
 import { markdownToHtml } from './markdown.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);

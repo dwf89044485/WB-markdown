@@ -4,7 +4,7 @@
 
 import { escapeHtml } from './markdown.js';
 import { ICONS, renderToolIcon, inferToolIconKey, isWarningEvent, svgFromRegistry } from './icons.js';
-import { sleep, sleepDelay, playback, currentTokensPerSecond, fastRender } from './core.js';
+import { sleep, sleepDelay, currentTokensPerSecond, fastRender } from './core.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);

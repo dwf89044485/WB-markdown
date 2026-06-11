@@ -230,7 +230,7 @@ curl -X PUT https://pages.woa.com/api/sites/workbuddy-markdown.pages.woa.com \
   -d @/tmp/pages_payload.json
 ```
 
-API Key 已配置在环境变量 `OA_PAGES_API_KEY` 中。
+API Key 存储在 `~/.zshrc` 中（`export OA_PAGES_API_KEY="..."`）。部署脚本会自动读取，无需手动设置环境变量。
 
 ## 页面空白排查
 

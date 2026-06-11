@@ -721,7 +721,6 @@ function bindPanelControls(root) {
     speedSlider.style.setProperty('--speed-progress', progress);
     if (speedTrack) speedTrack.style.setProperty('--speed-progress', progress);
   };
-  syncSpeed();
   speedSlider.addEventListener('input', syncSpeed);
 
   replay.onclick = () => restartPlayback();
@@ -738,15 +737,16 @@ function bindPanelControls(root) {
 }
 
 function setupDemoControls() {
+  bindPanelControls(document);
+
   // 初始滑杆位置设为 60%
   const initSlider = document.querySelector('#ctrlSpeedSlider');
   if (initSlider) {
     const imin = Number(initSlider.min) || 20;
     const imax = Number(initSlider.max) || 1000;
     initSlider.value = Math.round(imin + (imax - imin) * 0.6);
+    initSlider.dispatchEvent(new Event('input', { bubbles: true }));
   }
-
-  bindPanelControls(document);
   syncToolCallStyleUI();
   updateDirectorControls();
 

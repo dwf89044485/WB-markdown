@@ -707,8 +707,8 @@ function bindPanelControls(root) {
     const max = Number(speedSlider.max) || 100;
     const clamped = Math.min(max, Math.max(min, value));
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
-    const trackWidth = speedTrack ? speedTrack.offsetWidth : 200;
-    const minPercent = Math.min(100, (23 / Math.max(1, trackWidth)) * 100);
+    const trackWidth = speedTrack && speedTrack.offsetWidth > 0 ? speedTrack.offsetWidth : 200;
+    const minPercent = Math.min(100, (23 / trackWidth) * 100);
     const visualPercent = Math.max(minPercent, percent);
     const progress = `${visualPercent}%`;
     let mappedValue;

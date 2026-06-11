@@ -232,17 +232,17 @@
 .md .tbl-toolbar-actions{
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:10px;
 }
 .md .tbl-btn{
   display:flex;
   align-items:center;
   justify-content:center;
-  width:24px;
-  height:24px;
+  width:32px;
+  height:32px;
   padding:0;
   border:none;
-  border-radius:5px;
+  border-radius:6px;
   background:transparent;
   color:var(--md-text-muted);
   cursor:pointer;
@@ -345,13 +345,13 @@
   user-select:none;
 }
 .response-action-left{
-  display:flex;align-items:center;gap:13px;min-width:0;
+  display:flex;align-items:center;gap:14px;min-width:0;
 }
 .response-action-btn{
   appearance:none;border:0;background:transparent;padding:0;margin:0;
   display:inline-flex;align-items:center;justify-content:center;gap:4px;
-  width:28px;height:28px;color:#8e8e93;cursor:pointer;
-  border-radius:8px;-webkit-tap-highlight-color:transparent;
+  width:36px;height:36px;color:#636366;cursor:pointer;
+  border-radius:10px;-webkit-tap-highlight-color:transparent;
   font-size:0;line-height:0;
 }
 .response-action-btn span{
@@ -359,7 +359,7 @@
 }
 .response-action-btn:hover{background:rgba(0,0,0,.06);}
 .response-action-btn:active{background:rgba(0,0,0,.045);}
-.response-action-btn .action-svg{width:18px;height:18px;color:#8e8e93;opacity:.92;}
+.response-action-btn .action-svg{width:18px;height:18px;color:#636366;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 .response-cost{
   margin-left:auto;
@@ -373,7 +373,7 @@
 .md .response-actions svg *{max-width:none;}
 .response-action-btn svg path,
 .response-action-btn svg circle,
-.response-action-btn svg rect{fill:#8e8e93;fill-opacity:1;}
+.response-action-btn svg rect{fill:#636366;fill-opacity:1;}
 .response-cost svg path,
 .response-cost svg circle,
 .response-cost svg rect{fill:#b1b1b6;fill-opacity:1;}

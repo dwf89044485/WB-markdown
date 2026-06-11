@@ -11,12 +11,12 @@
 | `index.html`               | 手机壳、导航、输入框、对话容器、底部浮层等视觉骨架                                             |
 | `styles/base.css`          | Reset、phone-shell、status-bar、nav-bar、glass 按钮系统、composer              |
 | `styles/conversation.css`  | User/agent 消息气泡、timing-bar、exec-area、step-row、status-line、playback 动画 |
-| `styles/markdown.css`      | CSS 变量 tokens（设计系统源头）、.md 阅读系统、table、typewriter 动效、response-actions   |
+| `styles/markdown.css`      | CSS 变量 tokens（设计系统源头）、.md 阅读系统、table、typewriter 动效、response-actions。**表格全屏交互样式**（第397行起）：`.tbl-fullscreen-overlay`（全屏浮层）、`.tbl-landscape`（手机壳横屏模式，桌面端 852×393，移动端竖向全屏）、`.tbl-fs-nav`/`.tbl-fs-content`/`.tbl-fs-actions` 等全屏导航组件 |
 | `styles/sheet.css`         | Bottom sheet、工具事件行（s-row）、todo 列表、sheet CSS 变量                        |
 | `styles/demo-controls.css` | 演示控制台（.demo-controls）、media query                                     |
 | `scenario.js`              | 剧本数据：playback / nav / nodes / sheetFrames / final / todosBaseline     |
 | `engine/core.js`           | 播放状态（activePlayId、fastRender）、sleep、scrollToBottom、playback 参数读取      |
-| `engine/markdown.js`       | Markdown parser（escapeHtml、inlineMarkdown、markdownToHtml）             |
+| `engine/markdown.js`      | Markdown parser（escapeHtml、inlineMarkdown、markdownToHtml）。**表格渲染入口**：检测 `|` 分隔符（第65行），渲染 `<table>` 及 `tbl-toolbar` 工具栏（第73行），包含 4 个按钮：`tbl-copy`（复制）、`tbl-save-image`（保存图片）、`tbl-share`（分享）、`tbl-maximize`（全屏/展开）。SVG 图标常量定义在文件顶部（第3-8行） |
 | `engine/icons.js`          | 图标系统（SVG 注册表、tool icon 推断、status line 渲染）                             |
 | `engine/typewriter.js`     | Token 流式输出（typeText、appendHTMLTypedTo）                                |
 | `engine/sheet.js`          | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo）                  |
@@ -37,6 +37,30 @@
 4. timing-bar 只在全部节点结束后出现。
 5. 旧实现里的节点3删除项未迁入：不再出现"原生中文字符重写整个文件"和"已调用工具"。
 6. todos 数据：`scenario.js` 里 `todosBaseline` 是文本基准，各 sheetFrame 用 `todoOverrides` 只记录 status 变更，engine/sheet.js 的 `renderSheet` 合并两者渲染完整列表。
+
+### 表格交互专项说明
+
+表格是项目中交互最密集的组件之一，涉及以下文件：
+
+| 关注点 | 文件 | 关键位置 |
+|--------|------|----------|
+| 表格渲染 & 工具栏 | `engine/markdown.js` | 第65-77行（`markdownToHtml` 中检测 `|` 分隔符 → 渲染 `tbl-outer` + `tbl-toolbar` + `<table>`） |
+| 工具栏按钮定义 | `engine/markdown.js` | 第73行（`tbl-copy`、`tbl-save-image`、`tbl-share`、`tbl-maximize`） |
+| SVG 图标常量 | `engine/markdown.js` | 第3-8行（`SVG_COPY`、`SVG_SAVE_IMAGE`、`SVG_DOWNLOAD`、`SVG_MAXIMIZE`、`SVG_SHARE`） |
+| 全屏展开样式 | `styles/markdown.css` | 第397行起（`.tbl-fullscreen-overlay` 全屏浮层、`.tbl-landscape` 横屏模式） |
+| 桌面端横屏 | `styles/markdown.css` | `.phone-shell.tbl-landscape`：手机壳变为 852×393，隐藏状态栏/对话流/输入框 |
+| 移动端全屏 | `styles/markdown.css` | `html:not(.force-desktop) .phone-shell.tbl-landscape`：竖向全屏，不旋转 |
+| 全屏 JS 交互 | **当前未绑定** | `tbl-maximize` 按钮的点击事件尚未实现，需在 `engine/player.js` 或 `engine/markdown.js` 中绑定 |
+
+**当前状态**：表格工具栏的 4 个按钮中，`tbl-copy`（复制）、`tbl-save-image`（保存图片）、`tbl-share`（分享）的点击事件已绑定；**`tbl-maximize`（全屏/展开表格）按钮尚未绑定点击事件**，CSS 全屏样式已就绪但 JS 交互未实现。
+
+**用户常用术语对照**：
+- "展开表格" = 点击 `tbl-maximize` 按钮进入全屏/横屏模式
+- "表格工具栏" = `tbl-toolbar`（`.tbl-toolbar`），位于表格上方
+- "全屏查看" = `.tbl-fullscreen-overlay` 浮层
+- "横屏模式" = `.tbl-landscape`，桌面端手机壳变宽，移动端竖向全屏
+
+**后续可能的扩展方向**：表格排序、列宽拖拽、单元格编辑、数据导出、响应式列隐藏等，这些交互主要在 `engine/markdown.js` 的表格渲染逻辑和 `styles/markdown.css` 的表格样式中扩展。
 
 ### 执行区间距架构约束（conversation）
 

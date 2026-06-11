@@ -370,12 +370,24 @@
   flex-shrink:0;
   cursor:ns-resize;
   margin-bottom:max(12px, env(safe-area-inset-bottom));
+  gap:0;
 }
+.pc-handle::before,
 .pc-handle::after{
   content:"";
-  width:72px;height:6px;
+  display:block;
+  width:32px;
+  height:4px;
   background:#d7d7dc;
-  border-radius:99px;
+  border-radius:2px;
+}
+.pc-handle::before{
+  transform:rotate(22deg);
+  transform-origin:right center;
+}
+.pc-handle::after{
+  transform:rotate(-22deg);
+  transform-origin:left center;
 }
 
 .phone-controls [data-phone-hide]{display:none;}

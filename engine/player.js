@@ -12,7 +12,7 @@ import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
 import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
-import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
+import { openSheet, closeSheet, maybeClose, renderFileCard, checkSheetOverflow } from './sheet.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const designNotes = window.WORKBUDDY_DESIGN_NOTES || {};
@@ -406,6 +406,8 @@ function openSourceSheet() {
   ov.className = 'sheet-overlay vis';
   requestAnimationFrame(() => requestAnimationFrame(() => {
     ov.className = 'sheet-overlay vis show';
+    // 内容渲染后检查是否需要自动展开
+    checkSheetOverflow();
   }));
 }
 

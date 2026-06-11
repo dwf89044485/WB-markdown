@@ -698,11 +698,10 @@ function bindPanelControls(root) {
   const $r = (sel) => root.querySelector(sel);
   const speedSlider = $r('#ctrlSpeedSlider');
   const speedTrack = speedSlider ? speedSlider.closest('.dc-speed-track') : null;
-  const replay = $r('#ctrlReplay');
   const prev = $r('#ctrlPrevStep');
   const auto = $r('#ctrlAutoStep');
   const next = $r('#ctrlNextStep');
-  if (!speedSlider || !replay) return;
+  if (!speedSlider) return;
 
   const syncSpeed = () => {
     const value = Math.round(Number(speedSlider.value));
@@ -723,10 +722,12 @@ function bindPanelControls(root) {
     scenario.playback.tokensPerSecond = mappedValue;
     speedSlider.style.setProperty('--speed-progress', progress);
     if (speedTrack) speedTrack.style.setProperty('--speed-progress', progress);
+    // 更新桌面只读显示
+    const ro = document.getElementById('dcSpeedRoValue');
+    if (ro) ro.textContent = mappedValue;
   };
   speedSlider.addEventListener('input', syncSpeed);
 
-  replay.onclick = () => restartPlayback();
   if (prev) prev.onclick = () => directorPrevStep();
   if (next) next.onclick = () => directorNextStep();
   if (auto) auto.onclick = () => toggleDirectorAuto();

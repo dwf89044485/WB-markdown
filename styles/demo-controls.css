@@ -80,30 +80,50 @@
   color:#000;
 }
 .dc-tweak-reload{
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  gap:8px;
-  height:30px;
-  padding:0 12px;
+  gap:4px;
+  height:22px;
   border:none;
-  border-radius:var(--dc-control-radius);
-  background:#EBEBEB;
+  background:transparent;
   cursor:pointer;
-  font-size:15px;
+  font-size:13px;
   line-height:22px;
-  font-weight:500;
+  font-weight:400;
   font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
-  color:#000;
+  color:#8e8e93;
   flex-shrink:0;
+  padding:0;
 }
 .dc-tweak-reload svg{
-  width:16px;
-  height:16px;
+  width:14px;
+  height:14px;
   display:block;
   flex-shrink:0;
 }
-.dc-tweak-reload:hover{ background:#E2E2E2; }
-.dc-tweak-reload:active{ background:#DADADA; }
+.dc-tweak-reload:hover{ color:#000; }
+.dc-tweak-reload:hover svg path{ fill:#000; }
+.dc-tweak-reload:active{ opacity:.6; }
+
+/* ── Token 速度只读显示 ────────────────────────────────────── */
+.dc-speed-ro{
+  display:flex;
+  align-items:center;
+  height:var(--dc-control-height);
+  padding:0 12px;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+}
+.dc-speed-ro-value{
+  font-size:13px;
+  font-weight:500;
+  line-height:22px;
+  color:#000;
+  min-width:32px;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0.5px;
+}
 
 .dc-pill,
 .dc-segment,

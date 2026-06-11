@@ -85,7 +85,7 @@ function panelRoots() {
 
 // ── State ──────────────────────────────────────────────────
 const displayMode = 'flat';
-let toolCallStyle = 'card'; // 'card' | 'flat' | 'stack'
+let toolCallStyle = 'flat'; // 'card' | 'flat' | 'stack'
 let execOpen = true;
 let stepsOpen = true;
 let stepSeq = 0;

@@ -740,6 +740,14 @@ function bindPanelControls(root) {
 }
 
 function setupDemoControls() {
+  // 初始滑杆位置设为 60%
+  const initSlider = document.querySelector('#ctrlSpeedSlider');
+  if (initSlider) {
+    const imin = Number(initSlider.min) || 20;
+    const imax = Number(initSlider.max) || 1000;
+    initSlider.value = Math.round(imin + (imax - imin) * 0.6);
+  }
+
   bindPanelControls(document);
   syncToolCallStyleUI();
   updateDirectorControls();
@@ -822,17 +830,23 @@ function openPhoneControls() {
   const dcMain = source.querySelector('.dc-main');
   if (dcMain) pcBody.appendChild(dcMain.cloneNode(true));
 
-  bindPanelControls(phonePanel);
-
-  // Sync speed slider
+  // Sync speed slider value to phone clone before bindPanelControls,
+  // so syncSpeed() reads the correct value on first call
   const srcSpeed = source.querySelector('#ctrlSpeedSlider');
   const phoneSpeed = phonePanel.querySelector('#ctrlSpeedSlider');
   if (srcSpeed && phoneSpeed) {
     phoneSpeed.value = srcSpeed.value;
+  }
+  bindPanelControls(phonePanel);
+
+  // Also sync progress visual
+  if (srcSpeed && phoneSpeed) {
     const progress = srcSpeed.style.getPropertyValue('--speed-progress');
-    phoneSpeed.style.setProperty('--speed-progress', progress);
-    const phoneTrack = phoneSpeed.closest('.dc-speed-track');
-    if (phoneTrack) phoneTrack.style.setProperty('--speed-progress', progress);
+    if (progress) {
+      phoneSpeed.style.setProperty('--speed-progress', progress);
+      const phoneTrack = phoneSpeed.closest('.dc-speed-track');
+      if (phoneTrack) phoneTrack.style.setProperty('--speed-progress', progress);
+    }
   }
 
   syncToolCallStyleUI();

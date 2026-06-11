@@ -723,7 +723,6 @@ function bindPanelControls(root) {
   };
   const sliderMin = Number(speedSlider.min) || 20;
   const sliderMax = Number(speedSlider.max) || 1000;
-  speedSlider.value = Math.round(sliderMin + (sliderMax - sliderMin) * 0.5);
   syncSpeed();
   speedSlider.addEventListener('input', syncSpeed);
 
@@ -839,6 +838,15 @@ function openPhoneControls() {
   syncToolCallStyleUI();
   updateDirectorControls();
   phonePanel.classList.add('is-open');
+
+  // Click handle to close
+  const handle = phonePanel.querySelector('.pc-handle');
+  if (handle) {
+    handle.onclick = (e) => {
+      e.stopPropagation();
+      closePhoneControls();
+    };
+  }
 }
 
 function closePhoneControls() {

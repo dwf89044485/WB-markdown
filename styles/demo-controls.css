@@ -368,7 +368,7 @@
   align-items:center;
   justify-content:center;
   flex-shrink:0;
-  cursor:ns-resize;
+  cursor:pointer;
   margin-bottom:max(12px, env(safe-area-inset-bottom));
   gap:0;
 }
@@ -382,12 +382,12 @@
   border-radius:2px;
 }
 .pc-handle::before{
-  transform:rotate(24deg);
+  transform:rotate(-24deg);
   transform-origin:right center;
   margin-right:-1px;
 }
 .pc-handle::after{
-  transform:rotate(-24deg);
+  transform:rotate(24deg);
   transform-origin:left center;
   margin-left:-1px;
 }

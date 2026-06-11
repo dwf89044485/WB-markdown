@@ -369,7 +369,10 @@
 .response-action-btn span{
   position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
 }
-.response-action-btn:hover{background:rgba(0,0,0,.06);}
+@media (hover: hover){
+  .response-action-btn:hover{background:rgba(0,0,0,.06);}
+}
+.response-action-btn:active{background:rgba(0,0,0,.08);}
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 .response-cost{

@@ -4,6 +4,7 @@
 # Cache & logs
 .cache/
 server.log
+.ardot-cache/
 
 # IDE / tool directories
 .codebuddy/

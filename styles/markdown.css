@@ -513,30 +513,3 @@
 .phone-shell.tbl-landscape > .phone-controls{
   display:none;
 }
-
-/* ── MOBILE LANDSCAPE (vertical fullscreen) ──────────────── */
-/* 移动端：手机壳全屏时，不做旋转，而是竖向全屏展示表格内容 */
-html:not(.force-desktop) .phone-shell.tbl-landscape{
-  width:100%;
-  height:100dvh;
-  border-radius:0;
-  box-shadow:none;
-  background:#fafafa;
-  margin:0;
-  align-self:center;
-  /* 竖向布局，不旋转 */
-  transition:width .35s cubic-bezier(.32,.72,0,1),
-              height .35s cubic-bezier(.32,.72,0,1);
-}
-html:not(.force-desktop) .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
-  border-radius:0;
-}
-/* 移动端正屏下隐藏所有原本的 UI */
-html:not(.force-desktop) .phone-shell.tbl-landscape > .status-bar,
-html:not(.force-desktop) .phone-shell.tbl-landscape > #conv,
-html:not(.force-desktop) .phone-shell.tbl-landscape > .conversation,
-html:not(.force-desktop) .phone-shell.tbl-landscape > .composer,
-html:not(.force-desktop) .phone-shell.tbl-landscape > .sheet-overlay,
-html:not(.force-desktop) .phone-shell.tbl-landscape > .phone-controls{
-  display:none;
-}

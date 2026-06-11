@@ -31,7 +31,7 @@
   display:flex;
   flex-direction:column;
   gap:20px;
-  padding:24px 20px 20px;
+  padding:20px;
   background:#fff;
   border-radius:20px;
   box-shadow:0 4px 20px rgba(0,0,0,.08);
@@ -91,7 +91,7 @@
   line-height:22px;
   font-weight:400;
   font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
-  color:#8e8e93;
+  color:#000;
   flex-shrink:0;
   padding:0;
 }
@@ -101,8 +101,7 @@
   display:block;
   flex-shrink:0;
 }
-.dc-tweak-reload:hover{ color:#000; }
-.dc-tweak-reload:hover svg path{ fill:#000; }
+.dc-tweak-reload svg path{ fill:#000; }
 .dc-tweak-reload:active{ opacity:.6; }
 
 /* ── Token 速度只读显示 ────────────────────────────────────── */

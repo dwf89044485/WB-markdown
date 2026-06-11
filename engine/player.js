@@ -267,8 +267,8 @@ function renderFinalActions() {
   wrap.innerHTML = `
     <div class="response-action-left">
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
-    </div>
-    <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>`;
+      <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
+    </div>`;
   main.appendChild(wrap);
 }
 

@@ -339,13 +339,12 @@
   padding:4px 0 0;
   display:flex;
   align-items:center;
-  justify-content:space-between;
   gap:12px;
   color:#8e8e93;
   user-select:none;
 }
 .response-action-left{
-  display:flex;align-items:center;gap:6px;min-width:0;
+  display:flex;align-items:center;gap:0;min-width:0;
 }
 .response-action-btn{
   appearance:none;border:0;background:transparent;padding:0;margin:0;
@@ -362,12 +361,12 @@
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 .response-cost{
-  margin-left:auto;
+  margin-left:0;
   display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
-  padding:2px 0;font-size:12px;line-height:1;font-weight:500;
+  height:36px;padding:0;font-size:12px;line-height:1;font-weight:500;
   color:#b1b1b6;letter-spacing:-.12px;white-space:nowrap;
 }
-.response-cost .cost-svg{width:13px;height:13px;opacity:.58;transform:translateY(.2px);}
+.response-cost .cost-svg{width:13px;height:13px;opacity:.58;}
 .response-cost strong{font-size:12px;font-weight:600;color:#a7a7ad;}
 .md .response-actions svg,
 .md .response-actions svg *{max-width:none;}

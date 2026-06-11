@@ -132,7 +132,7 @@ function createStatusLineIn(container, text, frameIds, title) {
   btn.dataset.frames = (frameIds || []).join(',');
   btn.dataset.sheetTitle = title || '';
   setStatusLineLabels(btn, splitStatusLabels(text));
-  btn.onclick = () => openSheet(btn.dataset.frames, btn.dataset.sheetTitle);
+  btn.onclick = () => openSheet(btn.dataset.frames, btn.dataset.sheetTitle, { replay: btn.classList.contains('is-running') });
   container.appendChild(btn);
   scrollToBottom();
   return btn;
@@ -264,13 +264,13 @@ function renderFinalActions() {
     ['copy', '复制', RESPONSE_SVGS.copy],
     ['regenerate', '重新生成', RESPONSE_SVGS.refresh],
     ['share', '分享', RESPONSE_SVGS.share],
-    ['more', '更多', RESPONSE_SVGS.more],
-    ['source', '来源', '<img class="action-img" src="./icons/wb-source.png" alt="">']
+    ['more', '更多', RESPONSE_SVGS.more]
   ];
   wrap.innerHTML = `
     <div class="response-action-left" style="position:relative">
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
+      <button class="response-action-btn response-action-source" type="button" aria-label="来源"><img class="action-img" src="./icons/wb-source.png" alt=""><span>来源</span></button>
     </div>`;
   main.appendChild(wrap);
 

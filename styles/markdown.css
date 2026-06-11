@@ -429,6 +429,20 @@
 .tbl-fullscreen-overlay.is-active{
   display:flex;
 }
+html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100dvh;
+  border-radius:0;
+}
+html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-portrait{
+  transform-origin:top left;
+  transform:translateY(100vw) rotate(90deg);
+}
+html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape{
+  transform:none;
+}
 @keyframes tbl-fs-in{
   from{opacity:0;}
   to{opacity:1;}

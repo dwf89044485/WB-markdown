@@ -305,6 +305,36 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     if (a === 'copy') b.innerHTML = FS_COPY || COPY_SVG;
   });
 
+  function isMobileFsMode(){
+    return !document.documentElement.classList.contains('force-desktop') &&
+      window.matchMedia('(max-width: 900px)').matches;
+  }
+
+  function isLandscapeViewport(){
+    var vv = window.visualViewport;
+    var width = vv ? vv.width : window.innerWidth;
+    var height = vv ? vv.height : window.innerHeight;
+    return width > height;
+  }
+
+  function syncFullscreenOrientation(){
+    if (!overlay.classList.contains('is-active')) return;
+    if (!isMobileFsMode()) {
+      overlay.classList.remove('tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
+      shell.classList.add('tbl-landscape');
+      return;
+    }
+    shell.classList.remove('tbl-landscape');
+    overlay.classList.add('tbl-mobile');
+    if (isLandscapeViewport()) {
+      overlay.classList.add('tbl-mobile-landscape');
+      overlay.classList.remove('tbl-mobile-portrait');
+    } else {
+      overlay.classList.add('tbl-mobile-portrait');
+      overlay.classList.remove('tbl-mobile-landscape');
+    }
+  }
+
   /* ── 全屏入口 ────────────────────────────────────────── */
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.tbl-btn.tbl-maximize');
@@ -315,14 +345,19 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     if (!table) return;
     /* 克隆表格 HTML 放入内容区 */
     content.innerHTML = '<div class="tbl-outer"><div class="tbl-wrap">' + table.outerHTML + '</div></div>';
-    /* 切换横屏 + 显示浮层 */
-    shell.classList.add('tbl-landscape');
     overlay.classList.add('is-active');
+    syncFullscreenOrientation();
   });
+
+  window.addEventListener('resize', syncFullscreenOrientation);
+  window.addEventListener('orientationchange', syncFullscreenOrientation);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncFullscreenOrientation);
+  }
 
   /* ── 返回 ─────────────────────────────────────────────── */
   function closeFullscreen(){
-    overlay.classList.remove('is-active');
+    overlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
     shell.classList.remove('tbl-landscape');
     content.innerHTML = '';
   }

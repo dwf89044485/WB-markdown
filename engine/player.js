@@ -354,7 +354,7 @@ function resetPlaybackDom() {
   stepsOpen = true;
   stepSeq = 0;
   if (overlay) overlay.className = 'sheet-overlay';
-  if (tblOverlay) tblOverlay.classList.remove('is-active');
+  if (tblOverlay) tblOverlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
   if (phoneShell) phoneShell.classList.remove('tbl-landscape');
   if (userBubble) userBubble.textContent = '';
   if (userWrap) userWrap.className = 'user-msg-wrap is-hidden';
@@ -712,17 +712,15 @@ function bindPanelControls(root) {
     const visualPercent = Math.max(minPercent, percent);
     const progress = `${visualPercent}%`;
     let mappedValue;
-    if (percent <= 50) {
-      mappedValue = Math.round(5 + (percent / 50) * 195);
+    if (percent <= 60) {
+      mappedValue = Math.round(5 + (percent / 60) * 195);
     } else {
-      mappedValue = Math.round(200 + ((percent - 50) / 50) * 1300);
+      mappedValue = Math.round(200 + ((percent - 60) / 40) * 1300);
     }
     scenario.playback.tokensPerSecond = mappedValue;
     speedSlider.style.setProperty('--speed-progress', progress);
     if (speedTrack) speedTrack.style.setProperty('--speed-progress', progress);
   };
-  const sliderMin = Number(speedSlider.min) || 20;
-  const sliderMax = Number(speedSlider.max) || 1000;
   syncSpeed();
   speedSlider.addEventListener('input', syncSpeed);
 

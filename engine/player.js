@@ -262,6 +262,7 @@ function renderFinalActions() {
 async function renderFinal() {
   renderTiming();
   collapseProcessIntoTiming();
+  setComposerGenerating(false);
   await sleep(playbackDelay('stepDelay', 470));
   const main = $('#mainMd');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
@@ -330,6 +331,7 @@ function resetPlaybackDom() {
   if (stepsList) { stepsList.innerHTML = ''; stepsList.className = 'steps-list open'; }
   if (main) main.innerHTML = '';
   if (execArea) execArea.className = 'exec-area open is-hidden';
+  setComposerGenerating(false);
   scrollToBottom();
 }
 
@@ -432,6 +434,7 @@ async function runDirectorStep(index) {
 async function runDirectorAutoLoop(token) {
   if (directorBusy) return;
   directorBusy = true;
+  setComposerGenerating(true);
   updateDirectorControls();
   try {
     await sleep(playback('autoStartDelay', 420));
@@ -445,6 +448,7 @@ async function runDirectorAutoLoop(token) {
       directorBusy = false;
       autoPlaying = false;
       pauseRequested = false;
+      setComposerGenerating(false);
       updateDirectorControls();
     }
   }
@@ -459,10 +463,30 @@ function startDirectorAuto() {
   runDirectorAutoLoop(token);
 }
 
+function setComposerGenerating(generating) {
+  const shell = document.querySelector('.composer-shell');
+  if (!shell) return;
+  shell.classList.toggle('is-generating', generating);
+}
+
 function stopDirectorAuto() {
   pauseRequested = true;
   autoPlaying = false;
   updateDirectorControls();
+}
+
+function stopPlayback() {
+  if (!directorBusy && !autoPlaying) return;
+  stopDirectorAuto();
+  incrementPlayId();
+  resetPlaybackDom();
+  setFastRender(false);
+  currentDirectorIndex = -1;
+  directorRuntime = { rows: [] };
+  directorTimeline = buildDirectorTimeline();
+  updateDirectorControls();
+  renderDesignNotes(currentDirectorIndex);
+  setComposerGenerating(false);
 }
 
 function toggleDirectorAuto() {
@@ -503,6 +527,7 @@ async function directorNextStep() {
   // 正常情况：单步播放
   const token = activePlayId;
   directorBusy = true;
+  setComposerGenerating(true);
   updateDirectorControls();
   try {
     await runDirectorStep(currentDirectorIndex + 1);
@@ -550,6 +575,7 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
     directorRuntime = { rows: [] };
     directorTimeline = buildDirectorTimeline();
     currentDirectorIndex = -1;
+    setComposerGenerating(true);
     const capped = Math.min(targetIndex, directorTimeline.length - 1);
     for (let i = 0; i <= capped; i++) {
       await runDirectorStep(i);
@@ -652,7 +678,7 @@ function bindPanelControls(root) {
     const progress = `${visualPercent}%`;
     let mappedValue;
     if (percent <= 50) {
-      mappedValue = Math.round(50 + (percent / 50) * 150);
+      mappedValue = Math.round(5 + (percent / 50) * 195);
     } else {
       mappedValue = Math.round(200 + ((percent - 50) / 50) * 1300);
     }
@@ -683,6 +709,10 @@ function setupDemoControls() {
   bindPanelControls(document);
   syncToolCallStyleUI();
   updateDirectorControls();
+
+  // 停止生成按钮
+  const stopBtn = document.getElementById('composerStopBtn');
+  if (stopBtn) stopBtn.addEventListener('click', stopPlayback);
 
   // Phone drawer wiring
   const navCenter = document.querySelector('.nav-center');

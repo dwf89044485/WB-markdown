@@ -399,6 +399,23 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   background:transparent;transition:background .1s;
 }
 .composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
+.composer-stop-btn{display:none;cursor:pointer;}
+.composer-shell.is-generating .composer-stop-btn{display:flex;}
+.composer-shell.is-generating .composer-placeholder{display:none;}
+.composer-stop-circle{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.composer-stop-icon{display:block;}
+.composer-stop-icon{
+  animation:composer-stop-spin 4s linear infinite;
+}
+@keyframes composer-stop-spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
 .composer-placeholder{
   flex:1;
   text-align:center;

@@ -111,6 +111,13 @@
           <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1001 0.644165C12.6298 0.644595 14.6809 2.69526 14.681 5.22506V9.11503C14.6806 11.6445 12.6296 13.6955 10.1001 13.6959C7.57024 13.6959 5.51967 11.6448 5.51923 9.11503V5.22506C5.51934 2.695 7.57003 0.644165 10.1001 0.644165ZM10.1001 2.30595C8.48821 2.30595 7.18112 3.61317 7.18101 5.22506V9.11503C7.18145 10.7266 8.48841 12.0333 10.1001 12.0333C11.7115 12.0329 13.0188 10.7264 13.0192 9.11503V5.22506C13.0191 3.61344 11.7117 2.30638 10.1001 2.30595Z" fill="black" fill-opacity="0.86"/>
         </svg>
       </button>
+      <button class="composer-side-btn composer-stop-btn" type="button" tabindex="-1" aria-label="停止生成" id="composerStopBtn">
+        <span class="composer-stop-circle">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="composer-stop-icon">
+            <rect width="12" height="12" rx="2.6" fill="white"/>
+          </svg>
+        </span>
+      </button>
     </div>
   </div>
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
@@ -158,7 +165,7 @@
       <span class="dc-label">Token速度：</span>
       <div class="dc-speed">
         <div class="dc-speed-track">
-          <input id="ctrlSpeedSlider" type="range" min="20" max="1500" value="200" step="10" aria-label="Token速度调节">
+          <input id="ctrlSpeedSlider" type="range" min="5" max="1500" value="200" step="10" aria-label="Token速度调节">
         </div>
         <button id="ctrlReplay" type="button" class="dc-icon-btn" aria-label="刷新重放">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="#000" transform="matrix(1 0 0 1 0.899994 0.899994)" d="M14.2 7.1Q14.2 10.0409 12.1205 12.1205Q10.0409 14.2 7.1 14.2Q4.1591 14.2 2.0796 12.1205Q0 10.0409 0 7.1Q0 4.1591 2.0796 2.0796Q4.1591 0 7.1 0Q9.3561 0 11.1927 1.2977Q12.215 2.0199 12.9034 2.996L12.9034 0.6971L14.1034 0.6971L14.1034 3.5507Q14.1034 3.9951 14.0796 4.1696Q14.0248 4.5714 13.7812 4.8149Q13.5377 5.0584 13.1359 5.1133Q12.9614 5.1371 12.517 5.1371L9.6634 5.1371L9.6634 3.9371L12.0878 3.9371Q11.4776 2.9682 10.5003 2.2777Q8.9749 1.2 7.1 1.2Q4.6561 1.2 2.9281 2.9281Q1.2 4.6561 1.2 7.1Q1.2 9.5439 2.9281 11.2719Q4.6561 13 7.1 13Q9.5439 13 11.2719 11.2719Q13 9.5439 13 7.1L14.2 7.1Z" fill-rule="evenodd"/></svg>

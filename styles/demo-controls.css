@@ -53,6 +53,58 @@
   gap:16px;
 }
 
+/* ── Tweak row ──────────────────────────────────────────────── */
+.dc-row-tweak{
+  justify-content:space-between;
+  height:30px;
+  gap:0;
+}
+.dc-tweak-labels{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  flex-shrink:0;
+}
+.dc-tweak-title{
+  font-size:22px;
+  line-height:22px;
+  font-weight:600;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#000;
+}
+.dc-tweak-hash{
+  font-size:13px;
+  line-height:18px;
+  font-weight:200;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#000;
+}
+.dc-tweak-reload{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  height:30px;
+  padding:0 12px;
+  border:none;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+  cursor:pointer;
+  font-size:15px;
+  line-height:22px;
+  font-weight:500;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#000;
+  flex-shrink:0;
+}
+.dc-tweak-reload svg{
+  width:16px;
+  height:16px;
+  display:block;
+  flex-shrink:0;
+}
+.dc-tweak-reload:hover{ background:#E2E2E2; }
+.dc-tweak-reload:active{ background:#DADADA; }
+
 .dc-pill,
 .dc-segment,
 .dc-speed-track,

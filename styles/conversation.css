@@ -293,11 +293,17 @@
   padding-bottom:var(--cv-main-content-padding-bottom);
 }
 #mainMd,
-#mainBiz,
 #mainActions{
   min-width:0;
   min-height:0;
   display:flow-root;
+}
+#mainBiz{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:var(--cv-main-content-gap);
 }
 #mainMd > :last-child{
   margin-bottom:0;

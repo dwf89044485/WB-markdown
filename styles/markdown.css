@@ -120,7 +120,7 @@
   width:5px;
   height:5px;
   border-radius:50%;
-  background:var(--md-purple);
+  background:var(--md-text-muted);
 }
 .md-node ul li::before{top:13px;width:4px;height:4px;}
 

@@ -55,7 +55,12 @@ function updateScrollNav() {
   const hasPrev = idx > 0;
   const hasNext = idx >= 0 && idx < len - 1;
 
-  const showUp = hasPrev;
+  // ↑ 可见条件：有上一轮，或当前已滚过第一条用户消息（说明有内容可回卷）
+  const firstUserTop = t[0].userMsg.offsetTop;
+  const scrolledPastFirst = SN.conv.scrollTop > firstUserTop + 1;
+  const showUp = hasPrev || scrolledPastFirst;
+
+  // ↓ 可见条件：只有存在下一轮时才显示
   const showDown = hasNext;
 
   const prevUpHidden = SN.upBtn.classList.contains('is-hidden');

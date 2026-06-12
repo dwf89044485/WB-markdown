@@ -22,7 +22,7 @@ window.WORKBUDDY_SCENARIO = {
     },
     {
       "agent": "好的，这些我都会重点考虑进去。父亲膝盖的问题不用太担心，关西很多景点都有替代方案——比如去清水寺可以打车到山门入口、岚山可以坐小火车游览竹林而不用全程步行、伏见稻荷大社走主干道前半段就好。妈妈不吃生食也没问题，关西美食熟食选择非常丰富，大阪烧、章鱼烧、汤豆腐、烤鳗鱼、神户牛这些都是全熟的美食，完全不用担心。\n\n偏好自然风光和城市街区的话，正好可以安排岚山竹林、奈良公园、大阪城天守阁这些自然与人文兼具的景点。信息已经很充足了，随时可以开始出方案。要我现在开始策划吗？",
-      "user": "可以，帮我策划吧"
+      "user": "可以，帮我策划吧\n\n具体需求再梳理一下：\n· 2026年9月18日到24日，关西7日\n· 4人从上海出发，预算28,000元\n· 爸爸膝盖不好，需要低步行量方案\n· 妈妈不吃生食，偏好熟食\n· 喜欢自然风光和城市街区"
     }
   ],
   "agent": {
@@ -557,7 +557,16 @@ window.WORKBUDDY_SCENARIO = {
         {"type": "markdown", "markdown": `没有成功，我来调用 SubAgent 来专门修复这些问题`},
         {"type": "status", "runningText": "正在委派 Subagent", "doneText": "委派 Subagent", "frames": ["F3.5a", "F3.5b", "F3.5c"]},
         {"type": "markdown", "markdown": `文档已成功生成！让我更新进度`},
-        {"type": "status", "runningText": "正在更新待办", "doneText": "更新待办", "frames": ["F3.6a", "F3.6b"]}
+        {"type": "status", "runningText": "正在更新待办", "doneText": "更新待办", "frames": ["F3.6a", "F3.6b"]},
+        {
+          "type": "askUser",
+          "questions": [
+            { "id": "q1", "type": "single", "question": "你希望住宿偏向哪种风格？", "options": ["商务酒店", "日式旅馆", "民宿", "青旅"] },
+            { "id": "q2", "type": "multiple", "question": "你希望行程包含哪些类型？", "options": ["寺庙神社", "自然风光", "购物美食", "文化体验"] },
+            { "id": "q3", "type": "sort", "question": "请按优先级排列你的出行考量", "options": ["性价比", "舒适度", "特色体验", "交通便利"] },
+            { "id": "q4", "type": "single", "question": "行程节奏你更偏好哪种？", "options": ["紧凑高效", "适中均衡", "悠闲随性"] }
+          ]
+        }
       ]
     }
   ],

@@ -30,9 +30,6 @@
   --cv-status-chevron-padding-left:var(--spacing-4);
   --cv-main-content-padding-bottom:var(--spacing-8);
   --cv-main-content-gap:var(--spacing-8);
-  --cv-main-md-margin-bottom:0;
-  --cv-main-biz-margin-bottom:0;
-  --cv-main-actions-margin-bottom:0;
   --cv-flat-padding-bottom:var(--spacing-8);
   --cv-flat-stack-gap:var(--spacing-12);
   --cv-exec-stack-gap:var(--cv-flat-stack-gap);
@@ -295,9 +292,7 @@
   gap:var(--cv-main-content-gap);
   padding-bottom:var(--cv-main-content-padding-bottom);
 }
-.main-content > #mainMd{margin-bottom:var(--cv-main-md-margin-bottom);}
-.main-content > #mainBiz{margin-bottom:var(--cv-main-biz-margin-bottom);}
-.main-content > #mainActions{margin-bottom:var(--cv-main-actions-margin-bottom);}
+
 
 /* ── DYNAMIC RUNTIME HELPERS ─────────────────────────────── */
 /* only active during playback; final visual keeps original classes */

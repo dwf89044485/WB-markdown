@@ -51,17 +51,15 @@ function updateScrollNav() {
     return;
   }
 
-  const idx = getCurrentTurnIndex();
-  const hasPrev = idx > 0;
-  const hasNext = idx >= 0 && idx < len - 1;
+  // 显隐判断基于滚动容器的位置，而非轮次索引
+  // ↑ 可见：不在最顶部（5px 容差）
+  // ↓ 可见：不在最底部（5px 容差）
+  const scrollTop = SN.conv.scrollTop;
+  const scrollBottom = scrollTop + SN.conv.clientHeight;
+  const scrollHeight = SN.conv.scrollHeight;
 
-  // ↑ 可见条件：有上一轮，或当前已滚过第一条用户消息（说明有内容可回卷）
-  const firstUserTop = t[0].userMsg.offsetTop;
-  const scrolledPastFirst = SN.conv.scrollTop > firstUserTop + 1;
-  const showUp = hasPrev || scrolledPastFirst;
-
-  // ↓ 可见条件：只有存在下一轮时才显示
-  const showDown = hasNext;
+  const showUp = scrollTop > 5;
+  const showDown = scrollBottom < scrollHeight - 5;
 
   const prevUpHidden = SN.upBtn.classList.contains('is-hidden');
   const prevDownHidden = SN.downBtn.classList.contains('is-hidden');
@@ -221,8 +219,13 @@ function doSingleUp() {
 
 function doSingleDown() {
   const idx = getCurrentTurnIndex();
-  if (idx < 0 || idx >= SN.turns.length - 1) return;
-  scrollToUserMsg(idx + 1);
+  if (idx < 0) return;
+  if (idx < SN.turns.length - 1) {
+    scrollToUserMsg(idx + 1);
+  } else {
+    // 已是最后一轮 → 直接滚到底
+    SN.conv.scrollTop = SN.conv.scrollHeight;
+  }
 }
 
 // ── Tooltip ───────────────────────────────────────────────

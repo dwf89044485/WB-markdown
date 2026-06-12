@@ -475,7 +475,7 @@ function renderStaticPreChat() {
       + makeResponseActionsHtml();
     conv.insertBefore(agentDiv, ref);
 
-    // 最后一条用户消息由 showUserMessage() 渲染，这里跳过避免重复
+    // 最后一条用户消息由 showUserMessage() 动画展示，这里跳过
     if (isLast) continue;
 
     // 用户回复
@@ -484,6 +484,18 @@ function renderStaticPreChat() {
     userWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(round.user) + '</div>';
     conv.insertBefore(userWrap, ref);
   }
+
+  // 初始显示第四轮用户消息，滚动到 navbar 下方
+  const lastChat = preChat[preChat.length - 1];
+  if (lastChat) {
+    $('#userBubble').textContent = lastChat.user;
+    $('#userMsgWrap').classList.remove('is-hidden');
+  }
+  // scrollTop = ref 相对 conv 的位置 - navbar 高度 - 间距
+  const navBar = conv.querySelector('.nav-bar');
+  const navHeight = navBar ? navBar.offsetHeight : 0;
+  const scrollTarget = (ref.offsetTop - conv.offsetTop) - navHeight - 12;
+  if (scrollTarget > 0) conv.scrollTop = scrollTarget;
 }
 
 // ── User / agent appearance ───────────────────────────────

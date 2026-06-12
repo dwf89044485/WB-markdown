@@ -441,34 +441,60 @@ async function renderFinal() {
 }
 
 // ── Static pre-chat rounds ───────────────────────────────
+// 存放隐藏的 preChat 元素，按 DOM 顺序排列
+let preChatElements = [];
+
+function makeResponseActionsHtml() {
+  const btns = [
+    ['copy', '复制', RESPONSE_SVGS.copy],
+    ['regenerate', '重新生成', RESPONSE_SVGS.refresh],
+    ['share', '分享', RESPONSE_SVGS.share],
+    ['more', '更多', RESPONSE_SVGS.more],
+  ];
+  return '<div class="response-actions" style="margin-top:8px">'
+    + '<div class="response-action-left" style="position:relative">'
+    + btns.map(([key, label, svg]) =>
+      `<span class="response-action-btn response-action-${key}" style="cursor:default">${svg}<span>${label}</span></span>`
+    ).join('')
+    + '<span class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>'
+    + RESPONSE_SVGS.cost + '<strong>120</strong></span>'
+    + '</div></div>';
+}
+
 function renderStaticPreChat() {
   const preChat = scenario.preChat;
   if (!preChat || !preChat.length) return;
-  // 已渲染过则跳过（重启播放时复用）
-  if (document.querySelector('.prechat-static')) return;
 
   const conv = document.getElementById('conv');
   const ref = document.getElementById('userMsgWrap');
+
+  // 清空旧索引（重置时重新填充）
+  preChatElements = [];
 
   // 第一轮用户消息（来自 scenario.userMessage）
   const firstUserWrap = document.createElement('div');
   firstUserWrap.className = 'user-msg-wrap prechat-static';
   firstUserWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(scenario.userMessage) + '</div>';
   conv.insertBefore(firstUserWrap, ref);
+  firstUserWrap.classList.add('is-hidden');
+  preChatElements.push(firstUserWrap);
 
   for (let i = 0; i < preChat.length; i++) {
     const round = preChat[i];
     const isLast = i === preChat.length - 1;
 
-    // AI 回复
+    // AI 回复（含底部操作栏）
     const agentDiv = document.createElement('div');
     agentDiv.className = 'agent-msg prechat-static';
     agentDiv.innerHTML = '<div class="agent-header">'
       + '<div class="agent-avatar">' + AGENT_AVATAR_SVG + '</div>'
       + '<span class="agent-name">' + scenario.agent.name + '</span>'
       + '</div>'
-      + '<div class="md md-node">' + markdownToHtml(round.agent) + '</div>';
+      + '<div class="md md-node">' + markdownToHtml(round.agent) + '</div>'
+      + makeResponseActionsHtml();
     conv.insertBefore(agentDiv, ref);
+    agentDiv.classList.add('is-hidden');
+    preChatElements.push(agentDiv);
 
     // 最后一条用户消息由 showUserMessage() 渲染，这里跳过避免重复
     if (isLast) continue;
@@ -478,6 +504,8 @@ function renderStaticPreChat() {
     userWrap.className = 'user-msg-wrap prechat-static';
     userWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(round.user) + '</div>';
     conv.insertBefore(userWrap, ref);
+    userWrap.classList.add('is-hidden');
+    preChatElements.push(userWrap);
   }
 }
 
@@ -518,6 +546,10 @@ function collapseProcessIntoTiming() {
 
 // ── DOM reset ─────────────────────────────────────────────
 function resetPlaybackDom() {
+  // 清理 preChat 静态元素
+  document.querySelectorAll('.prechat-static').forEach(el => el.remove());
+  preChatElements = [];
+
   const userWrap = $('#userMsgWrap');
   const userBubble = $('#userBubble');
   const agent = $('#agentMsg');
@@ -586,7 +618,23 @@ function directorActionLabel(action) {
 
 function buildDirectorTimeline() {
   const timeline = [];
-  timeline.push({ label: '用户消息', run: showUserMessage });
+
+  // PreChat 逐条揭示步骤
+  if (preChatElements.length) {
+    preChatElements.forEach((el, i) => {
+      timeline.push({
+        label: i === 0 ? '用户消息' : `预对话 ${Math.ceil(i / 2)}`,
+        run: async () => {
+          el.classList.remove('is-hidden');
+          scrollToBottom();
+          rebuildScrollNav();
+          await sleepDelay(i === 0 ? 'userMessageDelay' : 'stepDelay', i === 0 ? 720 : 470);
+        }
+      });
+    });
+  }
+
+  timeline.push({ label: '用户触发', run: showUserMessage });
   timeline.push({ label: 'WorkBuddy 出现', run: showAgentShell });
   timeline.push({ label: '思考过程', run: showThinkingLoading });
 
@@ -789,6 +837,7 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
       scrollToBottom();
     } else {
       resetPlaybackDom();
+      renderStaticPreChat();
     }
     directorRuntime = { rows: [] };
     directorTimeline = buildDirectorTimeline();
@@ -1082,8 +1131,8 @@ function initializePlayback() {
   currentDirectorIndex = -1;
   directorRuntime = { rows: [] };
   setupNavMeta();
-  renderStaticPreChat();
   resetPlaybackDom();
+  renderStaticPreChat();
   renderDesignNotes(currentDirectorIndex);
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();

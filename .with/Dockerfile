@@ -1,52 +1,34 @@
-# Multi-stage build for static WorkBuddy site
-# Stage 1: Prepare static files with commit hash injection
-FROM alpine:3.19 AS prepare
-
-WORKDIR /app
+# Static HTML site — multi-stage build with Nginx
+FROM nginx:1.25-alpine AS runner
 
 # Copy all static files
-COPY . .
+COPY . /usr/share/nginx/html
 
-# Inject commit hash into index.html meta tag
-RUN GIT_DIR=/app/.git && \
-    HEAD_FILE=$GIT_DIR/HEAD && \
-    if [ -f "$HEAD_FILE" ]; then \
-      HEAD=$(cat "$HEAD_FILE") && \
-      case "$HEAD" in \
-        "ref: "*) \
-          REF=$(echo "$HEAD" | sed 's/ref: //' | tr -d '\n\r ') && \
-          REF_FILE="$GIT_DIR/$REF" && \
-          if [ -f "$REF_FILE" ]; then \
-            SHORT_SHA=$(cat "$REF_FILE" | tr -d '\n\r ' | cut -c1-8); \
-          else \
-            SHORT_SHA=""; \
-          fi ;; \
-        *) \
-          SHORT_SHA=$(echo "$HEAD" | tr -d '\n\r ' | cut -c1-8);; \
-      esac && \
-      if [ -n "$SHORT_SHA" ] && [ "$SHORT_SHA" != "__COMM" ]; then \
-        sed -i "s/__COMMIT_HASH__/$SHORT_SHA/g" /app/index.html; \
-      fi; \
-    fi
+# Remove dev-only files
+RUN rm -f /usr/share/nginx/html/.gitignore \
+    /usr/share/nginx/html/AGENTS.md \
+    /usr/share/nginx/html/README.md \
+    /usr/share/nginx/html/COMMIT_HASH \
+    /usr/share/nginx/html/commit-hash.js \
+    /usr/share/nginx/html/scripts/deploy-pages.sh \
+    /usr/share/nginx/html/scripts/deploy-pages.py \
+    /usr/share/nginx/html/vercel-build.sh \
+    /usr/share/nginx/html/docs/commit-hash.md \
+    /usr/share/nginx/html/.with/Dockerfile
 
-# Remove unnecessary files
-RUN rm -f /app/AGENTS.md /app/CLAUDE.md /app/CLAUDE.md.zip /app/MARKDOWN_STYLE_TOKENS.md && \
-    rm -rf /app/docs /app/screenshots /app/ppt /app/.git /app/.agent /app/.agents /app/.claude /app/.playwright-cli /app/Users && \
-    rm -rf /app/assets/icons /app/icons /app/scripts
+# Remove .git directory if present
+RUN rm -rf /usr/share/nginx/html/.git
 
-# Stage 2: Serve with nginx
-FROM nginx:alpine AS runner
+# Custom nginx config for SPA-like fallback (not needed here, but good practice)
+RUN echo 'server { \
+    listen 8000; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
-# Copy prepared static files from build stage
-COPY --from=prepare /app /usr/share/nginx/html
-
-# Remove unnecessary files from nginx image
-RUN rm -f /usr/share/nginx/html/AGENTS.md
-
-# Expose port 8000
 EXPOSE 8000
-
-# Override nginx config to listen on port 8000
-RUN sed -i 's/listen\s*80;/listen 8000;/g' /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]

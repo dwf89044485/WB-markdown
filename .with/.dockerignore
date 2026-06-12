@@ -13,23 +13,17 @@ Thumbs.db
 
 # Documentation
 README.md
-docs
 AGENTS.md
-DESIGN.md
+docs
 
 # CI/CD
 .github
-.gitlab-ci.yml
-
-# Environment
-.env
-.env.local
-*.env
-
-# Misc
-coverage
-.cache
-tmp
-temp
 scripts
-node_modules
+vercel-build.sh
+
+# Build artifacts
+COMMIT_HASH
+commit-hash.js
+
+# Docker
+.with

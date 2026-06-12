@@ -358,15 +358,6 @@
 }
 .source-inline .response-action-source{
   margin-bottom:0;
-}
-/* source-divider 是 source-inline 的兄弟节点，不是子节点 */
-.source-divider{
-  width:100%;
-  border:0;height:.5px;
-  background:var(--md-border);
-  margin:0;
-}
-.source-inline .response-action-source{
   width:auto;height:24px;
   border-radius:50px;
   padding:0 8px;gap:3px;
@@ -420,21 +411,6 @@
 .response-action-btn .action-svg{width:18px;height:18px;color:#000;opacity:.92;}
 .response-action-more .action-svg{width:19px;height:19px;}
 
-/* ── 来源按钮（药丸形）────────────────────────────────── */
-.response-action-source{
-  width:auto;height:22px;
-  border-radius:50px;
-  padding:0;gap:4px;
-  font-size:13px;font-family:var(--md-font-family);font-weight:400;
-  color:#97979B;letter-spacing:0;
-  flex-direction:row-reverse;
-}
-.response-action-source .action-img{width:32px;height:16px;display:block;}
-.response-action-source span{
-  position:static;width:auto;height:auto;
-  overflow:visible;clip:auto;
-  font-size:13px;line-height:1;color:inherit;
-}
 .response-cost{
   margin-left:6px;
   display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;

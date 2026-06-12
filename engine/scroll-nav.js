@@ -94,19 +94,19 @@ function updateScrollNav() {
 
 // ── Scroll helpers ────────────────────────────────────────
 
-/** nav-bar 覆盖在 conversation 顶部的高度，滚动到用户消息时需要额外偏移 */
+/** nav-bar 覆盖在 conversation 顶部的高度 + 额外间距，确保用户消息不被 nav-bar 遮住 */
 function navBarOverlap() {
   const bar = document.querySelector('.nav-bar');
   const conv = document.querySelector('.conversation');
   if (!bar || !conv) return 0;
   const barRect = bar.getBoundingClientRect();
   const convRect = conv.getBoundingClientRect();
-  return Math.max(0, barRect.bottom - convRect.top);
+  return Math.max(0, barRect.bottom - convRect.top) + 40;
 }
 
 function smoothScrollTo(y) {
-  // 提前展示目标位置会出现的按钮，让入场动画与滚动同步进行
-  // 注意：只 show 不 hide——按钮隐藏让后续 scroll 事件自然处理
+  // 预判目标位置的按钮状态——提前瞬间到位，不播放入场动画，
+  // 这样滚动结束时按钮已经完全可见
   const targetBottom = y + SN.conv.clientHeight;
   const scrollHeight = SN.conv.scrollHeight;
   const willShowUp = y > 5;
@@ -117,26 +117,43 @@ function smoothScrollTo(y) {
 
   if (willShowUp && prevUpHidden) {
     SN.upBtn.classList.remove('is-hidden');
-    SN.upBtn.classList.add('is-appearing');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => { SN.upBtn.classList.remove('is-appearing'); });
-    });
+    // 无入场动画：按钮直接完全可见
   }
   if (willShowDown && prevDownHidden) {
     SN.downBtn.classList.remove('is-hidden');
-    SN.downBtn.classList.add('is-appearing');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => { SN.downBtn.classList.remove('is-appearing'); });
-    });
+    // 无入场动画
+  }
+  // 需要消失的按钮瞬间隐藏
+  if (!willShowUp && !prevUpHidden) {
+    SN.upBtn.classList.add('is-hidden');
+  }
+  if (!willShowDown && !prevDownHidden) {
+    SN.downBtn.classList.add('is-hidden');
   }
   SN.nav.classList.toggle('has-two', !SN.upBtn.classList.contains('is-hidden') && !SN.downBtn.classList.contains('is-hidden'));
   SN.nav.classList.remove('is-hidden');
+
+  // 标记用户主动滚动中，阻止流式输出的 scrollToBottom 打断
+  document.body.dataset.snNavigating = 'true';
+  // 清除上一次的追踪（防多次快速点击冲突）
+  if (SN._clearNavTimer) clearTimeout(SN._clearNavTimer);
+  if (SN._clearNavFn) SN.conv.removeEventListener('scrollend', SN._clearNavFn);
 
   if ('scrollBehavior' in document.documentElement.style) {
     SN.conv.scrollTo({ top: y, behavior: 'smooth' });
   } else {
     SN.conv.scrollTop = y;
   }
+
+  // 清除标记：scrollend 事件或超时兜底（500ms）
+  SN._clearNavFn = () => { document.body.dataset.snNavigating = 'false'; SN._clearNavFn = null; };
+  SN.conv.addEventListener('scrollend', SN._clearNavFn, { once: true });
+  SN._clearNavTimer = setTimeout(() => {
+    if (SN._clearNavFn) {
+      SN.conv.removeEventListener('scrollend', SN._clearNavFn);
+      SN._clearNavFn();
+    }
+  }, 500);
 }
 
 function scrollToUserMsg(index) {
@@ -147,8 +164,7 @@ function scrollToUserMsg(index) {
 
 function scrollToTopTurn() {
   if (!SN.turns.length) return;
-  const top = Math.max(0, SN.turns[0].userMsg.offsetTop - navBarOverlap());
-  smoothScrollTo(top);
+  smoothScrollTo(0);
 }
 
 function scrollToBottomTurn() {

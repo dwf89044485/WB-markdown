@@ -54,6 +54,7 @@
   gap:var(--cv-agent-stack-gap);
   padding:var(--cv-agent-padding-top) var(--cv-msg-gutter-x) var(--cv-agent-padding-bottom);
 }
+.agent-msg.prechat-static{gap:var(--spacing-8);}
 
 /* ── AGENT HEADER ────────────────────────────────────────── */
 .agent-header{display:flex;align-items:center;gap:var(--cv-agent-header-gap);}

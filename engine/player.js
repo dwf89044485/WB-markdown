@@ -451,7 +451,7 @@ function makeResponseActionsHtml() {
     ['share', '分享', RESPONSE_SVGS.share],
     ['more', '更多', RESPONSE_SVGS.more],
   ];
-  return '<div class="response-actions" style="margin-top:8px">'
+  return '<div class="response-actions" style="margin:0 0 8px 0">'
     + '<div class="response-action-left" style="position:relative">'
     + btns.map(([key, label, svg]) =>
       `<span class="response-action-btn response-action-${key}" style="cursor:default">${svg}<span>${label}</span></span>`

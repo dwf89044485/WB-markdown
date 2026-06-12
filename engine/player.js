@@ -245,7 +245,7 @@ function renderTiming() {
   $('#timingMount').innerHTML = `
     <div class="timing-bar timing-enter" onclick="toggleExec()" role="button" tabindex="0" aria-label="折叠/展开执行过程">
       <span class="timing-text">${scenario.final.timing}</span>
-      <img class="timing-arrow" id="timingArrow" src="./icons/right.svg" alt="">
+      <span class="timing-arrow" id="timingArrow">›</span>
     </div>`;
 }
 
@@ -282,7 +282,7 @@ function renderFinalActions() {
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
     </div>
-    ${showSource ? `<div class="response-action-right"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div>` : ''}`;
+    ${showSource ? `<div class="response-action-right"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAABHNCSVQICAgIfAhkiAAAAQRpQ0NQVEdGWAAAGJVjYGA8wwAELAYMDLl5JUVB7k4KEZFRCuwvGTgZxBnAIDG5uIABN2BkYPh2DUQyMFzWxaMOF+BMSS1OBtIfgFilCGg50EgRIFskHcLWANIGwbELu8pKAEyA4AsYtCgpyB7BQgWyMdiZ2ExE4uKAKp7wGyHXJzSpMR7mbgSc0LDQbSHEAsw1DMEMTgzuAE8j9ESf4iBgaLrwwMzBMQYkkzGRi2tzSNwixKksYGDgb2Fg2HYeIYYIk4LEokSwEAsQM6WlMTB8Ws7AwBvJwCB8gYGBKxoWEDjcpgR2WwhDKkMeQzKYLGFQYPAE8/SALCMGAyA2ZWAAAPaCP+RXa/pgAAADT0lEQVRIib2VX2hbdRTHvzdZmpaNPlSMc9Z/XR34J2MMKyMdq6vFKk6FMrapIJ0+2CF98aUFQYv45MMmgqTd3ARxDqyitBvCMGKGXV8WK52tZVUo1qVpb2K6dE3TLPd+fEia5qarKOIOXO6955zf/X7P73t+50plBgSAXmCSVZss+AL/NV6OVw4e5P+3YCmmUQDeIGlM0rZ12Y31S8nfpC2PSnUtf1tISUUFFKM8ct4wjNZSAuOSHnSsXcrIqPBIbnfeMfW9lF2QRk5K6aTG93+inSM9xfzMno8dCJlzvbr+/hFhS7INuTfXqebMr6UpvYZhHHEVdCmCW1PTSux7WbH7HlNs2+7VdLdXGv1UauqR6lv10MUPtKu6XpJU49mkyguHHQQqn+mQxx+Qa+Mmue+ul6vGJ7PJsRMdQECF5gAg3T9A1Od3XFb8T9L9g6RP92PPjMPxBlg04dTuoqjPXT7KqxMn1hV9aSBI6mgHyxfPkji0tTTUKwrdmj7z9RrwqM9P9I7txeelwfPwUQDSify9xLzhdrzhdoJXv3X4zX0bAEi8eA8Ac4+rNDwpgFxsjuidO4j6/MzU7eL6yc/ITU2Tm/qdhWPHiySyP14G24ZcBiYG1lS6QuJmFt9/W55As/LfKJgAEgc7iPr8pL88i2VZDA8P09nZSSQSyWfZNuaTh4j6/JgtB9fd6o0XXsEbbidnWw7/wrHDAFjXTMyWtQQmZ+5tINn5JgBdXV0YhkFtbS0ul4tQKARANjJalALLCVC+C6WWHf2O7M9hAK71PIvZ6pTAJSlkVHhU+dReAerr61MsFlNjY6MADQ0N5U+HmVjtX5fL0fFIeu3KKc3dSDn82eHPlXqnWZ6H9+TfLw3KfdfW0pSQgEDqvQ+JbX8CgO7ubtra2qiqqqK6uppsNouVSDL7yN68TF+cK9JvGnnXobs33E5D5K1ifP7tAPEDwk6nsNMLmM87qoeV0QxMLJ44Taw+QPqrb4ibJrOzs2ST88y/0cNM7U6iW3awfOmn4spfFq+uaTqLVW0zoSCJl0T8BRE/IJKvO44fFEbyyiT0KD+KH7gxdkXLoR9kTf8ho6JC7vr7Vfl0s9ybb9e/tn8wisvyb/3P6GYkbunv+C9K977RXCNlsQAAAABJRU5ErkJggg==" alt=""></button></div>` : ''}`;
   actionsMount.appendChild(wrap);
 
   // More popover
@@ -1132,7 +1132,6 @@ export function toggleExec() {
   $('#execArea').className = 'exec-area ' + (execOpen ? 'open' : 'closed');
   const arrow = $('#timingArrow');
   if (arrow) {
-    arrow.src = execOpen ? './icons/up.svg' : './icons/right.svg';
     arrow.className = 'timing-arrow' + (execOpen ? '' : ' collapsed');
   }
 }

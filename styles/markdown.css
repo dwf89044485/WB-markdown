@@ -346,6 +346,35 @@
 @keyframes mdBlockIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
 
 /* ── RESPONSE ACTIONS ────────────────────────────────────── */
+
+/* ── 来源按钮（作为 Markdown 对话流的一部分，左对齐）─────── */
+.source-inline{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:0;
+  margin:6px 0 2px;
+}
+.source-inline .response-action-source{
+  width:auto;height:24px;
+  border-radius:50px;
+  padding:0 8px;gap:3px;
+  font-size:13px;font-family:var(--md-font-family);font-weight:400;
+  color:#97979B;letter-spacing:0;
+  background:transparent;
+  flex-direction:row-reverse;
+}
+.source-inline .response-action-source .action-img{width:36px;height:18px;display:block;}
+.source-inline .response-action-source span{
+  position:static;width:auto;height:auto;
+  overflow:visible;clip:auto;
+  font-size:13px;line-height:1;color:inherit;
+}
+@media (hover: hover){
+  .source-inline .response-action-source:hover{background:rgba(0,0,0,.04);}
+}
+.source-inline .response-action-source:active{background:rgba(0,0,0,.06);}
+
 .response-actions{
   margin:12px 0 4px;
   padding:4px 0 0;

@@ -271,8 +271,7 @@ function renderFinalActions() {
     <div class="response-action-left" style="position:relative">
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
-    </div>
-    <button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button>`;
+    </div>`;
   main.appendChild(wrap);
 
   // More popover
@@ -363,8 +362,18 @@ function renderFinalActions() {
   const regenerateBtn = wrap.querySelector('.response-action-regenerate');
   if (regenerateBtn) regenerateBtn.onclick = restartPlayback;
 
-  // 来源按钮
-  const sourceBtn = wrap.querySelector('.response-action-source');
+  // 来源按钮（已移到 Markdown 上方渲染）
+  // const sourceBtn = wrap.querySelector('.response-action-source');
+  // if (sourceBtn) sourceBtn.onclick = openSourceSheet;
+}
+
+// ── 来源按钮（渲染在 fileCard 上方，作为 Markdown 对话流的一部分）──
+function renderSourceButtonHtml() {
+  return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div>`;
+}
+
+function bindSourceButton() {
+  const sourceBtn = document.querySelector('.source-inline .response-action-source');
   if (sourceBtn) sourceBtn.onclick = openSourceSheet;
 }
 
@@ -407,9 +416,15 @@ async function renderFinal() {
   const main = $('#mainMd');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
+    // 在 fileCard 之前渲染来源按钮，作为 Markdown 对话流的一部分
+    const sourceHtml = renderSourceButtonHtml();
+    if (sourceHtml) {
+      await appendHTMLTypedTo(main, sourceHtml);
+    }
     await appendHTMLTypedTo(main, renderFileCard(scenario.final.fileCard));
   }
   renderFinalActions();
+  bindSourceButton();
   scrollToBottom();
   setComposerGenerating(false);
 }
@@ -620,14 +635,10 @@ function stopPlayback() {
   if (!directorBusy && !autoPlaying) return;
   stopDirectorAuto();
   incrementPlayId();
-  resetPlaybackDom();
   setFastRender(false);
-  currentDirectorIndex = -1;
-  directorRuntime = { rows: [] };
-  directorTimeline = buildDirectorTimeline();
-  updateDirectorControls();
-  renderDesignNotes(currentDirectorIndex);
+  // 保留已生成的内容，只停止播放引擎
   setComposerGenerating(false);
+  updateDirectorControls();
 }
 
 function toggleDirectorAuto() {

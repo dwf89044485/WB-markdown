@@ -13,6 +13,7 @@ import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusSta
 import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
+import { initScrollNav, rebuildScrollNav } from './scroll-nav.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const designNotes = window.WORKBUDDY_DESIGN_NOTES || {};
@@ -438,6 +439,7 @@ async function showUserMessage() {
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
   scrollToBottom();
+  rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
 }
 
@@ -447,6 +449,7 @@ async function showAgentShell() {
   agent.classList.remove('is-hidden');
   agent.classList.add('agent-enter');
   scrollToBottom();
+  rebuildScrollNav();
   await sleepDelay('agentDelay', 520);
 }
 
@@ -1030,6 +1033,7 @@ function initializePlayback() {
   renderDesignNotes(currentDirectorIndex);
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();
+  initScrollNav();
 }
 
 function restartPlayback() {

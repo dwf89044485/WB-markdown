@@ -65,17 +65,18 @@ function renderAskQuestion() {
   if (prevBtn) prevBtn.disabled = stepIndex <= 0;
   if (nextBtn) nextBtn.disabled = stepIndex >= total - 1;
 
-  // 问题区
+  // 问题区：始终渲染 badge 占位，单选用空内容 + 隐藏 class 保持高度一致
   const questionArea = document.getElementById('aqQuestionArea');
   if (questionArea) {
-    let html = '';
+    let badgeHtml = '<span class="aq-badge';
     if (q.type === 'multiple') {
-      html += '<span class="aq-badge">多选</span>';
+      badgeHtml += '">多选</span>';
     } else if (q.type === 'sort') {
-      html += '<span class="aq-badge">排序</span>';
+      badgeHtml += '">排序</span>';
+    } else {
+      badgeHtml += ' aq-badge--hidden"></span>';
     }
-    html += `<span class="aq-question-text">${escapeAQHtml(q.question)}</span>`;
-    questionArea.innerHTML = html;
+    questionArea.innerHTML = badgeHtml + `<span class="aq-question-text">${escapeAQHtml(q.question)}</span>`;
   }
 
   // 选项列表

@@ -163,6 +163,10 @@
   flex-shrink: 0;
 }
 
+.aq-badge--hidden {
+  visibility: hidden;
+}
+
 .aq-question-text {
   font-family: var(--aq-font);
   font-weight: var(--aq-text-semibold);

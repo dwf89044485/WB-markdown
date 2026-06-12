@@ -276,11 +276,13 @@ function renderFinalActions() {
     ['share', '分享', RESPONSE_SVGS.share],
     ['more', '更多', RESPONSE_SVGS.more]
   ];
+  const showSource = !!(scenario.final && scenario.final.fileCard);
   wrap.innerHTML = `
     <div class="response-action-left" style="position:relative">
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
-    </div>`;
+    </div>
+    ${showSource ? `<div class="response-action-right"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div>` : ''}`;
   actionsMount.appendChild(wrap);
 
   // More popover
@@ -372,18 +374,10 @@ function renderFinalActions() {
   const regenerateBtn = wrap.querySelector('.response-action-regenerate');
   if (regenerateBtn) regenerateBtn.onclick = restartPlayback;
 
-  // 来源按钮（已移到 Markdown 上方渲染）
-  // const sourceBtn = wrap.querySelector('.response-action-source');
-  // if (sourceBtn) sourceBtn.onclick = openSourceSheet;
-}
-
-// ── 来源按钮（渲染到 #mainBiz：source 按钮 + divider）──
-function renderSourceButtonHtml() {
-  return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div><hr class="source-divider">`;
 }
 
 function bindSourceButton() {
-  const sourceBtn = document.querySelector('.source-inline .response-action-source');
+  const sourceBtn = document.querySelector('#mainActions .response-action-source');
   if (sourceBtn) sourceBtn.onclick = openSourceSheet;
 }
 
@@ -427,11 +421,6 @@ async function renderFinal() {
   const mainBiz = $('#mainBiz');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
-    // 先写入来源按钮与分隔线，再写入 fileCard（都在 #mainBiz）
-    const sourceHtml = renderSourceButtonHtml();
-    if (sourceHtml) {
-      await appendHTMLTypedTo(mainBiz, sourceHtml);
-    }
     await appendHTMLTypedTo(mainBiz, renderFileCard(scenario.final.fileCard));
   }
   renderFinalActions();

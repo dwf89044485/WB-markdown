@@ -158,14 +158,14 @@
   border-radius:7px;background:rgba(0,122,255,0.10);font-size:14px;
 }
 
-/* ── FILE CARD ───────────────────────────────────────────── */
-.md .file-card{
+/* ── FILE CARD (lives in #mainBiz, NOT inside .md) ───────── */
+.file-card{
   display:flex;
   align-items:center;
   gap:12px;
   width:100%;
   padding:13px 14px;
-  margin:0 0 6px;
+  margin:0;
   background:var(--md-surface);
   border:0.5px solid var(--md-border);
   border-radius:var(--md-radius-sm);
@@ -173,28 +173,28 @@
   box-shadow:0 2px 10px rgba(0,0,0,0.035);
   transition:background .12s ease;
 }
-.md .file-card:active{background:#f9f9fb;}
-.md .file-card-icon{
+.file-card:active{background:#f9f9fb;}
+.file-card-icon{
   width:32px;height:32px;flex:0 0 32px;
   display:flex;align-items:center;justify-content:center;
 }
-.md .file-card-icon svg{width:28px;height:28px;display:block;}
-.md .file-card-info{
+.file-card-icon svg{width:28px;height:28px;display:block;}
+.file-card-info{
   flex:1;min-width:0;
   display:flex;flex-direction:column;gap:2px;
 }
-.md .file-card-title{
+.file-card-title{
   font-size:15.5px;font-weight:500;color:var(--md-text-primary);
   line-height:1.3;letter-spacing:-0.2px;
 }
-.md .file-card-meta{
+.file-card-meta{
   font-size:12px;color:#8e8e93;line-height:1.3;letter-spacing:-0.1px;
 }
-.md .file-card-arrow{
+.file-card-arrow{
   width:20px;height:20px;flex:0 0 20px;
   display:flex;align-items:center;justify-content:center;color:#c7c7cc;
 }
-.md .file-card-arrow svg{width:16px;height:16px;display:block;}
+.file-card-arrow svg{width:16px;height:16px;display:block;}
 
 /* ── TABLES ──────────────────────────────────────────────── */
 .md .tbl-outer{
@@ -347,7 +347,7 @@
 
 /* ── RESPONSE ACTIONS ────────────────────────────────────── */
 
-/* ── 来源按钮（作为 Markdown 对话流的一部分，左对齐）─────── */
+/* ── 来源按钮（业务块，在 #mainBiz 内，不在 .md 内）─────── */
 .source-inline{
   display:flex;
   flex-direction:column;
@@ -357,13 +357,14 @@
   margin:0;
 }
 .source-inline .response-action-source{
-  margin-bottom:var(--spacing-8);
+  margin-bottom:0;
 }
-.source-inline .source-divider{
+/* source-divider 是 source-inline 的兄弟节点，不是子节点 */
+.source-divider{
   width:100%;
   border:0;height:.5px;
   background:var(--md-border);
-  margin:0 0 var(--spacing-10);
+  margin:0;
 }
 .source-inline .response-action-source{
   width:auto;height:24px;
@@ -385,9 +386,10 @@
 }
 .source-inline .response-action-source:active{background:rgba(0,0,0,.06);}
 
+/* ── RESPONSE ACTIONS (业务块，在 #mainActions 内) ─────── */
 .response-actions{
-  margin:12px 0 4px;
-  padding:4px 0 0;
+  margin:0;
+  padding:0;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -441,8 +443,6 @@
 }
 .response-cost .cost-svg{width:13px;height:13px;opacity:.58;}
 .response-cost strong{font-size:12px;font-weight:600;color:#a7a7ad;}
-.md .response-actions svg,
-.md .response-actions svg *{max-width:none;}
 .response-action-btn svg path,
 .response-action-btn svg circle,
 .response-action-btn svg rect{fill:#000;fill-opacity:1;}

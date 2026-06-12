@@ -320,7 +320,7 @@
   background: transparent;
   font-family: var(--aq-font);
   font-weight: var(--aq-text-regular);
-  font-size: var(--aq-font-base);
+  font-size: 16px; /* 必须 ≥16px，防止 iOS Safari 点击时自动缩放页面 */
   line-height: var(--aq-line-height);
   color: var(--aq-text);
   padding: 0;

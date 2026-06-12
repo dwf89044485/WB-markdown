@@ -292,11 +292,15 @@
   gap:var(--cv-main-content-gap);
   padding-bottom:var(--cv-main-content-padding-bottom);
 }
+#mainMd,
 #mainBiz,
 #mainActions{
   min-width:0;
   min-height:0;
   display:flow-root;
+}
+#mainMd > :last-child{
+  margin-bottom:0;
 }
 
 /* ── DYNAMIC RUNTIME HELPERS ─────────────────────────────── */

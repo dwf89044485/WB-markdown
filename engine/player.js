@@ -6,7 +6,7 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleep, sleepDelay, playback, currentTokensPerSecond, CANCELLED,
-  scrollToBottom
+  scrollToBottom, scrollToUserBelowNav, smartScroll
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
@@ -139,7 +139,7 @@ function createStatusLineIn(container, text, frameIds, title) {
   setStatusLineLabels(btn, splitStatusLabels(text));
   btn.onclick = () => openSheet(btn.dataset.frames, btn.dataset.sheetTitle, { replay: btn.classList.contains('is-running') });
   container.appendChild(btn);
-  scrollToBottom();
+  smartScroll();
   return btn;
 }
 
@@ -236,7 +236,7 @@ async function runThinkingStatus() {
   line.dataset.sheetTitle = toDoneLabel(action);
   line.classList.remove('is-running');
   stepsList.classList.remove('is-hidden');
-  scrollToBottom();
+  smartScroll();
   await sleepDelay('stepDelay', 470);
 }
 
@@ -491,33 +491,33 @@ function renderStaticPreChat() {
     $('#userBubble').textContent = lastChat.user;
     $('#userMsgWrap').classList.remove('is-hidden');
   }
-  // scrollTop = ref 相对 conv 的位置 - navbar 高度 - 间距
-  const navBar = conv.querySelector('.nav-bar');
-  const navHeight = navBar ? navBar.offsetHeight : 0;
-  const scrollTarget = (ref.offsetTop - conv.offsetTop) - navHeight - 12;
-  if (scrollTarget > 0) conv.scrollTop = scrollTarget;
+  // 初始滚动：让 #userMsgWrap 紧贴 navbar 下方
+  requestAnimationFrame(() => scrollToUserBelowNav());
 }
 
 // ── User / agent appearance ───────────────────────────────
 async function showUserMessage() {
   // 使用 preChat 最后一条作为触发消息，无 preChat 时回退到 userMessage
   const chat = scenario.preChat;
-  const trigger = (chat && chat.length) ? chat[chat.length - 1].user : scenario.userMessage;
+  const hasPreChat = !!(chat && chat.length);
+  const trigger = hasPreChat ? chat[chat.length - 1].user : scenario.userMessage;
   $('#userBubble').textContent = trigger;
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
-  scrollToBottom();
+  smartScroll();
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
 }
 
 async function showAgentShell() {
+  const chat = scenario.preChat;
+  const hasPreChat = !!(chat && chat.length);
   $('#agentName').textContent = scenario.agent.name;
   const agent = $('#agentMsg');
   agent.classList.remove('is-hidden');
   agent.classList.add('agent-enter');
-  scrollToBottom();
+  smartScroll();
   rebuildScrollNav();
   await sleepDelay('agentDelay', 520);
 }
@@ -569,7 +569,7 @@ function resetPlaybackDom() {
   if (mainActions) mainActions.innerHTML = '';
   if (execArea) execArea.className = 'exec-area open is-hidden';
   setComposerGenerating(false);
-  scrollToBottom();
+  smartScroll();
 }
 
 // ── Nav ───────────────────────────────────────────────────
@@ -807,7 +807,7 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
       if (execArea) execArea.className = 'exec-area open is-hidden';
       execOpen = true;
       stepsOpen = true;
-      scrollToBottom();
+      smartScroll();
     } else {
       resetPlaybackDom();
       renderStaticPreChat();

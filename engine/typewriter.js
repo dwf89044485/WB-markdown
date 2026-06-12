@@ -2,7 +2,7 @@
 // TYPEWRITER — Token streaming output engine
 // ============================================================
 
-import { sleep, sleepDelay, fastRender, currentTokensPerSecond, scrollToBottom } from './core.js';
+import { sleep, sleepDelay, fastRender, currentTokensPerSecond, smartScroll } from './core.js';
 import { markdownToHtml } from './markdown.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -19,7 +19,7 @@ export async function typeText(target, text) {
   if (!text) return;
   if (fastRender) {
     target.textContent += text;
-    scrollToBottom();
+    smartScroll();
     return;
   }
   const chunkSize = optimalChunkSize();
@@ -28,7 +28,7 @@ export async function typeText(target, text) {
     const chunk = text.slice(i, i + chunkSize);
     const interval = typeIntervalForChunk(chunkSize);
     target.textContent += chunk;
-    scrollToBottom();
+    smartScroll();
     await sleep(chunk.trim() ? interval : Math.max(1, interval * 0.35));
   }
   target.parentElement && target.parentElement.classList.remove('typing-active');
@@ -45,7 +45,7 @@ export async function typeClone(source, target) {
     if (child.nodeType === Node.ELEMENT_NODE) {
       const c = cloneEmptyNode(child);
       target.appendChild(c);
-      scrollToBottom();
+      smartScroll();
       await typeClone(child, c);
     }
   }
@@ -69,7 +69,7 @@ export async function appendHTMLTypedTo(container, html) {
       const c = cloneEmptyNode(child);
       c.classList.add('typing-block-enter');
       container.appendChild(c);
-      scrollToBottom();
+      smartScroll();
       await typeClone(child, c);
       c.classList.remove('typing-block-enter');
     }

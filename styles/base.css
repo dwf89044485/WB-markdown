@@ -425,6 +425,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   height: 36px;
   flex-shrink: 0;
   background: #fafafa;
+  z-index: 5;
 }
 .scroll-nav.is-hidden {
   display: none;
@@ -442,43 +443,40 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.25s cubic-bezier(.32,.72,0,1), opacity 0.2s ease, background 0.1s;
+  transition: transform 0.3s cubic-bezier(.32,.72,0,1), opacity 0.2s ease, background 0.1s;
   color: rgba(0,0,0,0.72);
 }
 .scroll-nav-btn:hover {
   background: rgba(0,0,0,0.07);
 }
-.scroll-nav-btn:active {
-  background: rgba(0,0,0,0.10);
-  transform: translateX(-50%) scale(0.94);
-}
 .scroll-nav-btn.is-hidden {
   display: none;
 }
-/* 入场初始态：透明+上偏移，随后被移除触发 transition */
+/* 入场初始态 */
 .scroll-nav-btn.is-appearing {
   opacity: 0;
   transform: translateY(6px) translateX(-50%);
   pointer-events: none;
 }
-/* 两个按钮分列左右 */
-.scroll-nav.has-two .scroll-nav-btn {
-  left: auto;
-  right: auto;
-  transform: translateX(0);
-}
+/* 两个按钮分列左右——都用 transform 偏移，保证平滑过渡 */
 .scroll-nav.has-two #scrollUp {
-  left: 12px;
+  transform: translateX(calc(-50% - 22px));
 }
 .scroll-nav.has-two #scrollDown {
-  right: 12px;
+  transform: translateX(calc(-50% + 22px));
 }
 .scroll-nav.has-two .scroll-nav-btn:active {
-  transform: translateX(0) scale(0.94);
+  transform: scale(0.94) translateX(calc(-50% - 22px));
+}
+.scroll-nav.has-two #scrollDown:active {
+  transform: scale(0.94) translateX(calc(-50% + 22px));
 }
 /* 入场态 + 分列 */
 .scroll-nav.has-two .scroll-nav-btn.is-appearing {
-  transform: translateY(6px) translateX(0);
+  transform: translateY(6px) translateX(calc(-50% - 22px));
+}
+.scroll-nav.has-two #scrollDown.is-appearing {
+  transform: translateY(6px) translateX(calc(-50% + 22px));
 }
 
 /* ── Scroll Nav Tooltip ─────────────────────────────────── */

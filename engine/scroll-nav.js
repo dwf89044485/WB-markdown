@@ -95,23 +95,31 @@ function updateScrollNav() {
 
 // ── Scroll helpers ────────────────────────────────────────
 
+function smoothScrollTo(y) {
+  if ('scrollBehavior' in document.documentElement.style) {
+    SN.conv.scrollTo({ top: y, behavior: 'smooth' });
+  } else {
+    SN.conv.scrollTop = y;
+  }
+}
+
 function scrollToUserMsg(index) {
   if (index < 0 || index >= SN.turns.length) return;
   const top = SN.turns[index].userMsg.offsetTop;
-  SN.conv.scrollTop = top;
+  smoothScrollTo(top);
 }
 
 function scrollToTopTurn() {
   if (!SN.turns.length) return;
   const top = SN.turns[0].userMsg.offsetTop;
-  SN.conv.scrollTop = top;
+  smoothScrollTo(top);
 }
 
 function scrollToBottomTurn() {
   if (!SN.turns.length) return;
   const idx = SN.turns.length - 1;
   const top = SN.turns[idx].userMsg.offsetTop;
-  SN.conv.scrollTop = top;
+  smoothScrollTo(top);
 }
 
 // ── Click logic (single & double) ─────────────────────────
@@ -216,7 +224,7 @@ function doSingleDown() {
     scrollToUserMsg(idx + 1);
   } else {
     // 已是最后一轮 → 直接滚到底
-    SN.conv.scrollTop = SN.conv.scrollHeight;
+    smoothScrollTo(SN.conv.scrollHeight);
   }
 }
 

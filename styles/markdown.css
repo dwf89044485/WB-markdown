@@ -165,7 +165,7 @@
   gap:12px;
   width:100%;
   padding:13px 14px;
-  margin:10px 0 14px;
+  margin:0 0 6px;
   background:var(--md-surface);
   border:0.5px solid var(--md-border);
   border-radius:var(--md-radius-sm);
@@ -353,7 +353,7 @@
   align-items:center;
   justify-content:flex-start;
   padding:0;
-  margin:6px 0 2px;
+  margin:10px 0 0;
 }
 .source-inline .response-action-source{
   width:auto;height:24px;

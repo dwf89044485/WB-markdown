@@ -141,20 +141,20 @@ function smoothScrollTo(y) {
 
 function scrollToUserMsg(index) {
   if (index < 0 || index >= SN.turns.length) return;
-  const top = SN.turns[index].userMsg.offsetTop + navBarOverlap();
+  const top = Math.max(0, SN.turns[index].userMsg.offsetTop - navBarOverlap());
   smoothScrollTo(top);
 }
 
 function scrollToTopTurn() {
   if (!SN.turns.length) return;
-  const top = SN.turns[0].userMsg.offsetTop + navBarOverlap();
+  const top = Math.max(0, SN.turns[0].userMsg.offsetTop - navBarOverlap());
   smoothScrollTo(top);
 }
 
 function scrollToBottomTurn() {
   if (!SN.turns.length) return;
   const idx = SN.turns.length - 1;
-  const top = SN.turns[idx].userMsg.offsetTop + navBarOverlap();
+  const top = Math.max(0, SN.turns[idx].userMsg.offsetTop - navBarOverlap());
   smoothScrollTo(top);
 }
 

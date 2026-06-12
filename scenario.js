@@ -564,7 +564,7 @@ window.WORKBUDDY_SCENARIO = {
             { "id": "q1", "type": "single", "question": "你希望住宿偏向哪种风格？", "options": ["商务酒店", "日式旅馆", "民宿", "青旅"] },
             { "id": "q2", "type": "multiple", "question": "你希望行程包含哪些类型？", "options": ["寺庙神社", "自然风光", "购物美食", "文化体验"] },
             { "id": "q3", "type": "sort", "question": "请按优先级排列你的出行考量", "options": ["性价比", "舒适度", "特色体验", "交通便利"] },
-            { "id": "q4", "type": "single", "question": "行程节奏你更偏好哪种？", "options": ["紧凑高效", "适中均衡", "悠闲随性"] }
+            { "id": "q4", "type": "single", "question": "行程节奏你更偏好哪种？", "options": ["紧凑高效", "适中均衡", "悠闲随性", "深度慢游"] }
           ]
         }
       ]

@@ -2,9 +2,10 @@
 // ASK QUESTION — 问答卡片渲染 · 交互 · 状态管理
 // ============================================================
 
-const CHECK_SVG = '<svg width="11.85" height="7.82" viewBox="0 0 12 8" fill="none"><path d="M1 3.5L4.5 7L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHECK_BLACK_SVG = '<svg width="11.85" height="7.82" viewBox="0 0 12 8" fill="none"><path d="M1 3.5L4.5 7L11 1" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHECK_WHITE_SVG = '<svg width="11.85" height="7.82" viewBox="0 0 12 8" fill="none"><path d="M1 3.5L4.5 7L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-const DRAG_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="3.5" r="1.5" fill="currentColor"/><circle cx="10.5" cy="3.5" r="1.5" fill="currentColor"/><circle cx="5.5" cy="8" r="1.5" fill="currentColor"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor"/><circle cx="5.5" cy="12.5" r="1.5" fill="currentColor"/><circle cx="10.5" cy="12.5" r="1.5" fill="currentColor"/></svg>';
+const DRAG_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.5C4.5 1.9477 4.9477 1.5 5.5 1.5C6.0523 1.5 6.5 1.9477 6.5 2.5C6.5 3.0523 6.0523 3.5 5.5 3.5C4.9477 3.5 4.5 3.0523 4.5 2.5ZM9.5 2.5C9.5 1.9477 9.9477 1.5 10.5 1.5C11.0523 1.5 11.5 1.9477 11.5 2.5C11.5 3.0523 11.0523 3.5 10.5 3.5C9.9477 3.5 9.5 3.0523 9.5 2.5ZM4.5 6.1667C4.5 5.6144 4.9477 5.1667 5.5 5.1667C6.0523 5.1667 6.5 5.6144 6.5 6.1667C6.5 6.719 6.0523 7.1667 5.5 7.1667C4.9477 7.1667 4.5 6.719 4.5 6.1667ZM9.5 6.1667C9.5 5.6144 9.9477 5.1667 10.5 5.1667C11.0523 5.1667 11.5 5.6144 11.5 6.1667C11.5 6.719 11.0523 7.1667 10.5 7.1667C9.9477 7.1667 9.5 6.719 9.5 6.1667ZM4.5 9.8333C4.5 9.281 4.9477 8.8333 5.5 8.8333C6.0523 8.8333 6.5 9.281 6.5 9.8333C6.5 10.3856 6.0523 10.8333 5.5 10.8333C4.9477 10.8333 4.5 10.3856 4.5 9.8333ZM9.5 9.8333C9.5 9.281 9.9477 8.8333 10.5 8.8333C11.0523 8.8333 11.5 9.281 11.5 9.8333C11.5 10.3856 11.0523 10.8333 10.5 10.8333C9.9477 10.8333 9.5 10.3856 9.5 9.8333ZM4.5 13.5C4.5 12.9477 4.9477 12.5 5.5 12.5C6.0523 12.5 6.5 12.9477 6.5 13.5C6.5 14.0523 6.0523 14.5 5.5 14.5C4.9477 14.5 4.5 14.0523 4.5 13.5ZM9.5 13.5C9.5 12.9477 9.9477 12.5 10.5 12.5C11.0523 12.5 11.5 12.9477 11.5 13.5C11.5 14.0523 11.0523 14.5 10.5 14.5C9.9477 14.5 9.5 14.0523 9.5 13.5Z" fill="black"/></svg>';
 
 // ── 问答会话状态 ─────────────────────────────────
 let askState = null;     // { questions, answers[], stepIndex, resolve }
@@ -126,9 +127,9 @@ function createOptionRow(index, text, displayNum, type, isSelected) {
 
   let rightHtml = '';
   if (type === 'single' && isSelected) {
-    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_SVG}</span></div>`;
+    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_BLACK_SVG}</span></div>`;
   } else if (type === 'multiple') {
-    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_SVG : ''}</span></div>`;
+    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_WHITE_SVG : ''}</span></div>`;
   } else if (type === 'sort') {
     rightHtml = `<div class="aq-option-right"><span class="aq-drag-handle">${DRAG_SVG}</span></div>`;
   } else if (type === 'single' && !isSelected) {
@@ -265,7 +266,7 @@ function initDragSort() {
     const q = askState.questions[askState.stepIndex];
     if (q.type !== 'sort') return;
 
-    const handle = e.target.closest('.aq-drag-handle');
+    const handle = e.target.closest('.aq-drag-handle, .aq-option-right');
     if (!handle) return;
 
     const row = handle.closest('.aq-option');

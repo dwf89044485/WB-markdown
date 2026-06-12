@@ -284,6 +284,7 @@
   height: 16px;
   color: var(--aq-text);
   opacity: 0.4;
+  touch-action: none;
 }
 
 /* 底部输入栏 */

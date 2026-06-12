@@ -101,35 +101,19 @@ export function getFrames(refs) {
   return refs.split(',').map(id => id.trim()).filter(Boolean).map(id => scenario.sheetFrames[id]).filter(Boolean);
 }
 
-// ── Auto-expand sheet when content outgrows 40% ──────────
-export function checkSheetOverflow() {
-  const body = $('#sheetBody');
-  const sheet = $('#sheet');
-  if (!body || !sheet || dragState) return;
-
-  requestAnimationFrame(() => {
-    const containerH = sheet.parentElement.getBoundingClientRect().height;
-    const contentPct = (body.scrollHeight / containerH) * 100;
-    if (contentPct <= 42) return; // fits in 40% with buffer
-
-    const sheetPct = (sheet.getBoundingClientRect().height / containerH) * 100;
-    if (sheetPct >= 80) return;
-
-    const targetPct = Math.min(80, Math.ceil(contentPct + 3));
-    if (targetPct > sheetPct) {
-      sheet.style.height = targetPct + '%';
-      // 展开后重滚到底部，避免浏览器扩展 clientHeight 时滚动位漂移
-      body.scrollTop = body.scrollHeight;
-    }
-  });
-}
-
 // ── Sheet body auto-scroll ────────────────────────────────
-function scrollSheetBody() {
-  const body = $('#sheetBody');
+function scrollSheetBody(body) {
+  if (!body) body = $('#sheetBody');
   if (!body) return;
-  // 内容展示在顶部（scrollTop = 0），超出的部分靠 checkSheetOverflow 自动展开
-  checkSheetOverflow();
+  const sheet = $('#sheet');
+  if (!sheet) return;
+
+  // 80% + 用户已翻上去 → 不打断
+  if (sheet.classList.contains('expanded')) {
+    const threshold = 20;
+    if (body.scrollTop < body.scrollHeight - body.clientHeight - threshold) return;
+  }
+  body.scrollTop = body.scrollHeight;
 }
 
 // ── Get full todo list for skeleton rendering ─────────────
@@ -289,7 +273,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     if (renderToken !== sheetRenderToken) return;
     ov.className = 'sheet-overlay vis show';
-    checkSheetOverflow();
     return;
   }
 
@@ -331,6 +314,12 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
 
   // Running: replay animations; completed: render final static content immediately
   await streamSheetContent(frames, baseline, { animated: replay, renderToken });
+
+  // 静态已完成内容：停到顶部，从最早的信息开始看起
+  if (!replay) {
+    const body = $('#sheetBody');
+    if (body) body.scrollTop = 0;
+  }
 }
 
 // ── Close sheet ───────────────────────────────────────────
@@ -426,7 +415,7 @@ function initSheetDrag() {
     const pct = (currentH / dragState.containerH) * 100;
     dragState = null;
     sheet.style.transition = 'height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1)';
-    if (pct > 58) {
+    if (pct >= 50) {
       sheet.style.height = '80%';
       sheet.classList.add('expanded');
     } else {

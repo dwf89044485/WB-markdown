@@ -24,6 +24,7 @@ FILES = [
     "styles/markdown.css",
     "styles/sheet.css",
     "styles/demo-controls.css",
+    "styles/ask-question.css",
 ]
 
 files = {}

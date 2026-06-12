@@ -65,17 +65,14 @@ function renderAskQuestion() {
   if (prevBtn) prevBtn.disabled = stepIndex <= 0;
   if (nextBtn) nextBtn.disabled = stepIndex >= total - 1;
 
-  // 问题区：始终渲染 badge 占位，单选用空内容 + 隐藏 class 保持高度一致
+  // 问题区：每个类型都显示对应 badge
   const questionArea = document.getElementById('aqQuestionArea');
   if (questionArea) {
-    let badgeHtml = '<span class="aq-badge';
-    if (q.type === 'multiple') {
-      badgeHtml += '">多选</span>';
-    } else if (q.type === 'sort') {
-      badgeHtml += '">排序</span>';
-    } else {
-      badgeHtml += ' aq-badge--hidden"></span>';
-    }
+    let badgeLabel = '';
+    if (q.type === 'single') badgeLabel = '单选';
+    else if (q.type === 'multiple') badgeLabel = '多选';
+    else if (q.type === 'sort') badgeLabel = '排序';
+    const badgeHtml = `<span class="aq-badge">${badgeLabel}</span>`;
     questionArea.innerHTML = badgeHtml + `<span class="aq-question-text">${escapeAQHtml(q.question)}</span>`;
   }
 

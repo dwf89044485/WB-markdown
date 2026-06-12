@@ -38,8 +38,8 @@ export function inferToolIconKey(item = {}) {
   if (/👀|读取|查看|view|read/i.test(raw)) return 'view';
   if (/🖥|执行命令|terminal|python|cd \/sessions/i.test(raw)) return 'terminal';
   if (/☐|☑|待办|计划|更新计划|todo/i.test(raw)) return 'plan';
-  if (/网页|网站|联网|入境|交通卡|天气|汇率|路线/i.test(raw)) return 'website';
   if (/🔍|搜索|search/i.test(raw)) return 'search';
+  if (/网页|网站|联网|入境|交通卡|天气|汇率|路线/i.test(raw)) return 'website';
   return 'tools';
 }
 

@@ -1,6 +1,6 @@
 /* ── Ask User Question ─────────────────────────────── */
 :root {
-  --aq-bg: #FAFAFA;
+  --aq-bg: #FFFFFF;
   --aq-radius: 20px;
   --aq-padding: 20px;
   --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);

@@ -350,10 +350,17 @@
 /* ── 来源按钮（作为 Markdown 对话流的一部分，左对齐）─────── */
 .source-inline{
   display:flex;
-  align-items:center;
+  flex-direction:column;
+  align-items:flex-start;
   justify-content:flex-start;
   padding:0;
-  margin:10px 0 0;
+  margin:0;
+}
+.source-inline .source-divider{
+  width:100%;
+  border:0;height:.5px;
+  background:var(--md-border);
+  margin:20px 0 14px;
 }
 .source-inline .response-action-source{
   width:auto;height:24px;

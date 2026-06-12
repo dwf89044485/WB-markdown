@@ -257,7 +257,7 @@ const RESPONSE_SVGS = (() => {
 })();
 
 function renderFinalActions() {
-  const main = $('#mainMd');
+  const main = $('#mainActions');
   if (!main || main.querySelector('.response-actions')) return;
   const wrap = document.createElement('div');
   wrap.className = 'response-actions message-enter';
@@ -369,7 +369,7 @@ function renderFinalActions() {
 
 // ── 来源按钮（渲染在 fileCard 上方，作为 Markdown 对话流的一部分）──
 function renderSourceButtonHtml() {
-  return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button><hr class="source-divider"></div>`;
+  return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div><hr class="source-divider">`;
 }
 
 function bindSourceButton() {
@@ -414,14 +414,15 @@ async function renderFinal() {
   collapseProcessIntoTiming();
   await sleepDelay('stepDelay', 470);
   const main = $('#mainMd');
+  const mainBiz = $('#mainBiz');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
-    // 在 fileCard 之前渲染来源按钮，作为 Markdown 对话流的一部分
+    // 在 fileCard 之前渲染来源按钮，写入 #mainBiz
     const sourceHtml = renderSourceButtonHtml();
     if (sourceHtml) {
-      await appendHTMLTypedTo(main, sourceHtml);
+      await appendHTMLTypedTo(mainBiz, sourceHtml);
     }
-    await appendHTMLTypedTo(main, renderFileCard(scenario.final.fileCard));
+    await appendHTMLTypedTo(mainBiz, renderFileCard(scenario.final.fileCard));
   }
   renderFinalActions();
   bindSourceButton();
@@ -469,6 +470,8 @@ function resetPlaybackDom() {
   const thinkingMount = $('#thinkingMount');
   const stepsList = $('#stepsList');
   const main = $('#mainMd');
+  const mainBiz = $('#mainBiz');
+  const mainActions = $('#mainActions');
   const overlay = $('#overlay');
   const tblOverlay = $('#tblOverlay');
   const phoneShell = $('.phone-shell');
@@ -486,6 +489,8 @@ function resetPlaybackDom() {
   if (thinkingMount) thinkingMount.innerHTML = '';
   if (stepsList) { stepsList.innerHTML = ''; stepsList.className = 'steps-list open'; }
   if (main) main.innerHTML = '';
+  if (mainBiz) mainBiz.innerHTML = '';
+  if (mainActions) mainActions.innerHTML = '';
   if (execArea) execArea.className = 'exec-area open is-hidden';
   setComposerGenerating(false);
   scrollToBottom();
@@ -713,10 +718,14 @@ async function jumpDirectorTo(targetIndex, { force = false, keepUserShell = fals
       const overlay = document.getElementById('overlay');
       const stepsList = document.getElementById('stepsList');
       const main = document.getElementById('mainMd');
+      const mainBiz = document.getElementById('mainBiz');
+      const mainActions = document.getElementById('mainActions');
       const execArea = document.getElementById('execArea');
       if (overlay) overlay.className = 'sheet-overlay';
       if (stepsList) { stepsList.innerHTML = ''; stepsList.className = 'steps-list open'; }
       if (main) main.innerHTML = '';
+      if (mainBiz) mainBiz.innerHTML = '';
+      if (mainActions) mainActions.innerHTML = '';
       if (execArea) execArea.className = 'exec-area open is-hidden';
       execOpen = true;
       stepsOpen = true;

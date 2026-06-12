@@ -348,6 +348,14 @@
 /* ── RESPONSE ACTIONS ────────────────────────────────────── */
 
 /* ── 来源按钮（业务块，在 #mainBiz 内，不在 .md 内）─────── */
+.source-divider{
+  display:flow-root;
+  width:100%;
+  border:0;
+  height:.5px;
+  background:var(--md-border);
+  margin:0;
+}
 .source-inline{
   display:flex;
   flex-direction:column;

@@ -319,7 +319,6 @@
 .response-actions svg,
 .response-actions svg *{max-width:none;}
 
-/* ── SOURCE DIVIDER (explicit BFC to avoid margin-collapsing dependency) ── */
-.source-divider{display:flow-root;}
+
 @keyframes messageIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes agentIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}

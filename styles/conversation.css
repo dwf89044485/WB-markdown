@@ -74,6 +74,7 @@
   color:#8e8e93;
   transition:transform 0.25s ease;
   flex-shrink:0;
+  transform:rotate(-90deg);
 }
 .timing-arrow.collapsed{transform:rotate(90deg);}
 #timingMount:empty{display:none;}

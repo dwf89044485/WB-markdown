@@ -369,7 +369,7 @@ function renderFinalActions() {
 
 // ── 来源按钮（渲染在 fileCard 上方，作为 Markdown 对话流的一部分）──
 function renderSourceButtonHtml() {
-  return `<div class="source-inline"><hr class="source-divider"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div>`;
+  return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button><hr class="source-divider"></div>`;
 }
 
 function bindSourceButton() {

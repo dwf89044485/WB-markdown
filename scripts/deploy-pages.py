@@ -17,6 +17,8 @@ FILES = [
     "engine/typewriter.js",
     "engine/sheet.js",
     "engine/player.js",
+    "engine/scroll-nav.js",
+    "engine/ask-question.js",
     "engine/controls-stepper.js",
     "engine/controls-speed.js",
     "styles/base.css",

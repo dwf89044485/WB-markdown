@@ -471,13 +471,12 @@ function renderStaticPreChat() {
   // 清空旧索引（重置时重新填充）
   preChatElements = [];
 
-  // 第一轮用户消息（来自 scenario.userMessage）
+  // 第一轮用户消息（来自 scenario.userMessage），一进来就可见
   const firstUserWrap = document.createElement('div');
   firstUserWrap.className = 'user-msg-wrap prechat-static';
   firstUserWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(scenario.userMessage) + '</div>';
   conv.insertBefore(firstUserWrap, ref);
-  firstUserWrap.classList.add('is-hidden');
-  preChatElements.push(firstUserWrap);
+  // 不放 preChatElements 数组，不加入 timeline 揭示
 
   for (let i = 0; i < preChat.length; i++) {
     const round = preChat[i];

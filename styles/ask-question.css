@@ -56,7 +56,6 @@
   flex-shrink: 0;
   padding: 0 var(--composer-padding-x) var(--composer-padding-bottom);
   position: relative;
-  background: #fafafa;
 }
 .ask-question.is-active {
   display: flex;

@@ -1,9 +1,9 @@
 /* ── Ask User Question ─────────────────────────────── */
 :root {
-  --aq-bg: #FFFFFF;
+  --aq-bg: #FAFAFA;
   --aq-radius: 20px;
   --aq-padding: 20px;
-  --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
+  --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
   --aq-width: 350px;
 
   --aq-text: #3D3D3D;
@@ -15,7 +15,7 @@
   --aq-font-lg: 17px;
   --aq-line-height: 24px;
 
-  --aq-option-bg: #FAFAFA;
+  --aq-option-bg: #F2F2F2;
   --aq-option-selected-bg: #F2F2F2;
   --aq-option-height: 46px;
   --aq-option-radius: 10px;
@@ -37,14 +37,14 @@
 
   --aq-btn-skip-bg: #F4F2F2;
   --aq-btn-action-bg: #3D3D3D;
-  --aq-btn-height: 30px;
+  --aq-btn-height: 36px;
   --aq-btn-radius: 120px;
-  --aq-btn-padding: 1px 12px;
+  --aq-btn-padding: 1px 18px;
 
-  --aq-close-size: 36px;
-  --aq-close-radius: 120px;
-  --aq-close-bg: rgba(255, 255, 255, 0.3);
-  --aq-close-shadow: 0px 6px 30px 0px rgba(0, 0, 0, 0.1);
+  --aq-pill-size: 36px;
+  --aq-pill-radius: 120px;
+  --aq-pill-bg: rgba(255, 255, 255, 0.3);
+  --aq-pill-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.05), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
 
   --aq-input-height: 50px;
   --aq-input-placeholder-opacity: 0.3;
@@ -95,15 +95,18 @@
 }
 
 .aq-nav-btn {
+  width: var(--aq-pill-size);
+  height: var(--aq-pill-size);
+  border-radius: var(--aq-pill-radius);
+  background: var(--aq-pill-bg);
+  box-shadow: var(--aq-pill-shadow);
+  border: none;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 16px;
-  height: 16px;
   padding: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
+  box-sizing: border-box;
   color: var(--aq-text);
 }
 .aq-nav-btn:disabled {
@@ -114,22 +117,22 @@
 .aq-step-indicator {
   font-family: var(--aq-font);
   font-weight: var(--aq-text-semibold);
-  font-size: var(--aq-font-sm);
+  font-size: 14px;
   line-height: var(--aq-line-height);
   color: var(--aq-text);
 }
 
 .aq-close-btn {
-  width: var(--aq-close-size);
-  height: var(--aq-close-size);
-  border-radius: var(--aq-close-radius);
-  background: var(--aq-close-bg);
+  width: var(--aq-pill-size);
+  height: var(--aq-pill-size);
+  border-radius: var(--aq-pill-radius);
+  background: var(--aq-pill-bg);
+  box-shadow: var(--aq-pill-shadow);
   border: none;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: var(--aq-close-shadow);
 }
 
 /* 问题区：标签 + 文字 */
@@ -259,6 +262,9 @@
 .aq-check-icon {
   width: 16px;
   height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 多选复选框 */
@@ -285,6 +291,9 @@
   color: var(--aq-text);
   opacity: 0.4;
   touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 底部输入栏 */
@@ -328,7 +337,7 @@
   cursor: pointer;
   font-family: var(--aq-font);
   font-weight: var(--aq-text-semibold);
-  font-size: var(--aq-font-sm);
+  font-size: 14px;
   line-height: var(--aq-line-height);
   white-space: nowrap;
   transition: background 0.15s, color 0.15s;

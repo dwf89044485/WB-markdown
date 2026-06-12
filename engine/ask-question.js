@@ -195,12 +195,22 @@ function onInputChange(text) {
   const a = answers[stepIndex];
 
   a.customInput = text;
-  if (q.type === 'single') {
+  if (q.type === 'single' && a.selected !== null) {
     a.selected = null;
+    // 轻量更新：只移除选项行的选中态，不全量重渲染
+    const container = document.getElementById('aqOptions');
+    if (container) container.querySelectorAll('.aq-option.is-selected').forEach(row => {
+      row.classList.remove('is-selected');
+      const num = row.querySelector('.aq-option-num');
+      if (num) num.style.fontWeight = '';
+      const txt = row.querySelector('.aq-option-text');
+      if (txt) txt.style.fontWeight = '';
+      // 移除单选 ✓ 图标
+      const icon = row.querySelector('.aq-check-icon');
+      if (icon) icon.parentElement.remove();
+    });
   }
   updateActionButton();
-  // 单选需要重新渲染选项行（去掉选中态）
-  if (q.type === 'single') renderOptions(q, a);
 }
 
 function goToStep(index) {
@@ -240,13 +250,15 @@ function submitAnswers() {
 }
 
 // ── 排序拖拽 ─────────────────────────────────
+let dragBound = false;
+
 function initDragSort() {
+  if (dragBound) return;
   const container = document.getElementById('aqOptions');
   if (!container) return;
+  dragBound = true;
 
   let dragEl = null;
-  let startY = 0;
-  let startIdx = 0;
 
   container.addEventListener('pointerdown', (e) => {
     if (!askState) return;
@@ -261,8 +273,6 @@ function initDragSort() {
 
     e.preventDefault();
     dragEl = row;
-    startY = e.clientY;
-    startIdx = Array.from(container.children).indexOf(row);
     row.classList.add('is-dragging');
     row.setPointerCapture(e.pointerId);
   });
@@ -270,23 +280,26 @@ function initDragSort() {
   container.addEventListener('pointermove', (e) => {
     if (!dragEl) return;
     e.preventDefault();
-    const containerRect = container.getBoundingClientRect();
-    const rows = Array.from(container.children);
-    const currentY = e.clientY;
 
-    // 判断拖拽位置应插入到哪一行之前
-    for (let i = 0; i < rows.length; i++) {
-      const rowRect = rows[i].getBoundingClientRect();
-      const midY = rowRect.top + rowRect.height / 2;
-      if (currentY < midY && i !== startIdx) {
-        if (i < startIdx) {
-          container.insertBefore(dragEl, rows[i]);
-        } else {
-          container.insertBefore(dragEl, rows[i].nextSibling);
-        }
-        startIdx = Array.from(container.children).indexOf(dragEl);
+    const siblings = [...container.querySelectorAll('.aq-option:not(.is-dragging)')];
+    const dragRect = dragEl.getBoundingClientRect();
+    const dragMidY = dragRect.top + dragRect.height / 2;
+
+    let insertBefore = null;
+    for (const sibling of siblings) {
+      const sibRect = sibling.getBoundingClientRect();
+      const sibMidY = sibRect.top + sibRect.height / 2;
+      if (dragMidY < sibMidY) {
+        insertBefore = sibling;
         break;
       }
+    }
+
+    if (insertBefore) {
+      container.insertBefore(dragEl, insertBefore);
+    } else {
+      // 拖到末尾
+      container.appendChild(dragEl);
     }
   });
 
@@ -295,10 +308,8 @@ function initDragSort() {
     dragEl.classList.remove('is-dragging');
 
     // 从 DOM 顺序更新 answer.selected
-    const container = document.getElementById('aqOptions');
     const a = askState.answers[askState.stepIndex];
-    const newOrder = Array.from(container.children).map(el => parseInt(el.dataset.index));
-    a.selected = newOrder;
+    a.selected = [...container.querySelectorAll('.aq-option')].map(el => parseInt(el.dataset.index));
 
     // 更新序号显示
     container.querySelectorAll('.aq-option').forEach((row, i) => {

@@ -368,7 +368,7 @@ function renderFinalActions() {
   // if (sourceBtn) sourceBtn.onclick = openSourceSheet;
 }
 
-// ── 来源按钮（渲染在 fileCard 上方，作为 Markdown 对话流的一部分）──
+// ── 来源按钮（渲染到 #mainBiz：source 按钮 + divider）──
 function renderSourceButtonHtml() {
   return `<div class="source-inline"><button class="response-action-btn response-action-source" type="button" aria-label="来源"><span>28 来源</span><img class="action-img" src="./icons/wb-source.png" alt=""></button></div><hr class="source-divider">`;
 }
@@ -418,7 +418,7 @@ async function renderFinal() {
   const mainBiz = $('#mainBiz');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
   if (scenario.final && scenario.final.fileCard) {
-    // 在 fileCard 之前渲染来源按钮，写入 #mainBiz
+    // 先写入来源按钮与分隔线，再写入 fileCard（都在 #mainBiz）
     const sourceHtml = renderSourceButtonHtml();
     if (sourceHtml) {
       await appendHTMLTypedTo(mainBiz, sourceHtml);

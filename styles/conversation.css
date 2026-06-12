@@ -292,7 +292,12 @@
   gap:var(--cv-main-content-gap);
   padding-bottom:var(--cv-main-content-padding-bottom);
 }
-
+#mainBiz,
+#mainActions{
+  min-width:0;
+  min-height:0;
+  display:flow-root;
+}
 
 /* ── DYNAMIC RUNTIME HELPERS ─────────────────────────────── */
 /* only active during playback; final visual keeps original classes */
@@ -315,9 +320,6 @@
 .node-enter{animation:agentIn .28s cubic-bezier(.2,.8,.2,1) both;}
 .timing-enter{animation:agentIn .28s cubic-bezier(.2,.8,.2,1) both;}
 
-/* ── RESPONSE ACTIONS SVG (moved from .md context, preserve max-width:none) ── */
-.response-actions svg,
-.response-actions svg *{max-width:none;}
 
 
 @keyframes messageIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:translateY(0) scale(1);}}

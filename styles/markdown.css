@@ -386,6 +386,8 @@
 .source-inline .response-action-source:active{background:rgba(0,0,0,.06);}
 
 /* ── RESPONSE ACTIONS (业务块，在 #mainActions 内) ─────── */
+#mainActions .response-actions svg,
+#mainActions .response-actions svg *{max-width:none;}
 .response-actions{
   margin:0;
   padding:0;

@@ -64,7 +64,8 @@
 }
 
 .ask-question-card {
-  width: var(--aq-width);
+  width: 100%;
+  max-width: var(--aq-width);
   background: var(--aq-bg);
   border-radius: var(--aq-radius);
   box-shadow: var(--aq-shadow);
@@ -85,8 +86,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 310px;
-  align-self: center;
+  width: 100%;
 }
 
 .aq-nav {
@@ -143,8 +143,7 @@
   align-items: center;
   gap: 10px;
   padding: 16px 0;
-  width: 310px;
-  align-self: center;
+  width: 100%;
 }
 
 .aq-badge {
@@ -303,9 +302,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 310px;
+  width: 100%;
   height: var(--aq-input-height);
-  align-self: center;
   margin-top: var(--aq-option-gap);
 }
 

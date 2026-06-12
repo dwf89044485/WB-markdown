@@ -424,7 +424,6 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   position: relative;
   height: 36px;
   flex-shrink: 0;
-  background: #fafafa;
   z-index: 5;
 }
 .scroll-nav.is-hidden {

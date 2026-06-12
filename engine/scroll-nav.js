@@ -38,12 +38,8 @@ function getCurrentTurnIndex() {
 
 // ── Visibility ────────────────────────────────────────────
 
-function updateScrollNav() {
-  if (SN.isTblFullscreen) {
-    SN.nav.classList.add('is-hidden');
-    return;
-  }
-
+function syncVisibility(scrollTop, skipEntrance) {
+  // skipEntrance: 预判模式下不触发入场动画（按钮已经显示了就不需要再生效一次）
   const t = SN.turns;
   const len = t.length;
   if (len < 1) {
@@ -51,10 +47,7 @@ function updateScrollNav() {
     return;
   }
 
-  // 显隐判断基于滚动容器的位置，而非轮次索引
-  // ↑ 可见：不在最顶部（5px 容差）
-  // ↓ 可见：不在最底部（5px 容差）
-  const scrollTop = SN.conv.scrollTop;
+  // 显隐判断基于滚动容器的位置
   const scrollBottom = scrollTop + SN.conv.clientHeight;
   const scrollHeight = SN.conv.scrollHeight;
 
@@ -70,9 +63,10 @@ function updateScrollNav() {
 
   // 同步 has-two class
   SN.nav.classList.toggle('has-two', showUp && showDown);
+  SN.nav.classList.toggle('is-hidden', !showUp && !showDown);
 
-  // 入场动画：从隐藏变显示时
-  if (showUp && prevUpHidden) {
+  // 入场动画——从隐藏变显示时
+  if (showUp && prevUpHidden && !skipEntrance) {
     SN.upBtn.classList.add('is-appearing');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -80,7 +74,7 @@ function updateScrollNav() {
       });
     });
   }
-  if (showDown && prevDownHidden) {
+  if (showDown && prevDownHidden && !skipEntrance) {
     SN.downBtn.classList.add('is-appearing');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -88,14 +82,56 @@ function updateScrollNav() {
       });
     });
   }
+}
 
-  // 整个 nav 容器在无按钮时隐藏
-  SN.nav.classList.toggle('is-hidden', !showUp && !showDown);
+function updateScrollNav() {
+  if (SN.isTblFullscreen) {
+    SN.nav.classList.add('is-hidden');
+    return;
+  }
+  syncVisibility(SN.conv.scrollTop);
 }
 
 // ── Scroll helpers ────────────────────────────────────────
 
+/** nav-bar 覆盖在 conversation 顶部的高度，滚动到用户消息时需要额外偏移 */
+function navBarOverlap() {
+  const bar = document.querySelector('.nav-bar');
+  const conv = document.querySelector('.conversation');
+  if (!bar || !conv) return 0;
+  const barRect = bar.getBoundingClientRect();
+  const convRect = conv.getBoundingClientRect();
+  return Math.max(0, barRect.bottom - convRect.top);
+}
+
 function smoothScrollTo(y) {
+  // 提前展示目标位置会出现的按钮，让入场动画与滚动同步进行
+  // 注意：只 show 不 hide——按钮隐藏让后续 scroll 事件自然处理
+  const targetBottom = y + SN.conv.clientHeight;
+  const scrollHeight = SN.conv.scrollHeight;
+  const willShowUp = y > 5;
+  const willShowDown = targetBottom < scrollHeight - 5;
+
+  const prevUpHidden = SN.upBtn.classList.contains('is-hidden');
+  const prevDownHidden = SN.downBtn.classList.contains('is-hidden');
+
+  if (willShowUp && prevUpHidden) {
+    SN.upBtn.classList.remove('is-hidden');
+    SN.upBtn.classList.add('is-appearing');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { SN.upBtn.classList.remove('is-appearing'); });
+    });
+  }
+  if (willShowDown && prevDownHidden) {
+    SN.downBtn.classList.remove('is-hidden');
+    SN.downBtn.classList.add('is-appearing');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { SN.downBtn.classList.remove('is-appearing'); });
+    });
+  }
+  SN.nav.classList.toggle('has-two', !SN.upBtn.classList.contains('is-hidden') && !SN.downBtn.classList.contains('is-hidden'));
+  SN.nav.classList.remove('is-hidden');
+
   if ('scrollBehavior' in document.documentElement.style) {
     SN.conv.scrollTo({ top: y, behavior: 'smooth' });
   } else {
@@ -105,20 +141,20 @@ function smoothScrollTo(y) {
 
 function scrollToUserMsg(index) {
   if (index < 0 || index >= SN.turns.length) return;
-  const top = SN.turns[index].userMsg.offsetTop;
+  const top = SN.turns[index].userMsg.offsetTop + navBarOverlap();
   smoothScrollTo(top);
 }
 
 function scrollToTopTurn() {
   if (!SN.turns.length) return;
-  const top = SN.turns[0].userMsg.offsetTop;
+  const top = SN.turns[0].userMsg.offsetTop + navBarOverlap();
   smoothScrollTo(top);
 }
 
 function scrollToBottomTurn() {
   if (!SN.turns.length) return;
   const idx = SN.turns.length - 1;
-  const top = SN.turns[idx].userMsg.offsetTop;
+  const top = SN.turns[idx].userMsg.offsetTop + navBarOverlap();
   smoothScrollTo(top);
 }
 

@@ -257,8 +257,8 @@ const RESPONSE_SVGS = (() => {
 })();
 
 function renderFinalActions() {
-  const main = $('#mainActions');
-  if (!main || main.querySelector('.response-actions')) return;
+  const actionsMount = $('#mainActions');
+  if (!actionsMount || actionsMount.querySelector('.response-actions')) return;
   const wrap = document.createElement('div');
   wrap.className = 'response-actions message-enter';
   const buttons = [
@@ -272,7 +272,7 @@ function renderFinalActions() {
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
     </div>`;
-  main.appendChild(wrap);
+  actionsMount.appendChild(wrap);
 
   // More popover
   const moreBtn = wrap.querySelector('.response-action-more');
@@ -283,7 +283,8 @@ function renderFinalActions() {
     <button class="more-menu-item" type="button" aria-label="没有帮助">${RESPONSE_SVGS.dislike}<span>没有帮助</span></button>
     <button class="more-menu-item" type="button" aria-label="复制请求ID">${RESPONSE_SVGS.copy}<span>复制请求ID</span></button>
     <button class="more-menu-item" type="button" aria-label="提交反馈">${RESPONSE_SVGS.ask}<span>提交反馈</span></button>`;
-  wrap.appendChild(popover);
+  const leftGroup = wrap.querySelector('.response-action-left');
+  leftGroup.appendChild(popover);
 
   moreBtn.onclick = (e) => {
     e.stopPropagation();
@@ -303,7 +304,7 @@ function renderFinalActions() {
     copyBtn.onclick = async () => {
       const text = scenario.final && scenario.final.markdown
         ? scenario.final.markdown
-        : (scenario.final && scenario.final.html ? scenario.final.html : main.textContent || '');
+        : (scenario.final && scenario.final.html ? scenario.final.html : actionsMount.textContent || '');
       try {
         await navigator.clipboard.writeText(text);
       } catch (_) {
@@ -334,7 +335,7 @@ function renderFinalActions() {
     shareBtn.onclick = async () => {
       const text = scenario.final && scenario.final.markdown
         ? scenario.final.markdown
-        : (scenario.final && scenario.final.html ? scenario.final.html : main.textContent || '');
+        : (scenario.final && scenario.final.html ? scenario.final.html : actionsMount.textContent || '');
       const title = 'WorkBuddy';
       try {
         if (navigator.share) {

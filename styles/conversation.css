@@ -307,5 +307,12 @@
 .agent-enter{animation:agentIn .36s cubic-bezier(.2,.8,.2,1) both;}
 .node-enter{animation:agentIn .28s cubic-bezier(.2,.8,.2,1) both;}
 .timing-enter{animation:agentIn .28s cubic-bezier(.2,.8,.2,1) both;}
+
+/* ── RESPONSE ACTIONS SVG (moved from .md context, preserve max-width:none) ── */
+.response-actions svg,
+.response-actions svg *{max-width:none;}
+
+/* ── SOURCE DIVIDER (explicit BFC to avoid margin-collapsing dependency) ── */
+.source-divider{display:flow-root;}
 @keyframes messageIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes agentIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}

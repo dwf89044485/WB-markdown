@@ -456,7 +456,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display: none;
 }
 /* 入场初始态：透明+上偏移，随后被移除触发 transition */
-.scroll-nav-btn.is-entering {
+.scroll-nav-btn.is-appearing {
   opacity: 0;
   transform: translateY(6px) translateX(-50%);
   pointer-events: none;
@@ -477,7 +477,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   transform: translateX(0) scale(0.94);
 }
 /* 入场态 + 分列 */
-.scroll-nav.has-two .scroll-nav-btn.is-entering {
+.scroll-nav.has-two .scroll-nav-btn.is-appearing {
   transform: translateY(6px) translateX(0);
 }
 

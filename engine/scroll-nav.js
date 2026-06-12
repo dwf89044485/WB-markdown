@@ -63,36 +63,28 @@ function updateScrollNav() {
 
   const prevUpHidden = SN.upBtn.classList.contains('is-hidden');
   const prevDownHidden = SN.downBtn.classList.contains('is-hidden');
-  const prevHasTwo = SN.nav.classList.contains('has-two');
 
   // 切换显隐
   SN.upBtn.classList.toggle('is-hidden', !showUp);
   SN.downBtn.classList.toggle('is-hidden', !showDown);
 
-  // 状态不变时无动画
-  const nowHasTwo = showUp && showDown;
-
-  if (nowHasTwo !== prevHasTwo) {
-    // 从 1→2 或 2→1，触发布局变化过渡
-    SN.nav.classList.toggle('has-two', nowHasTwo);
-  } else {
-    SN.nav.classList.toggle('has-two', nowHasTwo);
-  }
+  // 同步 has-two class
+  SN.nav.classList.toggle('has-two', showUp && showDown);
 
   // 入场动画：从隐藏变显示时
   if (showUp && prevUpHidden) {
-    SN.upBtn.classList.add('is-entering');
+    SN.upBtn.classList.add('is-appearing');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        SN.upBtn.classList.remove('is-entering');
+        SN.upBtn.classList.remove('is-appearing');
       });
     });
   }
   if (showDown && prevDownHidden) {
-    SN.downBtn.classList.add('is-entering');
+    SN.downBtn.classList.add('is-appearing');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        SN.downBtn.classList.remove('is-entering');
+        SN.downBtn.classList.remove('is-appearing');
       });
     });
   }
@@ -285,8 +277,8 @@ export function initScrollNav() {
   SN.downState = { lastClickTime: 0, showTooltip: false, tooltipTimer: null };
   SN.isTblFullscreen = false;
   SN.nav.classList.remove('has-two', 'is-hidden');
-  SN.upBtn.classList.remove('is-hidden', 'is-entering');
-  SN.downBtn.classList.remove('is-hidden', 'is-entering');
+  SN.upBtn.classList.remove('is-hidden', 'is-appearing');
+  SN.downBtn.classList.remove('is-hidden', 'is-appearing');
 
   // Remove old scroll listener if re-initializing
   if (SN._onScroll) {

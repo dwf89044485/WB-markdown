@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="./styles/markdown.css">
 <link rel="stylesheet" href="./styles/sheet.css">
 <link rel="stylesheet" href="./styles/demo-controls.css">
+<link rel="stylesheet" href="./styles/ask-question.css">
 <script>
 (function(){
   var params = new URLSearchParams(location.search);
@@ -131,6 +132,37 @@
           </svg>
         </span>
       </button>
+    </div>
+  </div>
+  <!-- Ask User Question (replaces composer when active) -->
+  <div class="ask-question" id="askQuestion">
+    <div class="ask-question-card">
+      <!-- 顶栏 -->
+      <div class="aq-header">
+        <div class="aq-nav">
+          <button class="aq-nav-btn aq-prev-btn" id="aqPrev" type="button" aria-label="上一题">
+            <svg width="4" height="8" viewBox="0 0 4 8" fill="none"><path d="M3.4243 7.8485L-0.6615 3.7627L-0.6808 3.7434Q-1.2803 3.1439 -1.4689 2.8959Q-1.8373 2.411 -1.8373 1.9243Q-1.8373 1.4375 -1.4689 0.9526Q-1.2803 0.7046 -0.6808 0.1051L-0.6615 0.0858L3.4243 -4L4.2728 -3.1515L0.187 -0.9343L0.1677 0.9536Q-0.0387 1.1599 -0.1921 1.3242L10.8485 1.3242L10.8485 2.5243L-0.1921 2.5243Q-0.0387 2.6886 0.1677 2.8949L0.1773 2.9045L0.187 2.9142L4.2728 7L3.4243 7.8485Z" transform="matrix(-1 0 0 1 2.0757 8)" fill="currentColor" fill-rule="evenodd"/></svg>
+          </button>
+          <span class="aq-step-indicator" id="aqStep">1 / 4</span>
+          <button class="aq-nav-btn aq-next-btn" id="aqNext" type="button" aria-label="下一题">
+            <svg width="4" height="8" viewBox="0 0 4 8" fill="none"><path d="M7.4243 11.8485L11.51 7.7627L11.5294 7.7434Q12.1289 7.1439 12.3174 6.8959Q12.6858 6.411 12.6858 5.9243Q12.6858 5.4375 12.3174 4.9526Q12.1289 4.7046 11.5294 4.1051L11.51 4.0858L7.4243 0L6.5757 0.8485L10.6615 4.9343L10.6808 4.9536Q10.8872 5.1599 11.0406 5.3242L0 5.3242L0 6.5243L11.0406 6.5243Q10.8872 6.6886 10.6808 6.8949L10.6712 6.9045L10.6615 6.9142L6.5757 11L7.4243 11.8485Z" fill="currentColor" fill-rule="evenodd"/></svg>
+          </button>
+        </div>
+        <button class="aq-close-btn" id="aqClose" type="button" aria-label="关闭">
+          <svg width="10.87" height="10.87" viewBox="0 0 11 11" fill="none">
+            <path d="M1 1L10 10M10 1L1 10" stroke="#3D3D3D" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <!-- 问题区 -->
+      <div class="aq-question-area" id="aqQuestionArea"></div>
+      <!-- 选项列表 -->
+      <div class="aq-options" id="aqOptions"></div>
+      <!-- 输入栏 -->
+      <div class="aq-input-bar">
+        <input class="aq-input-field" id="aqInput" type="text" autocomplete="off">
+        <button class="aq-action-btn is-skip" id="aqAction" type="button">跳过</button>
+      </div>
     </div>
   </div>
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">

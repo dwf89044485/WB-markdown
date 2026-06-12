@@ -1,0 +1,369 @@
+// ============================================================
+// ASK QUESTION — 问答卡片渲染 · 交互 · 状态管理
+// ============================================================
+
+const CHECK_SVG = '<svg width="11.85" height="7.82" viewBox="0 0 12 8" fill="none"><path d="M1 3.5L4.5 7L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const DRAG_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="3.5" r="1.5" fill="currentColor"/><circle cx="10.5" cy="3.5" r="1.5" fill="currentColor"/><circle cx="5.5" cy="8" r="1.5" fill="currentColor"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor"/><circle cx="5.5" cy="12.5" r="1.5" fill="currentColor"/><circle cx="10.5" cy="12.5" r="1.5" fill="currentColor"/></svg>';
+
+// ── 问答会话状态 ─────────────────────────────────
+let askState = null;     // { questions, answers[], stepIndex, resolve }
+let dragState = null;    // { startIndex, currentIndex, placeholder }
+
+function resetAskState(questions) {
+  return {
+    questions,
+    answers: questions.map(q => ({
+      type: q.type,
+      selected: q.type === 'single' ? null : q.type === 'sort' ? q.options.map((_, i) => i) : [],
+      customInput: '',
+    })),
+    stepIndex: 0,
+    resolve: null,
+  };
+}
+
+// ── 状态计算函数 ─────────────────────────────────
+function isAnswered(question, answer) {
+  if (question.type === 'sort') return true;
+  if (question.type === 'single') {
+    return answer.selected !== null || answer.customInput.trim() !== '';
+  }
+  if (question.type === 'multiple') {
+    return answer.selected.length > 0 || answer.customInput.trim() !== '';
+  }
+  return false;
+}
+
+function getButtonLabel(stepIndex, totalSteps, question, answer) {
+  const isLast = stepIndex === totalSteps - 1;
+  if (question.type === 'sort') {
+    return isLast ? '提交' : '下一步';
+  }
+  if (isAnswered(question, answer)) {
+    return isLast ? '提交' : '下一步';
+  }
+  return '跳过';
+}
+
+// ── 渲染函数 ─────────────────────────────────
+function renderAskQuestion() {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+  const total = questions.length;
+
+  // 步骤指示器
+  const stepEl = document.getElementById('aqStep');
+  if (stepEl) stepEl.textContent = `${stepIndex + 1} / ${total}`;
+
+  // 导航按钮
+  const prevBtn = document.getElementById('aqPrev');
+  const nextBtn = document.getElementById('aqNext');
+  if (prevBtn) prevBtn.disabled = stepIndex <= 0;
+  if (nextBtn) nextBtn.disabled = stepIndex >= total - 1;
+
+  // 问题区
+  const questionArea = document.getElementById('aqQuestionArea');
+  if (questionArea) {
+    let html = '';
+    if (q.type === 'multiple') {
+      html += '<span class="aq-badge">多选</span>';
+    } else if (q.type === 'sort') {
+      html += '<span class="aq-badge">排序</span>';
+    }
+    html += `<span class="aq-question-text">${escapeAQHtml(q.question)}</span>`;
+    questionArea.innerHTML = html;
+  }
+
+  // 选项列表
+  renderOptions(q, a);
+
+  // 输入栏
+  const inputEl = document.getElementById('aqInput');
+  if (inputEl) {
+    inputEl.value = a.customInput;
+    inputEl.placeholder = q.type === 'single'
+      ? '以上都不是，我来告诉你'
+      : '我来额外补充说明';
+  }
+
+  // 按钮
+  updateActionButton();
+}
+
+function escapeAQHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderOptions(q, a) {
+  const container = document.getElementById('aqOptions');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (q.type === 'sort') {
+    // 排序：按 answer.selected 顺序渲染
+    a.selected.forEach((optIdx, posIdx) => {
+      container.appendChild(createOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, true));
+    });
+  } else {
+    q.options.forEach((opt, i) => {
+      const isSelected = q.type === 'single'
+        ? a.selected === i
+        : a.selected.includes(i);
+      container.appendChild(createOptionRow(i, opt, i + 1, q.type, isSelected));
+    });
+  }
+}
+
+function createOptionRow(index, text, displayNum, type, isSelected) {
+  const row = document.createElement('div');
+  row.className = 'aq-option' + (isSelected ? ' is-selected' : '') + (type === 'sort' ? ' is-sort' : '');
+  row.dataset.index = index;
+
+  let rightHtml = '';
+  if (type === 'single' && isSelected) {
+    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_SVG}</span></div>`;
+  } else if (type === 'multiple') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_SVG : ''}</span></div>`;
+  } else if (type === 'sort') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-drag-handle">${DRAG_SVG}</span></div>`;
+  } else if (type === 'single' && !isSelected) {
+    rightHtml = '<div class="aq-option-right"></div>';
+  }
+
+  row.innerHTML = `
+    <div class="aq-option-left">
+      <span class="aq-option-num">${displayNum}</span>
+      <span class="aq-option-text">${escapeAQHtml(text)}</span>
+    </div>
+    ${rightHtml}
+  `;
+
+  return row;
+}
+
+function updateActionButton() {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const btn = document.getElementById('aqAction');
+  if (!btn) return;
+
+  const label = getButtonLabel(stepIndex, questions.length, questions[stepIndex], answers[stepIndex]);
+  btn.textContent = label;
+  btn.className = 'aq-action-btn ' + (label === '跳过' ? 'is-skip' : 'is-action');
+}
+
+// ── 事件处理函数 ─────────────────────────────────
+function onOptionClick(optionIndex) {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+
+  if (q.type === 'single') {
+    if (a.selected === optionIndex) {
+      a.selected = null;
+      a.customInput = '';
+    } else {
+      a.selected = optionIndex;
+      a.customInput = '';
+    }
+    renderAskQuestion();
+
+    // 非最后一题自动前进
+    if (a.selected !== null && stepIndex < questions.length - 1) {
+      setTimeout(() => goToStep(stepIndex + 1), 300);
+    }
+  }
+
+  if (q.type === 'multiple') {
+    const idx = a.selected.indexOf(optionIndex);
+    if (idx >= 0) a.selected.splice(idx, 1);
+    else a.selected.push(optionIndex);
+    renderAskQuestion();
+  }
+}
+
+function onInputChange(text) {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+
+  a.customInput = text;
+  if (q.type === 'single') {
+    a.selected = null;
+  }
+  updateActionButton();
+  // 单选需要重新渲染选项行（去掉选中态）
+  if (q.type === 'single') renderOptions(q, a);
+}
+
+function goToStep(index) {
+  if (!askState) return;
+  if (index < 0 || index >= askState.questions.length) return;
+  askState.stepIndex = index;
+  renderAskQuestion();
+}
+
+function onActionClick() {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const label = getButtonLabel(stepIndex, questions.length, questions[stepIndex], answers[stepIndex]);
+
+  if (stepIndex === questions.length - 1 && (label === '提交' || label === '跳过')) {
+    submitAnswers();
+  } else {
+    goToStep(stepIndex + 1);
+  }
+}
+
+function onCloseAsk() {
+  submitAnswers();
+}
+
+function submitAnswers() {
+  if (!askState || !askState.resolve) return;
+  const result = askState.questions.map((q, i) => ({
+    questionId: q.id,
+    type: q.type,
+    selected: askState.answers[i].selected,
+    customInput: askState.answers[i].customInput.trim() || null,
+  }));
+  const resolve = askState.resolve;
+  hideAskQuestion();
+  resolve(result);
+}
+
+// ── 排序拖拽 ─────────────────────────────────
+function initDragSort() {
+  const container = document.getElementById('aqOptions');
+  if (!container) return;
+
+  let dragEl = null;
+  let startY = 0;
+  let startIdx = 0;
+
+  container.addEventListener('pointerdown', (e) => {
+    if (!askState) return;
+    const q = askState.questions[askState.stepIndex];
+    if (q.type !== 'sort') return;
+
+    const handle = e.target.closest('.aq-drag-handle');
+    if (!handle) return;
+
+    const row = handle.closest('.aq-option');
+    if (!row) return;
+
+    e.preventDefault();
+    dragEl = row;
+    startY = e.clientY;
+    startIdx = Array.from(container.children).indexOf(row);
+    row.classList.add('is-dragging');
+    row.setPointerCapture(e.pointerId);
+  });
+
+  container.addEventListener('pointermove', (e) => {
+    if (!dragEl) return;
+    e.preventDefault();
+    const containerRect = container.getBoundingClientRect();
+    const rows = Array.from(container.children);
+    const currentY = e.clientY;
+
+    // 判断拖拽位置应插入到哪一行之前
+    for (let i = 0; i < rows.length; i++) {
+      const rowRect = rows[i].getBoundingClientRect();
+      const midY = rowRect.top + rowRect.height / 2;
+      if (currentY < midY && i !== startIdx) {
+        if (i < startIdx) {
+          container.insertBefore(dragEl, rows[i]);
+        } else {
+          container.insertBefore(dragEl, rows[i].nextSibling);
+        }
+        startIdx = Array.from(container.children).indexOf(dragEl);
+        break;
+      }
+    }
+  });
+
+  container.addEventListener('pointerup', () => {
+    if (!dragEl || !askState) return;
+    dragEl.classList.remove('is-dragging');
+
+    // 从 DOM 顺序更新 answer.selected
+    const container = document.getElementById('aqOptions');
+    const a = askState.answers[askState.stepIndex];
+    const newOrder = Array.from(container.children).map(el => parseInt(el.dataset.index));
+    a.selected = newOrder;
+
+    // 更新序号显示
+    container.querySelectorAll('.aq-option').forEach((row, i) => {
+      row.querySelector('.aq-option-num').textContent = i + 1;
+    });
+
+    dragEl = null;
+  });
+}
+
+// ── 显示/隐藏 ─────────────────────────────────
+function showAskQuestion(questions) {
+  return new Promise((resolve) => {
+    askState = resetAskState(questions);
+    askState.resolve = resolve;
+
+    // 隐藏 composer，显示问答卡片
+    const composer = document.querySelector('.composer');
+    const askEl = document.getElementById('askQuestion');
+    if (composer) composer.style.display = 'none';
+    if (askEl) askEl.classList.add('is-active');
+
+    renderAskQuestion();
+    initDragSort();
+  });
+}
+
+function hideAskQuestion() {
+  const composer = document.querySelector('.composer');
+  const askEl = document.getElementById('askQuestion');
+  if (composer) composer.style.display = '';
+  if (askEl) askEl.classList.remove('is-active');
+
+  askState = null;
+}
+
+// 绑定一次性事件（在 DOMContentLoaded 后调用）
+function bindAskQuestionEvents() {
+  // 选项点击
+  document.getElementById('aqOptions')?.addEventListener('click', (e) => {
+    const row = e.target.closest('.aq-option');
+    if (!row || !askState) return;
+    const q = askState.questions[askState.stepIndex];
+    if (q.type === 'sort') return; // 排序不用点击
+    onOptionClick(parseInt(row.dataset.index));
+  });
+
+  // 输入框
+  document.getElementById('aqInput')?.addEventListener('input', (e) => {
+    onInputChange(e.target.value);
+  });
+
+  // 按钮
+  document.getElementById('aqAction')?.addEventListener('click', onActionClick);
+
+  // 导航
+  document.getElementById('aqPrev')?.addEventListener('click', () => {
+    if (askState) goToStep(askState.stepIndex - 1);
+  });
+  document.getElementById('aqNext')?.addEventListener('click', () => {
+    if (askState) goToStep(askState.stepIndex + 1);
+  });
+
+  // 关闭
+  document.getElementById('aqClose')?.addEventListener('click', onCloseAsk);
+}
+
+export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents };

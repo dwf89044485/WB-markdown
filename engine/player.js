@@ -14,6 +14,7 @@ import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
 import { initScrollNav, rebuildScrollNav } from './scroll-nav.js';
+import { showAskQuestion, bindAskQuestionEvents } from './ask-question.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const designNotes = window.WORKBUDDY_DESIGN_NOTES || {};
@@ -208,6 +209,10 @@ async function runFlatAction(container, action) {
     wrapper.className = 'md md-node';
     container.appendChild(wrapper);
     await appendHTMLTypedTo(wrapper, markdownToHtml(action.markdown));
+  }
+  if (action.type === 'askUser') {
+    const result = await showAskQuestion(action.questions);
+    console.log('[AskUser] answers:', result);
   }
 }
 
@@ -575,6 +580,7 @@ function directorActionLabel(action) {
   if (action.type === 'statusGroup') return action.actions.map(toDoneLabel).join('、');
   if (action.type === 'markdown') return '输出 markdown';
   if (action.type === 'html') return '输出内容';
+  if (action.type === 'askUser') return '向用户提问';
   return '子节点';
 }
 
@@ -1082,6 +1088,7 @@ function initializePlayback() {
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();
   initScrollNav();
+  bindAskQuestionEvents();
 }
 
 function restartPlayback() {

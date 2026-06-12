@@ -445,8 +445,15 @@ function renderStaticPreChat() {
   const conv = document.getElementById('conv');
   const ref = document.getElementById('userMsgWrap');
 
+  // 第一轮用户消息（来自 scenario.userMessage）
+  const firstUserWrap = document.createElement('div');
+  firstUserWrap.className = 'user-msg-wrap prechat-static';
+  firstUserWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(scenario.userMessage) + '</div>';
+  conv.insertBefore(firstUserWrap, ref);
+
   for (let i = 0; i < preChat.length; i++) {
     const round = preChat[i];
+    const isLast = i === preChat.length - 1;
 
     // AI 回复
     const agentDiv = document.createElement('div');
@@ -457,6 +464,9 @@ function renderStaticPreChat() {
       + '</div>'
       + '<div class="md md-node">' + markdownToHtml(round.agent) + '</div>';
     conv.insertBefore(agentDiv, ref);
+
+    // 最后一条用户消息由 showUserMessage() 渲染，这里跳过避免重复
+    if (isLast) continue;
 
     // 用户回复
     const userWrap = document.createElement('div');

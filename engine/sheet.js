@@ -413,9 +413,12 @@ function initSheetDrag() {
     if (!dragState) return;
     const currentH = sheet.getBoundingClientRect().height;
     const pct = (currentH / dragState.containerH) * 100;
+    const wasExpanded = dragState.startExpanded;
     dragState = null;
     sheet.style.transition = 'height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1)';
-    if (pct >= 50) {
+    // 双向滞后：从40%拉起需过半（50%）才展开，从80%拉下到75%即折叠
+    const threshold = wasExpanded ? 75 : 50;
+    if (pct >= threshold) {
       sheet.style.height = '80%';
       sheet.classList.add('expanded');
     } else {

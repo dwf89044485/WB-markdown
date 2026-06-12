@@ -104,9 +104,9 @@ function renderOptions(q, a) {
   container.innerHTML = '';
 
   if (q.type === 'sort') {
-    // 排序：按 answer.selected 顺序渲染
+    // 排序：按 answer.selected 顺序渲染，不使用选中态
     a.selected.forEach((optIdx, posIdx) => {
-      container.appendChild(createOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, true));
+      container.appendChild(createOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, false));
     });
   } else {
     q.options.forEach((opt, i) => {
@@ -259,12 +259,13 @@ function initDragSort() {
 
   let dragEl = null;
 
-  container.addEventListener('pointerdown', (e) => {
+  // 使用 document 级别的事件监听，避免 setPointerCapture 导致事件重定向问题
+  document.addEventListener('pointerdown', (e) => {
     if (!askState) return;
     const q = askState.questions[askState.stepIndex];
     if (q.type !== 'sort') return;
 
-    const handle = e.target.closest('.aq-drag-handle, .aq-option-right');
+    const handle = e.target.closest('.aq-drag-handle');
     if (!handle) return;
 
     const row = handle.closest('.aq-option');
@@ -273,10 +274,9 @@ function initDragSort() {
     e.preventDefault();
     dragEl = row;
     row.classList.add('is-dragging');
-    row.setPointerCapture(e.pointerId);
   });
 
-  container.addEventListener('pointermove', (e) => {
+  document.addEventListener('pointermove', (e) => {
     if (!dragEl) return;
     e.preventDefault();
 
@@ -297,12 +297,11 @@ function initDragSort() {
     if (insertBefore) {
       container.insertBefore(dragEl, insertBefore);
     } else {
-      // 拖到末尾
       container.appendChild(dragEl);
     }
   });
 
-  container.addEventListener('pointerup', () => {
+  document.addEventListener('pointerup', () => {
     if (!dragEl || !askState) return;
     dragEl.classList.remove('is-dragging');
 
@@ -312,12 +311,15 @@ function initDragSort() {
 
     // 更新序号显示
     container.querySelectorAll('.aq-option').forEach((row, i) => {
-      row.querySelector('.aq-option-num').textContent = i + 1;
+      const num = row.querySelector('.aq-option-num');
+      if (num) num.textContent = i + 1;
     });
 
     dragEl = null;
   });
 }
+
+
 
 // ── 显示/隐藏 ─────────────────────────────────
 function showAskQuestion(questions) {

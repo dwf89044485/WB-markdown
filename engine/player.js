@@ -441,9 +441,6 @@ async function renderFinal() {
 }
 
 // ── Static pre-chat rounds ───────────────────────────────
-// 存放隐藏的 preChat 元素，按 DOM 顺序排列
-let preChatElements = [];
-
 function makeResponseActionsHtml() {
   const btns = [
     ['copy', '复制', RESPONSE_SVGS.copy],
@@ -468,15 +465,11 @@ function renderStaticPreChat() {
   const conv = document.getElementById('conv');
   const ref = document.getElementById('userMsgWrap');
 
-  // 清空旧索引（重置时重新填充）
-  preChatElements = [];
-
-  // 第一轮用户消息（来自 scenario.userMessage），一进来就可见
+  // 第一轮用户消息（来自 scenario.userMessage）
   const firstUserWrap = document.createElement('div');
   firstUserWrap.className = 'user-msg-wrap prechat-static';
   firstUserWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(scenario.userMessage) + '</div>';
   conv.insertBefore(firstUserWrap, ref);
-  // 不放 preChatElements 数组，不加入 timeline 揭示
 
   for (let i = 0; i < preChat.length; i++) {
     const round = preChat[i];
@@ -492,8 +485,6 @@ function renderStaticPreChat() {
       + '<div class="md md-node">' + markdownToHtml(round.agent) + '</div>'
       + makeResponseActionsHtml();
     conv.insertBefore(agentDiv, ref);
-    agentDiv.classList.add('is-hidden');
-    preChatElements.push(agentDiv);
 
     // 最后一条用户消息由 showUserMessage() 渲染，这里跳过避免重复
     if (isLast) continue;
@@ -503,8 +494,6 @@ function renderStaticPreChat() {
     userWrap.className = 'user-msg-wrap prechat-static';
     userWrap.innerHTML = '<div class="user-bubble">' + escapeHtml(round.user) + '</div>';
     conv.insertBefore(userWrap, ref);
-    userWrap.classList.add('is-hidden');
-    preChatElements.push(userWrap);
   }
 }
 
@@ -547,7 +536,6 @@ function collapseProcessIntoTiming() {
 function resetPlaybackDom() {
   // 清理 preChat 静态元素
   document.querySelectorAll('.prechat-static').forEach(el => el.remove());
-  preChatElements = [];
 
   const userWrap = $('#userMsgWrap');
   const userBubble = $('#userBubble');
@@ -618,22 +606,7 @@ function directorActionLabel(action) {
 function buildDirectorTimeline() {
   const timeline = [];
 
-  // PreChat 逐条揭示步骤
-  if (preChatElements.length) {
-    preChatElements.forEach((el, i) => {
-      timeline.push({
-        label: i === 0 ? '用户消息' : `预对话 ${Math.ceil(i / 2)}`,
-        run: async () => {
-          el.classList.remove('is-hidden');
-          scrollToBottom();
-          rebuildScrollNav();
-          await sleepDelay(i === 0 ? 'userMessageDelay' : 'stepDelay', i === 0 ? 720 : 470);
-        }
-      });
-    });
-  }
-
-  timeline.push({ label: '用户触发', run: showUserMessage });
+  timeline.push({ label: '用户消息', run: showUserMessage });
   timeline.push({ label: 'WorkBuddy 出现', run: showAgentShell });
   timeline.push({ label: '思考过程', run: showThinkingLoading });
 

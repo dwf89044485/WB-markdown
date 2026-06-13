@@ -492,14 +492,7 @@ function renderStaticPreChat() {
     $('#userMsgWrap').classList.remove('is-hidden');
   }
   // 初始滚动：让 #userMsgWrap 紧贴 navbar 下方
-  // 双重 rAF 确保浏览器完成布局后再计算位置
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      scrollToUserBelowNav();
-    });
-  });
-  // 后备：延时再滚动一次，防止字体/图片加载导致布局偏移
-  setTimeout(() => scrollToUserBelowNav(), 100);
+  requestAnimationFrame(() => scrollToUserBelowNav());
 }
 
 // ── User / agent appearance ───────────────────────────────
@@ -511,11 +504,7 @@ async function showUserMessage() {
   $('#userBubble').textContent = trigger;
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
-  // 有 preChat 时，renderStaticPreChat 已显示用户消息并滚动到 navbar 下方，
-  // 不再加 message-enter 动画（避免元素消失再渐入导致闪烁和位置跳动）
-  if (!hasPreChat) {
-    wrap.classList.add('message-enter');
-  }
+  wrap.classList.add('message-enter');
   smartScroll();
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);

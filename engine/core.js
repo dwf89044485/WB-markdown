@@ -60,30 +60,3 @@ export function scrollToBottom() {
   if (c.scrollTop + c.clientHeight < c.scrollHeight - 80) return;
   c.scrollTop = c.scrollHeight;
 }
-
-export function scrollToUserBelowNav() {
-  const conv = document.querySelector('#conv');
-  const userWrap = document.querySelector('#userMsgWrap');
-  const navBar = conv ? conv.querySelector('.nav-bar') : null;
-  if (!conv || !userWrap) return;
-  // 使用 getBoundingClientRect 相对视口精确计算
-  const convRect = conv.getBoundingClientRect();
-  const userRect = userWrap.getBoundingClientRect();
-  const navHeight = navBar ? navBar.offsetHeight : 0;
-  // 目标：userWrap 顶部应该在 navbar 底部下方 12px
-  // 当前 userWrap 顶部相对 conv 可视区域的位置 = userRect.top - convRect.top
-  // 期望位置 = navHeight + 12
-  const currentOffset = userRect.top - convRect.top;
-  const desiredOffset = navHeight + 12;
-  const delta = currentOffset - desiredOffset;
-  conv.scrollTop += delta;
-}
-
-// 智能滚动：有 preChat 时用户消息保持在 navbar 下方，否则滚动到底部
-export function smartScroll() {
-  if (scenario.preChat && scenario.preChat.length) {
-    scrollToUserBelowNav();
-  } else {
-    scrollToBottom();
-  }
-}

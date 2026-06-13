@@ -266,7 +266,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   if (options.customRenderer) {
     const body = $('#sheetBody');
     body.innerHTML = '';
-    options.customRenderer(body);
     resetSheetHeight();
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';
@@ -274,8 +273,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     if (renderToken !== sheetRenderToken) return;
     ov.className = 'sheet-overlay vis show';
     sheetOpen = true;
-    document.addEventListener('mousedown', onOutsideClick);
-    document.addEventListener('touchstart', onOutsideClick, { passive: true });
     return;
   }
 
@@ -286,8 +283,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
       if (renderToken !== sheetRenderToken) return;
       ov.className = 'sheet-overlay vis show';
       sheetOpen = true;
-      document.addEventListener('mousedown', onOutsideClick);
-      document.addEventListener('touchstart', onOutsideClick, { passive: true });
     }));
     return;
   }
@@ -318,8 +313,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   if (renderToken !== sheetRenderToken) return;
   ov.className = 'sheet-overlay vis show';
   sheetOpen = true;
-  document.addEventListener('mousedown', onOutsideClick);
-  document.addEventListener('touchstart', onOutsideClick, { passive: true });
 
   // Running: replay animations; completed: render final static content immediately
   await streamSheetContent(frames, baseline, { animated: replay, renderToken });
@@ -341,21 +334,6 @@ export function closeSheet() {
     ov.className = 'sheet-overlay';
     ov.removeEventListener('transitionend', h);
   });
-  document.removeEventListener('mousedown', onOutsideClick);
-  document.removeEventListener('touchstart', onOutsideClick);
-}
-
-let sheetOpen = false;
-
-function onOutsideClick(e) {
-  if (!sheetOpen) return;
-  const sheet = $('#sheet');
-  if (!sheet) return;
-  // 如果点击在面板内部，不关闭
-  if (sheet.contains(e.target)) return;
-  // 如果点击在关闭按钮上（可能在面板外），不关闭（closeSheet 自己处理）
-  if (e.target.closest('.sheet-close-btn')) return;
-  closeSheet();
 }
 
 export function maybeClose(e) {

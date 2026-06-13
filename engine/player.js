@@ -942,6 +942,10 @@ function bindPanelControls(root) {
   if (toolCard) toolCard.onclick = () => toggleToolCallStyle('card');
   if (toolFlat) toolFlat.onclick = () => toggleToolCallStyle('flat');
   if (toolStack) toolStack.onclick = () => toggleToolCallStyle('stack');
+
+  // 重新加载按钮
+  const tweakReload = $r('#ctrlTweakReload');
+  if (tweakReload) tweakReload.onclick = () => restartPlayback();
 }
 
 function setupDemoControls() {

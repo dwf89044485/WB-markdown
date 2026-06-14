@@ -257,6 +257,7 @@ function submitAnswers() {
 
 // ── 排序拖拽（SortableJS）─────────────────────────────────
 let sortableInstance = null;  // SortableJS 实例
+let _aqInterceptInstalled = false; // 是否已安装事件拦截
 
 function initDragSort() {
   const container = document.getElementById('aqOptions');
@@ -268,74 +269,82 @@ function initDragSort() {
     sortableInstance = null;
   }
 
+  // 安装事件拦截（只装一次）
+  if (!_aqInterceptInstalled) {
+    installCoordinateInterceptor();
+    _aqInterceptInstalled = true;
+  }
+
   sortableInstance = Sortable.create(container, {
     handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
     animation: 200,                   // 松手落位动画时长 ms
     easing: 'cubic-bezier(0.2, 0, 0, 1)',
     ghostClass: 'aq-sort-ghost',     // 原位占位样式（完全隐藏）
     chosenClass: 'aq-sort-chosen',   // 被选中（按下）的原始行样式
-    forceFallback: true,             // 用克隆元素跟随手指，可完全控制样式和位置
+    forceFallback: true,             // 用克隆元素跟随手指，可完全控制样式
     fallbackClass: 'aq-sort-fallback', // 克隆元素的 class
-    fallbackOnBody: true,            // 克隆挂到 body，避免干扰容器内排序逻辑
+    fallbackOnBody: true,            // 克隆挂到 body
     fallbackTolerance: 3,            // 拖动 3px 后才开始，防止误触
     direction: 'vertical',           // 只允许纵向排序
     onStart: function() {
-      // 记录选项容器边界，用于约束拖拽范围
       const rect = container.getBoundingClientRect();
       container._aqBounds = {
         left: rect.left,
-        top: rect.top,
         right: rect.right,
+        top: rect.top,
         bottom: rect.bottom,
       };
-      container._aqDragging = true;
-      container._aqRafId = requestAnimationFrame(constrainFallback);
     },
     onEnd: function() {
-      container._aqDragging = false;
-      if (container._aqRafId) {
-        cancelAnimationFrame(container._aqRafId);
-        container._aqRafId = null;
-      }
-      // SortableJS 已经帮你重排了 DOM，只需同步数据源
+      container._aqBounds = null;
       commitSortFromDOM();
     },
   });
 }
 
-// rAF 循环：约束克隆元素不得超出选项容器矩形范围
-function constrainFallback() {
-  const container = document.getElementById('aqOptions');
-  if (!container || !container._aqDragging) return;
+/**
+ * 在捕获阶段拦截 pointermove / touchmove / mousemove，
+ * 当拖拽排序激活时，覆盖事件的 clientX/clientY 到选项容器矩形范围内。
+ * SortableJS 内部读取 clientX/clientY 来计算拖拽偏移，
+ * 所以它读到的坐标受限后，克隆元素自然不会超出边界。
+ */
+function installCoordinateInterceptor() {
+  function overrideCoords(e, clientX, clientY) {
+    try {
+      Object.defineProperty(e, 'clientX', { value: clientX, writable: true });
+      Object.defineProperty(e, 'clientY', { value: clientY, writable: true });
+    } catch(err) { /* 部分浏览器可能禁止覆盖 */ }
+  }
 
-  const fallback = document.querySelector('.aq-sort-fallback');
-  if (fallback && container._aqBounds) {
-    const bounds = container._aqBounds;
-    const fRect = fallback.getBoundingClientRect();
+  // 统一处理函数
+  function tryClamp(e) {
+    const container = document.getElementById('aqOptions');
+    if (!container || !container._aqBounds) return;
+    const b = container._aqBounds;
 
-    let offsetX = 0, offsetY = 0;
+    // 读取原始坐标
+    let cx, cy;
+    if (e.touches && e.touches.length > 0) {
+      cx = e.touches[0].clientX;
+      cy = e.touches[0].clientY;
+    } else {
+      cx = e.clientX;
+      cy = e.clientY;
+    }
 
-    // 水平方向：不得超出选项矩形左右边界
-    if (fRect.left < bounds.left) offsetX = bounds.left - fRect.left;
-    else if (fRect.right > bounds.right) offsetX = bounds.right - fRect.right;
+    // 钳制到矩形范围
+    const clampedX = Math.max(b.left, Math.min(b.right, cx));
+    const clampedY = Math.max(b.top, Math.min(b.bottom, cy));
 
-    // 垂直方向：不得超出选项矩形上下边界
-    if (fRect.top < bounds.top) offsetY = bounds.top - fRect.top;
-    else if (fRect.bottom > bounds.bottom) offsetY = bounds.bottom - fRect.bottom;
-
-    if (offsetX !== 0 || offsetY !== 0) {
-      // SortableJS 用 transform: translate3d(x, y, 0) 定位克隆元素
-      const transform = fallback.style.transform;
-      const match = transform.match(/translate3d\(\s*([-\d.]+)px\s*,\s*([-\d.]+)px/);
-      if (match) {
-        const x = parseFloat(match[1]) + offsetX;
-        const y = parseFloat(match[2]) + offsetY;
-        fallback.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      }
+    if (clampedX !== cx || clampedY !== cy) {
+      overrideCoords(e, clampedX, clampedY);
     }
   }
 
-  container._aqRafId = requestAnimationFrame(constrainFallback);
+  // 捕获阶段拦截，先于 SortableJS 的冒泡阶段监听器
+  document.addEventListener('pointermove', tryClamp, { capture: true });
+  document.addEventListener('touchmove', tryClamp, { capture: true, passive: true });
+  document.addEventListener('mousemove', tryClamp, { capture: true });
 }
 
 // 从 DOM 顺序同步回数据源

@@ -205,6 +205,14 @@
 .aq-option.is-sort {
   cursor: grab;
   touch-action: none;        /* 阻止移动端页面滚动 */
+  -webkit-user-select: none;
+  user-select: none !important;
+  -webkit-touch-callout: none;
+}
+.aq-option.is-sort * {
+  -webkit-user-select: none;
+  user-select: none !important;
+  -webkit-touch-callout: none;
 }
 .aq-option.is-sort:active {
   cursor: grabbing;

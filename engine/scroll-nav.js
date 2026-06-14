@@ -61,8 +61,6 @@ function syncVisibility(scrollTop, skipEntrance) {
   SN.upBtn.classList.toggle('is-hidden', !showUp);
   SN.downBtn.classList.toggle('is-hidden', !showDown);
 
-  // 同步 has-two class
-  SN.nav.classList.toggle('has-two', showUp && showDown);
   SN.nav.classList.toggle('is-hidden', !showUp && !showDown);
 
   // 入场动画——从隐藏变显示时
@@ -130,7 +128,6 @@ function smoothScrollTo(y) {
   if (!willShowDown && !prevDownHidden) {
     SN.downBtn.classList.add('is-hidden');
   }
-  SN.nav.classList.toggle('has-two', !SN.upBtn.classList.contains('is-hidden') && !SN.downBtn.classList.contains('is-hidden'));
   SN.nav.classList.remove('is-hidden');
 
   // 标记用户主动滚动中，阻止流式输出的 scrollToBottom 打断
@@ -336,7 +333,7 @@ export function initScrollNav() {
   SN.upState = { lastClickTime: 0, showTooltip: false, tooltipTimer: null };
   SN.downState = { lastClickTime: 0, showTooltip: false, tooltipTimer: null };
   SN.isTblFullscreen = false;
-  SN.nav.classList.remove('has-two', 'is-hidden');
+  SN.nav.classList.remove('is-hidden');
   SN.upBtn.classList.remove('is-hidden', 'is-appearing');
   SN.downBtn.classList.remove('is-hidden', 'is-appearing');
 

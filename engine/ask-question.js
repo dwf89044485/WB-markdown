@@ -269,7 +269,6 @@ function initDragSort() {
   }
 
   sortableInstance = Sortable.create(container, {
-    handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
     animation: 200,                   // 松手落位动画时长 ms
     easing: 'cubic-bezier(0.2, 0, 0, 1)',
     ghostClass: 'aq-sort-ghost',     // 原位占位样式（完全隐藏）

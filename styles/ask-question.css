@@ -41,7 +41,7 @@
   --aq-btn-radius: 120px;
   --aq-btn-padding: 1px 18px;
 
-  --aq-pill-size: 36px;
+  --aq-pill-size: 40px;
   --aq-pill-radius: 999px;
 
   --aq-input-height: 50px;
@@ -104,6 +104,9 @@
   box-sizing: border-box;
   color: var(--aq-text);
 }
+.aq-nav-btn svg {
+  position: relative;
+}
 .aq-nav-btn:active {
   transform: scale(.985);
 }
@@ -135,6 +138,7 @@
   transform: scale(.985);
 }
 .aq-close-btn svg {
+  position: relative;
   color: #3D3D3D;
 }
 

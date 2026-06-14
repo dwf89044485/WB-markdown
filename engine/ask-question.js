@@ -277,30 +277,38 @@ function initDragSort() {
     easing: 'cubic-bezier(0.2, 0, 0, 1)',
     ghostClass: 'aq-sort-ghost',     // 拖拽时原位占位样式
     chosenClass: 'aq-sort-chosen',   // 被选中的元素样式
-    dragClass: 'aq-sort-drag',       // 正在拖拽的元素样式（跟随手指的那个）
-    forceFallback: false,            // 优先用原生拖拽，移动端自动 fallback
-    direction: 'vertical',           // 只允许纵向拖动
-    onMove: (evt) => {
-      // 限制拖拽元素不超出选项区域范围
-      const dragEl = evt.dragged;
-      if (dragEl) {
-        // 锁定水平位置 — 始终与容器对齐
-        dragEl.style.left = containerRect.left + 'px';
-        dragEl.style.width = containerRect.width + 'px';
-      }
-      return true; // 允许移动
+    dragClass: 'aq-sort-drag',       // 原生拖拽时的样式（forceFallback 下不生效）
+    forceFallback: true,             // 强制使用 fallback 模式：生成克隆元素跟随手指，表现一致可控
+    fallbackClass: 'aq-sort-fallback', // 跟随手指移动的克隆元素样式
+    fallbackOnBody: true,            // 克隆元素挂在 body 上，避免父容器 overflow 裁切
+    fallbackTolerance: 3,            // 手指移动 3px 后才开始拖拽，避免误触
+    direction: 'vertical',           // 只允许纵向排序
+    onStart: () => {
+      // 记录容器的水平位置，启动 rAF 循环锁定 X 轴
+      const rect = container.getBoundingClientRect();
+      container._aqLockX = rect.left;
+      container._aqLockW = rect.width;
+      aqDragLockRAF();
     },
     onEnd: (evt) => {
+      // 停止 rAF 锁定循环
+      container._aqLockX = undefined;
       // SortableJS 已经帮你重排了 DOM，只需同步数据源
-      // 清除拖拽时强制设置的内联样式
-      const dragEl = evt.item;
-      if (dragEl) {
-        dragEl.style.left = '';
-        dragEl.style.width = '';
-      }
       commitSortFromDOM();
     },
   });
+}
+
+// rAF 循环：每帧锁定拖拽克隆元素的水平位置
+function aqDragLockRAF() {
+  const container = document.getElementById('aqOptions');
+  if (!container || container._aqLockX === undefined) return;
+  const fallbackEl = document.querySelector('.aq-sort-fallback');
+  if (fallbackEl) {
+    fallbackEl.style.left = container._aqLockX + 'px';
+    fallbackEl.style.width = container._aqLockW + 'px';
+  }
+  requestAnimationFrame(aqDragLockRAF);
 }
 
 // 从 DOM 顺序同步回数据源

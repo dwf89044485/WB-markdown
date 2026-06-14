@@ -212,23 +212,23 @@
 
 /* SortableJS 拖拽状态类 */
 .aq-sort-chosen {
-  /* 被选中（手指按下）的行 — 轻微浮起 */
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  background: #fff;
+  /* 被选中（手指按下）的原始行 */
+  opacity: 0.2;
 }
 .aq-sort-ghost {
-  /* 原位占位（拖拽时留在原处的占位元素） */
-  opacity: 0.15;
+  /* 原位占位 — 拖拽时原始元素留在原处，其他选项基于它让位 */
+  opacity: 0.2;
   background: var(--aq-option-bg);
 }
-.aq-sort-drag {
-  /* 正在跟随手指移动的元素 — 锁定水平位置 */
-  opacity: 0.95;
+.aq-sort-fallback {
+  /* 跟随手指移动的克隆元素（forceFallback 模式）
+     JS 通过 onMove 实时锁定 left 和 width，水平不偏移
+     SortableJS 用 transform: translateY 控制垂直跟随，不能禁掉 */
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
   background: #fff;
   cursor: grabbing;
-  left: 0 !important;          /* 禁止水平偏移 */
-  transform: none !important;  /* 禁止 SortableJS 添加水平 transform */
+  border-radius: var(--aq-option-radius);
+  z-index: 9999;
 }
 
 /* 选项左侧：序号 + 文字 */

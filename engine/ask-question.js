@@ -257,7 +257,6 @@ function submitAnswers() {
 
 // ── 排序拖拽（SortableJS）─────────────────────────────────
 let sortableInstance = null;  // SortableJS 实例
-let _aqInterceptInstalled = false; // 是否已安装事件拦截
 
 function initDragSort() {
   const container = document.getElementById('aqOptions');
@@ -267,12 +266,6 @@ function initDragSort() {
   if (sortableInstance) {
     sortableInstance.destroy();
     sortableInstance = null;
-  }
-
-  // 安装事件拦截（只装一次）
-  if (!_aqInterceptInstalled) {
-    installCoordinateInterceptor();
-    _aqInterceptInstalled = true;
   }
 
   sortableInstance = Sortable.create(container, {
@@ -287,64 +280,87 @@ function initDragSort() {
     fallbackTolerance: 3,            // 拖动 3px 后才开始，防止误触
     direction: 'vertical',           // 只允许纵向排序
     onStart: function() {
-      const rect = container.getBoundingClientRect();
-      container._aqBounds = {
-        left: rect.left,
-        right: rect.right,
-        top: rect.top,
-        bottom: rect.bottom,
-      };
+      // ghost 在 onStart 之前已由 SortableJS 创建
+      const ghost = document.querySelector('.aq-sort-fallback');
+      if (ghost) {
+        const bounds = container.getBoundingClientRect();
+        patchGhostTransform(ghost, bounds);
+      }
     },
     onEnd: function() {
-      container._aqBounds = null;
       commitSortFromDOM();
     },
   });
 }
 
 /**
- * 在捕获阶段拦截 pointermove / touchmove / mousemove，
- * 当拖拽排序激活时，覆盖事件的 clientX/clientY 到选项容器矩形范围内。
- * SortableJS 内部读取 clientX/clientY 来计算拖拽偏移，
- * 所以它读到的坐标受限后，克隆元素自然不会超出边界。
+ * 拦截 ghost 元素的 style.transform setter，
+ * 当 SortableJS 设置 transform: translate(tx, ty) 时，
+ * 将 tx/ty 钳制到选项容器矩形范围内。
+ * 排序逻辑不受影响（它基于原始事件坐标），
+ * 只有跟随手指的视觉位置被限制。
  */
-function installCoordinateInterceptor() {
-  function overrideCoords(e, clientX, clientY) {
-    try {
-      Object.defineProperty(e, 'clientX', { value: clientX, writable: true });
-      Object.defineProperty(e, 'clientY', { value: clientY, writable: true });
-    } catch(err) { /* 部分浏览器可能禁止覆盖 */ }
-  }
+function patchGhostTransform(ghost, bounds) {
+  // ghost 的初始 position（left/top）由 SortableJS 设置为 position:fixed
+  const ghostLeft = ghost.offsetLeft;
+  const ghostTop = ghost.offsetTop;
 
-  // 统一处理函数
-  function tryClamp(e) {
-    const container = document.getElementById('aqOptions');
-    if (!container || !container._aqBounds) return;
-    const b = container._aqBounds;
+  // 允许的 translate 范围：
+  // ghost 实际位置 = ghostLeft + tx, ghostTop + ty
+  // 必须 ≤ bounds.right, bounds.bottom
+  // 必须 ≥ bounds.left, bounds.top
+  // 所以 tx ∈ [bounds.left - ghostLeft, bounds.right - ghostLeft]
+  //      ty ∈ [bounds.top - ghostTop, bounds.bottom - ghostTop]
+  const minX = bounds.left - ghostLeft;
+  const maxX = bounds.right - ghostLeft;
+  const minY = bounds.top - ghostTop;
+  const maxY = bounds.bottom - ghostTop;
 
-    // 读取原始坐标
-    let cx, cy;
-    if (e.touches && e.touches.length > 0) {
-      cx = e.touches[0].clientX;
-      cy = e.touches[0].clientY;
-    } else {
-      cx = e.clientX;
-      cy = e.clientY;
+  const style = ghost.style;
+  const proto = CSSStyleDeclaration.prototype;
+  const origDescriptor = Object.getOwnPropertyDescriptor(proto, 'transform');
+
+  if (!origDescriptor || !origDescriptor.set) return;
+
+  // 用自定义 setter 覆盖，钳制 translate 值
+  Object.defineProperty(style, 'transform', {
+    get: origDescriptor.get ? origDescriptor.get.bind(style) : function() { return ''; },
+    set: function(v) {
+      // 解析 translate(tx, ty) 或 translate3d(tx, ty, tz)
+      const m = v && v.match(/translate(?:3d)?\(\s*([-\d.e+]+)\s*(?:px)?\s*,\s*([-\d.e+]+)\s*(?:px)?/);
+      if (m) {
+        let tx = parseFloat(m[1]);
+        let ty = parseFloat(m[2]);
+        tx = Math.max(minX, Math.min(maxX, tx));
+        ty = Math.max(minY, Math.min(maxY, ty));
+        v = `translate(${tx}px, ${ty}px)`;
+      }
+      origDescriptor.set.call(style, v);
+    },
+    configurable: true,
+  });
+
+  // 同时 patch webkitTransform（Chrome 可能优先使用）
+  if ('webkitTransform' in proto) {
+    const webkitDesc = Object.getOwnPropertyDescriptor(proto, 'webkitTransform');
+    if (webkitDesc && webkitDesc.set) {
+      Object.defineProperty(style, 'webkitTransform', {
+        get: webkitDesc.get ? webkitDesc.get.bind(style) : function() { return ''; },
+        set: function(v) {
+          const m = v && v.match(/translate(?:3d)?\(\s*([-\d.e+]+)\s*(?:px)?\s*,\s*([-\d.e+]+)\s*(?:px)?/);
+          if (m) {
+            let tx = parseFloat(m[1]);
+            let ty = parseFloat(m[2]);
+            tx = Math.max(minX, Math.min(maxX, tx));
+            ty = Math.max(minY, Math.min(maxY, ty));
+            v = `translate(${tx}px, ${ty}px)`;
+          }
+          webkitDesc.set.call(style, v);
+        },
+        configurable: true,
+      });
     }
-
-    // 钳制到矩形范围
-    const clampedX = Math.max(b.left, Math.min(b.right, cx));
-    const clampedY = Math.max(b.top, Math.min(b.bottom, cy));
-
-    if (clampedX !== cx || clampedY !== cy) {
-      overrideCoords(e, clampedX, clampedY);
-    }
   }
-
-  // 捕获阶段拦截，先于 SortableJS 的冒泡阶段监听器
-  document.addEventListener('pointermove', tryClamp, { capture: true });
-  document.addEventListener('touchmove', tryClamp, { capture: true, passive: true });
-  document.addEventListener('mousemove', tryClamp, { capture: true });
 }
 
 // 从 DOM 顺序同步回数据源

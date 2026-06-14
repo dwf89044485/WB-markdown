@@ -261,21 +261,24 @@ function submitAnswers() {
 let sortHintTimer = null;     // 等待/触发定时器
 let sortHintDismiss = null;   // 自动消失定时器
 let sortHintEl = null;        // pop 提示 DOM 元素
-
 let sortHintFirstShow = true;  // 首次显示标志
+let sortHintActive = false;    // 提示循环是否运行中
 
 function startSortHint() {
   clearSortHint();
   const container = document.getElementById('aqOptions');
   if (!container) return;
+  sortHintActive = true;
   // 首次1.5s，后续2s
   const delay = sortHintFirstShow ? 1500 : 2000;
   sortHintTimer = setTimeout(() => {
+    if (!sortHintActive) return;  // 循环已被终止，不再显示
     showSortHint();
   }, delay);
 }
 
 function showSortHint() {
+  if (!sortHintActive) return;  // 循环已被终止
   const container = document.getElementById('aqOptions');
   if (!container) return;
   const rows = container.querySelectorAll('.aq-option.is-sort');
@@ -293,7 +296,11 @@ function showSortHint() {
   // 3秒后消失（带消失动效），再等2秒循环
   sortHintDismiss = setTimeout(() => {
     hideSortHintWithAnimation(() => {
-      sortHintTimer = setTimeout(() => showSortHint(), 2000);
+      if (!sortHintActive) return;  // 循环已被终止，不再继续
+      sortHintTimer = setTimeout(() => {
+        if (!sortHintActive) return;
+        showSortHint();
+      }, 2000);
     });
   }, 3000);
 }
@@ -322,6 +329,7 @@ function hideSortHintWithAnimation(callback) {
 }
 
 function clearSortHint() {
+  sortHintActive = false;  // 停止循环
   if (sortHintTimer) { clearTimeout(sortHintTimer); sortHintTimer = null; }
   if (sortHintDismiss) { clearTimeout(sortHintDismiss); sortHintDismiss = null; }
   sortHintFirstShow = true;
@@ -363,10 +371,13 @@ function initDragSort() {
       return container.getBoundingClientRect();
     },
     onStart: function() {
-      clearSortHint();               // 拖拽开始时立即清除提示
+      clearSortHint();               // 拖拽开始时立即清除提示，停止循环
     },
     onEnd: function() {
       commitSortFromDOM();
+      // 拖拽结束后重新启动提示循环
+      sortHintFirstShow = true;
+      startSortHint();
     },
   });
 

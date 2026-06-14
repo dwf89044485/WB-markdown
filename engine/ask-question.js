@@ -279,13 +279,9 @@ function initDragSort() {
     fallbackOnBody: true,            // 克隆挂到 body
     fallbackTolerance: 3,            // 拖动 3px 后才开始，防止误触
     direction: 'vertical',           // 只允许纵向排序
-    onStart: function() {
-      // ghost 在 onStart 之前已由 SortableJS 创建
-      const ghost = document.querySelector('.aq-sort-fallback');
-      if (ghost) {
-        const bounds = container.getBoundingClientRect();
-        patchGhostTransform(ghost, bounds);
-      }
+    fallbackAxis: 'y',               // 锁定 X 轴：克隆元素只能纵向移动
+    fallbackBounds: function() {     // 限制 Y 轴：克隆元素不得超出选项容器矩形
+      return container.getBoundingClientRect();
     },
     onEnd: function() {
       commitSortFromDOM();
@@ -293,75 +289,7 @@ function initDragSort() {
   });
 }
 
-/**
- * 拦截 ghost 元素的 style.transform setter，
- * 当 SortableJS 设置 transform: translate(tx, ty) 时，
- * 将 tx/ty 钳制到选项容器矩形范围内。
- * 排序逻辑不受影响（它基于原始事件坐标），
- * 只有跟随手指的视觉位置被限制。
- */
-function patchGhostTransform(ghost, bounds) {
-  // ghost 的初始 position（left/top）由 SortableJS 设置为 position:fixed
-  const ghostLeft = ghost.offsetLeft;
-  const ghostTop = ghost.offsetTop;
 
-  // 允许的 translate 范围：
-  // ghost 实际位置 = ghostLeft + tx, ghostTop + ty
-  // 必须 ≤ bounds.right, bounds.bottom
-  // 必须 ≥ bounds.left, bounds.top
-  // 所以 tx ∈ [bounds.left - ghostLeft, bounds.right - ghostLeft]
-  //      ty ∈ [bounds.top - ghostTop, bounds.bottom - ghostTop]
-  const minX = bounds.left - ghostLeft;
-  const maxX = bounds.right - ghostLeft;
-  const minY = bounds.top - ghostTop;
-  const maxY = bounds.bottom - ghostTop;
-
-  const style = ghost.style;
-  const proto = CSSStyleDeclaration.prototype;
-  const origDescriptor = Object.getOwnPropertyDescriptor(proto, 'transform');
-
-  if (!origDescriptor || !origDescriptor.set) return;
-
-  // 用自定义 setter 覆盖，钳制 translate 值
-  Object.defineProperty(style, 'transform', {
-    get: origDescriptor.get ? origDescriptor.get.bind(style) : function() { return ''; },
-    set: function(v) {
-      // 解析 translate(tx, ty) 或 translate3d(tx, ty, tz)
-      const m = v && v.match(/translate(?:3d)?\(\s*([-\d.e+]+)\s*(?:px)?\s*,\s*([-\d.e+]+)\s*(?:px)?/);
-      if (m) {
-        let tx = parseFloat(m[1]);
-        let ty = parseFloat(m[2]);
-        tx = Math.max(minX, Math.min(maxX, tx));
-        ty = Math.max(minY, Math.min(maxY, ty));
-        v = `translate(${tx}px, ${ty}px)`;
-      }
-      origDescriptor.set.call(style, v);
-    },
-    configurable: true,
-  });
-
-  // 同时 patch webkitTransform（Chrome 可能优先使用）
-  if ('webkitTransform' in proto) {
-    const webkitDesc = Object.getOwnPropertyDescriptor(proto, 'webkitTransform');
-    if (webkitDesc && webkitDesc.set) {
-      Object.defineProperty(style, 'webkitTransform', {
-        get: webkitDesc.get ? webkitDesc.get.bind(style) : function() { return ''; },
-        set: function(v) {
-          const m = v && v.match(/translate(?:3d)?\(\s*([-\d.e+]+)\s*(?:px)?\s*,\s*([-\d.e+]+)\s*(?:px)?/);
-          if (m) {
-            let tx = parseFloat(m[1]);
-            let ty = parseFloat(m[2]);
-            tx = Math.max(minX, Math.min(maxX, tx));
-            ty = Math.max(minY, Math.min(maxY, ty));
-            v = `translate(${tx}px, ${ty}px)`;
-          }
-          webkitDesc.set.call(style, v);
-        },
-        configurable: true,
-      });
-    }
-  }
-}
 
 // 从 DOM 顺序同步回数据源
 function commitSortFromDOM() {

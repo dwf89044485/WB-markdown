@@ -222,6 +222,7 @@ function onInputChange(text) {
 function goToStep(index) {
   if (!askState) return;
   if (index < 0 || index >= askState.questions.length) return;
+  clearSortHint();
   askState.stepIndex = index;
   renderAskQuestion();
 }
@@ -255,6 +256,44 @@ function submitAnswers() {
   resolve(result);
 }
 
+// ── 排序拖拽提示（停留3秒后高亮第2项 + pop提示）────────────
+let sortHintTimer = null;     // 3秒触发定时器
+let sortHintDismiss = null;   // 自动消失定时器
+let sortHintEl = null;        // pop 提示 DOM 元素
+
+function startSortHint() {
+  clearSortHint();
+  const container = document.getElementById('aqOptions');
+  if (!container) return;
+  sortHintTimer = setTimeout(() => {
+    // 找到第2个选项
+    const rows = container.querySelectorAll('.aq-option.is-sort');
+    if (rows.length < 2) return;
+    const target = rows[1];
+    // 添加白底+投影高亮
+    target.classList.add('aq-sort-hint');
+    // 创建 pop 提示
+    const pop = document.createElement('div');
+    pop.className = 'aq-sort-hint-pop';
+    pop.textContent = '拖动可调整顺序';
+    target.appendChild(pop);
+    sortHintEl = pop;
+    // 3秒后自动消失
+    sortHintDismiss = setTimeout(() => clearSortHint(), 3000);
+  }, 3000);
+}
+
+function clearSortHint() {
+  if (sortHintTimer) { clearTimeout(sortHintTimer); sortHintTimer = null; }
+  if (sortHintDismiss) { clearTimeout(sortHintDismiss); sortHintDismiss = null; }
+  // 移除高亮
+  const container = document.getElementById('aqOptions');
+  if (container) container.querySelectorAll('.aq-sort-hint').forEach(el => el.classList.remove('aq-sort-hint'));
+  // 移除 pop
+  if (sortHintEl && sortHintEl.parentNode) { sortHintEl.parentNode.removeChild(sortHintEl); }
+  sortHintEl = null;
+}
+
 // ── 排序拖拽（SortableJS）─────────────────────────────────
 let sortableInstance = null;  // SortableJS 实例
 
@@ -282,10 +321,16 @@ function initDragSort() {
     fallbackBounds: function() {     // 限制 Y 轴：克隆元素不得超出选项容器矩形
       return container.getBoundingClientRect();
     },
+    onStart: function() {
+      clearSortHint();               // 拖拽开始时立即清除提示
+    },
     onEnd: function() {
       commitSortFromDOM();
     },
   });
+
+  // 启动3秒提示定时器
+  startSortHint();
 }
 
 
@@ -328,6 +373,7 @@ function hideAskQuestion() {
     sortableInstance.destroy();
     sortableInstance = null;
   }
+  clearSortHint();
 
   const composer = document.querySelector('.composer');
   const askEl = document.getElementById('askQuestion');

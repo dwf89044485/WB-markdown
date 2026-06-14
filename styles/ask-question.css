@@ -239,6 +239,48 @@
   opacity: 1 !important;
 }
 
+/* 排序拖拽提示（停留3秒后高亮第2项） */
+.aq-option.aq-sort-hint {
+  background: #fff !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 2;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.aq-sort-hint-pop {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--aq-text);
+  color: #fff;
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-regular);
+  font-size: 12px;
+  line-height: 20px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: aq-hint-pop-in 0.3s ease-out;
+}
+.aq-sort-hint-pop::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--aq-text);
+}
+@keyframes aq-hint-pop-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 /* 选项左侧：序号 + 文字 */
 .aq-option-left {
   display: flex;

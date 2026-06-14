@@ -21,6 +21,8 @@
 | `engine/typewriter.js`     | Token 流式输出（typeText、appendHTMLTypedTo）                                |
 | `engine/sheet.js`          | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo）                  |
 | `engine/player.js`         | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）              |
+| `engine/ask-question.js`   | 问答卡片渲染与交互（单选/多选/排序题、拖拽排序、状态管理、事件绑定）                          |
+| `styles/ask-question.css`  | 问答卡片样式（卡片容器、选项行、排序拖拽手柄、导航按钮、输入栏、步骤指示器、玻璃按钮系统）            |
 | `icons-inline.js`          | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取**                                   |
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。

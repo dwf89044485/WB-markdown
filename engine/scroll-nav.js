@@ -8,8 +8,8 @@ const SN = {
   upBtn: null,         // #scrollUp
   downBtn: null,       // #scrollDown
   conv: null,          // .conversation
-  upState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 },
-  downState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 },
+  upState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 },
+  downState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 },
   scrollTicking: false,
   isTblFullscreen: false,
 };
@@ -180,12 +180,11 @@ function handleUpClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
-  // 快速连点追踪（2s 窗口）
-  if (now - state.rapidWindowStart > 2000) {
-    state.rapidCount = 0;
-    state.rapidWindowStart = now;
+  // 连续快速点击追踪：间隔 >500ms 说明在阅读，重置计数
+  if (elapsed > 500) {
+    state.rapidStreak = 0;
   }
-  state.rapidCount++;
+  state.rapidStreak++;
 
   if (elapsed <= 300) {
     // 双击 — 跳顶
@@ -203,8 +202,8 @@ function handleUpClick() {
   // 单击 — 正常翻页
   doSingleUp();
 
-  // 快速连点 ≥3 次（2s 内）且未毕业双击 → 提示用户双击存在
-  if (state.rapidCount >= 3 && !state.dblclickGraduated) {
+  // 连续快速点击 ≥3 次（无阅读停顿）且未毕业双击 → 提示用户双击存在
+  if (state.rapidStreak >= 3 && !state.dblclickGraduated) {
     removeTooltip(SN.upBtn);
     if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
     state.tooltipTimer = setTimeout(() => {
@@ -223,12 +222,11 @@ function handleDownClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
-  // 快速连点追踪（2s 窗口）
-  if (now - state.rapidWindowStart > 2000) {
-    state.rapidCount = 0;
-    state.rapidWindowStart = now;
+  // 连续快速点击追踪：间隔 >500ms 说明在阅读，重置计数
+  if (elapsed > 500) {
+    state.rapidStreak = 0;
   }
-  state.rapidCount++;
+  state.rapidStreak++;
 
   if (elapsed <= 300) {
     // 双击 — 跳底
@@ -246,8 +244,8 @@ function handleDownClick() {
   // 单击 — 正常翻页
   doSingleDown();
 
-  // 快速连点 ≥3 次（2s 内）且未毕业双击 → 提示用户双击存在
-  if (state.rapidCount >= 3 && !state.dblclickGraduated) {
+  // 连续快速点击 ≥3 次（无阅读停顿）且未毕业双击 → 提示用户双击存在
+  if (state.rapidStreak >= 3 && !state.dblclickGraduated) {
     removeTooltip(SN.downBtn);
     if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
     state.tooltipTimer = setTimeout(() => {
@@ -340,8 +338,8 @@ export function initScrollNav() {
   if (!SN.nav || !SN.upBtn || !SN.downBtn || !SN.conv) return;
 
   // Reset state
-  SN.upState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 };
-  SN.downState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 };
+  SN.upState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 };
+  SN.downState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 };
   SN.isTblFullscreen = false;
   SN.nav.classList.remove('is-hidden');
   SN.upBtn.classList.remove('is-hidden', 'is-appearing');

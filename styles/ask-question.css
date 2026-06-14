@@ -215,17 +215,18 @@
   /* 被选中（手指按下）的原始行 — 白底+投影浮起效果 */
   background: #fff !important;
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
-  z-index: 9999;
+  z-index: 1;
 }
 .aq-sort-ghost {
-  /* 原位占位 — 完全不可见，不显示浅色残留 */
+  /* 原位占位 — 完全不可见 */
   opacity: 0 !important;
-  background: var(--aq-option-bg);
 }
-.aq-sort-drag {
-  /* 原生拖拽时的浏览器快照 — 保持白底+投影视觉 */
+.aq-sort-fallback {
+  /* 跟随手指的克隆元素 — 白底+投影 */
   background: #fff !important;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08) !important;
+  border-radius: var(--aq-option-radius) !important;
+  z-index: 9999 !important;
   opacity: 1 !important;
 }
 

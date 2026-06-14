@@ -268,33 +268,74 @@ function initDragSort() {
     sortableInstance = null;
   }
 
-  // 计算选项区域的边界，用于限制拖拽范围
-  const containerRect = container.getBoundingClientRect();
-
   sortableInstance = Sortable.create(container, {
     handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
     animation: 200,                   // 松手落位动画时长 ms
     easing: 'cubic-bezier(0.2, 0, 0, 1)',
-    ghostClass: 'aq-sort-ghost',     // 原位占位样式（设为不可见）
+    ghostClass: 'aq-sort-ghost',     // 原位占位样式（完全隐藏）
     chosenClass: 'aq-sort-chosen',   // 被选中（按下）的原始行样式
-    dragClass: 'aq-sort-drag',       // 正在拖动的原始元素样式
-    forceFallback: false,            // 不克隆，用原生拖拽，原始元素自身移动
+    forceFallback: true,             // 用克隆元素跟随手指，可完全控制样式和位置
+    fallbackClass: 'aq-sort-fallback', // 克隆元素的 class
+    fallbackOnBody: true,            // 克隆挂到 body，避免干扰容器内排序逻辑
+    fallbackTolerance: 3,            // 拖动 3px 后才开始，防止误触
     direction: 'vertical',           // 只允许纵向排序
-    onStart: () => {
-      // 记录容器边界
+    onStart: function() {
+      // 记录选项容器边界，用于约束拖拽范围
       const rect = container.getBoundingClientRect();
-      container._aqLockX = rect.left;
-      container._aqLockW = rect.width;
-      container._aqMinY = rect.top;
-      container._aqMaxY = rect.bottom;
+      container._aqBounds = {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+      };
+      container._aqDragging = true;
+      container._aqRafId = requestAnimationFrame(constrainFallback);
     },
-    onEnd: (evt) => {
-      // 清除边界数据
-      container._aqLockX = undefined;
+    onEnd: function() {
+      container._aqDragging = false;
+      if (container._aqRafId) {
+        cancelAnimationFrame(container._aqRafId);
+        container._aqRafId = null;
+      }
       // SortableJS 已经帮你重排了 DOM，只需同步数据源
       commitSortFromDOM();
     },
   });
+}
+
+// rAF 循环：约束克隆元素不得超出选项容器矩形范围
+function constrainFallback() {
+  const container = document.getElementById('aqOptions');
+  if (!container || !container._aqDragging) return;
+
+  const fallback = document.querySelector('.aq-sort-fallback');
+  if (fallback && container._aqBounds) {
+    const bounds = container._aqBounds;
+    const fRect = fallback.getBoundingClientRect();
+
+    let offsetX = 0, offsetY = 0;
+
+    // 水平方向：不得超出选项矩形左右边界
+    if (fRect.left < bounds.left) offsetX = bounds.left - fRect.left;
+    else if (fRect.right > bounds.right) offsetX = bounds.right - fRect.right;
+
+    // 垂直方向：不得超出选项矩形上下边界
+    if (fRect.top < bounds.top) offsetY = bounds.top - fRect.top;
+    else if (fRect.bottom > bounds.bottom) offsetY = bounds.bottom - fRect.bottom;
+
+    if (offsetX !== 0 || offsetY !== 0) {
+      // SortableJS 用 transform: translate3d(x, y, 0) 定位克隆元素
+      const transform = fallback.style.transform;
+      const match = transform.match(/translate3d\(\s*([-\d.]+)px\s*,\s*([-\d.]+)px/);
+      if (match) {
+        const x = parseFloat(match[1]) + offsetX;
+        const y = parseFloat(match[2]) + offsetY;
+        fallback.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
+    }
+  }
+
+  container._aqRafId = requestAnimationFrame(constrainFallback);
 }
 
 // 从 DOM 顺序同步回数据源

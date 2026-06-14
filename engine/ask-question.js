@@ -371,13 +371,10 @@ function initDragSort() {
       return container.getBoundingClientRect();
     },
     onStart: function() {
-      clearSortHint();               // 拖拽开始时立即清除提示，停止循环
+      clearSortHint();               // 拖拽开始时立即清除提示，且不再重启（用户已学会）
     },
     onEnd: function() {
       commitSortFromDOM();
-      // 拖拽结束后重新启动提示循环
-      sortHintFirstShow = true;
-      startSortHint();
     },
   });
 

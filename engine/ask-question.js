@@ -258,26 +258,38 @@ function initDragSort() {
   dragBound = true;
 
   let dragEl = null;
+  let dragIndex = -1;
+  let pointerId = -12;
 
-  // 用 mousedown 替代 pointerdown，更可靠
-  container.addEventListener('mousedown', (e) => {
+  container.addEventListener('pointerdown', (e) => {
     if (!askState) return;
     const q = askState.questions[askState.stepIndex];
     if (q.type !== 'sort') return;
 
-    const handle = e.target.closest('.aq-drag-handle');
+    // 手动遍历 DOM 查找拖拽手柄（避免 SVG 内部元素导致 closest 失效）
+    let target = e.target;
+    let handle = null;
+    while (target && target !== container) {
+      if (target.classList && target.classList.contains('aq-drag-handle')) {
+        handle = target;
+        break;
+      }
+      target = target.parentElement;
+    }
     if (!handle) return;
 
     const row = handle.closest('.aq-option');
     if (!row) return;
 
     e.preventDefault();
-    e.stopPropagation();
+    row.setPointerCapture(e.pointerId);
+    pointerId = e.pointerId;
     dragEl = row;
+    dragIndex = [...container.querySelectorAll('.aq-option')].indexOf(row);
     row.classList.add('is-dragging');
   });
 
-  document.addEventListener('mousemove', (e) => {
+  container.addEventListener('pointermove', (e) => {
     if (!dragEl) return;
     e.preventDefault();
 
@@ -302,9 +314,12 @@ function initDragSort() {
     }
   });
 
-  document.addEventListener('mouseup', () => {
+  container.addEventListener('pointerup', (e) => {
     if (!dragEl || !askState) return;
+    if (e.pointerId !== pointerId) return;
+
     dragEl.classList.remove('is-dragging');
+    dragEl.releasePointerCapture(e.pointerId);
 
     // 从 DOM 顺序更新 answer.selected
     const a = askState.answers[askState.stepIndex];
@@ -317,6 +332,17 @@ function initDragSort() {
     });
 
     dragEl = null;
+    dragIndex = -1;
+    pointerId = -1;
+  });
+
+  container.addEventListener('pointercancel', (e) => {
+    if (!dragEl || !askState) return;
+    dragEl.classList.remove('is-dragging');
+    try { dragEl.releasePointerCapture(e.pointerId); } catch (_) {}
+    dragEl = null;
+    dragIndex = -1;
+    pointerId = -1;
   });
 }
 

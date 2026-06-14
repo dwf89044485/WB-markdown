@@ -1,34 +1,41 @@
-# Static HTML site — multi-stage build with Nginx
-FROM nginx:1.25-alpine AS runner
+# Stage 1: Use nginx to serve static files
+FROM nginx:alpine AS runner
 
-# Copy all static files
+# Copy static files (including .git/HEAD and .git/refs/ for hash injection)
 COPY . /usr/share/nginx/html
 
-# Remove dev-only files
-RUN rm -f /usr/share/nginx/html/.gitignore \
-    /usr/share/nginx/html/AGENTS.md \
-    /usr/share/nginx/html/README.md \
-    /usr/share/nginx/html/COMMIT_HASH \
-    /usr/share/nginx/html/commit-hash.js \
-    /usr/share/nginx/html/scripts/deploy-pages.sh \
-    /usr/share/nginx/html/scripts/deploy-pages.py \
-    /usr/share/nginx/html/vercel-build.sh \
-    /usr/share/nginx/html/docs/commit-hash.md \
-    /usr/share/nginx/html/.with/Dockerfile
+# Inject commit hash into index.html meta tag (same logic as vercel-build.sh)
+RUN GIT_DIR=/usr/share/nginx/html/.git && \
+    HEAD_FILE=$GIT_DIR/HEAD && \
+    if [ -f "$HEAD_FILE" ]; then \
+      HEAD=$(cat "$HEAD_FILE") && \
+      case "$HEAD" in \
+        "ref: "*) \
+          REF=$(echo "$HEAD" | sed 's/ref: //' | tr -d '\n\r ') && \
+          REF_FILE="$GIT_DIR/$REF" && \
+          if [ -f "$REF_FILE" ]; then \
+            SHORT_SHA=$(cat "$REF_FILE" | tr -d '\n\r ' | cut -c1-8); \
+          else \
+            SHORT_SHA=""; \
+          fi ;; \
+        *) \
+          SHORT_SHA=$(echo "$HEAD" | tr -d '\n\r ' | cut -c1-8);; \
+      esac && \
+      if [ -n "$SHORT_SHA" ] && [ "$SHORT_SHA" != "__COMM" ]; then \
+        sed -i "s/__COMMIT_HASH__/$SHORT_SHA/g" /usr/share/nginx/html/index.html; \
+      fi; \
+    fi
 
-# Remove .git directory if present
+# Remove unnecessary files
+RUN rm -f /usr/share/nginx/html/AGENTS.md
+
+# Clean up .git directory (no longer needed after hash injection)
 RUN rm -rf /usr/share/nginx/html/.git
 
-# Custom nginx config for SPA-like fallback (not needed here, but good practice)
-RUN echo 'server { \
-    listen 8000; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
+# Expose port
 EXPOSE 8000
+
+# Override nginx config to listen on port 8000
+RUN sed -i 's/listen\s*80;/listen 8000;/g' /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]

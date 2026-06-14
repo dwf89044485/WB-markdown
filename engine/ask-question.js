@@ -9,7 +9,6 @@ const DRAG_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xm
 
 // ── 问答会话状态 ─────────────────────────────────
 let askState = null;     // { questions, answers[], stepIndex, resolve }
-let dragState = null;    // { startIndex, currentIndex, placeholder }
 
 function resetAskState(questions) {
   return {
@@ -78,6 +77,14 @@ function renderAskQuestion() {
 
   // 选项列表
   renderOptions(q, a);
+
+  // 排序题：初始化 SortableJS；非排序题：销毁实例
+  if (q.type === 'sort') {
+    initDragSort();
+  } else if (sortableInstance) {
+    sortableInstance.destroy();
+    sortableInstance = null;
+  }
 
   // 输入栏
   const inputEl = document.getElementById('aqInput');
@@ -248,266 +255,47 @@ function submitAnswers() {
   resolve(result);
 }
 
-// ── 排序拖拽 ─────────────────────────────────
-// 成熟交互模式：
-//   1. pointerdown → 将 dragEl 移到容器末尾 + absolute 脱流，用 top 定位起始位置
-//   2. pointermove → 用 transform:translate(offsetX, offsetY) 跟随手指
-//   3. 其他选项根据拖拽位置用 translateY(±height) 弹性让位
-//   4. pointerup → 清除所有 transform → 一次性 DOM 重排 → 更新数据源
-let dragBound = false;
+// ── 排序拖拽（SortableJS）─────────────────────────────────
+let sortableInstance = null;  // SortableJS 实例
 
 function initDragSort() {
-  if (dragBound) return;
+  const container = document.getElementById('aqOptions');
+  if (!container || typeof Sortable === 'undefined') return;
+
+  // 如果已有实例，先销毁
+  if (sortableInstance) {
+    sortableInstance.destroy();
+    sortableInstance = null;
+  }
+
+  sortableInstance = Sortable.create(container, {
+    handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
+    animation: 200,                   // 松手落位动画时长 ms
+    easing: 'cubic-bezier(0.2, 0, 0, 1)',
+    ghostClass: 'aq-sort-ghost',     // 拖拽时原位占位样式
+    chosenClass: 'aq-sort-chosen',   // 被选中的元素样式
+    dragClass: 'aq-sort-drag',       // 正在拖拽的元素样式（跟随手指的那个）
+    forceFallback: false,            // 优先用原生拖拽，移动端自动 fallback
+    onEnd: (evt) => {
+      // SortableJS 已经帮你重排了 DOM，只需同步数据源
+      commitSortFromDOM();
+    },
+  });
+}
+
+// 从 DOM 顺序同步回数据源
+function commitSortFromDOM() {
+  if (!askState) return;
+  const a = askState.answers[askState.stepIndex];
   const container = document.getElementById('aqOptions');
   if (!container) return;
-  dragBound = true;
-
-  // 拖拽状态
-  let dragEl = null;         // 被拖拽的行元素
-  let dragOffsetY = 0;       // 指针在行内的 Y 偏移
-  let dragHeight = 0;        // 行高（含 gap）
-  let dragWidth = 0;         // 行宽
-  let originalIndex = -1;    // 拖拽起始索引
-  let pointerId = -1;
-  let animFrame = null;
-
-  // 拖拽前的兄弟快照（记录初始顺序和位置）
-  let siblingSnap = [];      // [{el, isAbove, isToggled}]
-
-  // 获取容器内所有选项行
-  function getRows() {
-    return [...container.querySelectorAll('.aq-option')];
-  }
-
-  // 构建兄弟快照：记录每个非拖拽项的 isAbove 状态
-  function buildSiblingSnap(dragIdx) {
-    siblingSnap = [];
-    const rows = getRows();
-    rows.forEach((row, i) => {
-      if (row === dragEl) return;
-      siblingSnap.push({
-        el: row,
-        isAbove: i < dragIdx,   // 初始时在拖拽项上方还是下方
-        isToggled: false,       // 是否已让位
-      });
-    });
-  }
-
-  // 判断拖拽项中心 Y 是否越过某个兄弟项的中心 Y
-  function isDragPastSibling(dragCenterY, sibRect) {
-    const sibCenterY = sibRect.top + sibRect.height / 2;
-    return dragCenterY > sibCenterY;
-  }
-
-  // 更新所有兄弟项的让位状态
-  function updateSiblingShifts(dragCenterY) {
-    siblingSnap.forEach(snap => {
-      const sibRect = snap.el.getBoundingClientRect();
-      const pastSib = isDragPastSibling(dragCenterY, sibRect);
-
-      let shouldToggle = false;
-      if (snap.isAbove) {
-        // 上方项：拖拽项移到它下方时 → 往下让
-        shouldToggle = pastSib;
-      } else {
-        // 下方项：拖拽项移到它上方时 → 往上让
-        shouldToggle = !pastSib;
-      }
-
-      if (shouldToggle !== snap.isToggled) {
-        snap.isToggled = shouldToggle;
-        if (shouldToggle) {
-          const direction = snap.isAbove ? 1 : -1;
-          snap.el.style.transform = `translateY(${direction * dragHeight}px)`;
-          snap.el.classList.add('is-shifting');
-        } else {
-          snap.el.style.transform = '';
-          snap.el.classList.remove('is-shifting');
-        }
-      }
-    });
-  }
-
-  // 根据 siblingSnap 计算最终目标索引
-  function calcTargetIndex() {
-    // 统计有多少上方项被 toggle（拖拽项下移了多少）+ 多少下方项被 toggle（上移了多少）
-    let toggledAbove = siblingSnap.filter(s => s.isAbove && s.isToggled).length;
-    let toggledBelow = siblingSnap.filter(s => !s.isAbove && s.isToggled).length;
-    // 原始位置 - 上方让出位数 + 下方让出位数
-    const totalOptions = getRows().filter(el => !el.classList.contains('aq-drag-placeholder')).length;
-    let targetIdx = originalIndex - toggledAbove + toggledBelow;
-    return Math.max(0, Math.min(targetIdx, totalOptions - 1));
-  }
-
-  // 提交排序结果
-  function commitSort() {
-    if (!askState) return;
-    const a = askState.answers[askState.stepIndex];
-    const rows = getRows().filter(el => !el.classList.contains('aq-drag-placeholder'));
-    a.selected = rows.map(el => parseInt(el.dataset.index));
-    rows.forEach((row, i) => {
-      const num = row.querySelector('.aq-option-num');
-      if (num) num.textContent = i + 1;
-    });
-  }
-
-  // ── pointerdown：长按触发拖拽 ──
-  container.addEventListener('pointerdown', (e) => {
-    if (!askState) return;
-    const q = askState.questions[askState.stepIndex];
-    if (q.type !== 'sort') return;
-
-    // 查找拖拽手柄
-    let target = e.target;
-    let handle = null;
-    while (target && target !== container) {
-      if (target.classList && target.classList.contains('aq-drag-handle')) {
-        handle = target;
-        break;
-      }
-      target = target.parentElement;
-    }
-    if (!handle) return;
-
-    const row = handle.closest('.aq-option');
-    if (!row) return;
-
-    e.preventDefault();
-
-    // 记录拖拽起始信息
-    const rows = getRows();
-    const dragIdx = rows.indexOf(row);
-    const rowRect = row.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-
-    dragEl = row;
-    originalIndex = dragIdx;
-    dragOffsetY = e.clientY - rowRect.top;
-    dragHeight = rowRect.height + 10; // 行高 + gap（--aq-option-gap: 10px）
-    dragWidth = rowRect.width;
-    pointerId = e.pointerId;
-
-    // 构建兄弟快照（在移到末尾之前）
-    buildSiblingSnap(dragIdx);
-
-    // 关键：将 dragEl 移到容器末尾，让它脱离正常文档流位置
-    container.appendChild(dragEl);
-
-    // 设置拖拽态：absolute 定位，用 top 跟随手指
-    dragEl.classList.add('is-dragging');
-    dragEl.style.position = 'absolute';
-    dragEl.style.width = dragWidth + 'px';
-    dragEl.style.left = '0px';
-    dragEl.style.top = (rowRect.top - containerRect.top) + 'px';
-    dragEl.style.zIndex = '100';
-    dragEl.style.margin = '0';
-    dragEl.style.transition = 'none';
-
-    // 让容器高度不变（因为 dragEl 脱流了）
-    // 插入一个占位 div 保持高度
-    const placeholder = document.createElement('div');
-    placeholder.className = 'aq-drag-placeholder';
-    placeholder.style.height = (dragHeight - 10) + 'px'; // 减去 gap，因为 placeholder 不参与 gap
-    placeholder.style.visibility = 'hidden';
-    placeholder.style.flexShrink = '0';
-    // 插入到 dragEl 原来的位置（现在 dragEl 在末尾，所以 placeholder 插在末尾-1 的位置不对，
-    // 需要在 appendChild(dragEl) 之前记住位置——但 dragEl 已经移到末尾了，
-    // 所以直接插在 dragEl 前面即可）
-    container.insertBefore(placeholder, dragEl);
-
-    // 使用 setPointerCapture 确保后续事件不丢失
-    row.setPointerCapture(e.pointerId);
-
-    // 绑定 pointermove / pointerup
-    row.addEventListener('pointermove', onPointerMove);
-    row.addEventListener('pointerup', onPointerUp);
-    row.addEventListener('pointercancel', onPointerUp);
+  const rows = [...container.querySelectorAll('.aq-option')];
+  a.selected = rows.map(el => parseInt(el.dataset.index));
+  // 更新序号显示
+  rows.forEach((row, i) => {
+    const num = row.querySelector('.aq-option-num');
+    if (num) num.textContent = i + 1;
   });
-
-  // ── pointermove：跟随手指 + 兄弟让位 ──
-  function onPointerMove(e) {
-    if (!dragEl) return;
-    e.preventDefault();
-
-    if (animFrame) cancelAnimationFrame(animFrame);
-    animFrame = requestAnimationFrame(() => {
-      if (!dragEl) return;
-      const containerRect = container.getBoundingClientRect();
-
-      // 被拖拽元素跟随手指：top = 指针Y - 容器top - 行内偏移
-      const newTop = e.clientY - containerRect.top - dragOffsetY;
-      dragEl.style.top = newTop + 'px';
-      dragEl.style.transform = ''; // 清除 transform，纯用 top 跟随
-
-      // 用 dragEl 中心 Y 来判断是否越过兄弟项
-      const dragRect = dragEl.getBoundingClientRect();
-      const dragCenterY = dragRect.top + dragRect.height / 2;
-
-      updateSiblingShifts(dragCenterY);
-    });
-  }
-
-  // ── pointerup / pointercancel：松手落位 ──
-  function onPointerUp(e) {
-    if (!dragEl || !askState) return;
-    if (e.pointerId !== pointerId) return;
-
-    // 移除临时监听器
-    dragEl.removeEventListener('pointermove', onPointerMove);
-    dragEl.removeEventListener('pointerup', onPointerUp);
-    dragEl.removeEventListener('pointercancel', onPointerUp);
-
-    if (animFrame) cancelAnimationFrame(animFrame);
-
-    // 计算最终目标位置
-    const targetIdx = calcTargetIndex();
-
-    // 第一步：清除所有兄弟项的 transform，恢复文档流
-    siblingSnap.forEach(snap => {
-      snap.el.style.transform = '';
-      snap.el.classList.remove('is-shifting');
-    });
-
-    // 第二步：移除占位 placeholder
-    const placeholder = container.querySelector('.aq-drag-placeholder');
-    if (placeholder) placeholder.remove();
-
-    // 第三步：清除拖拽态，恢复正常定位
-    dragEl.classList.remove('is-dragging');
-    dragEl.style.position = '';
-    dragEl.style.width = '';
-    dragEl.style.left = '';
-    dragEl.style.top = '';
-    dragEl.style.transform = '';
-    dragEl.style.zIndex = '';
-    dragEl.style.margin = '';
-    dragEl.style.transition = '';
-    try { dragEl.releasePointerCapture(e.pointerId); } catch (_) {}
-
-    // 第四步：一次性 DOM 重排 — 将 dragEl 插到目标位置
-    // 注意：dragEl 现在在容器末尾，需要移到 targetIdx 位置
-    const currentRows = getRows().filter(el => !el.classList.contains('aq-drag-placeholder'));
-    const currentDragIdx = currentRows.indexOf(dragEl);
-
-    if (currentDragIdx !== targetIdx) {
-      dragEl.remove();
-      const afterRemoval = getRows().filter(el => !el.classList.contains('aq-drag-placeholder'));
-      if (targetIdx >= afterRemoval.length) {
-        container.appendChild(dragEl);
-      } else {
-        container.insertBefore(dragEl, afterRemoval[targetIdx]);
-      }
-    }
-
-    // 第五步：更新数据源和序号
-    commitSort();
-
-    // 重置状态
-    dragEl = null;
-    originalIndex = -1;
-    pointerId = -1;
-    siblingSnap = [];
-  }
 }
 
 // ── 显示/隐藏 ─────────────────────────────────
@@ -528,6 +316,12 @@ function showAskQuestion(questions) {
 }
 
 function hideAskQuestion() {
+  // 销毁 SortableJS 实例
+  if (sortableInstance) {
+    sortableInstance.destroy();
+    sortableInstance = null;
+  }
+
   const composer = document.querySelector('.composer');
   const askEl = document.getElementById('askQuestion');
   if (composer) composer.style.display = '';

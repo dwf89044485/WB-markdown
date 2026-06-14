@@ -461,6 +461,22 @@ function bindAskQuestionEvents() {
 
   // 关闭
   document.getElementById('aqClose')?.addEventListener('click', onCloseAsk);
+
+  // 排序题：手指碰到选项的瞬间立刻清除提示（比 SortableJS 的 onStart 更早）
+  const optionsContainer = document.getElementById('aqOptions');
+  if (optionsContainer) {
+    const immediateClearHint = (e) => {
+      if (!askState) return;
+      const q = askState.questions[askState.stepIndex];
+      if (q.type !== 'sort') return;
+      const row = e.target.closest('.aq-option');
+      if (!row) return;
+      // 手指碰到选项，立刻清除提示循环
+      clearSortHint();
+    };
+    optionsContainer.addEventListener('touchstart', immediateClearHint, { passive: true });
+    optionsContainer.addEventListener('mousedown', immediateClearHint);
+  }
 }
 
 export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents };

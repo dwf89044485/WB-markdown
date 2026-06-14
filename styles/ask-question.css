@@ -180,6 +180,7 @@
   flex-direction: column;
   gap: var(--aq-option-gap);
   align-self: stretch;
+  position: relative;   /* 拖拽项 absolute 定位的参照 */
 }
 
 /* 单个选项行 */
@@ -204,21 +205,21 @@
 /* 排序行 */
 .aq-option.is-sort {
   cursor: grab;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  touch-action: none;        /* 阻止移动端页面滚动 */
+  will-change: transform;    /* GPU 加速 */
 }
 .aq-option.is-sort.is-dragging {
-  opacity: 0.9;
+  opacity: 0.92;
   cursor: grabbing;
-  transform: scale(1.03);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
   z-index: 100;
-  position: relative;
   background: #fff;
   border-radius: var(--aq-option-radius);
-  transition: transform 0.05s ease, box-shadow 0.2s ease;
+  /* position: absolute 由 JS 动态设置 */
+  /* 不设 transition — 拖拽时需要即时响应 */
 }
 .aq-option.is-sort.is-shifting {
-  transition: transform 0.2s ease;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);  /* 弹性让位动画 */
 }
 
 /* 选项左侧：序号 + 文字 */

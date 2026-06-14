@@ -259,7 +259,7 @@ function initDragSort() {
   dragBound = true;
 
   let dragEl = null;       // 被拖拽的行元素
-  let dragStartY = 0;      // 指针起始 Y
+  let dragOffsetY = 0;     // 指针在行内的偏移
   let dragHeight = 0;      // 行高
   let fromIndex = -1;      // 拖拽起始索引
   let toIndex = -1;        // 当前目标索引
@@ -303,11 +303,9 @@ function initDragSort() {
       if (i < Math.min(dragIdx, targetIdx) || i > Math.max(dragIdx, targetIdx)) return;
       // 在拖拽行经过范围内的兄弟，需要让位
       if (targetIdx > dragIdx && i > dragIdx && i <= targetIdx) {
-        // 向下拖：后面的元素向上挪
         row.style.transform = `translateY(-${dragHeight}px)`;
         row.classList.add('is-shifting');
       } else if (targetIdx < dragIdx && i >= targetIdx && i < dragIdx) {
-        // 向上拖：前面的元素向下挪
         row.style.transform = `translateY(${dragHeight}px)`;
         row.classList.add('is-shifting');
       }
@@ -318,9 +316,7 @@ function initDragSort() {
   function commitSort() {
     if (!askState) return;
     const a = askState.answers[askState.stepIndex];
-    // 按 DOM 顺序更新 answer.selected
     a.selected = getRows().map(el => parseInt(el.dataset.index));
-    // 更新序号
     getRows().forEach((row, i) => {
       const num = row.querySelector('.aq-option-num');
       if (num) num.textContent = i + 1;
@@ -349,29 +345,42 @@ function initDragSort() {
     if (!row) return;
 
     e.preventDefault();
-    // 捕获指针，确保快速移动时事件不丢失
-    row.setPointerCapture(e.pointerId);
-    pointerId = e.pointerId;
     dragEl = row;
     fromIndex = toIndex = getRows().indexOf(row);
     dragHeight = row.offsetHeight;
-    dragStartY = e.clientY;
+    dragOffsetY = e.clientY - row.getBoundingClientRect().top;
+    pointerId = e.pointerId;
 
     // 设置拖拽态：浮起
     row.classList.add('is-dragging');
     row.style.transform = 'translateY(0px)';
+    row.style.zIndex = '100';
+    row.style.position = 'relative';
+
+    // 关键：使用 setPointerCapture 确保后续事件不丢失
+    // 并且将 pointermove/pointerup 监听在 dragEl 上（而非 container）
+    // 因为 setPointerCapture 会将事件重定向到捕获元素
+    row.setPointerCapture(e.pointerId);
+
+    // ── pointermove：跟随手指 + 兄弟让位 ──
+    row.addEventListener('pointermove', onPointerMove);
+
+    // ── pointerup / pointercancel：松手落位 ──
+    row.addEventListener('pointerup', onPointerUp);
+    row.addEventListener('pointercancel', onPointerUp);
   });
 
-  // ── pointermove：跟随手指 + 兄弟让位 ──
-  container.addEventListener('pointermove', (e) => {
+  function onPointerMove(e) {
     if (!dragEl) return;
     e.preventDefault();
 
     if (animFrame) cancelAnimationFrame(animFrame);
     animFrame = requestAnimationFrame(() => {
-      const deltaY = e.clientY - dragStartY;
-      // 被拖拽元素跟随手指
-      dragEl.style.transform = `translateY(${deltaY}px)`;
+      const containerRect = container.getBoundingClientRect();
+      const rowRect = dragEl.getBoundingClientRect();
+      // 被拖拽元素跟随手指，保持手指在拖拽行上的相对位置不变
+      const newTop = e.clientY - containerRect.top - dragOffsetY;
+      dragEl.style.transform = `translateY(${newTop}px)`;
 
       // 计算当前目标位置
       const newIdx = calcTargetIndex(e.clientY);
@@ -380,12 +389,16 @@ function initDragSort() {
         updateSiblingPositions(toIndex);
       }
     });
-  });
+  }
 
-  // ── pointerup / pointercancel：松手落位 ──
-  function endDrag(e) {
+  function onPointerUp(e) {
     if (!dragEl || !askState) return;
-    if (e && e.pointerId !== pointerId) return;
+    if (e.pointerId !== pointerId) return;
+
+    // 移除 dragEl 上的临时监听器
+    dragEl.removeEventListener('pointermove', onPointerMove);
+    dragEl.removeEventListener('pointerup', onPointerUp);
+    dragEl.removeEventListener('pointercancel', onPointerUp);
 
     if (animFrame) cancelAnimationFrame(animFrame);
 
@@ -400,23 +413,22 @@ function initDragSort() {
     if (toIndex > dragIdx) insertIdx = toIndex + 1;
     if (insertIdx > rows.length - 1) insertIdx = rows.length - 1;
 
-    // 让拖拽行回到原位（清除 transform）
+    // 清除拖拽态
     dragEl.classList.remove('is-dragging');
     dragEl.style.transform = '';
+    dragEl.style.zIndex = '';
+    dragEl.style.position = '';
     try { dragEl.releasePointerCapture(e.pointerId); } catch (_) {}
 
     // 等待一帧让动画完成，然后更新 DOM 排序
     requestAnimationFrame(() => {
-      // 从 DOM 中移除拖拽行
       dragEl.remove();
-      // 插入到目标位置
-      const allRows = getRows(); // 此时已不含 dragEl
+      const allRows = getRows();
       if (insertIdx >= allRows.length) {
         container.appendChild(dragEl);
       } else {
         container.insertBefore(dragEl, allRows[insertIdx]);
       }
-      // 提交排序结果
       commitSort();
 
       dragEl = null;
@@ -425,12 +437,7 @@ function initDragSort() {
       pointerId = -1;
     });
   }
-
-  container.addEventListener('pointerup', endDrag);
-  container.addEventListener('pointercancel', endDrag);
 }
-
-
 
 // ── 显示/隐藏 ─────────────────────────────────
 function showAskQuestion(questions) {

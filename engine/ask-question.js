@@ -223,6 +223,7 @@ function goToStep(index) {
   if (!askState) return;
   if (index < 0 || index >= askState.questions.length) return;
   clearSortHint();
+  sortHintFirstShow = true;
   askState.stepIndex = index;
   renderAskQuestion();
 }
@@ -261,14 +262,17 @@ let sortHintTimer = null;     // 等待/触发定时器
 let sortHintDismiss = null;   // 自动消失定时器
 let sortHintEl = null;        // pop 提示 DOM 元素
 
+let sortHintFirstShow = true;  // 首次显示标志
+
 function startSortHint() {
   clearSortHint();
   const container = document.getElementById('aqOptions');
   if (!container) return;
-  // 等2秒后显示提示
+  // 首次1.5s，后续2s
+  const delay = sortHintFirstShow ? 1500 : 2000;
   sortHintTimer = setTimeout(() => {
     showSortHint();
-  }, 2000);
+  }, delay);
 }
 
 function showSortHint() {
@@ -284,29 +288,48 @@ function showSortHint() {
   pop.textContent = '拖动可调整顺序';
   target.appendChild(pop);
   sortHintEl = pop;
-  // 3秒后消失，再等2秒循环
+  // 标记首次已显示
+  sortHintFirstShow = false;
+  // 3秒后消失（带消失动效），再等2秒循环
   sortHintDismiss = setTimeout(() => {
-    hideSortHint();
-    sortHintTimer = setTimeout(() => showSortHint(), 2000);
+    hideSortHintWithAnimation(() => {
+      sortHintTimer = setTimeout(() => showSortHint(), 2000);
+    });
   }, 3000);
 }
 
 function hideSortHint() {
   if (sortHintDismiss) { clearTimeout(sortHintDismiss); sortHintDismiss = null; }
-  // 移除高亮
+  // 移除高亮（带过渡）
   const container = document.getElementById('aqOptions');
-  if (container) container.querySelectorAll('.aq-sort-hint').forEach(el => el.classList.remove('aq-sort-hint'));
-  // 移除 pop
-  if (sortHintEl && sortHintEl.parentNode) { sortHintEl.parentNode.removeChild(sortHintEl); }
-  sortHintEl = null;
+  if (container) container.querySelectorAll('.aq-sort-hint').forEach(el => {
+    el.classList.add('aq-sort-hint-out');
+    el.classList.remove('aq-sort-hint');
+  });
+  // 移除 pop（带动画）
+  if (sortHintEl) {
+    sortHintEl.classList.add('aq-sort-hint-pop-out');
+    const popRef = sortHintEl;
+    setTimeout(() => { if (popRef.parentNode) popRef.parentNode.removeChild(popRef); }, 250);
+    sortHintEl = null;
+  }
+}
+
+function hideSortHintWithAnimation(callback) {
+  hideSortHint();
+  // 等消失动画完成（250ms）后再回调
+  setTimeout(callback, 260);
 }
 
 function clearSortHint() {
   if (sortHintTimer) { clearTimeout(sortHintTimer); sortHintTimer = null; }
   if (sortHintDismiss) { clearTimeout(sortHintDismiss); sortHintDismiss = null; }
-  // 移除高亮
+  sortHintFirstShow = true;
+  // 移除高亮及动画残留
   const container = document.getElementById('aqOptions');
-  if (container) container.querySelectorAll('.aq-sort-hint').forEach(el => el.classList.remove('aq-sort-hint'));
+  if (container) container.querySelectorAll('.aq-sort-hint, .aq-sort-hint-out').forEach(el => {
+    el.classList.remove('aq-sort-hint', 'aq-sort-hint-out');
+  });
   // 移除 pop
   if (sortHintEl && sortHintEl.parentNode) { sortHintEl.parentNode.removeChild(sortHintEl); }
   sortHintEl = null;

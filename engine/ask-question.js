@@ -275,55 +275,26 @@ function initDragSort() {
     handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
     animation: 200,                   // 松手落位动画时长 ms
     easing: 'cubic-bezier(0.2, 0, 0, 1)',
-    ghostClass: 'aq-sort-ghost',     // 拖拽时原位占位样式
-    chosenClass: 'aq-sort-chosen',   // 被选中的元素样式
-    dragClass: 'aq-sort-drag',       // 原生拖拽时的样式（forceFallback 下不生效）
-    forceFallback: true,             // 强制使用 fallback 模式：生成克隆元素跟随手指，表现一致可控
-    fallbackClass: 'aq-sort-fallback', // 跟随手指移动的克隆元素样式
-    fallbackOnBody: true,            // 克隆元素挂在 body 上，避免父容器 overflow 裁切
-    fallbackTolerance: 3,            // 手指移动 3px 后才开始拖拽，避免误触
+    ghostClass: 'aq-sort-ghost',     // 原位占位样式（设为不可见）
+    chosenClass: 'aq-sort-chosen',   // 被选中（按下）的原始行样式
+    dragClass: 'aq-sort-drag',       // 正在拖动的原始元素样式
+    forceFallback: false,            // 不克隆，用原生拖拽，原始元素自身移动
     direction: 'vertical',           // 只允许纵向排序
     onStart: () => {
-      // 记录容器边界，启动 rAF 循环锁定位置
+      // 记录容器边界
       const rect = container.getBoundingClientRect();
       container._aqLockX = rect.left;
       container._aqLockW = rect.width;
       container._aqMinY = rect.top;
       container._aqMaxY = rect.bottom;
-      aqDragLockRAF();
     },
     onEnd: (evt) => {
-      // 停止 rAF 锁定循环
+      // 清除边界数据
       container._aqLockX = undefined;
       // SortableJS 已经帮你重排了 DOM，只需同步数据源
       commitSortFromDOM();
     },
   });
-}
-
-// rAF 循环：每帧锁定拖拽克隆元素 — 水平居中 + 垂直不超出选项区域
-function aqDragLockRAF() {
-  const container = document.getElementById('aqOptions');
-  if (!container || container._aqLockX === undefined) return;
-  const fallbackEl = document.querySelector('.aq-sort-fallback');
-  if (fallbackEl) {
-    // ① 水平锁定：始终与容器对齐
-    fallbackEl.style.left = container._aqLockX + 'px';
-    fallbackEl.style.width = container._aqLockW + 'px';
-
-    // ② 垂直限位：克隆元素不能超出容器上下边界
-    const elRect = fallbackEl.getBoundingClientRect();
-    if (elRect.top < container._aqMinY) {
-      // 超出顶部 → 钳制到顶部
-      fallbackEl.style.top = container._aqMinY + 'px';
-      fallbackEl.style.transform = 'none';
-    } else if (elRect.bottom > container._aqMaxY) {
-      // 超出底部 → 钳制到底部
-      fallbackEl.style.top = (container._aqMaxY - elRect.height) + 'px';
-      fallbackEl.style.transform = 'none';
-    }
-  }
-  requestAnimationFrame(aqDragLockRAF);
 }
 
 // 从 DOM 顺序同步回数据源

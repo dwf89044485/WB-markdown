@@ -174,7 +174,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-background:#4CAF50;
+background:#FF5722;
   flex-shrink:0;
 }
 .status-time{
@@ -418,12 +418,11 @@ background:#4CAF50;
 
 /* ── SCROLL NAV ─────────────────────────────────────────── */
 .scroll-nav {
-  position: absolute;
-  right: 8px;
-  bottom: 160px;
+  position: relative;
+  height: 0;
+  overflow: visible;
+  flex-shrink: 0;
   z-index: 20;
-  width: 36px;
-  height: 80px;
   pointer-events: none;
 }
 .scroll-nav.is-hidden {
@@ -432,7 +431,7 @@ background:#4CAF50;
 .scroll-nav-btn {
   pointer-events: auto;
   position: absolute;
-  left: 0;
+  right: 8px;
   width: 36px;
   height: 36px;
   border-radius: 120px;
@@ -447,19 +446,19 @@ background:#4CAF50;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(.32,.72,0,1);
+  transition: opacity 0.2s ease;
 }
 #scrollUp {
-  top: 0;
+  bottom: calc(10px + 36px + 8px);
 }
 #scrollDown {
-  bottom: 0;
+  bottom: 10px;
 }
 .scroll-nav-btn:hover {
   opacity: 0.8;
 }
 .scroll-nav-btn:active {
-  transform: scale(0.94);
+  opacity: 0.6;
 }
 .scroll-nav-btn.is-hidden {
   display: none;

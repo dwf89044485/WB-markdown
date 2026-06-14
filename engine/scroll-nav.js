@@ -8,8 +8,8 @@ const SN = {
   upBtn: null,         // #scrollUp
   downBtn: null,       // #scrollDown
   conv: null,          // .conversation
-  upState: { lastClickTime: 0, showTooltip: false, tooltipTimer: null },
-  downState: { lastClickTime: 0, showTooltip: false, tooltipTimer: null },
+  upState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 },
+  downState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 },
   scrollTicking: false,
   isTblFullscreen: false,
 };
@@ -180,35 +180,40 @@ function handleUpClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
+  // 快速连点追踪（2s 窗口）
+  if (now - state.rapidWindowStart > 2000) {
+    state.rapidCount = 0;
+    state.rapidWindowStart = now;
+  }
+  state.rapidCount++;
+
   if (elapsed <= 300) {
     // 双击 — 跳顶
-    state.showTooltip = false;
     if (state.tooltipTimer) { clearTimeout(state.tooltipTimer); state.tooltipTimer = null; }
-    scrollToTopTurn();
     removeTooltip(SN.upBtn);
-    return;
-  }
-
-  if (elapsed > 700) {
-    // 独立单击 — 正常翻页
-    state.showTooltip = false;
-    doSingleUp();
-    return;
-  }
-
-  // 300 < elapsed <= 700：学习窗 — 单击 + 延迟弹提示
-  doSingleUp();
-  state.showTooltip = true;
-  removeTooltip(SN.upBtn);
-
-  if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
-  state.tooltipTimer = setTimeout(() => {
-    if (state.showTooltip && !SN.upBtn.classList.contains('is-hidden')) {
+    scrollToTopTurn();
+    // 首次双击：提示并毕业；后续双击：静默
+    if (!state.dblclickGraduated) {
+      state.dblclickGraduated = true;
       showTooltip(SN.upBtn, '双击 ↑ 可跳转对话顶部');
     }
-    state.showTooltip = false;
-    state.tooltipTimer = null;
-  }, 700 - elapsed);
+    return;
+  }
+
+  // 单击 — 正常翻页
+  doSingleUp();
+
+  // 快速连点 ≥3 次（2s 内）且未毕业双击 → 提示用户双击存在
+  if (state.rapidCount >= 3 && !state.dblclickGraduated) {
+    removeTooltip(SN.upBtn);
+    if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
+    state.tooltipTimer = setTimeout(() => {
+      if (!SN.upBtn.classList.contains('is-hidden')) {
+        showTooltip(SN.upBtn, '双击 ↑ 可跳转对话顶部');
+      }
+      state.tooltipTimer = null;
+    }, 100);
+  }
 }
 
 function handleDownClick() {
@@ -218,35 +223,40 @@ function handleDownClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
+  // 快速连点追踪（2s 窗口）
+  if (now - state.rapidWindowStart > 2000) {
+    state.rapidCount = 0;
+    state.rapidWindowStart = now;
+  }
+  state.rapidCount++;
+
   if (elapsed <= 300) {
     // 双击 — 跳底
-    state.showTooltip = false;
     if (state.tooltipTimer) { clearTimeout(state.tooltipTimer); state.tooltipTimer = null; }
-    scrollToBottomTurn();
     removeTooltip(SN.downBtn);
-    return;
-  }
-
-  if (elapsed > 700) {
-    // 独立单击
-    state.showTooltip = false;
-    doSingleDown();
-    return;
-  }
-
-  // 学习窗
-  doSingleDown();
-  state.showTooltip = true;
-  removeTooltip(SN.downBtn);
-
-  if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
-  state.tooltipTimer = setTimeout(() => {
-    if (state.showTooltip && !SN.downBtn.classList.contains('is-hidden')) {
+    scrollToBottomTurn();
+    // 首次双击：提示并毕业；后续双击：静默
+    if (!state.dblclickGraduated) {
+      state.dblclickGraduated = true;
       showTooltip(SN.downBtn, '双击 ↓ 可跳转对话底部');
     }
-    state.showTooltip = false;
-    state.tooltipTimer = null;
-  }, 700 - elapsed);
+    return;
+  }
+
+  // 单击 — 正常翻页
+  doSingleDown();
+
+  // 快速连点 ≥3 次（2s 内）且未毕业双击 → 提示用户双击存在
+  if (state.rapidCount >= 3 && !state.dblclickGraduated) {
+    removeTooltip(SN.downBtn);
+    if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
+    state.tooltipTimer = setTimeout(() => {
+      if (!SN.downBtn.classList.contains('is-hidden')) {
+        showTooltip(SN.downBtn, '双击 ↓ 可跳转对话底部');
+      }
+      state.tooltipTimer = null;
+    }, 100);
+  }
 }
 
 function doSingleUp() {
@@ -330,8 +340,8 @@ export function initScrollNav() {
   if (!SN.nav || !SN.upBtn || !SN.downBtn || !SN.conv) return;
 
   // Reset state
-  SN.upState = { lastClickTime: 0, showTooltip: false, tooltipTimer: null };
-  SN.downState = { lastClickTime: 0, showTooltip: false, tooltipTimer: null };
+  SN.upState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 };
+  SN.downState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidCount: 0, rapidWindowStart: 0 };
   SN.isTblFullscreen = false;
   SN.nav.classList.remove('is-hidden');
   SN.upBtn.classList.remove('is-hidden', 'is-appearing');

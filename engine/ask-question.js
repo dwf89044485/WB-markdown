@@ -284,10 +284,12 @@ function initDragSort() {
     fallbackTolerance: 3,            // 手指移动 3px 后才开始拖拽，避免误触
     direction: 'vertical',           // 只允许纵向排序
     onStart: () => {
-      // 记录容器的水平位置，启动 rAF 循环锁定 X 轴
+      // 记录容器边界，启动 rAF 循环锁定位置
       const rect = container.getBoundingClientRect();
       container._aqLockX = rect.left;
       container._aqLockW = rect.width;
+      container._aqMinY = rect.top;
+      container._aqMaxY = rect.bottom;
       aqDragLockRAF();
     },
     onEnd: (evt) => {
@@ -299,14 +301,27 @@ function initDragSort() {
   });
 }
 
-// rAF 循环：每帧锁定拖拽克隆元素的水平位置
+// rAF 循环：每帧锁定拖拽克隆元素 — 水平居中 + 垂直不超出选项区域
 function aqDragLockRAF() {
   const container = document.getElementById('aqOptions');
   if (!container || container._aqLockX === undefined) return;
   const fallbackEl = document.querySelector('.aq-sort-fallback');
   if (fallbackEl) {
+    // ① 水平锁定：始终与容器对齐
     fallbackEl.style.left = container._aqLockX + 'px';
     fallbackEl.style.width = container._aqLockW + 'px';
+
+    // ② 垂直限位：克隆元素不能超出容器上下边界
+    const elRect = fallbackEl.getBoundingClientRect();
+    if (elRect.top < container._aqMinY) {
+      // 超出顶部 → 钳制到顶部
+      fallbackEl.style.top = container._aqMinY + 'px';
+      fallbackEl.style.transform = 'none';
+    } else if (elRect.bottom > container._aqMaxY) {
+      // 超出底部 → 钳制到底部
+      fallbackEl.style.top = (container._aqMaxY - elRect.height) + 'px';
+      fallbackEl.style.transform = 'none';
+    }
   }
   requestAnimationFrame(aqDragLockRAF);
 }

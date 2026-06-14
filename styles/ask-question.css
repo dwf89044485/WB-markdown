@@ -204,15 +204,21 @@
 /* 排序行 */
 .aq-option.is-sort {
   cursor: grab;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .aq-option.is-sort.is-dragging {
-  opacity: 0.85;
+  opacity: 0.9;
   cursor: grabbing;
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 10;
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  z-index: 100;
   position: relative;
+  background: #fff;
+  border-radius: var(--aq-option-radius);
+  transition: transform 0.05s ease, box-shadow 0.2s ease;
+}
+.aq-option.is-sort.is-shifting {
+  transition: transform 0.2s ease;
 }
 
 /* 选项左侧：序号 + 文字 */

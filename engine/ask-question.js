@@ -249,6 +249,7 @@ function submitAnswers() {
 }
 
 // ── 排序拖拽 ─────────────────────────────────
+// 成熟交互：拖拽选项跟随手指 → 其他选项弹性让位 → 松手落位排序
 let dragBound = false;
 
 function initDragSort() {
@@ -257,16 +258,82 @@ function initDragSort() {
   if (!container) return;
   dragBound = true;
 
-  let dragEl = null;
-  let dragIndex = -1;
-  let pointerId = -12;
+  let dragEl = null;       // 被拖拽的行元素
+  let dragStartY = 0;      // 指针起始 Y
+  let dragHeight = 0;      // 行高
+  let fromIndex = -1;      // 拖拽起始索引
+  let toIndex = -1;        // 当前目标索引
+  let pointerId = -1;
+  let animFrame = null;
 
+  // 获取容器内所有选项行
+  function getRows() {
+    return [...container.querySelectorAll('.aq-option')];
+  }
+
+  // 根据指针 Y 计算目标插入位置索引
+  function calcTargetIndex(clientY) {
+    const rows = getRows();
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i] === dragEl) continue;
+      const rect = rows[i].getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      if (clientY < mid) return i;
+    }
+    return rows.length - 1;
+  }
+
+  // 重置所有兄弟元素的 transform
+  function resetSiblingTransforms() {
+    getRows().forEach(el => {
+      if (el !== dragEl) el.style.transform = '';
+      el.classList.remove('is-shifting');
+    });
+  }
+
+  // 更新兄弟元素的位置偏移（弹性让位）
+  function updateSiblingPositions(targetIdx) {
+    const rows = getRows();
+    const dragIdx = rows.indexOf(dragEl);
+
+    rows.forEach((row, i) => {
+      if (row === dragEl) return;
+      row.classList.remove('is-shifting');
+      row.style.transform = '';
+      if (i < Math.min(dragIdx, targetIdx) || i > Math.max(dragIdx, targetIdx)) return;
+      // 在拖拽行经过范围内的兄弟，需要让位
+      if (targetIdx > dragIdx && i > dragIdx && i <= targetIdx) {
+        // 向下拖：后面的元素向上挪
+        row.style.transform = `translateY(-${dragHeight}px)`;
+        row.classList.add('is-shifting');
+      } else if (targetIdx < dragIdx && i >= targetIdx && i < dragIdx) {
+        // 向上拖：前面的元素向下挪
+        row.style.transform = `translateY(${dragHeight}px)`;
+        row.classList.add('is-shifting');
+      }
+    });
+  }
+
+  // 提交排序结果
+  function commitSort() {
+    if (!askState) return;
+    const a = askState.answers[askState.stepIndex];
+    // 按 DOM 顺序更新 answer.selected
+    a.selected = getRows().map(el => parseInt(el.dataset.index));
+    // 更新序号
+    getRows().forEach((row, i) => {
+      const num = row.querySelector('.aq-option-num');
+      if (num) num.textContent = i + 1;
+    });
+  }
+
+  // ── pointerdown：长按触发 ──
   container.addEventListener('pointerdown', (e) => {
     if (!askState) return;
     const q = askState.questions[askState.stepIndex];
     if (q.type !== 'sort') return;
 
-    // 手动遍历 DOM 查找拖拽手柄（避免 SVG 内部元素导致 closest 失效）
+    // 手动遍历 DOM 查找拖拽手柄
     let target = e.target;
     let handle = null;
     while (target && target !== container) {
@@ -282,68 +349,85 @@ function initDragSort() {
     if (!row) return;
 
     e.preventDefault();
+    // 捕获指针，确保快速移动时事件不丢失
     row.setPointerCapture(e.pointerId);
     pointerId = e.pointerId;
     dragEl = row;
-    dragIndex = [...container.querySelectorAll('.aq-option')].indexOf(row);
+    fromIndex = toIndex = getRows().indexOf(row);
+    dragHeight = row.offsetHeight;
+    dragStartY = e.clientY;
+
+    // 设置拖拽态：浮起
     row.classList.add('is-dragging');
+    row.style.transform = 'translateY(0px)';
   });
 
+  // ── pointermove：跟随手指 + 兄弟让位 ──
   container.addEventListener('pointermove', (e) => {
     if (!dragEl) return;
     e.preventDefault();
 
-    const siblings = [...container.querySelectorAll('.aq-option:not(.is-dragging)')];
-    const dragRect = dragEl.getBoundingClientRect();
-    const dragMidY = dragRect.top + dragRect.height / 2;
+    if (animFrame) cancelAnimationFrame(animFrame);
+    animFrame = requestAnimationFrame(() => {
+      const deltaY = e.clientY - dragStartY;
+      // 被拖拽元素跟随手指
+      dragEl.style.transform = `translateY(${deltaY}px)`;
 
-    let insertBefore = null;
-    for (const sibling of siblings) {
-      const sibRect = sibling.getBoundingClientRect();
-      const sibMidY = sibRect.top + sibRect.height / 2;
-      if (dragMidY < sibMidY) {
-        insertBefore = sibling;
-        break;
+      // 计算当前目标位置
+      const newIdx = calcTargetIndex(e.clientY);
+      if (newIdx !== toIndex) {
+        toIndex = newIdx;
+        updateSiblingPositions(toIndex);
       }
-    }
-
-    if (insertBefore) {
-      container.insertBefore(dragEl, insertBefore);
-    } else {
-      container.appendChild(dragEl);
-    }
-  });
-
-  container.addEventListener('pointerup', (e) => {
-    if (!dragEl || !askState) return;
-    if (e.pointerId !== pointerId) return;
-
-    dragEl.classList.remove('is-dragging');
-    dragEl.releasePointerCapture(e.pointerId);
-
-    // 从 DOM 顺序更新 answer.selected
-    const a = askState.answers[askState.stepIndex];
-    a.selected = [...container.querySelectorAll('.aq-option')].map(el => parseInt(el.dataset.index));
-
-    // 更新序号显示
-    container.querySelectorAll('.aq-option').forEach((row, i) => {
-      const num = row.querySelector('.aq-option-num');
-      if (num) num.textContent = i + 1;
     });
-
-    dragEl = null;
-    dragIndex = -1;
-    pointerId = -1;
   });
 
-  container.addEventListener('pointercancel', (e) => {
+  // ── pointerup / pointercancel：松手落位 ──
+  function endDrag(e) {
     if (!dragEl || !askState) return;
+    if (e && e.pointerId !== pointerId) return;
+
+    if (animFrame) cancelAnimationFrame(animFrame);
+
+    const rows = getRows();
+    const dragIdx = rows.indexOf(dragEl);
+
+    // 先重置所有兄弟的 transform
+    resetSiblingTransforms();
+
+    // 计算最终插入位置
+    let insertIdx = toIndex;
+    if (toIndex > dragIdx) insertIdx = toIndex + 1;
+    if (insertIdx > rows.length - 1) insertIdx = rows.length - 1;
+
+    // 让拖拽行回到原位（清除 transform）
     dragEl.classList.remove('is-dragging');
+    dragEl.style.transform = '';
     try { dragEl.releasePointerCapture(e.pointerId); } catch (_) {}
-    dragEl = null;
-    dragIndex = -1;
-    pointerId = -1;
-  });
+
+    // 等待一帧让动画完成，然后更新 DOM 排序
+    requestAnimationFrame(() => {
+      // 从 DOM 中移除拖拽行
+      dragEl.remove();
+      // 插入到目标位置
+      const allRows = getRows(); // 此时已不含 dragEl
+      if (insertIdx >= allRows.length) {
+        container.appendChild(dragEl);
+      } else {
+        container.insertBefore(dragEl, allRows[insertIdx]);
+      }
+      // 提交排序结果
+      commitSort();
+
+      dragEl = null;
+      fromIndex = -1;
+      toIndex = -1;
+      pointerId = -1;
+    });
+  }
+
+  container.addEventListener('pointerup', endDrag);
+  container.addEventListener('pointercancel', endDrag);
 }
 
 

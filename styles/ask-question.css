@@ -222,11 +222,13 @@
   background: var(--aq-option-bg);
 }
 .aq-sort-drag {
-  /* 正在跟随手指移动的元素 */
+  /* 正在跟随手指移动的元素 — 锁定水平位置 */
   opacity: 0.95;
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
   background: #fff;
   cursor: grabbing;
+  left: 0 !important;          /* 禁止水平偏移 */
+  transform: none !important;  /* 禁止 SortableJS 添加水平 transform */
 }
 
 /* 选项左侧：序号 + 文字 */

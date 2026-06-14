@@ -268,6 +268,9 @@ function initDragSort() {
     sortableInstance = null;
   }
 
+  // 计算选项区域的边界，用于限制拖拽范围
+  const containerRect = container.getBoundingClientRect();
+
   sortableInstance = Sortable.create(container, {
     handle: '.aq-drag-handle',       // 只有拖拽手柄可触发
     animation: 200,                   // 松手落位动画时长 ms
@@ -276,8 +279,25 @@ function initDragSort() {
     chosenClass: 'aq-sort-chosen',   // 被选中的元素样式
     dragClass: 'aq-sort-drag',       // 正在拖拽的元素样式（跟随手指的那个）
     forceFallback: false,            // 优先用原生拖拽，移动端自动 fallback
+    direction: 'vertical',           // 只允许纵向拖动
+    onMove: (evt) => {
+      // 限制拖拽元素不超出选项区域范围
+      const dragEl = evt.dragged;
+      if (dragEl) {
+        // 锁定水平位置 — 始终与容器对齐
+        dragEl.style.left = containerRect.left + 'px';
+        dragEl.style.width = containerRect.width + 'px';
+      }
+      return true; // 允许移动
+    },
     onEnd: (evt) => {
       // SortableJS 已经帮你重排了 DOM，只需同步数据源
+      // 清除拖拽时强制设置的内联样式
+      const dragEl = evt.item;
+      if (dragEl) {
+        dragEl.style.left = '';
+        dragEl.style.width = '';
+      }
       commitSortFromDOM();
     },
   });

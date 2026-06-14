@@ -256,8 +256,8 @@ function submitAnswers() {
   resolve(result);
 }
 
-// ── 排序拖拽提示（停留3秒后高亮第2项 + pop提示）────────────
-let sortHintTimer = null;     // 3秒触发定时器
+// ── 排序拖拽提示（停留2秒后高亮第2项 + pop提示）────────────
+let sortHintTimer = null;     // 2秒触发定时器
 let sortHintDismiss = null;   // 自动消失定时器
 let sortHintEl = null;        // pop 提示 DOM 元素
 
@@ -270,9 +270,8 @@ function startSortHint() {
     const rows = container.querySelectorAll('.aq-option.is-sort');
     if (rows.length < 2) return;
     const target = rows[1];
-    // 添加白底+投影高亮
+    // 同时添加白底+投影高亮 和 pop 提示
     target.classList.add('aq-sort-hint');
-    // 创建 pop 提示
     const pop = document.createElement('div');
     pop.className = 'aq-sort-hint-pop';
     pop.textContent = '拖动可调整顺序';
@@ -280,7 +279,7 @@ function startSortHint() {
     sortHintEl = pop;
     // 3秒后自动消失
     sortHintDismiss = setTimeout(() => clearSortHint(), 3000);
-  }, 3000);
+  }, 2000);
 }
 
 function clearSortHint() {

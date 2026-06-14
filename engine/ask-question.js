@@ -258,32 +258,26 @@ function initDragSort() {
   dragBound = true;
 
   let dragEl = null;
-  let pointerId = null;
 
-  document.addEventListener('pointerdown', (e) => {
+  // 用 mousedown 替代 pointerdown，更可靠
+  container.addEventListener('mousedown', (e) => {
     if (!askState) return;
     const q = askState.questions[askState.stepIndex];
     if (q.type !== 'sort') return;
 
-    // 从 e.target 向上查找拖拽手柄（兼容 SVG 子元素）
-    let handle = e.target;
-    while (handle && handle !== container && handle !== document) {
-      if (handle.classList && handle.classList.contains('aq-drag-handle')) break;
-      handle = handle.parentElement;
-    }
-    if (!handle || !handle.classList || !handle.classList.contains('aq-drag-handle')) return;
+    const handle = e.target.closest('.aq-drag-handle');
+    if (!handle) return;
 
     const row = handle.closest('.aq-option');
     if (!row) return;
 
     e.preventDefault();
+    e.stopPropagation();
     dragEl = row;
-    pointerId = e.pointerId;
-    row.setPointerCapture(e.pointerId);
     row.classList.add('is-dragging');
   });
 
-  document.addEventListener('pointermove', (e) => {
+  document.addEventListener('mousemove', (e) => {
     if (!dragEl) return;
     e.preventDefault();
 
@@ -308,12 +302,9 @@ function initDragSort() {
     }
   });
 
-  document.addEventListener('pointerup', (e) => {
+  document.addEventListener('mouseup', () => {
     if (!dragEl || !askState) return;
-    if (e.pointerId !== pointerId) return;
     dragEl.classList.remove('is-dragging');
-    try { dragEl.releasePointerCapture(pointerId); } catch (_) {}
-    pointerId = null;
 
     // 从 DOM 顺序更新 answer.selected
     const a = askState.answers[askState.stepIndex];

@@ -174,7 +174,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-background:#E91E63;
+background:#4CAF50;
   flex-shrink:0;
 }
 .status-time{
@@ -420,12 +420,10 @@ background:#E91E63;
 .scroll-nav {
   position: absolute;
   right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 160px;
   z-index: 20;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  width: 36px;
+  height: 80px;
   pointer-events: none;
 }
 .scroll-nav.is-hidden {
@@ -433,6 +431,8 @@ background:#E91E63;
 }
 .scroll-nav-btn {
   pointer-events: auto;
+  position: absolute;
+  left: 0;
   width: 36px;
   height: 36px;
   border-radius: 120px;
@@ -448,6 +448,12 @@ background:#E91E63;
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s ease, transform 0.3s cubic-bezier(.32,.72,0,1);
+}
+#scrollUp {
+  top: 0;
+}
+#scrollDown {
+  bottom: 0;
 }
 .scroll-nav-btn:hover {
   opacity: 0.8;

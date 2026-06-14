@@ -256,8 +256,8 @@ function submitAnswers() {
   resolve(result);
 }
 
-// ── 排序拖拽提示（停留2秒后高亮第2项 + pop提示）────────────
-let sortHintTimer = null;     // 2秒触发定时器
+// ── 排序拖拽提示（循环：等2秒 → 显示3秒 → 消失 → 等2秒 → …）──────
+let sortHintTimer = null;     // 等待/触发定时器
 let sortHintDismiss = null;   // 自动消失定时器
 let sortHintEl = null;        // pop 提示 DOM 元素
 
@@ -265,21 +265,40 @@ function startSortHint() {
   clearSortHint();
   const container = document.getElementById('aqOptions');
   if (!container) return;
+  // 等2秒后显示提示
   sortHintTimer = setTimeout(() => {
-    // 找到第2个选项
-    const rows = container.querySelectorAll('.aq-option.is-sort');
-    if (rows.length < 2) return;
-    const target = rows[1];
-    // 同时添加白底+投影高亮 和 pop 提示
-    target.classList.add('aq-sort-hint');
-    const pop = document.createElement('div');
-    pop.className = 'aq-sort-hint-pop';
-    pop.textContent = '拖动可调整顺序';
-    target.appendChild(pop);
-    sortHintEl = pop;
-    // 3秒后自动消失
-    sortHintDismiss = setTimeout(() => clearSortHint(), 3000);
+    showSortHint();
   }, 2000);
+}
+
+function showSortHint() {
+  const container = document.getElementById('aqOptions');
+  if (!container) return;
+  const rows = container.querySelectorAll('.aq-option.is-sort');
+  if (rows.length < 2) return;
+  const target = rows[1];
+  // 同时添加白底+投影高亮 和 pop 提示
+  target.classList.add('aq-sort-hint');
+  const pop = document.createElement('div');
+  pop.className = 'aq-sort-hint-pop';
+  pop.textContent = '拖动可调整顺序';
+  target.appendChild(pop);
+  sortHintEl = pop;
+  // 3秒后消失，再等2秒循环
+  sortHintDismiss = setTimeout(() => {
+    hideSortHint();
+    sortHintTimer = setTimeout(() => showSortHint(), 2000);
+  }, 3000);
+}
+
+function hideSortHint() {
+  if (sortHintDismiss) { clearTimeout(sortHintDismiss); sortHintDismiss = null; }
+  // 移除高亮
+  const container = document.getElementById('aqOptions');
+  if (container) container.querySelectorAll('.aq-sort-hint').forEach(el => el.classList.remove('aq-sort-hint'));
+  // 移除 pop
+  if (sortHintEl && sortHintEl.parentNode) { sortHintEl.parentNode.removeChild(sortHintEl); }
+  sortHintEl = null;
 }
 
 function clearSortHint() {

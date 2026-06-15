@@ -1097,5 +1097,52 @@ window.toggleSteps = toggleSteps;
 
 // ── Bootstrap (type="module" is auto-deferred, DOM is ready) ──
 applyUrlPlaybackOverrides();
+
+// ============================================================
+// PUBLIC API — 给 feature-jump.js 用的播放控制接口
+// ============================================================
+
+export function getCurrentStepIndex() {
+  return currentDirectorIndex;
+}
+
+export function pauseDirector() {
+  pauseRequested = true;
+  autoPlaying = false;
+}
+
+/**
+ * 跳到指定 step。如果目标 step 在当前 step 之后，从当前位置快进到目标。
+ * 如果目标 step 在当前 step 之前或相等，通过 reload + sessionStorage 兜底。
+ *
+ * @param {number} targetStep
+ * @returns {Promise<void>}
+ */
+export async function goToStep(targetStep) {
+  if (typeof targetStep !== 'number' || targetStep < 0) return;
+
+  // 先暂停当前播放
+  pauseRequested = true;
+  autoPlaying = false;
+
+  // 等当前帧让出
+  await sleep(0);
+
+  // 如果目标步 <= 当前步：通过 reload 兜底
+  if (targetStep <= currentDirectorIndex) {
+    sessionStorage.setItem('__pendingJumpStep', String(targetStep));
+    window.location.reload();
+    return;
+  }
+
+  // targetStep > currentDirectorIndex：从当前位置快进到目标
+  pauseRequested = false;
+  autoPlaying = true;
+
+  // 等到达目标 step
+  while (currentDirectorIndex < targetStep) {
+    await sleep(50);
+  }
+}
 setupDemoControls();
 startPlayback();

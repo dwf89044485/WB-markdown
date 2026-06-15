@@ -299,6 +299,7 @@ features/
 - typewriter / status-line / timing-bar 等候选 tab
 - 设计系统 / 规约文档（不进总览）
 - 「在左侧看演示」按钮的高亮 / 视觉回馈样式（v1 跳转能跳就行，视觉细化留 v2）
+- 反向跳转的优雅实现（v1 反向跳通过 reload 兜底，v2 应实现 director 原生 reset）
 
 ### 验收标准（v1 通过条件）
 

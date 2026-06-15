@@ -43,7 +43,7 @@
   position:absolute;
   inset:0;
   background-image:var(--grid-svg, none);
-  background-size:cover;
+  background-size:var(--grid-cw, 618px) var(--grid-ch, 100vh);
   background-repeat:no-repeat;
   opacity:0.6;
   pointer-events:none;

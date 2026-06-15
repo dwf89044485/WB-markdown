@@ -21,13 +21,16 @@
 | `engine/typewriter.js`     | Token 流式输出（typeText、appendHTMLTypedTo）                                |
 | `engine/sheet.js`          | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo）                  |
 | `engine/player.js`         | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）              |
+| `engine/scroll-nav.js`     | 快速滚动按钮（↑↓）——按 turn 跳转对话消息；`initScrollNav`/`rebuildScrollNav` 由 `player.js` import；内含 `isTblFullscreen` 状态感知，全屏时禁用滚动 |
+| `engine/controls-speed.js` | 速度滑块绑定（IIFE，非 ES module）：监听 `#ctrlSpeedSlider`，同步 `scenario.playback.tokensPerSecond`，更新 `#dcSpeedRoValue` 显示；含重播按钮 `#ctrlTweakReload` |
+| `engine/controls-stepper.js` | 步进控制绑定（IIFE）：`#ctrlPrevStep`/`#ctrlAutoStep`/`#ctrlNextStep` 绑定到 `player.js` 导出的 `directorPrevStep`/`directorNextStep`/`toggleDirectorAuto` |
 | `engine/ask-question.js`   | 问答卡片渲染与交互（单选/多选/排序题、拖拽排序、状态管理、事件绑定）                          |
 | `styles/ask-question.css`  | 问答卡片样式（卡片容器、选项行、排序拖拽手柄、导航按钮、输入栏、步骤指示器、玻璃按钮系统）            |
 | `icons-inline.js`          | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取**                                   |
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
 
-> **速度控制**：输出速度变量为 `scenario.playback.tokensPerSecond`，默认值 `200`。读取入口为 `engine/core.js` 的 `currentTokensPerSecond()`。UI 控件在 `index.html` 的 `#ctrlSpeedSlider`（range slider，20~1000，步进 10），当前值显示在 `#ctrlSpeedValue`。`typewriter.js` 用 `typeIntervalForChunk()` 实时读取该值；`core.js` 的 `playbackDelay()` 也按 `200 / tps` 缩放 `frameDelay` 和 `stepDelay`，所以调速对打字速度和步进间隔同时生效。
+> **速度控制**：输出速度变量为 `scenario.playback.tokensPerSecond`，默认值 `200`。读取入口为 `engine/core.js` 的 `currentTokensPerSecond()`。UI 控件在 `index.html` 的 `#ctrlSpeedSlider`（range slider，5~1500，步进 5），当前值显示在 `#dcSpeedRoValue`。绑定逻辑在 `engine/controls-speed.js`（IIFE，随 `player.js` 模块加载后执行）。`typewriter.js` 用 `typeIntervalForChunk()` 实时读取该值；`core.js` 的 `playbackDelay()` 也按 `200 / tps` 缩放 `frameDelay` 和 `stepDelay`，所以调速对打字速度和步进间隔同时生效。
 
 > **本地开发**：使用 `python3 -m http.server 8080` 或 VS Code Live Server，通过 `http://localhost:8080` 访问，不要直接双击 HTML（`engine/` 模块用 ES Module，`file://` 协议不支持）。
 
@@ -59,7 +62,7 @@
 | 全屏展开样式 | `styles/markdown.css` | 第397行起（`.tbl-fullscreen-overlay` 全屏浮层、`.tbl-landscape` 横屏模式） |
 | 桌面端横屏 | `styles/markdown.css` | `.phone-shell.tbl-landscape`：手机壳变为 852×393，隐藏状态栏/对话流/输入框 |
 | 移动端全屏 | `styles/markdown.css` | `html:not(.force-desktop) .phone-shell.tbl-landscape`：竖向全屏，不旋转 |
-| 全屏 JS 交互 | **当前未绑定** | `tbl-maximize` 按钮的点击事件尚未实现，需在 `engine/player.js` 或 `engine/markdown.js` 中绑定 |
+| 全屏 JS 交互 | `index.html` `<script>` 块 | `tbl-maximize` 点击事件在 `index.html` 底部的内联 `<script>` 中实现（非 engine 文件）；支持桌面端横屏（`tbl-landscape`）+ 移动端全屏（`tbl-mobile`/`tbl-mobile-portrait`/`tbl-mobile-landscape`）；监听 `orientationchange` / `visualViewport.resize` 自动同步方向 |
 
 ### 执行区间距架构约束（conversation）
 
@@ -222,7 +225,7 @@ git push
 bash PAGES/deploy-pages.sh
 ```
 
-部署脚本会收集 19 个文件（index.html、engine/*.js、styles/*.css 等）打包上传。全文本文件，无需 base64 编码。
+部署脚本会收集 27 个文件（index.html、engine/*.js、styles/*.css 等）打包上传。全文本文件，无需 base64 编码。
 
 另外也有 Python 版可直接调用：
 

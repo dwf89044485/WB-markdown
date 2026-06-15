@@ -1,6 +1,6 @@
 #!/bin/bash
 # 部署当前项目到 pages.woa.com
-# 使用: ./scripts/deploy-pages.sh
+# 使用: ./PAGES/deploy-pages.sh
 
 # 如果 OA_PAGES_API_KEY 未设置，尝试从 ~/.zshrc 读取
 if [ -z "$OA_PAGES_API_KEY" ]; then
@@ -14,7 +14,7 @@ fi
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-python3 "$ROOT_DIR/scripts/deploy-pages.py"
+python3 "$ROOT_DIR/PAGES/deploy-pages.py"
 
 curl -s -X PUT \
   -H "X-Api-Key: $OA_PAGES_API_KEY" \

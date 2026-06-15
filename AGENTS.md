@@ -219,7 +219,7 @@ git push
 用户说 **"更新pages"** 时，立即执行部署脚本，不等用户确认：
 
 ```bash
-bash scripts/deploy-pages.sh
+bash PAGES/deploy-pages.sh
 ```
 
 部署脚本会收集 19 个文件（index.html、engine/*.js、styles/*.css 等）打包上传。全文本文件，无需 base64 编码。
@@ -227,7 +227,7 @@ bash scripts/deploy-pages.sh
 另外也有 Python 版可直接调用：
 
 ```bash
-python3 scripts/deploy-pages.py && \
+python3 PAGES/deploy-pages.py && \
 curl -X PUT https://pages.woa.com/api/sites/workbuddy-markdown.pages.woa.com \
   -H "X-Api-Key: $OA_PAGES_API_KEY" \
   -H "Content-Type: application/json" \

@@ -26,6 +26,7 @@
 <script src="./commit-hash.js"></script>
 </head>
 <body>
+<div class="paper-bg" aria-hidden="true"></div>
 <div class="layout-main">
 <div class="left-area">
 <div class="phone-shell">
@@ -272,7 +273,6 @@
 </div><!-- /layout-main -->
 
 <script src="./scenario.js"></script>
-<script src="./design-notes.js"></script>
 <script src="./icons-inline.js"></script>
 <script src="./vendor/Sortable.min.js"></script>
 <script type="module" src="./engine/player.js"></script>
@@ -498,6 +498,53 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       }
     }
   });
+})();
+</script>
+<script>
+/* ── 网格背景对齐手机壳四边 ────────────────────────────── */
+(function(){
+  function alignPhoneGrid(){
+    var bg=document.querySelector('.paper-bg');
+    var phone=document.querySelector('.phone-shell');
+    if(!bg||!phone)return;
+    var bgR=bg.getBoundingClientRect();
+    var pR=phone.getBoundingClientRect();
+    var left=pR.left-bgR.left;    // phone left edge relative to .paper-bg
+    var top=pR.top-bgR.top;       // phone top edge relative to .paper-bg
+    var w=pR.width; var h=pR.height;
+
+    // 宽度分3等份, 高度分7等份 — 格子约 131×122，接近调用 121
+    var cw=w/3, ch=h/7;
+
+    // ── 内部网格 (无边框线, repeat 不叠影) ──
+    var lines='';
+    var i;
+    for(i=1;i<3;i++){ var x=i*cw;
+      lines+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'; }
+    for(i=1;i<7;i++){ var y=i*ch;
+      lines+='<line x1="0" y1="'+y+'" x2="'+w.toFixed(1)+'" y2="'+y+'" stroke="black" stroke-width="0.5"/>'; }
+    var inside='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w.toFixed(1)+' '+h.toFixed(1)+'">'+lines+'</svg>';
+
+    // ── 四边线 (no-repeat, 正好划在demo四条边上) ──
+    var edge='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w.toFixed(1)+' '+h.toFixed(1)+'">'+
+      '<line x1="0" y1="0" x2="0" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'+
+      '<line x1="'+w.toFixed(1)+'" y1="0" x2="'+w.toFixed(1)+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'+
+      '<line x1="0" y1="0" x2="'+w.toFixed(1)+'" y2="0" stroke="black" stroke-width="0.5"/>'+
+      '<line x1="0" y1="'+h.toFixed(1)+'" x2="'+w.toFixed(1)+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5"/>'+
+      '</svg>';
+
+    bg.style.setProperty('--grid-inner-svg','url(data:image/svg+xml,'+encodeURIComponent(inside)+')');
+    bg.style.setProperty('--grid-edge-svg', 'url(data:image/svg+xml,'+encodeURIComponent(edge) +')');
+    bg.style.setProperty('--grid-w',w.toFixed(1)+'px');
+    bg.style.setProperty('--grid-h',h.toFixed(1)+'px');
+    bg.style.setProperty('--grid-offset-x',left+'px');
+    bg.style.setProperty('--grid-offset-y',top+'px');
+  }
+  alignPhoneGrid();
+  window.addEventListener('resize',alignPhoneGrid);
+  var ro=new ResizeObserver(alignPhoneGrid);
+  var shell=document.querySelector('.phone-shell');
+  if(shell)ro.observe(shell);
 })();
 </script>
 </body>

@@ -1110,6 +1110,8 @@ function initializePlayback() {
   setupNavMeta();
   resetPlaybackDom();
   renderStaticPreChat();
+  // 重置滚动到底部，避免 renderStaticPreChat 设置的 scrollTop 阻塞后续播放过程的自动滚动
+  scrollToBottom();
   renderDesignNotes(currentDirectorIndex);
   directorTimeline = buildDirectorTimeline();
   updateDirectorControls();

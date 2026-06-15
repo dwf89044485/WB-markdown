@@ -266,13 +266,13 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   if (options.customRenderer) {
     const body = $('#sheetBody');
     body.innerHTML = '';
+    options.customRenderer(body);
     resetSheetHeight();
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     if (renderToken !== sheetRenderToken) return;
     ov.className = 'sheet-overlay vis show';
-    sheetOpen = true;
     return;
   }
 
@@ -282,7 +282,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (renderToken !== sheetRenderToken) return;
       ov.className = 'sheet-overlay vis show';
-      sheetOpen = true;
     }));
     return;
   }
@@ -312,7 +311,6 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   if (renderToken !== sheetRenderToken) return;
   ov.className = 'sheet-overlay vis show';
-  sheetOpen = true;
 
   // Running: replay animations; completed: render final static content immediately
   await streamSheetContent(frames, baseline, { animated: replay, renderToken });

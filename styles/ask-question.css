@@ -90,7 +90,7 @@
 .aq-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 }
 
 .aq-nav-btn {
@@ -122,6 +122,9 @@
   font-size: 14px;
   line-height: var(--aq-line-height);
   color: var(--aq-text);
+  width: 48px;
+  text-align: center;
+  display: inline-block;
 }
 
 .aq-close-btn {

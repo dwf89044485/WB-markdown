@@ -1136,11 +1136,13 @@ export async function goToStep(targetStep) {
   }
 
   // targetStep > currentDirectorIndex：从当前位置快进到目标
+  const safeTarget = Math.min(targetStep, directorTimeline.length - 1);
   pauseRequested = false;
   autoPlaying = true;
 
-  // 等到达目标 step
-  while (currentDirectorIndex < targetStep) {
+  // 等到达目标 step（最多等 8s 超时兜底）
+  const deadline = Date.now() + 8000;
+  while (currentDirectorIndex < safeTarget && Date.now() < deadline) {
     await sleep(50);
   }
 }

@@ -1,8 +1,12 @@
 # Multi-stage build for static site
 FROM nginx:alpine AS runner
 
-# Remove default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
+# Remove default nginx static assets and config
+RUN rm -rf /usr/share/nginx/html/* && \
+    rm -f /etc/nginx/conf.d/default.conf
+
+# Copy custom nginx config (port 8000, gzip, security headers, cache)
+COPY .with/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy all static assets
 COPY . /usr/share/nginx/html/
@@ -11,11 +15,10 @@ COPY . /usr/share/nginx/html/
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Set proper permissions
-RUN chown -R appuser:appgroup /usr/share/nginx/html
-
-# Update nginx config to listen on port 8000
-RUN sed -i 's/listen       80;/listen       8000;/g' /etc/nginx/conf.d/default.conf && \
-    sed -i 's/listen  \[::\]:80;/listen  [::]:8000;/g' /etc/nginx/conf.d/default.conf
+RUN chown -R appuser:appgroup /usr/share/nginx/html && \
+    chown -R appuser:appgroup /var/cache/nginx && \
+    chown -R appuser:appgroup /var/log/nginx && \
+    chown -R appuser:appgroup /etc/nginx/conf.d
 
 EXPOSE 8000
 

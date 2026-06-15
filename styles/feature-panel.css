@@ -1,0 +1,203 @@
+/* ============================================================
+   FEATURE PANEL — 右侧交互说明栏样式
+   ============================================================ */
+
+/* 容器 */
+.fp-root{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
+  color:#1d1d1f;
+}
+
+/* 顶部导航 */
+.fp-nav{
+  flex-shrink:0;
+  margin-bottom:24px;
+  position:relative;
+}
+.fp-nav-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 16px;
+  font-size:15px;
+  font-weight:500;
+  color:#1d1d1f;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.12);
+  border-radius:10px;
+  cursor:pointer;
+  user-select:none;
+  transition:background .15s ease;
+}
+.fp-nav-trigger:hover{ background:#f5f5f7; }
+.fp-nav-trigger::after{
+  content:'';
+  width:8px;height:8px;
+  border-right:1.5px solid currentColor;
+  border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg) translateY(-2px);
+  margin-left:4px;
+}
+.fp-nav-menu{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  min-width:240px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:10px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.08);
+  padding:6px;
+  display:none;
+  z-index:100;
+}
+.fp-nav-menu.is-open{ display:block; }
+.fp-nav-item{
+  display:block;
+  width:100%;
+  padding:10px 12px;
+  font-size:14px;
+  text-align:left;
+  border:none;
+  background:transparent;
+  border-radius:6px;
+  cursor:pointer;
+  color:#1d1d1f;
+}
+.fp-nav-item:hover{ background:#f5f5f7; }
+.fp-nav-item.is-active{ background:#eef0f3; font-weight:500; }
+.fp-nav-divider{
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin:4px 8px;
+}
+
+/* 内容区 */
+.fp-content{
+  flex:1;
+  min-height:0;
+}
+.fp-content h1{
+  font-size:32px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin-bottom:8px;
+}
+.fp-content h2{
+  font-size:22px;
+  font-weight:600;
+  margin:32px 0 12px;
+  letter-spacing:-0.005em;
+}
+.fp-content h3{
+  font-size:16px;
+  font-weight:600;
+  margin:16px 0 8px;
+}
+.fp-content p{
+  font-size:14px;
+  line-height:1.7;
+  color:#3a3a3c;
+  margin-bottom:10px;
+}
+.fp-content ul{
+  margin:8px 0 12px 18px;
+}
+.fp-content li{
+  font-size:14px;
+  line-height:1.7;
+  color:#3a3a3c;
+  margin-bottom:4px;
+}
+.fp-content pre{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
+  font-size:12.5px;
+  line-height:1.6;
+  background:#f5f5f7;
+  border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;
+  padding:12px 16px;
+  overflow-x:auto;
+  white-space:pre;
+}
+.fp-content code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
+  font-size:0.92em;
+  background:rgba(0,0,0,0.05);
+  padding:1px 6px;
+  border-radius:4px;
+}
+.fp-content section{
+  margin-bottom:24px;
+}
+.fp-subtitle{
+  font-size:15px;
+  color:#86868b;
+  margin-bottom:24px;
+}
+.fp-meta{
+  font-size:12px;
+  color:#86868b;
+  margin-top:8px;
+}
+
+/* 锚点跳转按钮 */
+.fp-anchor-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:500;
+  color:#1d1d1f;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.12);
+  border-radius:8px;
+  cursor:pointer;
+  margin:6px 8px 6px 0;
+  transition:all .15s ease;
+}
+.fp-anchor-btn:hover{
+  background:#f5f5f7;
+  border-color:rgba(0,0,0,0.25);
+}
+.fp-anchor-btn::after{
+  content:'→';
+  margin-left:2px;
+  color:#86868b;
+}
+.fp-anchor-row{
+  display:flex;
+  flex-wrap:wrap;
+  margin:8px -4px;
+}
+
+/* 占位提示 */
+.fp-placeholder-block{
+  background:#f5f5f7;
+  border-left:3px solid #d1d1d6;
+  padding:14px 18px;
+  border-radius:6px;
+  margin:16px 0;
+}
+.fp-placeholder-label{
+  font-size:12px;
+  color:#86868b;
+  font-style:italic;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.fp-placeholder-block p{
+  margin-bottom:0;
+}
+
+.fp-lead{
+  font-size:16px;
+  color:#3a3a3c;
+  line-height:1.6;
+  margin-bottom:16px;
+}

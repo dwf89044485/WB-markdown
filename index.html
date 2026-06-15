@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="./styles/sheet.css">
 <link rel="stylesheet" href="./styles/demo-controls.css">
 <link rel="stylesheet" href="./styles/ask-question.css">
+<link rel="stylesheet" href="./styles/feature-panel.css">
 <script>
 (function(){
   var params = new URLSearchParams(location.search);
@@ -266,9 +267,7 @@
 </div> <!-- /left-area -->
 
 <div class="design-notes" aria-label="交互设计说明">
-  <div class="design-notes-inner">
-    <span class="design-notes-placeholder">交互设计说明</span>
-  </div>
+  <div class="design-notes-inner"></div>
 </div>
 </div><!-- /layout-main -->
 
@@ -276,6 +275,14 @@
 <script src="./icons-inline.js"></script>
 <script src="./vendor/Sortable.min.js"></script>
 <script type="module" src="./engine/player.js"></script>
+<script type="module">
+  import { initFeaturePanel } from './engine/feature-panel.js';
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFeaturePanel);
+  } else {
+    initFeaturePanel();
+  }
+</script>
 <script>
 var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 1.58943 0.657074)" d="M3.7804 11.4101Q3.1921 11.4035 2.9264 11.3839Q2.2536 11.3344 1.8193 11.1371Q0.7581 10.6552 0.2762 9.5941Q0.079 9.1598 0.0294 8.487Q0 8.0876 0 6.9589L0 4.8155Q0 3.3828 0.0469 2.8798Q0.126 2.0311 0.4397 1.5078Q0.84 0.84 1.5078 0.4397Q2.0311 0.126 2.8798 0.0469Q3.3828 0 4.8155 0L6.0922 0Q6.7465 0 6.9587 0.0294Q7.9864 0.1715 8.7229 0.908Q9.4594 1.6445 9.6016 2.6722Q9.6309 2.8845 9.6309 3.5387L8.6137 3.5387C10.3989 3.5399 11.3221 3.5643 11.9644 4.0633C12.1299 4.1918 12.2788 4.3407 12.4073 4.5062C12.9319 5.1815 12.9319 6.1672 12.9319 8.1386L12.9319 9.2787C12.9319 11.2501 12.9319 12.2358 12.4073 12.9111C12.2788 13.0766 12.1299 13.2255 11.9644 13.354C11.2891 13.8786 10.3034 13.8786 8.332 13.8786C6.3605 13.8786 5.3748 13.8786 4.6995 13.354C4.534 13.2255 4.3852 13.0766 4.2566 12.9111C3.9691 12.5411 3.8392 12.0778 3.7804 11.4101ZM3.7346 10.205Q2.6043 10.1757 2.3155 10.0445Q1.6645 9.7489 1.3689 9.0979Q1.2 8.7261 1.2 6.9589L1.2 4.8155Q1.2 3.4386 1.2417 2.9911Q1.2955 2.4141 1.4689 2.1248Q1.7148 1.7148 2.1248 1.4689Q2.4141 1.2955 2.9911 1.2417Q3.4386 1.2 4.8155 1.2L6.0922 1.2Q6.6639 1.2 6.7943 1.218Q7.4229 1.305 7.8744 1.7565Q8.326 2.208 8.4129 2.8366Q8.4309 2.967 8.4309 3.5387L8.332 3.5387C6.3605 3.5387 5.3748 3.5387 4.6995 4.0633C4.534 4.1918 4.3852 4.3407 4.2566 4.5062C3.732 5.1815 3.732 6.1672 3.732 8.1386L3.732 9.2787C3.732 9.615 3.732 9.9226 3.7346 10.205ZM4.932 8.1386L4.932 9.2787Q4.932 10.9357 4.9899 11.4455Q5.0502 11.9767 5.2042 12.1749Q5.3054 12.3052 5.4357 12.4064Q5.6339 12.5604 6.1651 12.6207Q6.6749 12.6786 8.332 12.6786Q9.989 12.6786 10.4988 12.6207Q11.03 12.5604 11.2282 12.4064Q11.3585 12.3052 11.4597 12.1749Q11.6137 11.9767 11.674 11.4455Q11.7319 10.9357 11.7319 9.2787L11.7319 8.1386Q11.7319 6.4816 11.674 5.9718Q11.6137 5.4406 11.4597 5.2424Q11.3585 5.1121 11.2282 5.0109Q11.03 4.8569 10.4988 4.7966Q9.989 4.7387 6.1651 4.7966Q5.6339 4.8569 5.4357 5.0109Q5.3054 5.1121 5.2042 5.2424Q5.0502 5.4406 4.9899 5.9718Q4.932 6.4816 4.932 8.1386Z" fill-rule="evenodd"/></svg>';
   const CHECK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
@@ -501,50 +508,56 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 })();
 </script>
 <script>
-/* ── 网格背景对齐手机壳四边 ────────────────────────────── */
+/* ── 网格背景：以手机壳四边为锚点，按 Figma 设计稿间距绘制 ── */
 (function(){
-  function alignPhoneGrid(){
-    var bg=document.querySelector('.paper-bg');
-    var phone=document.querySelector('.phone-shell');
-    if(!bg||!phone)return;
-    var bgR=bg.getBoundingClientRect();
-    var pR=phone.getBoundingClientRect();
-    var left=pR.left-bgR.left;    // phone left edge relative to .paper-bg
-    var top=pR.top-bgR.top;       // phone top edge relative to .paper-bg
-    var w=pR.width; var h=pR.height;
+  // Figma 设计参数（@1x）：竖线间距 131px，横线间距 142px
+  var COL_GAP = 131;
+  var ROW_GAP = 142;
+  var COLOR   = '#BBBAB0';
+  var DASH    = '8 8';
 
-    // 宽度分3等份, 高度分7等份 — 格子约 131×122，接近调用 121
-    var cw=w/3, ch=h/7;
+  function r(n){ return Math.round(n * 10) / 10; }
 
-    // ── 内部网格 (无边框线, repeat 不叠影) ──
-    var lines='';
-    var i;
-    for(i=1;i<3;i++){ var x=i*cw;
-      lines+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'; }
-    for(i=1;i<7;i++){ var y=i*ch;
-      lines+='<line x1="0" y1="'+y+'" x2="'+w.toFixed(1)+'" y2="'+y+'" stroke="black" stroke-width="0.5"/>'; }
-    var inside='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w.toFixed(1)+' '+h.toFixed(1)+'">'+lines+'</svg>';
+  function buildGrid(){
+    var bg    = document.querySelector('.paper-bg');
+    var phone = document.querySelector('.phone-shell');
+    if(!bg || !phone) return;
 
-    // ── 四边线 (no-repeat, 正好划在demo四条边上) ──
-    var edge='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w.toFixed(1)+' '+h.toFixed(1)+'">'+
-      '<line x1="0" y1="0" x2="0" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'+
-      '<line x1="'+w.toFixed(1)+'" y1="0" x2="'+w.toFixed(1)+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5" stroke-dasharray="7.56 7.56"/>'+
-      '<line x1="0" y1="0" x2="'+w.toFixed(1)+'" y2="0" stroke="black" stroke-width="0.5"/>'+
-      '<line x1="0" y1="'+h.toFixed(1)+'" x2="'+w.toFixed(1)+'" y2="'+h.toFixed(1)+'" stroke="black" stroke-width="0.5"/>'+
-      '</svg>';
+    var bgR = bg.getBoundingClientRect();
+    var pR  = phone.getBoundingClientRect();
 
-    bg.style.setProperty('--grid-inner-svg','url(data:image/svg+xml,'+encodeURIComponent(inside)+')');
-    bg.style.setProperty('--grid-edge-svg', 'url(data:image/svg+xml,'+encodeURIComponent(edge) +')');
-    bg.style.setProperty('--grid-w',w.toFixed(1)+'px');
-    bg.style.setProperty('--grid-h',h.toFixed(1)+'px');
-    bg.style.setProperty('--grid-offset-x',left+'px');
-    bg.style.setProperty('--grid-offset-y',top+'px');
+    // phone left/top 相对于 .paper-bg 左上角
+    var px = pR.left - bgR.left;
+    var py = pR.top  - bgR.top;
+    var cw = bgR.width;
+    var ch = bgR.height;
+
+    var lines = '';
+    var attr = 'stroke="'+COLOR+'" stroke-width="1" stroke-dasharray="'+DASH+'"';
+    var x, y;
+
+    // 竖线：从手机左边起，向左向右各扩展，间距 COL_GAP
+    for(x = px; x >= -1; x -= COL_GAP)
+      lines += '<line x1="'+r(x)+'" y1="0" x2="'+r(x)+'" y2="'+r(ch)+'" '+attr+'/>';
+    for(x = px + COL_GAP; x <= cw + 1; x += COL_GAP)
+      lines += '<line x1="'+r(x)+'" y1="0" x2="'+r(x)+'" y2="'+r(ch)+'" '+attr+'/>';
+
+    // 横线：从手机顶边起，向上向下各扩展，间距 ROW_GAP
+    for(y = py; y >= -1; y -= ROW_GAP)
+      lines += '<line x1="0" y1="'+r(y)+'" x2="'+r(cw)+'" y2="'+r(y)+'" '+attr+'/>';
+    for(y = py + ROW_GAP; y <= ch + 1; y += ROW_GAP)
+      lines += '<line x1="0" y1="'+r(y)+'" x2="'+r(cw)+'" y2="'+r(y)+'" '+attr+'/>';
+
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(cw)+'" height="'+r(ch)+'">'
+            + lines + '</svg>';
+    bg.style.setProperty('--grid-svg', 'url(data:image/svg+xml,'+encodeURIComponent(svg)+')');
   }
-  alignPhoneGrid();
-  window.addEventListener('resize',alignPhoneGrid);
-  var ro=new ResizeObserver(alignPhoneGrid);
-  var shell=document.querySelector('.phone-shell');
-  if(shell)ro.observe(shell);
+
+  buildGrid();
+  window.addEventListener('resize', buildGrid);
+  var ro = new ResizeObserver(buildGrid);
+  var shell = document.querySelector('.phone-shell');
+  if(shell) ro.observe(shell);
 })();
 </script>
 </body>

@@ -21,5 +21,12 @@ COMMIT_HASH
 
 # Test results
 test-results/
-.superpowers/
+
+# Screenshots
+screenshots/
+
+# Test tool artifacts
+.playwright-cli/
+
+# AI brainstorming sessions
 .superpowers/

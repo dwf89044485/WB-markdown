@@ -115,7 +115,7 @@ html.force-standalone .composer,
 html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
 
 /* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
-@media (max-width:900px){
+@media (max-width:599px){
   html:not(.force-desktop) body{
     display:block;
     padding:0;
@@ -141,6 +141,46 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
   html:not(.force-desktop) .layout-main{padding:0;gap:0;}
+}
+
+/* ── 双栏档布局（屏宽 ≥ 600px）─────────────────────── */
+@media (min-width:600px){
+  body{
+    /* 让横滚出现：去掉居中、改为左对齐 */
+    display:block;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:0;
+  }
+  .layout-main{
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    /* 总宽至少 1440：左 600 + 右 840 */
+    min-width:1440px;
+    width:max-content;
+    height:100dvh;
+    padding:0;
+    gap:0;
+  }
+  .left-area{
+    width:600px;
+    flex:0 0 600px;
+    height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 25px;  /* 25px 让 550px 手机壳在 600px 区里居中 */
+  }
+  .design-notes{
+    flex:1 1 840px;
+    min-width:840px;
+    height:100dvh;
+    overflow-y:auto;   /* 右侧栏内部可纵向滚 */
+    padding:32px 40px;
+    background:#fafafa;
+    border-left:1px solid rgba(0,0,0,0.06);
+  }
 }
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */
@@ -174,7 +214,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-background:#FF5722;
+background:#3D5AFE;
   flex-shrink:0;
 }
 .status-time{

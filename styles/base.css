@@ -185,8 +185,9 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */
 .phone-shell{
-  width:393px;height:852px;background:#fafafa;border-radius:47px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.10),0 0 0 6px #000,inset 0 0 0 1.5px rgba(255,255,255,0.55);
+  width:393px;height:852px;background:#fafafa;border-radius:0;
+  box-shadow:none;
+  border:1px solid rgba(0,0,0,0.08);
   display:flex;flex-direction:column;overflow:hidden;position:relative;
   transition:transform .35s cubic-bezier(.32,.72,0,1);
 }
@@ -214,7 +215,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-background:#34C759;
+  background:#FF9500;
   flex-shrink:0;
 }
 .status-time{

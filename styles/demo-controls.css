@@ -4,6 +4,8 @@
 
 /* ── Main layout: phone top, panel below ──────────────────── */
 .layout-main{
+  position:relative;
+  z-index:1;
   width:100%;
   display:flex;
   flex-direction:row;
@@ -23,18 +25,47 @@
   gap:24px;
 }
 
+/* ── Paper background panel (paper.design style) ───────── */
+/* 全屏高的左侧面板：覆盖 .left-area + 其左侧 padding，page 顶/底/左到边 */
+.paper-bg{
+  position:fixed;
+  top:0;
+  left:0;
+  width:618px;                       /* body 24 + layout-main 44 + .left-area 550 */
+  height:100vh;
+  background-image:url("../assets/paper/texture.png");
+  background-repeat:repeat;
+  z-index:0;
+  pointer-events:none;
+}
+.paper-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:var(--grid-svg, none);
+  background-size:cover;
+  background-repeat:no-repeat;
+  opacity:0.6;
+  pointer-events:none;
+}
+.paper-bg::after{
+  display:none;
+}
+
 /* ── Panel container ───────────────────────────────────────── */
 .demo-controls{
   --dc-control-height:30px;
   --dc-control-radius:10px;
-  width:393px;
+  position:fixed;
   display:flex;
   flex-direction:column;
   gap:20px;
   padding:20px 20px 30px;
   background:#fff;
-  border-radius:20px;
-  box-shadow:0 4px 20px rgba(0,0,0,.08);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:0;
+  box-shadow:none;
+  z-index:3;
   font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
 }
 
@@ -483,9 +514,9 @@
   flex:1;
   min-width:280px;
   height:852px;
-  background:#fff;
-  border-radius:20px;
-  border:1px solid #ececec;
+  background:transparent;
+  border-radius:0;
+  border:none;
   display:flex;
   overflow:hidden;
 }

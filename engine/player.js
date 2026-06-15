@@ -6,7 +6,7 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleep, sleepDelay, playback, currentTokensPerSecond, CANCELLED,
-  scrollToBottom
+  scrollToBottom, initScrollGuard
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
@@ -569,6 +569,7 @@ function resetPlaybackDom() {
   if (mainActions) mainActions.innerHTML = '';
   if (execArea) execArea.className = 'exec-area open is-hidden';
   setComposerGenerating(false);
+  initScrollGuard();
   scrollToBottom();
 }
 

@@ -53,10 +53,24 @@ export function currentTokensPerSecond() {
   return Math.min(1500, Math.max(5, Math.round(playback('tokensPerSecond', 200))));
 }
 
+// 用户主动往上翻的标记（通过 scroll 事件追踪）
+let _sbUserAway = false;
+let _sgInited = false;
+
+export function initScrollGuard() {
+  if (_sgInited) return;
+  const c = document.querySelector('#conv');
+  if (!c) return;
+  c.addEventListener('scroll', () => {
+    _sbUserAway = c.scrollTop + c.clientHeight < c.scrollHeight - 80;
+  }, { passive: true });
+  _sgInited = true;
+}
+
 export function scrollToBottom() {
   const c = document.querySelector('#conv');
   if (!c) return;
-  // 用户主动往上翻了（距底部超过 80px），不强制滚动
-  if (c.scrollTop + c.clientHeight < c.scrollHeight - 80) return;
+  // 用户主动往上翻过才拦截，否则一直跟随底部
+  if (_sbUserAway) return;
   c.scrollTop = c.scrollHeight;
 }

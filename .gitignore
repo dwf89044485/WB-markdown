@@ -8,8 +8,7 @@ server.log
 
 # IDE / tool directories
 .codebuddy/
-.with/*
-!.with/Dockerfile
+.with/
 
 # Backups
 *.old

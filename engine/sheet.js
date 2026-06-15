@@ -270,6 +270,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     resetSheetHeight();
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';
+    ov.style.pointerEvents = 'auto';
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     if (renderToken !== sheetRenderToken) return;
     ov.className = 'sheet-overlay vis show';
@@ -279,6 +280,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   if (!frameRefs) {
     const ov = $('#overlay');
     ov.className = 'sheet-overlay vis';
+    ov.style.pointerEvents = 'auto';
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (renderToken !== sheetRenderToken) return;
       ov.className = 'sheet-overlay vis show';
@@ -307,6 +309,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   // Show sheet overlay (body starts empty, height at 40%)
   resetSheetHeight();
   const ov = $('#overlay');
+  ov.style.pointerEvents = 'auto';
   ov.className = 'sheet-overlay vis';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   if (renderToken !== sheetRenderToken) return;
@@ -327,6 +330,7 @@ export function closeSheet() {
   sheetRenderToken += 1;
   const ov = $('#overlay');
   resetSheetHeight();
+  ov.style.pointerEvents = 'none';
   ov.className = 'sheet-overlay vis';
   ov.addEventListener('transitionend', function h() {
     ov.className = 'sheet-overlay';
@@ -335,33 +339,12 @@ export function closeSheet() {
 }
 
 export function maybeClose(e) {
-  // 兼容 overlay onclick（仅对 sheet 上 pointer-events:auto 的子元素冒泡生效）
+  // 点击遮罩背景关闭 sheet（overlay pointer-events:auto 时 overlay onclick 触发）
   const sheet = $('#sheet');
   if (!sheet) return;
   if (sheet.contains(e.target)) return;
   closeSheet();
 }
-
-// ── Overlay 有 pointer-events:none，点击遮罩会穿透到底层
-//    因此用 document 级 mousedown/touchstart 来捕获遮罩点击
-document.addEventListener('mousedown', function onMaskClick(e) {
-  const ov = $('#overlay');
-  if (!ov || !ov.classList.contains('show')) return;
-  const sheet = $('#sheet');
-  if (!sheet) return;
-  if (sheet.contains(e.target)) return;
-  if (e.target.closest('.sheet-close-btn')) return;
-  closeSheet();
-});
-document.addEventListener('touchstart', function onMaskTouch(e) {
-  const ov = $('#overlay');
-  if (!ov || !ov.classList.contains('show')) return;
-  const sheet = $('#sheet');
-  if (!sheet) return;
-  if (sheet.contains(e.target)) return;
-  if (e.target.closest('.sheet-close-btn')) return;
-  closeSheet();
-}, { passive: true });
 
 // ── Drag interaction ──────────────────────────────────────
 // 40%: 面板任意位置操控——上拖展开、下拖关闭

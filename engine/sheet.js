@@ -335,8 +335,11 @@ export function closeSheet() {
 }
 
 export function maybeClose(e) {
-  // 保留兼容，但不再依赖 overlay 点击
-  if (e.target === $('#overlay')) closeSheet();
+  // 点击遮罩背景（overlay 上 sheet 以外的区域）关闭 sheet
+  const sheet = $('#sheet');
+  if (!sheet) return;
+  if (sheet.contains(e.target)) return;
+  closeSheet();
 }
 
 // ── Drag interaction ──────────────────────────────────────

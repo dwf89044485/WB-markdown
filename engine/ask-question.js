@@ -163,6 +163,100 @@ function updateActionButton() {
   btn.className = 'aq-action-btn ' + (label === '跳过' ? 'is-skip' : 'is-action');
 }
 
+// ── 静态快照渲染（供右侧文档面板图文并茂用）─────────
+// 纯函数，返回完整 HTML 字符串，不操作 DOM，不绑定事件
+// 复用同一套 CSS class → 改样式时自动同步
+
+function renderStaticAskQuestion(questions, stepIndex, answers, options = {}) {
+  const { hideInput = false, hideHeader = false } = options;
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+  const total = questions.length;
+
+  // 题型 badge
+  let badgeLabel = '';
+  if (q.type === 'single') badgeLabel = '单选';
+  else if (q.type === 'multiple') badgeLabel = '多选';
+  else if (q.type === 'sort') badgeLabel = '排序';
+
+  // 选项列表
+  let optionsHtml = '';
+  if (q.type === 'sort') {
+    a.selected.forEach((optIdx, posIdx) => {
+      optionsHtml += createStaticOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, false);
+    });
+  } else {
+    q.options.forEach((opt, i) => {
+      const isSelected = q.type === 'single' ? a.selected === i : a.selected.includes(i);
+      optionsHtml += createStaticOptionRow(i, opt, i + 1, q.type, isSelected);
+    });
+  }
+
+  const buttonLabel = getButtonLabel(stepIndex, total, q, a);
+  const buttonClass = buttonLabel === '跳过' ? 'is-skip' : 'is-action';
+  const stepText = `${stepIndex + 1} / ${total}`;
+
+  // 导航箭头
+  const PREV_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const NEXT_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CLOSE_X = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+  const prevDisabled = stepIndex <= 0 ? ' disabled' : '';
+  const nextDisabled = stepIndex >= total - 1 ? ' disabled' : '';
+
+  const headerHtml = hideHeader ? '' : `
+    <div class="aq-header">
+      <div class="aq-nav">
+        <button class="aq-nav-btn"${prevDisabled} type="button" tabindex="-1">${PREV_ARROW}</button>
+        <span class="aq-step-indicator">${stepText}</span>
+        <button class="aq-nav-btn"${nextDisabled} type="button" tabindex="-1">${NEXT_ARROW}</button>
+      </div>
+      <button class="aq-close-btn" type="button" tabindex="-1">${CLOSE_X}</button>
+    </div>`;
+
+  const inputHtml = hideInput ? '' : `
+    <div class="aq-input-bar">
+      <input class="aq-input-field" type="text" readonly placeholder="..." tabindex="-1">
+      <button class="aq-action-btn ${buttonClass}" type="button" tabindex="-1">${buttonLabel}</button>
+    </div>`;
+
+  return `
+    <div class="ask-question-card aq-static">
+      ${headerHtml}
+      <div class="aq-question-area">
+        <span class="aq-badge">${badgeLabel}</span>
+        <span class="aq-question-text">${escapeAQHtml(q.question)}</span>
+      </div>
+      <div class="aq-options">${optionsHtml}</div>
+      ${inputHtml}
+    </div>`;
+}
+
+function createStaticOptionRow(index, text, displayNum, type, isSelected) {
+  const selClass = isSelected ? ' is-selected' : '';
+  const sortClass = type === 'sort' ? ' is-sort' : '';
+
+  let rightHtml = '';
+  if (type === 'single' && isSelected) {
+    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_BLACK_SVG}</span></div>`;
+  } else if (type === 'multiple') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_WHITE_SVG : ''}</span></div>`;
+  } else if (type === 'sort') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-drag-handle">${DRAG_SVG}</span></div>`;
+  } else if (type === 'single' && !isSelected) {
+    rightHtml = '<div class="aq-option-right"></div>';
+  }
+
+  return `
+    <div class="aq-option${selClass}${sortClass}" data-index="${index}">
+      <div class="aq-option-left">
+        <span class="aq-option-num">${displayNum}</span>
+        <span class="aq-option-text">${escapeAQHtml(text)}</span>
+      </div>
+      ${rightHtml}
+    </div>`;
+}
+
 // ── 事件处理函数 ─────────────────────────────────
 function onOptionClick(optionIndex) {
   if (!askState) return;
@@ -479,4 +573,98 @@ function bindAskQuestionEvents() {
   }
 }
 
-export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents };
+// ── 静态快照渲染（供右侧文档面板图文并茂用）─────────
+// 纯函数，返回完整 HTML 字符串，不操作 DOM，不绑定事件
+// 复用同一套 CSS class → 改样式时自动同步
+
+function renderStaticAskQuestion(questions, stepIndex, answers, options = {}) {
+  const { hideInput = false, hideHeader = false } = options;
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+  const total = questions.length;
+
+  // 题型 badge
+  let badgeLabel = '';
+  if (q.type === 'single') badgeLabel = '单选';
+  else if (q.type === 'multiple') badgeLabel = '多选';
+  else if (q.type === 'sort') badgeLabel = '排序';
+
+  // 选项列表
+  let optionsHtml = '';
+  if (q.type === 'sort') {
+    a.selected.forEach((optIdx, posIdx) => {
+      optionsHtml += createStaticOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, false);
+    });
+  } else {
+    q.options.forEach((opt, i) => {
+      const isSelected = q.type === 'single' ? a.selected === i : a.selected.includes(i);
+      optionsHtml += createStaticOptionRow(i, opt, i + 1, q.type, isSelected);
+    });
+  }
+
+  const buttonLabel = getButtonLabel(stepIndex, total, q, a);
+  const buttonClass = buttonLabel === '跳过' ? 'is-skip' : 'is-action';
+  const stepText = `${stepIndex + 1} / ${total}`;
+
+  // 导航箭头
+  const PREV_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const NEXT_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CLOSE_X = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+  const prevDisabled = stepIndex <= 0 ? ' disabled' : '';
+  const nextDisabled = stepIndex >= total - 1 ? ' disabled' : '';
+
+  const headerHtml = hideHeader ? '' : `
+    <div class="aq-header">
+      <div class="aq-nav">
+        <button class="aq-nav-btn"${prevDisabled} type="button" tabindex="-1">${PREV_ARROW}</button>
+        <span class="aq-step-indicator">${stepText}</span>
+        <button class="aq-nav-btn"${nextDisabled} type="button" tabindex="-1">${NEXT_ARROW}</button>
+      </div>
+      <button class="aq-close-btn" type="button" tabindex="-1">${CLOSE_X}</button>
+    </div>`;
+
+  const inputHtml = hideInput ? '' : `
+    <div class="aq-input-bar">
+      <input class="aq-input-field" type="text" readonly placeholder="..." tabindex="-1">
+      <button class="aq-action-btn ${buttonClass}" type="button" tabindex="-1">${buttonLabel}</button>
+    </div>`;
+
+  return `
+    <div class="ask-question-card aq-static">
+      ${headerHtml}
+      <div class="aq-question-area">
+        <span class="aq-badge">${badgeLabel}</span>
+        <span class="aq-question-text">${escapeAQHtml(q.question)}</span>
+      </div>
+      <div class="aq-options">${optionsHtml}</div>
+      ${inputHtml}
+    </div>`;
+}
+
+function createStaticOptionRow(index, text, displayNum, type, isSelected) {
+  const selClass = isSelected ? ' is-selected' : '';
+  const sortClass = type === 'sort' ? ' is-sort' : '';
+
+  let rightHtml = '';
+  if (type === 'single' && isSelected) {
+    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_BLACK_SVG}</span></div>`;
+  } else if (type === 'multiple') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_WHITE_SVG : ''}</span></div>`;
+  } else if (type === 'sort') {
+    rightHtml = `<div class="aq-option-right"><span class="aq-drag-handle">${DRAG_SVG}</span></div>`;
+  } else if (type === 'single' && !isSelected) {
+    rightHtml = '<div class="aq-option-right"></div>';
+  }
+
+  return `
+    <div class="aq-option${selClass}${sortClass}" data-index="${index}">
+      <div class="aq-option-left">
+        <span class="aq-option-num">${displayNum}</span>
+        <span class="aq-option-text">${escapeAQHtml(text)}</span>
+      </div>
+      ${rightHtml}
+    </div>`;
+}
+
+export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion };

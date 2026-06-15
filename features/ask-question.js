@@ -1,9 +1,60 @@
 // ============================================================
-// ASK-QUESTION — AskQuestion 交互设计文档（v1 完整范例）
+// ASK-QUESTION — AskQuestion 交互设计文档（图文并茂版）
 // ============================================================
 // 内容来源：docs/plans/2026-06-15-AskQuestion-交互设计文档.md（v2 已审）
-// 锚点：6 个细粒度（spec 第八节）
+// 快照：由 engine/ask-question.js 的 renderStaticAskQuestion() 实时渲染
+//       改左边组件样式 → 右边文档自动同步
 // ============================================================
+
+import { renderStaticAskQuestion } from '../engine/ask-question.js';
+
+// ── 样例数据（与 scenario.js 中 AskUser 的 questions 一致）──
+const SAMPLE_Q = [
+  { id: 'q1', type: 'single', question: '你希望住宿偏向哪种风格？', options: ['商务酒店', '日式旅馆', '民宿', '青旅'] },
+  { id: 'q2', type: 'multiple', question: '你希望行程包含哪些类型？', options: ['寺庙神社', '自然风光', '购物美食', '文化体验'] },
+  { id: 'q3', type: 'sort',    question: '请按优先级排列你的出行考量', options: ['性价比', '舒适度', '特色体验', '交通便利'] },
+  { id: 'q4', type: 'single',  question: '行程节奏你更偏好哪种？', options: ['紧凑高效', '适中均衡', '悠闲随性', '深度慢游'] },
+];
+
+function defaultAnswers() {
+  return SAMPLE_Q.map(q => ({
+    type: q.type,
+    selected: q.type === 'single' ? null : (q.type === 'sort' ? q.options.map((_, i) => i) : []),
+    customInput: '',
+  }));
+}
+
+// ── 不同状态的 answers ──────────────────────────
+const A = {
+  unanswered:   defaultAnswers(),                                                        // 全未答
+  singleSel:    (() => { const a=defaultAnswers(); a[0].selected=1; return a; })(),      // q1 选第2项
+  multiSel:     (() => { const a=defaultAnswers(); a[1].selected=[0,2]; return a; })(),  // q2 选第1、3项
+  sortReordered:(() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; return a; })(), // 交通便利→顶
+};
+
+// ── 预渲染所有快照 ──────────────────────────────
+const snap = {
+  // §2 构成：显示完整卡片
+  anatomy: renderStaticAskQuestion(SAMPLE_Q, 0, A.singleSel, { hideInput: true }),
+
+  // §3 类型：三种题型并排
+  typeSingle: renderStaticAskQuestion(SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
+  typeMulti:  renderStaticAskQuestion(SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
+  typeSort:   renderStaticAskQuestion(SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+
+  // §4 状态：各种状态对比
+  singleUnselected: renderStaticAskQuestion(SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
+  singleSelected:   renderStaticAskQuestion(SAMPLE_Q, 0, A.singleSel,   { hideHeader: true, hideInput: true }),
+  multiUnselected:  renderStaticAskQuestion(SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
+  multiChecked:     renderStaticAskQuestion(SAMPLE_Q, 1, A.multiSel,    { hideHeader: true, hideInput: true }),
+  sortDefault:      renderStaticAskQuestion(SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+  sortReordered:    renderStaticAskQuestion(SAMPLE_Q, 2, A.sortReordered, { hideHeader: true, hideInput: true }),
+};
+
+// ── 辅助：带标签的快照块 ──────────────────────────
+function labeled(label, html) {
+  return `<div class="fp-snapshot-wrap"><span class="fp-snapshot-label">${label}</span><div class="fp-snapshot">${html}</div></div>`;
+}
 
 // 实际 step 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）
 const STEP_ASK_QUESTION = 2;
@@ -18,7 +69,6 @@ export default {
       until: () => {
         const card = document.querySelector('.ask-question-card');
         if (!card) return false;
-        // 单选：aq-badge 显示"单选"
         const badge = card.querySelector('.aq-badge');
         return badge && badge.textContent.includes('单选');
       },
@@ -29,7 +79,6 @@ export default {
       until: () => {
         const stepIndicator = document.querySelector('.aq-step-indicator');
         if (!stepIndicator) return false;
-        // 等到指示器走到第 2 题（说明刚自动前进过）
         return /\b2\s*\/\s*\d+/.test(stepIndicator.textContent);
       },
       label: '看自动前进效果',
@@ -64,13 +113,14 @@ export default {
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         const hint = document.querySelector('.aq-sort-hint');
-        // 排序题、且引导提示已消失（拖过一次后）
         return badge && badge.textContent.includes('排序') && !hint;
       },
       label: '看拖拽后状态',
     },
   },
-  content: `
+  // getter 确保每次读取都重新计算（不过 feature-panel 只读一次）
+  get content() {
+    return `
     <article class="fp-feature">
       <header class="fp-feature-header">
         <h1>AskQuestion</h1>
@@ -93,18 +143,19 @@ export default {
 
       <section data-section="anatomy">
         <h2>2. 构成</h2>
-        <p>AskQuestion 卡片自上而下三层结构：① 顶栏（导航箭头 + 步骤指示器 + 关闭）② 问题区（题型药丸 + 题干）③ 选项列表 ④ 输入栏 ⑤ 操作按钮。</p>
+        <p>AskQuestion 卡片自上而下五层结构：<strong>① 顶栏</strong>（导航箭头 + 步骤指示器 + 关闭）→ <strong>② 问题区</strong>（题型药丸 + 题干）→ <strong>③ 选项列表</strong> → <strong>④ 输入栏</strong> → <strong>⑤ 操作按钮</strong>。</p>
+        ${labeled('完整卡片结构', snap.anatomy)}
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧看实例 →</button>
       </section>
 
       <section data-section="variants">
         <h2>3. 类型</h2>
-        <p>支持三种题型：</p>
-        <ul>
-          <li><strong>单选</strong>—— 互斥选项，最常见</li>
-          <li><strong>多选</strong>—— 可叠加选项，问题区带"多选"药丸</li>
-          <li><strong>排序</strong>—— 优先级排序，问题区带"排序"药丸</li>
-        </ul>
+        <p>支持三种题型，对应三种不同的选项交互模式：</p>
+        <div class="fp-snapshot-grid-3">
+          ${labeled('单选', snap.typeSingle)}
+          ${labeled('多选', snap.typeMulti)}
+          ${labeled('排序', snap.typeSort)}
+        </div>
         <div class="fp-anchor-row">
           <button class="fp-anchor-btn" data-anchor="single-appear">单选 →</button>
           <button class="fp-anchor-btn" data-anchor="multi-appear">多选 →</button>
@@ -114,12 +165,30 @@ export default {
 
       <section data-section="states">
         <h2>4. 状态</h2>
-        <h3>选项行</h3>
-        <p><strong>单选未选</strong>：白底，无右侧图标 / <strong>单选已选</strong>：浅灰底，加粗，✓ 图标</p>
-        <p><strong>多选未选</strong>：右侧空复选框 / <strong>多选已选</strong>：右侧实心 ☑</p>
-        <p><strong>排序</strong>：右侧 ≡ 拖拽手柄，序号动态跟随位置</p>
+
+        <h3>单选</h3>
+        <p>未选 → 白底，无右侧图标 / 已选 → 浅灰底，加粗，✓ 图标</p>
+        <div class="fp-snapshot-grid-2">
+          ${labeled('未选', snap.singleUnselected)}
+          ${labeled('已选', snap.singleSelected)}
+        </div>
+
+        <h3>多选</h3>
+        <p>复选框未选 → 空框 / 已选 → 实心 ☑，可同时多选</p>
+        <div class="fp-snapshot-grid-2">
+          ${labeled('未选', snap.multiUnselected)}
+          ${labeled('已选（2项）', snap.multiChecked)}
+        </div>
+
+        <h3>排序</h3>
+        <p>右侧 ≡ 拖拽手柄，序号动态跟随位置</p>
+        <div class="fp-snapshot-grid-2">
+          ${labeled('默认顺序', snap.sortDefault)}
+          ${labeled('拖拽后', snap.sortReordered)}
+        </div>
+
         <h3>操作按钮</h3>
-        <p>未答 → "跳过"（浅灰）；已答 → "下一步"（深色，最后一题为"提交"）。底色变化是主信号，文案变化是辅助。</p>
+        <p>未答 → "跳过"（浅灰底）；已答 → "下一步"（深色底，最后一题为"提交"）。底色变化是主信号，文案变化是辅助。</p>
       </section>
 
       <section data-section="behavior">
@@ -215,6 +284,6 @@ export default {
           <li>不要让用户在 AskQuestion 中执行复杂任务（它是"问询"工具，不是"录入"工具）</li>
         </ul>
       </section>
-    </article>
-  `,
+    </article>`;
+  },
 };

@@ -442,3 +442,10 @@
   background: var(--aq-btn-action-bg);
   color: #FFFFFF;
 }
+
+/* ── 静态快照（文档面板用）──────────────────── */
+.aq-static {
+  pointer-events: none;
+  user-select: none;
+  animation: none; /* 禁止入场动效 */
+}

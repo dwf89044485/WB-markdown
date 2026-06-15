@@ -21,3 +21,5 @@ COMMIT_HASH
 
 # Test results
 test-results/
+.superpowers/
+.superpowers/

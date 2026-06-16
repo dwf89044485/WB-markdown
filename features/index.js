@@ -6,12 +6,14 @@
 // 数组顺序 = 下拉菜单顺序（overview 必须在第一位）。
 // ============================================================
 
-import askQuestion from './ask-question.js';
 import principles from './principles.js';
+import infoArch from './info-arch.js';
+import askQuestion from './ask-question.js';
 
 export const featureList = [
-  askQuestion,
   principles,
+  infoArch,
+  askQuestion,
 ];
 
 // 按 id 快速查表

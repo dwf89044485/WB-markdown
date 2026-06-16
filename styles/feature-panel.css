@@ -348,6 +348,9 @@
 /* 原则卡片 */
 .fp-principle-card {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   gap: 16px;
   margin: 20px 0;
   padding: 20px;

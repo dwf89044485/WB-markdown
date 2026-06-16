@@ -6,11 +6,9 @@
 // 数组顺序 = 下拉菜单顺序（overview 必须在第一位）。
 // ============================================================
 
-import principles from './principles.js';
 import askQuestion from './ask-question.js';
 
 export const featureList = [
-  principles,
   askQuestion,
 ];
 

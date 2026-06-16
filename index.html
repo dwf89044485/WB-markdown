@@ -527,6 +527,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     // 左侧宽度 = 手机 + 左右各一格
     var bgW = pw + 2 * colStep;
     bg.style.width = r(bgW) + 'px';
+    // 同步 flex 左区域宽度，保证与纸张纹理区一致
+    var la = document.querySelector('.left-area');
+    if (la) la.style.flex = '0 0 ' + r(bgW) + 'px';
     var leftX = (bgW - pw) / 2;
 
     // 固定定位手机

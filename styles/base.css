@@ -166,8 +166,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     gap:0;
   }
   .left-area{
-    width:600px;
-    flex:0 0 600px;
+    width:524px;
+    flex:0 0 524px;     /* JS 网格引擎覆盖此值 */
     height:100dvh;
     display:flex;
     align-items:center;

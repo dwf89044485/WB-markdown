@@ -79,7 +79,9 @@
 .fp-content{
   flex:1;
   min-height:0;
-  overflow:visible;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:0 8px;
 }
 
 /* ── 字号阶梯（复用 .md 体系，右侧阅读区逐级放大）─── */
@@ -202,17 +204,16 @@
   flex-shrink: 0;
 }
 
-/* 2 列并排对比网格 */
+/* 2 列并排对比：flex 横向排列，间距固定 */
 .fp-snapshot-grid-2 {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 24px;
+  display: flex;
+  gap: 20px;
   margin: 16px 0;
   padding: 4px 8px;
   overflow-x: auto;
 }
 .fp-snapshot-grid-2 > .fp-snapshot-wrap {
-  padding: 4px;
+  flex-shrink: 0;
 }
 .fp-snapshot-grid-2 > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);

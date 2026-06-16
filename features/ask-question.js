@@ -168,9 +168,18 @@ export default {
       </section>
 
       <section data-section="anatomy">
-        <h2>2. 构成</h2>
-        <p>AskQuestion 卡片自上而下五层结构：<strong>① 顶栏</strong>（导航箭头 + 步骤指示器 + 关闭）→ <strong>② 问题区</strong>（题型药丸 + 题干）→ <strong>③ 选项列表</strong> → <strong>④ 输入栏</strong> → <strong>⑤ 操作按钮</strong>。</p>
-        ${labeled('完整卡片结构', s.anatomy)}
+        <h2>2. 组件构成</h2>
+        <div class="fp-snapshot-side">
+          ${labeled('完整卡片结构', s.anatomy)}
+          <div class="fp-snapshot-side-desc">
+            <p>AskQuestion 卡片自上而下五层结构：</p>
+            <p><strong>① 顶栏</strong>（导航箭头 + 步骤指示器 + 关闭）</p>
+            <p><strong>② 问题区</strong>（题型药丸 + 题干）</p>
+            <p><strong>③ 选项列表</strong></p>
+            <p><strong>④ 输入栏</strong></p>
+            <p><strong>⑤ 操作按钮</strong></p>
+          </div>
+        </div>
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧看实例 →</button>
       </section>
 

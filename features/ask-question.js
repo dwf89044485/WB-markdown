@@ -217,9 +217,10 @@ export default {
 
         <h3>排序</h3>
         <p>右侧 ≡ 拖拽手柄，序号动态跟随位置</p>
-        <div class="fp-snapshot-grid-2">
-          ${labeled('默认顺序', s.sortDefault)}
-          ${labeled('拖拽后', s.sortReordered)}
+        <div class="fp-snapshot-grid-3">
+          ${labeled('默认状态', s.sortDefault)}
+          ${labeled('拖拽时', s.sortDragging)}
+          ${labeled('新手指引', s.sortGuide)}
         </div>
 
         <h3>操作按钮</h3>

@@ -62,8 +62,9 @@ function getSnapshots() {
 }
 
 // ── 辅助：带标签的快照块 ──────────────────────────
+// 标签走全局排版组件 .tag（styles/base.css），本文件不再持有标签样式
 function labeled(label, html) {
-  return `<div class="fp-snapshot-wrap"><span class="fp-snapshot-label">${label}</span><div class="fp-snapshot">${html}</div></div>`;
+  return `<div class="fp-snapshot-wrap"><span class="tag">${label}</span><div class="fp-snapshot">${html}</div></div>`;
 }
 
 // 实际 node 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）

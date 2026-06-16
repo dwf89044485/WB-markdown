@@ -29,30 +29,45 @@
 .fp-nav-trigger{
   display:inline-flex;
   align-items:center;
-  gap:10px;
-  padding:10px 16px;
-  font-size:15px;
+  justify-content:space-between;
+  padding:0 12px 0 16px;
+  width:200px;
+  height:36px;
+  font-size:18px;
   font-weight:500;
-  color:#1d1d1f;
-  background:rgba(0,0,0,0.04);
+  color:rgba(0,0,0,.7);
+  background:#EBEBEB;
   border:none;
-  border-radius:20px;
+  border-radius:10px;
   cursor:pointer;
   user-select:none;
-  transition:all .2s ease;
+  transition:background .12s ease,color .12s ease;
 }
-.fp-nav-trigger:hover{ background:rgba(0,0,0,0.06); }
-.fp-nav-trigger.is-open{ background:rgba(0,0,0,0.08); }
+.fp-nav-trigger:hover{ background:#E2E2E2; }
+.fp-nav-trigger:active{ background:#DADADA; }
 .fp-nav-trigger::after{
   content:'';
-  width:8px;height:8px;
-  border-right:1.5px solid currentColor;
-  border-bottom:1.5px solid currentColor;
-  transform:rotate(45deg) translateY(-2px);
-  margin-left:4px;
+  width:16px;height:16px;
+  background:currentColor;
+  mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M4 3.1515L0.4243 -0.4243L-0.4243 0.4243L3.5757 4.4243L4 4.8485L8.4243 0.4243L7.5757 -0.4243L4 3.1515Z' fill-rule='evenodd' transform='matrix(-1 0 0 -1 12 10)'/></svg>");
+  mask-size:contain;
+  mask-repeat:no-repeat;
+  mask-position:center;
+  flex-shrink:0;
+  transform:rotate(180deg);
+  transition:transform .2s ease;
 }
 .fp-nav-trigger.is-open::after{
-  transform:rotate(-135deg) translateY(1px);
+  transform:rotate(0deg);
+}
+/* 下拉标签：左对齐 + 溢出省略 */
+.fp-trigger-label{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:left;
+  flex:1;
+  min-width:0;
 }
 .fp-nav-menu{
   position:absolute;
@@ -94,7 +109,10 @@
   min-height:0;
   overflow-y:auto;
   overflow-x:hidden;
-  padding:0 8px;
+  scrollbar-width:none;           /* Firefox：不显示滚动条 */
+}
+.fp-content::-webkit-scrollbar{
+  display:none;                   /* WebKit：不显示滚动条 */
 }
 
 .fp-subtitle{
@@ -182,14 +200,9 @@
   padding: 4px 8px;
 }
 
-.fp-snapshot-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: #86868b;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 8px;
+/* 截图角标走全局 .tag 组件，此处只控制 tag 与下方快照的间距 */
+.fp-snapshot-wrap > .tag {
+  margin-bottom: 12px;
 }
 
 .fp-snapshot {

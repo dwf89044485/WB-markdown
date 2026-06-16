@@ -227,7 +227,7 @@
   gap:12px;
   width:100%;
   padding:13px 14px;
-  margin:0;
+  margin:12px 0;
   background:var(--md-surface);
   border:0.5px solid var(--md-border);
   border-radius:var(--md-radius-sm);
@@ -352,14 +352,13 @@
   background:var(--md-surface-soft);
   color:var(--md-text-muted);
   font-weight:680;
-  padding:9px 10px;
-  text-align:left;
+  padding:9px 16px;
   border-bottom:.5px solid var(--md-border);
   font-size:var(--md-font-table-th);
   white-space:nowrap;
 }
 .md .tbl td{
-  padding:9px 10px;
+  padding:12px 16px;
   color:var(--md-text-primary);
   border-bottom:.5px solid var(--md-border-soft);
   font-size:var(--md-font-table-td);
@@ -425,7 +424,7 @@
 .md .code-btn svg{display:block;width:13px;height:13px;}
 .md .code-btn:hover{background:rgba(0,0,0,.06);}
 .md .code-btn:active{background:rgba(0,0,0,.1);}
-.md pre{margin:0;padding:12px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--md-surface);}
+.md pre{margin:0;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--md-surface);}
 .md pre code{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:var(--md-font-pre);

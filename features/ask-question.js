@@ -184,7 +184,7 @@ export default {
       </section>
 
       <section data-section="variants">
-        <h2>3. 类型</h2>
+        <h2>3. 组件类型</h2>
         <p>支持三种题型，对应三种不同的选项交互模式：</p>
         <div class="fp-snapshot-grid-3">
           ${labeled('单选', s.typeSingle)}

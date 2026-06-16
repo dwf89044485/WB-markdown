@@ -171,7 +171,7 @@ export default {
       </section>
 
       <section data-section="anatomy">
-        <h2>2. 卡片构成</h2>
+        <h2>2. 卡片构成（结构）</h2>
         <div class="fp-snapshot-side">
           ${labeled('完整卡片结构', s.anatomy)}
           <div class="fp-snapshot-side-desc">
@@ -183,12 +183,65 @@ export default {
             <p><strong>⑤ 操作按钮</strong></p>
           </div>
         </div>
+
+        <h3>① 顶栏 · 题间导航</h3>
+        <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
+        <p><strong>左 / 右箭头</strong>：上下题切换；第 1 题时左箭头不可点，最后题时右箭头不可点（视觉降饱和度）。</p>
+        <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
+        <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
+
+        <h3>④ 输入栏 · 与选项的两种关系</h3>
+        <p>输入栏有两种工作模式，由题型决定——这条规则写在结构层，跨所有题型生效：</p>
+        <table>
+          <thead>
+            <tr>
+              <th>题型</th>
+              <th>用户输入文字时</th>
+              <th>用户点选项时</th>
+              <th>提交结果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>单选</strong></td>
+              <td>已选项<strong>清空</strong></td>
+              <td>输入框<strong>清空</strong></td>
+              <td>选项 / 输入 二选一（互斥）</td>
+            </tr>
+            <tr>
+              <td><strong>多选</strong></td>
+              <td>已选项<strong>保留</strong></td>
+              <td>输入框<strong>保留</strong></td>
+              <td>选项 + 输入 并存</td>
+            </tr>
+            <tr>
+              <td><strong>排序</strong></td>
+              <td>排序结果<strong>保留</strong></td>
+              <td>—</td>
+              <td>顺序 + 输入 并存</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>理由</strong>：单选语义本身互斥——"选项"与"自定义输入"是同一题的两种回答路径；多选 / 排序的"自定义输入"是补充说明，不替代选项。</p>
+        <p>placeholder 文案按题型变化，详见 <a href="#sec-interaction">第 4 节</a>。</p>
+
+        <h3>⑤ 操作按钮</h3>
+        <p>卡片底部单按钮，随状态切换三态：</p>
+        <ul>
+          <li><strong>跳过</strong>：浅灰底 → 用户未作答</li>
+          <li><strong>下一步</strong>：深色底 → 用户已作答，非最后题</li>
+          <li><strong>提交</strong>：深色底 → 用户已作答，最后一题</li>
+        </ul>
+        <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
+        <p><strong>底色变化是主信号，文案变化是辅助</strong>——用户快速作答时先用余光感知底色，真要按之前才会读文案确认。</p>
+        <p><strong>排序题无"跳过"按钮</strong>：默认顺序即为答案，没有"未答"概念。具体行为见 <a href="#sec-sort">第 4.3 节</a>。</p>
+
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧Demo查看示例</button>
       </section>
 
       <section data-section="variants">
         <h2>3. 题型</h2>
-        <p>支持三种题型，对应三种不同的选项交互模式：</p>
+        <p>支持三种题型，由 agent 在生成问题时声明，用户不可切换：</p>
         <div class="fp-snapshot-grid-3">
           ${labeled('单选', s.typeSingle)}
           ${labeled('多选', s.typeMulti)}
@@ -201,12 +254,10 @@ export default {
         </div>
       </section>
 
-      <section data-section="interaction">
+      <section data-section="interaction" id="sec-interaction">
         <h2>4. 交互与状态</h2>
 
-        <h3>4.1 选项行</h3>
-
-        <h4>单选</h4>
+        <h3 id="sec-single">4.1 单选题</h3>
         <p><strong>未选</strong>：白底，常规字重，无右侧图标<br>
            <strong>已选</strong>：浅灰底，加粗，✓ 图标</p>
         <div class="fp-snapshot-grid-2">
@@ -214,18 +265,22 @@ export default {
           ${labeled('已选', s.singleSelected)}
         </div>
         <p><strong>行为</strong>：点未选项 → 选中该项（其他项取消）+ 输入框清空 + <strong>非最后题自动前进</strong>；点已选项 → 取消选中，留在当前题；在输入框打字 → 已选项清空（互斥），不自动前进。</p>
+        <p><strong>输入栏 placeholder</strong>：「以上都不是，我来告诉你」——明确告诉用户这是 escape hatch。</p>
+        <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交，按状态切换。</p>
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
-        <h4>多选</h4>
+        <h3>4.2 多选题</h3>
         <p><strong>未选</strong>：空框 □ / <strong>已选</strong>：实心 ☑，可同时多选</p>
         <div class="fp-snapshot-grid-2">
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
         </div>
         <p><strong>行为</strong>：点选项 toggle 选中/取消，<strong>不自动前进</strong>，需手动按"下一步"；在输入框打字 → 已选项保留（共存）。</p>
+        <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」——表明是叠加而非替代。</p>
+        <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交。</p>
         <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
 
-        <h4>排序</h4>
+        <h3 id="sec-sort">4.3 排序题</h3>
         <p>右侧 ≡ 拖拽手柄，序号动态跟随位置。</p>
         <div class="fp-snapshot-grid-3">
           ${labeled('默认状态', s.sortDefault)}
@@ -233,19 +288,12 @@ export default {
           ${labeled('新手指引', s.sortGuide)}
         </div>
         <p><strong>行为</strong>：按下并位移 ≥ 3px 进入拖拽（无需长按）；松手 → 200ms 缓动落位；首次进入有循环 pop 引导动效，<strong>用户首次拖动后永久消失</strong>；在输入框打字 → 排序结果保留。</p>
+        <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」。</p>
+        <p><strong>操作按钮</strong>：<strong>无"跳过"</strong>，只有下一步 / 提交——因为默认顺序即为答案。</p>
         <div class="fp-anchor-row">
           <button class="fp-anchor-btn" data-anchor="sort-appear">看引导动效 →</button>
           <button class="fp-anchor-btn" data-anchor="sort-after-drag">看拖拽后状态 →</button>
         </div>
-
-        <h3>4.2 操作按钮</h3>
-        <p>未答 → "跳过"（浅灰底）；已答 → "下一步"（深色底，最后一题为"提交"）。<strong>底色变化是主信号，文案变化是辅助。</strong></p>
-        <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
-
-        <h3>4.3 题间导航</h3>
-        <p><strong>左 / 右箭头</strong>：上下题切换，边界时不可点（视觉降饱和度）。</p>
-        <p><strong>关闭 ✕</strong>：所有题视为跳过，agent 收到空答案继续。</p>
-        <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
       </section>
 
       <section data-section="flow">
@@ -277,19 +325,10 @@ export default {
           <li><strong>中途关闭</strong>：不保存草稿，下次进入相当于全部跳过</li>
           <li><strong>误触关闭</strong>：无二次确认（轻量打扰原则）</li>
         </ul>
-        <h3>输入与选项的互斥规则</h3>
-        <p><strong>单选</strong>：选项与输入互斥 / <strong>多选</strong>：选项与输入并存 / <strong>排序</strong>：顺序与输入并存。</p>
-      </section>
-
-      <section data-section="content-spec">
-        <h2>7. 文案规范</h2>
-        <p><strong>单选输入框 placeholder</strong>："以上都不是，我来告诉你"——明确告诉用户这是 escape hatch。</p>
-        <p><strong>多选 / 排序 placeholder</strong>："我来额外补充说明"——表明是叠加而非替代。</p>
-        <p><strong>关闭按钮无文案</strong>，仅 ✕ 图标——避免与"跳过"按钮的语义混淆。</p>
       </section>
 
       <section data-section="motion">
-        <h2>8. 动效</h2>
+        <h2>7. 动效</h2>
         <h3>节奏分级</h3>
         <p><strong>快（100-150ms）</strong>：选项点击反馈、按钮按下态、复选框打勾——必须感觉"零延迟"</p>
         <p><strong>中（200-300ms）</strong>：切题、排序拖拽落位（200ms）、按钮文案与底色切换</p>
@@ -303,7 +342,7 @@ export default {
       </section>
 
       <section data-section="rationale">
-        <h2>9. 设计原理</h2>
+        <h2>8. 设计原理</h2>
         <h3>为什么单选自动前进、多选不自动前进</h3>
         <p>单选有明确的"作答完成"信号——选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明"我选完了"。强行让多选自动前进会"系统替用户做决定"，违反用户主导原则。</p>
         <h3>为什么排序题没有"跳过"按钮</h3>
@@ -314,7 +353,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>10. Do's / Don'ts</h2>
+        <h2>9. Do's / Don'ts</h2>
         <h3>Do's</h3>
         <ul>
           <li>agent 应在<strong>真正不确定时</strong>使用——避免"问以确认"的礼貌性提问</li>

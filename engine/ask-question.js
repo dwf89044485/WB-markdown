@@ -550,7 +550,7 @@ function bindAskQuestionEvents() {
  * 封装 module-private 的 goToStep(index)。
  * @param {number} index 目标 question 索引（0-based）
  */
-export function navigateToQuestion(index) {
+function navigateToQuestion(index) {
   goToStep(index);
 }
 

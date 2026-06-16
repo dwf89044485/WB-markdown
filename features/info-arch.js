@@ -20,15 +20,37 @@ export default {
         <h2>对话流信息层级结构</h2>
         <p>对话流从整体到细粒度，信息按以下层级组织：</p>
 
-        <pre>Conversation Flow 对话流
-├─ Thinking 思考过程
-│   └─ 按 frames 展开 → 浮层快照序列
-└─ Execution 执行过程
-    └─ Steps 执行步骤（按 Node 索引排列）
-        ├─ Markdown 节点内正文
-        ├─ Status 状态行（工具栏）
-        │   └─ frames → 浮层 Sheet（事件详情 + 原始记录）
-        └─ Others 问卷 / 确认 等</pre>
+        <div class="mermaid">
+flowchart TD
+    CF["Conversation Flow 对话流
+    ─────────────────────
+    User Message 用户输入
+    Agent Message Agent 回复"]
+
+    CF --> TK["Thinking
+    思考过程"]
+    CF --> EX["Execution
+    执行过程"]
+
+    TK --> TF["按 frames 展开
+    浮层快照序列"]
+
+    EX --> ND["Steps
+    执行步骤（节点）
+    按 Node 索引排列"]
+
+    ND --> MD["Markdown
+    节点内正文"]
+    ND --> ST["Status
+    状态行（工具栏）"]
+    ND --> OT["Others
+    问卷 / 确认 等"]
+
+    ST --> |通过 frames 链接| SH1["浮层 Sheet
+    事件详情 + 原始记录"]
+    TF --> |通过 frames 链接| SH2["浮层 Sheet
+    事件详情 + 原始记录"]
+</div>
 
         <p>思考过程的 frames 与执行节点内状态行的 frames，都链接到浮层 Sheet——用统一容器承载事件详情与原始记录。</p>
       </section>

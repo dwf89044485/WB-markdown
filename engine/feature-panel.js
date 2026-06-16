@@ -47,7 +47,7 @@ function buildShell() {
       <nav class="fp-nav">
         <span class="fp-section-label">交互说明</span>
         <button class="fp-nav-trigger" type="button" id="fpNavTrigger">
-          <span id="fpNavTriggerLabel">设计思考（总览）</span>
+          <span class="fp-trigger-label" id="fpNavTriggerLabel">设计思考（总览）</span>
         </button>
         <div class="fp-nav-menu" id="fpNavMenu" role="menu"></div>
       </nav>
@@ -152,6 +152,13 @@ function renderRoute(route) {
 
   currentFeature = f;
   contentEl.innerHTML = f.content;
+
+  // 渲染 Mermaid 流程图
+  if (window.mermaid) {
+    Promise.resolve().then(() => {
+      mermaid.run({ nodes: contentEl.querySelectorAll('.mermaid') }).catch(console.warn);
+    });
+  }
 
   // 同步 trigger label
   const labelEl = rootEl.querySelector('#fpNavTriggerLabel');

@@ -84,11 +84,13 @@ function bindEvents() {
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
     navMenuEl.classList.toggle('is-open');
+    trigger.classList.toggle('is-open');
   });
 
   document.addEventListener('click', (e) => {
     if (!navMenuEl.contains(e.target) && !trigger.contains(e.target)) {
       navMenuEl.classList.remove('is-open');
+      trigger.classList.remove('is-open');
     }
   });
 
@@ -102,6 +104,7 @@ function bindEvents() {
     if (!f) return;
 
     navMenuEl.classList.remove('is-open');
+    trigger.classList.remove('is-open');
 
     if (f.type === 'overview') {
       pushRoute('overview', null);

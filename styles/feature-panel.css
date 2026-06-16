@@ -79,6 +79,7 @@
 .fp-content{
   flex:1;
   min-height:0;
+  overflow:visible;
 }
 
 /* ── 字号阶梯（复用 .md 体系，右侧阅读区逐级放大）─── */
@@ -163,8 +164,20 @@
 }
 
 /* ── 组件快照（图文并茂）───────────────────── */
+
+/* 段落分割线 */
+.fp-feature section {
+  padding-bottom: 8px;
+}
+.fp-feature section + section {
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
 .fp-snapshot-wrap {
   margin: 16px 0;
+  padding: 4px 8px;
 }
 
 .fp-snapshot-label {
@@ -184,17 +197,26 @@
 }
 
 .fp-snapshot > .ask-question-card {
-  width: 100%;
-  max-width: 350px;
+  width: var(--aq-width, 350px);
+  min-width: var(--aq-width, 350px);
   flex-shrink: 0;
 }
 
 /* 2 列并排对比网格 */
 .fp-snapshot-grid-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: auto auto;
+  gap: 24px;
   margin: 16px 0;
+  padding: 4px 8px;
+  overflow-x: auto;
+}
+.fp-snapshot-grid-2 > .fp-snapshot-wrap {
+  padding: 4px;
+}
+.fp-snapshot-grid-2 > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
+  width: var(--aq-width, 350px);
+  min-width: var(--aq-width, 350px);
 }
 
 /* 3 列题型展示：横向平铺，允许水平滚动 */
@@ -203,7 +225,7 @@
   gap: 16px;
   margin: 16px 0;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding: 8px 12px 8px 0;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
 }
@@ -223,6 +245,6 @@
   /* 让卡片填满 wrap 的宽度 */
 }
 .fp-snapshot-grid-3 > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
-  width: 100%;
-  max-width: 350px;
+  width: var(--aq-width, 350px);
+  min-width: var(--aq-width, 350px);
 }

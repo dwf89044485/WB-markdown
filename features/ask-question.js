@@ -64,7 +64,8 @@ function labeled(label, html) {
   return `<div class="fp-snapshot-wrap"><span class="fp-snapshot-label">${label}</span><div class="fp-snapshot">${html}</div></div>`;
 }
 
-// 实际 step 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）
+// 实际 node 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）
+// nodeIndex 由 feature-jump.js 通过 resolveNodeStep() 换算为 director timeline 索引
 const STEP_ASK_QUESTION = 2;
 
 export default {
@@ -73,7 +74,7 @@ export default {
   label: 'AskQuestion',
   anchors: {
     'single-appear': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const card = document.querySelector('.ask-question-card');
         if (!card) return false;
@@ -83,7 +84,7 @@ export default {
       label: '看单选题画面',
     },
     'single-auto-next': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const stepIndicator = document.querySelector('.aq-step-indicator');
         if (!stepIndicator) return false;
@@ -92,7 +93,7 @@ export default {
       label: '看自动前进效果',
     },
     'multi-appear': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         return badge && badge.textContent.includes('多选');
@@ -100,7 +101,7 @@ export default {
       label: '看多选题画面',
     },
     'multi-checked': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const checked = document.querySelectorAll('.ask-question-card .aq-option.is-selected');
         return checked.length >= 2;
@@ -108,7 +109,7 @@ export default {
       label: '看多选已勾选状态',
     },
     'sort-appear': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         const hint = document.querySelector('.aq-sort-hint');
@@ -117,7 +118,7 @@ export default {
       label: '看排序题 + 拖拽提示',
     },
     'sort-after-drag': {
-      stepIndex: STEP_ASK_QUESTION,
+      nodeIndex: STEP_ASK_QUESTION,
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         const hint = document.querySelector('.aq-sort-hint');

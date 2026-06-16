@@ -20,14 +20,14 @@
 | `engine/icons.js`          | 图标系统（SVG 注册表、tool icon 推断、status line 渲染）                             |
 | `engine/typewriter.js`     | Token 流式输出（typeText、appendHTMLTypedTo）                                |
 | `engine/sheet.js`          | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo）                  |
-| `engine/player.js`         | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）              |
+| `engine/player.js`         | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）；导出 `goToStep` / `pauseDirector` / `resumePlayback` / `resolveNodeStep` |
 | `engine/scroll-nav.js`     | 快速滚动按钮（↑↓）——按 turn 跳转对话消息；`initScrollNav`/`rebuildScrollNav` 由 `player.js` import；内含 `isTblFullscreen` 状态感知，全屏时禁用滚动 |
 | `engine/controls-speed.js` | 速度滑块绑定（IIFE，非 ES module）：监听 `#ctrlSpeedSlider`，同步 `scenario.playback.tokensPerSecond`，更新 `#dcSpeedRoValue` 显示；含重播按钮 `#ctrlTweakReload` |
 | `engine/controls-stepper.js` | 步进控制绑定（IIFE）：`#ctrlPrevStep`/`#ctrlAutoStep`/`#ctrlNextStep` 绑定到 `player.js` 导出的 `directorPrevStep`/`directorNextStep`/`toggleDirectorAuto` |
 | `engine/ask-question.js`   | 问答卡片渲染与交互（单选/多选/排序题、拖拽排序、状态管理、事件绑定）                          |
 | `styles/ask-question.css`  | 问答卡片样式（卡片容器、选项行、排序拖拽手柄、导航按钮、输入栏、步骤指示器、玻璃按钮系统）            |
 | `engine/feature-router.js` | URL 路由工具：`parseURL` / `buildURL` / `pushRoute` / `onChange`；`?view=overview` / `?view=feature&id=<id>`；未知 view / 缺 id 一律 fallback 到 overview |
-| `engine/feature-jump.js`   | 跳转锚点引擎：`jumpToAnchor(anchor)` = goToStep + 轮询 until 条件（8s 超时兜底）+ pauseDirector；`consumePendingJump` 处理 reload 后待跳步骤 |
+| `engine/feature-jump.js`   | 跳转锚点引擎：`jumpToAnchor(anchor)` = 解析 nodeIndex → resolveNodeStep + goToStep（`jumpDirectorTo` fast-render）+ resumePlayback + 轮询 until 条件（8s 超时兜底）+ pauseDirector |
 | `engine/feature-panel.js`  | 右侧说明栏主控：读 URL → 渲染对应 feature 内容；下拉菜单导航；锚点按钮事件代理；屏宽 < 600 时不初始化 |
 | `features/index.js`        | Feature 注册中心（唯一真相源）：import 各 feature 模块，export `featureList` / `featureMap` / `getFeature`；数组顺序 = 下拉菜单顺序 |
 | `features/overview.js`     | 总览「设计思考」feature（v1 占位）；`type: 'overview'`，无锚点 |

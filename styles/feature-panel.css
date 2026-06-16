@@ -236,18 +236,10 @@
   margin: 16px 0;
 }
 
-.fp-snapshot-grid-2 .fp-snapshot-wrap {
-  overflow: hidden;
-}
-
 /* 3 列题型展示网格 */
 .fp-snapshot-grid-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   margin: 16px 0;
-}
-
-.fp-snapshot-grid-3 .fp-snapshot-wrap {
-  overflow: hidden;
 }

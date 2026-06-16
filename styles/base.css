@@ -179,7 +179,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     min-width:840px;
     height:100dvh;
     overflow-y:auto;   /* 右侧栏内部可纵向滚 */
-    padding:32px 20px;
+    padding:32px 60px;
     background:#fafafa;
     border-left:1px solid rgba(0,0,0,0.06);
   }
@@ -216,7 +216,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#6366F1; /* indigo */
+  background:#10B981; /* emerald */
   flex-shrink:0;
 }
 .status-time{

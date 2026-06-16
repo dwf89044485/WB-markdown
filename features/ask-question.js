@@ -42,20 +42,20 @@ function snap(key, ...args) {
 function getSnapshots() {
   return {
     // §2 构成：显示完整卡片
-    anatomy: snap('anatomy', SAMPLE_Q, 0, A.singleSel, { hideInput: true }),
+    anatomy: snap('anatomy', SAMPLE_Q, 0, A.singleSel, { hideInput: false }),
 
     // §3 类型：三种题型并排
-    typeSingle: snap('typeSingle', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
-    typeMulti:  snap('typeMulti', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
-    typeSort:   snap('typeSort', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+    typeSingle: snap('typeSingle', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: false }),
+    typeMulti:  snap('typeMulti', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: false }),
+    typeSort:   snap('typeSort', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: false }),
 
     // §4 状态：各种状态对比
-    singleUnselected: snap('singleUnselected', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
-    singleSelected:   snap('singleSelected', SAMPLE_Q, 0, A.singleSel, { hideHeader: true, hideInput: true }),
-    multiUnselected:  snap('multiUnselected', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
-    multiChecked:     snap('multiChecked', SAMPLE_Q, 1, A.multiSel, { hideHeader: true, hideInput: true }),
-    sortDefault:      snap('sortDefault', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
-    sortReordered:    snap('sortReordered', SAMPLE_Q, 2, A.sortReordered, { hideHeader: true, hideInput: true }),
+    singleUnselected: snap('singleUnselected', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: false }),
+    singleSelected:   snap('singleSelected', SAMPLE_Q, 0, A.singleSel, { hideHeader: true, hideInput: false }),
+    multiUnselected:  snap('multiUnselected', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: false }),
+    multiChecked:     snap('multiChecked', SAMPLE_Q, 1, A.multiSel, { hideHeader: true, hideInput: false }),
+    sortDefault:      snap('sortDefault', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: false }),
+    sortReordered:    snap('sortReordered', SAMPLE_Q, 2, A.sortReordered, { hideHeader: true, hideInput: false }),
   };
 }
 

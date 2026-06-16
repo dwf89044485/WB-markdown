@@ -32,24 +32,32 @@ const A = {
   sortReordered:(() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; return a; })(), // 交通便利→顶
 };
 
-// ── 预渲染所有快照 ──────────────────────────────
-const snap = {
-  // §2 构成：显示完整卡片
-  anatomy: renderStaticAskQuestion(SAMPLE_Q, 0, A.singleSel, { hideInput: true }),
+// ── 预渲染所有快照（lazy：首次访问时才计算）─────────
+const snapCache = {};
+function snap(key, ...args) {
+  if (!snapCache[key]) snapCache[key] = renderStaticAskQuestion(...args);
+  return snapCache[key];
+}
 
-  // §3 类型：三种题型并排
-  typeSingle: renderStaticAskQuestion(SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
-  typeMulti:  renderStaticAskQuestion(SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
-  typeSort:   renderStaticAskQuestion(SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+function getSnapshots() {
+  return {
+    // §2 构成：显示完整卡片
+    anatomy: snap('anatomy', SAMPLE_Q, 0, A.singleSel, { hideInput: true }),
 
-  // §4 状态：各种状态对比
-  singleUnselected: renderStaticAskQuestion(SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
-  singleSelected:   renderStaticAskQuestion(SAMPLE_Q, 0, A.singleSel,   { hideHeader: true, hideInput: true }),
-  multiUnselected:  renderStaticAskQuestion(SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
-  multiChecked:     renderStaticAskQuestion(SAMPLE_Q, 1, A.multiSel,    { hideHeader: true, hideInput: true }),
-  sortDefault:      renderStaticAskQuestion(SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
-  sortReordered:    renderStaticAskQuestion(SAMPLE_Q, 2, A.sortReordered, { hideHeader: true, hideInput: true }),
-};
+    // §3 类型：三种题型并排
+    typeSingle: snap('typeSingle', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
+    typeMulti:  snap('typeMulti', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
+    typeSort:   snap('typeSort', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+
+    // §4 状态：各种状态对比
+    singleUnselected: snap('singleUnselected', SAMPLE_Q, 0, A.unanswered, { hideHeader: true, hideInput: true }),
+    singleSelected:   snap('singleSelected', SAMPLE_Q, 0, A.singleSel, { hideHeader: true, hideInput: true }),
+    multiUnselected:  snap('multiUnselected', SAMPLE_Q, 1, A.unanswered, { hideHeader: true, hideInput: true }),
+    multiChecked:     snap('multiChecked', SAMPLE_Q, 1, A.multiSel, { hideHeader: true, hideInput: true }),
+    sortDefault:      snap('sortDefault', SAMPLE_Q, 2, A.unanswered, { hideHeader: true, hideInput: true }),
+    sortReordered:    snap('sortReordered', SAMPLE_Q, 2, A.sortReordered, { hideHeader: true, hideInput: true }),
+  };
+}
 
 // ── 辅助：带标签的快照块 ──────────────────────────
 function labeled(label, html) {
@@ -120,6 +128,7 @@ export default {
   },
   // getter 确保每次读取都重新计算（不过 feature-panel 只读一次）
   get content() {
+    const s = getSnapshots();
     return `
     <article class="fp-feature">
       <header class="fp-feature-header">
@@ -144,7 +153,7 @@ export default {
       <section data-section="anatomy">
         <h2>2. 构成</h2>
         <p>AskQuestion 卡片自上而下五层结构：<strong>① 顶栏</strong>（导航箭头 + 步骤指示器 + 关闭）→ <strong>② 问题区</strong>（题型药丸 + 题干）→ <strong>③ 选项列表</strong> → <strong>④ 输入栏</strong> → <strong>⑤ 操作按钮</strong>。</p>
-        ${labeled('完整卡片结构', snap.anatomy)}
+        ${labeled('完整卡片结构', s.anatomy)}
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧看实例 →</button>
       </section>
 
@@ -152,9 +161,9 @@ export default {
         <h2>3. 类型</h2>
         <p>支持三种题型，对应三种不同的选项交互模式：</p>
         <div class="fp-snapshot-grid-3">
-          ${labeled('单选', snap.typeSingle)}
-          ${labeled('多选', snap.typeMulti)}
-          ${labeled('排序', snap.typeSort)}
+          ${labeled('单选', s.typeSingle)}
+          ${labeled('多选', s.typeMulti)}
+          ${labeled('排序', s.typeSort)}
         </div>
         <div class="fp-anchor-row">
           <button class="fp-anchor-btn" data-anchor="single-appear">单选 →</button>
@@ -169,22 +178,22 @@ export default {
         <h3>单选</h3>
         <p>未选 → 白底，无右侧图标 / 已选 → 浅灰底，加粗，✓ 图标</p>
         <div class="fp-snapshot-grid-2">
-          ${labeled('未选', snap.singleUnselected)}
-          ${labeled('已选', snap.singleSelected)}
+          ${labeled('未选', s.singleUnselected)}
+          ${labeled('已选', s.singleSelected)}
         </div>
 
         <h3>多选</h3>
         <p>复选框未选 → 空框 / 已选 → 实心 ☑，可同时多选</p>
         <div class="fp-snapshot-grid-2">
-          ${labeled('未选', snap.multiUnselected)}
-          ${labeled('已选（2项）', snap.multiChecked)}
+          ${labeled('未选', s.multiUnselected)}
+          ${labeled('已选（2项）', s.multiChecked)}
         </div>
 
         <h3>排序</h3>
         <p>右侧 ≡ 拖拽手柄，序号动态跟随位置</p>
         <div class="fp-snapshot-grid-2">
-          ${labeled('默认顺序', snap.sortDefault)}
-          ${labeled('拖拽后', snap.sortReordered)}
+          ${labeled('默认顺序', s.sortDefault)}
+          ${labeled('拖拽后', s.sortReordered)}
         </div>
 
         <h3>操作按钮</h3>

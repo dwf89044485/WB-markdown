@@ -190,40 +190,8 @@ export default {
         <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
         <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
 
-        <h3>④ 输入栏 · 与选项的两种关系</h3>
-        <p>输入栏有两种工作模式，由题型决定——这条规则写在结构层，跨所有题型生效：</p>
-        <table>
-          <thead>
-            <tr>
-              <th>题型</th>
-              <th>用户输入文字时</th>
-              <th>用户点选项时</th>
-              <th>提交结果</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>单选</strong></td>
-              <td>已选项<strong>清空</strong></td>
-              <td>输入框<strong>清空</strong></td>
-              <td>选项 / 输入 二选一（互斥）</td>
-            </tr>
-            <tr>
-              <td><strong>多选</strong></td>
-              <td>已选项<strong>保留</strong></td>
-              <td>输入框<strong>保留</strong></td>
-              <td>选项 + 输入 并存</td>
-            </tr>
-            <tr>
-              <td><strong>排序</strong></td>
-              <td>排序结果<strong>保留</strong></td>
-              <td>—</td>
-              <td>顺序 + 输入 并存</td>
-            </tr>
-          </tbody>
-        </table>
-        <p><strong>理由</strong>：单选语义本身互斥——"选项"与"自定义输入"是同一题的两种回答路径；多选 / 排序的"自定义输入"是补充说明，不替代选项。</p>
-        <p>placeholder 文案按题型变化，详见 <a href="#sec-interaction">第 4 节</a>。</p>
+        <h3>④ 输入栏</h3>
+        <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
 
         <h3>⑤ 操作按钮</h3>
         <p>卡片底部单按钮，随状态切换三态：</p>
@@ -256,6 +224,41 @@ export default {
 
       <section data-section="interaction" id="sec-interaction">
         <h2>4. 交互与状态</h2>
+
+        <h3>输入栏 · 与选项的两种关系（跨题型）</h3>
+        <p>输入栏有两种工作模式，由题型决定——这条规则跨所有题型生效：</p>
+        <table>
+          <thead>
+            <tr>
+              <th>题型</th>
+              <th>用户输入文字时</th>
+              <th>用户点选项时</th>
+              <th>提交结果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>单选</strong></td>
+              <td>已选项<strong>清空</strong></td>
+              <td>输入框<strong>清空</strong></td>
+              <td>选项 / 输入 二选一（互斥）</td>
+            </tr>
+            <tr>
+              <td><strong>多选</strong></td>
+              <td>已选项<strong>保留</strong></td>
+              <td>输入框<strong>保留</strong></td>
+              <td>选项 + 输入 并存</td>
+            </tr>
+            <tr>
+              <td><strong>排序</strong></td>
+              <td>排序结果<strong>保留</strong></td>
+              <td>—</td>
+              <td>顺序 + 输入 并存</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>理由</strong>：单选语义本身互斥——"选项"与"自定义输入"是同一题的两种回答路径；多选 / 排序的"自定义输入"是补充说明，不替代选项。</p>
+        <p>每种题型下输入栏的 placeholder 文案与具体行为详见 4.1 / 4.2 / 4.3。</p>
 
         <h3 id="sec-single">4.1 单选题</h3>
         <p><strong>未选</strong>：白底，常规字重，无右侧图标<br>

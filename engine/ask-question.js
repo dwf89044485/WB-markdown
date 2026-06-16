@@ -69,36 +69,17 @@ function getButtonLabel(stepIndex, totalSteps, question, answer) {
 }
 
 // ── 渲染函数 ─────────────────────────────────
+// 左侧 Demo：注入完整 HTML 到 #askQuestion 容器，并恢复交互状态
 function renderAskQuestion() {
   if (!askState) return;
   const { questions, answers, stepIndex } = askState;
   const q = questions[stepIndex];
-  const a = answers[stepIndex];
-  const total = questions.length;
 
-  // 步骤指示器
-  const stepEl = document.getElementById('aqStep');
-  if (stepEl) stepEl.textContent = `${stepIndex + 1} / ${total}`;
+  const container = document.getElementById('askQuestion');
+  if (!container) return;
 
-  // 导航按钮
-  const prevBtn = document.getElementById('aqPrev');
-  const nextBtn = document.getElementById('aqNext');
-  if (prevBtn) prevBtn.disabled = stepIndex <= 0;
-  if (nextBtn) nextBtn.disabled = stepIndex >= total - 1;
-
-  // 问题区：每个类型都显示对应 badge
-  const questionArea = document.getElementById('aqQuestionArea');
-  if (questionArea) {
-    let badgeLabel = '';
-    if (q.type === 'single') badgeLabel = '单选';
-    else if (q.type === 'multiple') badgeLabel = '多选';
-    else if (q.type === 'sort') badgeLabel = '排序';
-    const badgeHtml = `<span class="aq-badge">${badgeLabel}</span>`;
-    questionArea.innerHTML = badgeHtml + `<span class="aq-question-text">${escapeAQHtml(q.question)}</span>`;
-  }
-
-  // 选项列表
-  renderOptions(q, a);
+  // 生成完整 HTML 并注入
+  container.innerHTML = renderAskQuestionHTML(questions, stepIndex, answers, { mode: 'live' });
 
   // 排序题：初始化 SortableJS；非排序题：销毁实例
   if (q.type === 'sort') {
@@ -107,18 +88,6 @@ function renderAskQuestion() {
     sortableInstance.destroy();
     sortableInstance = null;
   }
-
-  // 输入栏
-  const inputEl = document.getElementById('aqInput');
-  if (inputEl) {
-    inputEl.value = a.customInput;
-    inputEl.placeholder = q.type === 'single'
-      ? '以上都不是，我来告诉你'
-      : '我来额外补充说明';
-  }
-
-  // 按钮
-  updateActionButton();
 }
 
 function escapeAQHtml(str) {
@@ -127,134 +96,12 @@ function escapeAQHtml(str) {
   return div.innerHTML;
 }
 
-function renderOptions(q, a) {
-  const container = document.getElementById('aqOptions');
-  if (!container) return;
-  container.innerHTML = '';
-
-  if (q.type === 'sort') {
-    // 排序：按 answer.selected 顺序渲染，不使用选中态
-    a.selected.forEach((optIdx, posIdx) => {
-      container.appendChild(createOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, false));
-    });
-  } else {
-    q.options.forEach((opt, i) => {
-      const isSelected = q.type === 'single'
-        ? a.selected === i
-        : a.selected.includes(i);
-      container.appendChild(createOptionRow(i, opt, i + 1, q.type, isSelected));
-    });
-  }
+function escapeAttr(str) {
+  return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function createOptionRow(index, text, displayNum, type, isSelected) {
-  const row = document.createElement('div');
-  row.className = 'aq-option' + (isSelected ? ' is-selected' : '') + (type === 'sort' ? ' is-sort' : '');
-  row.dataset.index = index;
-
-  let rightHtml = '';
-  if (type === 'single' && isSelected) {
-    rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_BLACK_SVG}</span></div>`;
-  } else if (type === 'multiple') {
-    rightHtml = `<div class="aq-option-right"><span class="aq-checkbox">${isSelected ? CHECK_WHITE_SVG : ''}</span></div>`;
-  } else if (type === 'sort') {
-    rightHtml = `<div class="aq-option-right"><span class="aq-drag-handle">${DRAG_SVG}</span></div>`;
-  } else if (type === 'single' && !isSelected) {
-    rightHtml = '<div class="aq-option-right"></div>';
-  }
-
-  row.innerHTML = `
-    <div class="aq-option-left">
-      <span class="aq-option-num">${displayNum}</span>
-      <span class="aq-option-text">${escapeAQHtml(text)}</span>
-    </div>
-    ${rightHtml}
-  `;
-
-  return row;
-}
-
-function updateActionButton() {
-  if (!askState) return;
-  const { questions, answers, stepIndex } = askState;
-  const btn = document.getElementById('aqAction');
-  if (!btn) return;
-
-  const label = getButtonLabel(stepIndex, questions.length, questions[stepIndex], answers[stepIndex]);
-  btn.textContent = label;
-  btn.className = 'aq-action-btn ' + (label === '跳过' ? 'is-skip' : 'is-action');
-}
-
-// ── 静态快照渲染（供右侧文档面板图文并茂用）─────────
-// 纯函数，返回完整 HTML 字符串，不操作 DOM，不绑定事件
-// 复用同一套 CSS class → 改样式时自动同步
-
-function renderStaticAskQuestion(questions, stepIndex, answers, options = {}) {
-  const { hideInput = false, hideHeader = false } = options;
-  const q = questions[stepIndex];
-  const a = answers[stepIndex];
-  const total = questions.length;
-
-  // 题型 badge
-  let badgeLabel = '';
-  if (q.type === 'single') badgeLabel = '单选';
-  else if (q.type === 'multiple') badgeLabel = '多选';
-  else if (q.type === 'sort') badgeLabel = '排序';
-
-  // 选项列表
-  let optionsHtml = '';
-  if (q.type === 'sort') {
-    a.selected.forEach((optIdx, posIdx) => {
-      optionsHtml += createStaticOptionRow(optIdx, q.options[optIdx], posIdx + 1, q.type, false);
-    });
-  } else {
-    q.options.forEach((opt, i) => {
-      const isSelected = q.type === 'single' ? a.selected === i : a.selected.includes(i);
-      optionsHtml += createStaticOptionRow(i, opt, i + 1, q.type, isSelected);
-    });
-  }
-
-  const buttonLabel = getButtonLabel(stepIndex, total, q, a);
-  const buttonClass = buttonLabel === '跳过' ? 'is-skip' : 'is-action';
-  const stepText = `${stepIndex + 1} / ${total}`;
-
-  const prevDisabled = stepIndex <= 0;
-  const nextDisabled = stepIndex >= total - 1;
-
-  const headerHtml = hideHeader ? '' : `
-    <div class="aq-header">
-      <div class="aq-nav">
-        ${glassNavBtn(GLYPH_PREV, prevDisabled)}
-        <span class="aq-step-indicator">${stepText}</span>
-        ${glassNavBtn(GLYPH_NEXT, nextDisabled)}
-      </div>
-      ${glassCloseBtn()}
-    </div>`;
-
-  // placeholder 文案与左侧实际交互一致（参见 renderAskQuestion 第 177-179 行）
-  const placeholderText = q.type === 'single'
-    ? '以上都不是，我来告诉你'
-    : '我来额外补充说明';
-
-  const inputHtml = hideInput ? '' : `
-    <div class="aq-input-bar">
-      <input class="aq-input-field" type="text" readonly placeholder="${escapeAQHtml(placeholderText)}" tabindex="-1">
-      <button class="aq-action-btn ${buttonClass}" type="button" tabindex="-1">${buttonLabel}</button>
-    </div>`;
-
-  return `
-    <div class="ask-question-card aq-static">
-      ${headerHtml}
-      <div class="aq-question-area">
-        <span class="aq-badge">${badgeLabel}</span>
-        <span class="aq-question-text">${escapeAQHtml(q.question)}</span>
-      </div>
-      <div class="aq-options">${optionsHtml}</div>
-      ${inputHtml}
-    </div>`;
-}
-
-function createStaticOptionRow(index, text, displayNum, type, isSelected) {
+// ── 选项行 HTML（字符串生成，左右两侧共用）──────
+function createOptionRowHTML(index, text, displayNum, type, isSelected) {
   const selClass = isSelected ? ' is-selected' : '';
   const sortClass = type === 'sort' ? ' is-sort' : '';
 
@@ -277,6 +124,104 @@ function createStaticOptionRow(index, text, displayNum, type, isSelected) {
       </div>
       ${rightHtml}
     </div>`;
+}
+
+// ── 统一渲染函数（左右两侧共用）───────────────
+// mode: 'live' → 生成带 id 属性的交互 HTML（注入到 #askQuestion 容器）
+// mode: 'static' → 生成纯静态快照 HTML（无 id，无 data-action，disabled 按钮）
+function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
+  const { mode = 'live', hideHeader = false, hideInput = false } = options;
+  const isStatic = mode === 'static';
+  const q = questions[stepIndex];
+  const a = answers[stepIndex];
+  const total = questions.length;
+
+  // ── badge ──
+  let badgeLabel = '';
+  if (q.type === 'single') badgeLabel = '单选';
+  else if (q.type === 'multiple') badgeLabel = '多选';
+  else if (q.type === 'sort') badgeLabel = '排序';
+
+  // ── 选项 ──
+  let optionsHtml = '';
+  if (q.type === 'sort') {
+    a.selected.forEach((optIdx, posIdx) => {
+      optionsHtml += createOptionRowHTML(optIdx, q.options[optIdx], posIdx + 1, q.type, false);
+    });
+  } else {
+    q.options.forEach((opt, i) => {
+      const sel = q.type === 'single' ? a.selected === i : a.selected.includes(i);
+      optionsHtml += createOptionRowHTML(i, opt, i + 1, q.type, sel);
+    });
+  }
+
+  // ── 按钮状态 ──
+  const buttonLabel = getButtonLabel(stepIndex, total, q, a);
+  const buttonClass = buttonLabel === '跳过' ? 'is-skip' : 'is-action';
+  const stepText = `${stepIndex + 1} / ${total}`;
+  const prevDisabled = stepIndex <= 0;
+  const nextDisabled = stepIndex >= total - 1;
+
+  // ── ID 属性：live 模式需要，static 模式不需要 ──
+  const id = (liveAttr) => isStatic ? '' : liveAttr;
+
+  // ── header ──
+  const headerHtml = hideHeader ? '' : `
+    <div class="aq-header">
+      <div class="aq-nav">
+        ${glassNavBtn(GLYPH_PREV, prevDisabled, { dataAction: isStatic ? '' : 'aq-prev' })}
+        <span class="aq-step-indicator"${id(' id="aqStep"')}>${stepText}</span>
+        ${glassNavBtn(GLYPH_NEXT, nextDisabled, { dataAction: isStatic ? '' : 'aq-next' })}
+      </div>
+      ${glassCloseBtn({ dataAction: isStatic ? '' : 'aq-close' })}
+    </div>`;
+
+  // ── 问题区 ──
+  const questionAreaHtml = `
+    <div class="aq-question-area"${id(' id="aqQuestionArea"')}>
+      <span class="aq-badge">${badgeLabel}</span>
+      <span class="aq-question-text">${escapeAQHtml(q.question)}</span>
+    </div>`;
+
+  // ── 选项列表 ──
+  const optionsContainerHtml = `
+    <div class="aq-options"${id(' id="aqOptions"')}>${optionsHtml}</div>`;
+
+  // ── 输入栏 ──
+  const placeholderText = q.type === 'single'
+    ? '以上都不是，我来告诉你'
+    : '我来额外补充说明';
+
+  const inputHtml = hideInput ? '' : `
+    <div class="aq-input-bar">
+      <input class="aq-input-field"${id(' id="aqInput"')} type="text" autocomplete="off" value="${escapeAttr(a.customInput)}" placeholder="${escapeAttr(placeholderText)}"${isStatic ? ' readonly tabindex="-1"' : ''}>
+      <button class="aq-action-btn ${buttonClass}"${id(' id="aqAction"')} type="button"${isStatic ? ' tabindex="-1"' : ''}${isStatic ? '' : ' data-action="aq-action"'}>${buttonLabel}</button>
+    </div>`;
+
+  return `
+    <div class="ask-question-card${isStatic ? ' aq-static' : ''}">
+      ${headerHtml}
+      ${questionAreaHtml}
+      ${optionsContainerHtml}
+      ${inputHtml}
+    </div>`;
+}
+
+function updateActionButton() {
+  if (!askState) return;
+  const { questions, answers, stepIndex } = askState;
+  const btn = document.getElementById('aqAction');
+  if (!btn) return;
+
+  const label = getButtonLabel(stepIndex, questions.length, questions[stepIndex], answers[stepIndex]);
+  btn.textContent = label;
+  btn.className = 'aq-action-btn ' + (label === '跳过' ? 'is-skip' : 'is-action');
+}
+
+// ── 静态快照渲染（供右侧文档面板用）─────────────
+// 统一走 renderAskQuestionHTML，保证 HTML 结构与左侧 Demo 完全一致
+function renderStaticAskQuestion(questions, stepIndex, answers, options = {}) {
+  return renderAskQuestionHTML(questions, stepIndex, answers, { mode: 'static', ...options });
 }
 
 // ── 事件处理函数 ─────────────────────────────────
@@ -319,20 +264,12 @@ function onInputChange(text) {
   a.customInput = text;
   if (q.type === 'single' && a.selected !== null) {
     a.selected = null;
-    // 轻量更新：只移除选项行的选中态，不全量重渲染
-    const container = document.getElementById('aqOptions');
-    if (container) container.querySelectorAll('.aq-option.is-selected').forEach(row => {
-      row.classList.remove('is-selected');
-      const num = row.querySelector('.aq-option-num');
-      if (num) num.style.fontWeight = '';
-      const txt = row.querySelector('.aq-option-text');
-      if (txt) txt.style.fontWeight = '';
-      // 移除单选 ✓ 图标
-      const icon = row.querySelector('.aq-check-icon');
-      if (icon) icon.parentElement.remove();
-    });
+    // 需要重渲染以取消选项选中态（会重置光标位置，但这是用户触发的即时反馈）
+    renderAskQuestion();
+  } else {
+    // 轻量更新：仅按钮文案/样式可能变化
+    updateActionButton();
   }
-  updateActionButton();
 }
 
 function goToStep(index) {
@@ -527,8 +464,7 @@ function showAskQuestion(questions) {
     if (composer) composer.style.display = 'none';
     if (askEl) askEl.classList.add('is-active');
 
-    renderAskQuestion();
-    initDragSort();
+    renderAskQuestion(); // 内部会处理 sortable 初始化
   });
 }
 
@@ -548,51 +484,57 @@ function hideAskQuestion() {
   askState = null;
 }
 
-// 绑定一次性事件（在 DOMContentLoaded 后调用）
+// 绑定事件（使用事件委托，绑定在容器上，不因 innerHTML 替换而丢失）
 function bindAskQuestionEvents() {
-  // 选项点击
-  document.getElementById('aqOptions')?.addEventListener('click', (e) => {
+  const container = document.getElementById('askQuestion');
+  if (!container) return;
+
+  // ── click 委托 ──
+  container.addEventListener('click', (e) => {
+    if (!askState) return;
+
+    // 选项点击
     const row = e.target.closest('.aq-option');
-    if (!row || !askState) return;
-    const q = askState.questions[askState.stepIndex];
-    if (q.type === 'sort') return; // 排序不用点击
-    onOptionClick(parseInt(row.dataset.index));
-  });
-
-  // 输入框
-  document.getElementById('aqInput')?.addEventListener('input', (e) => {
-    onInputChange(e.target.value);
-  });
-
-  // 按钮
-  document.getElementById('aqAction')?.addEventListener('click', onActionClick);
-
-  // 导航
-  document.getElementById('aqPrev')?.addEventListener('click', () => {
-    if (askState) goToStep(askState.stepIndex - 1);
-  });
-  document.getElementById('aqNext')?.addEventListener('click', () => {
-    if (askState) goToStep(askState.stepIndex + 1);
-  });
-
-  // 关闭
-  document.getElementById('aqClose')?.addEventListener('click', onCloseAsk);
-
-  // 排序题：手指碰到选项的瞬间立刻清除提示（比 SortableJS 的 onStart 更早）
-  const optionsContainer = document.getElementById('aqOptions');
-  if (optionsContainer) {
-    const immediateClearHint = (e) => {
-      if (!askState) return;
+    if (row) {
       const q = askState.questions[askState.stepIndex];
-      if (q.type !== 'sort') return;
-      const row = e.target.closest('.aq-option');
-      if (!row) return;
-      // 手指碰到选项，立刻清除提示循环
-      clearSortHint();
-    };
-    optionsContainer.addEventListener('touchstart', immediateClearHint, { passive: true });
-    optionsContainer.addEventListener('mousedown', immediateClearHint);
-  }
+      if (q.type === 'sort') return;
+      onOptionClick(parseInt(row.dataset.index));
+      return;
+    }
+
+    // data-action 按钮
+    const actionEl = e.target.closest('[data-action]');
+    if (!actionEl) return;
+
+    const action = actionEl.dataset.action;
+    if (action === 'aq-prev')       goToStep(askState.stepIndex - 1);
+    else if (action === 'aq-next')  goToStep(askState.stepIndex + 1);
+    else if (action === 'aq-close') onCloseAsk();
+    else if (action === 'aq-action')onActionClick();
+  });
+
+  // ── input 委托 ──
+  container.addEventListener('input', (e) => {
+    if (!askState) return;
+    if (e.target.matches('#aqInput, .aq-input-field')) {
+      onInputChange(e.target.value);
+    }
+  });
+
+  // ── 排序题拖拽提示：手指/鼠标触碰选项时立刻清除 ──
+  container.addEventListener('touchstart', (e) => {
+    if (!askState) return;
+    const q = askState.questions[askState.stepIndex];
+    if (q.type !== 'sort') return;
+    if (e.target.closest('.aq-option')) clearSortHint();
+  }, { passive: true });
+
+  container.addEventListener('mousedown', (e) => {
+    if (!askState) return;
+    const q = askState.questions[askState.stepIndex];
+    if (q.type !== 'sort') return;
+    if (e.target.closest('.aq-option')) clearSortHint();
+  });
 }
 
 export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion };

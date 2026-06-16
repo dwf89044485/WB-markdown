@@ -137,45 +137,7 @@
     </div>
   </div>
   <!-- Ask User Question (replaces composer when active) -->
-  <div class="ask-question" id="askQuestion">
-    <div class="ask-question-card">
-      <!-- 顶栏 -->
-      <div class="aq-header">
-        <div class="aq-nav">
-          <button class="glass-btn aq-nav-btn aq-prev-btn" id="aqPrev" type="button" aria-label="上一题">
-            <span class="glass-layer lg-layer-one"></span>
-            <span class="glass-layer lg-layer-two"></span>
-            <span class="glass-layer-inner lg-layer-three"></span>
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M10 4L6 8L10 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <span class="aq-step-indicator" id="aqStep">1 / 4</span>
-          <button class="glass-btn aq-nav-btn aq-next-btn" id="aqNext" type="button" aria-label="下一题">
-            <span class="glass-layer lg-layer-one"></span>
-            <span class="glass-layer lg-layer-two"></span>
-            <span class="glass-layer-inner lg-layer-three"></span>
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M6 4L10 8L6 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <button class="glass-btn aq-close-btn" id="aqClose" type="button" aria-label="关闭">
-          <span class="glass-layer lg-layer-one"></span>
-          <span class="glass-layer lg-layer-two"></span>
-          <span class="glass-layer-inner lg-layer-three"></span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="position:relative">
-<path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <!-- 问题区 -->
-      <div class="aq-question-area" id="aqQuestionArea"></div>
-      <!-- 选项列表 -->
-      <div class="aq-options" id="aqOptions"></div>
-      <!-- 输入栏 -->
-      <div class="aq-input-bar">
-        <input class="aq-input-field" id="aqInput" type="text" autocomplete="off">
-        <button class="aq-action-btn is-skip" id="aqAction" type="button">跳过</button>
-      </div>
-    </div>
-  </div>
+  <div class="ask-question" id="askQuestion"></div>
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
     <div class="bottom-sheet" id="sheet">
       <div class="sheet-handle"></div>

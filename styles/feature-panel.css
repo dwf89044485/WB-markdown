@@ -84,7 +84,26 @@
   padding:0 8px;
 }
 
-/* ── 字号阶梯（复用 .md 体系，右侧阅读区逐级放大）─── */
+/* ── 字号体系 ───────────────────────────────────
+ *
+ * 基准：--md-font-body = 18px（对话区 body = 15px）
+ * 原则：右侧所有字号 ≥ 对话区对应层级，不得小于
+ *
+ *  层级         class                px
+ *  ──────────────────────────────────────────
+ *  h1           .md h1               26
+ *  h2           .md h2               23
+ *  h3           .md h3               20
+ *  h4           .md h4               19
+ *  引导段       .fp-lead             17
+ *  正文         .md p                18
+ *  副标题       .fp-subtitle         16
+ *  描述文字     .fp-snapshot-side-desc 16
+ *  按钮         .fp-anchor-btn       14
+ *  快照标签     .fp-snapshot-label   14
+ *  元信息       .fp-meta             14
+ *  占位标签     .fp-placeholder-label 14
+ *  ──────────────────────────────────────────── */
 .fp-root .md {
   --md-font-h1: 26px;
   --md-font-h2: 23px;
@@ -97,12 +116,12 @@
 }
 
 .fp-subtitle{
-  font-size:15px;
+  font-size:16px;
   color:#86868b;
   margin-bottom:24px;
 }
 .fp-meta{
-  font-size:12px;
+  font-size:14px;
   color:#86868b;
   margin-top:8px;
 }
@@ -113,7 +132,7 @@
   align-items:center;
   gap:6px;
   padding:8px 14px;
-  font-size:13px;
+  font-size:14px;
   font-weight:500;
   color:#1d1d1f;
   background:#fff;
@@ -147,7 +166,7 @@
   margin:16px 0;
 }
 .fp-placeholder-label{
-  font-size:12px;
+  font-size:14px;
   color:#86868b;
   font-style:italic;
   margin-bottom:8px;
@@ -159,7 +178,7 @@
 }
 
 .fp-lead{
-  font-size:16px;
+  font-size:17px;
   color:#3a3a3c;
   line-height:1.6;
   margin-bottom:16px;
@@ -179,12 +198,11 @@
 
 .fp-snapshot-wrap {
   margin: 16px 0;
-  padding: 4px 8px;
 }
 
 .fp-snapshot-label {
   display: block;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   color: #86868b;
   text-transform: uppercase;
@@ -209,7 +227,7 @@
   display: flex;
   gap: 20px;
   margin: 16px 0;
-  padding: 4px 8px;
+  padding: 8px 8px 8px 0;
   overflow-x: auto;
 }
 .fp-snapshot-grid-2 > .fp-snapshot-wrap {
@@ -267,7 +285,7 @@
   flex: 1;
   min-width: 0;
   padding-top: 4px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.75;
   color: #424245;
 }

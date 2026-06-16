@@ -281,7 +281,10 @@
   color: #1d1d1f;
 }
 
-/* ── Override github-markdown.css dark mode for feature panel ───── */#fpContent.markdown-body pre {
+/* ── Override github-markdown.css for feature panel ────────── */#fpContent.markdown-body {
+  background-color: #fafafa !important;  /* 与外层 design-notes 底色一致 */
+}
+#fpContent.markdown-body pre {
   background-color: #f6f8fa !important;
 }
 #fpContent.markdown-body code {

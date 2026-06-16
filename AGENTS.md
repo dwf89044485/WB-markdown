@@ -37,6 +37,12 @@
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
 
+> **⚠️ 两套 Markdown 样式系统（极易混淆）**：
+> - **左侧 Demo 区**（手机壳内对话流）→ 使用 `styles/markdown.css`，CSS 变量以 `--md-` 开头，如 `--md-font-h1: 20px`，h1 字号 20px
+> - **右侧 Feature Panel 区**（交互说明栏）→ 使用 GitHub 官方 `github-markdown.css`（CDN 引入），h1 字号为 `2em`（约 32px），样式类名 `.markdown-body`
+> - **切勿混淆**：查 h1 样式时，Demo 区去 `styles/markdown.css`，Feature Panel 区去 GitHub 官方样式或 `index.html` 中 CDN 链接
+> - **渲染入口**：`engine/markdown.js` 负责 Demo 区解析；`engine/feature-panel.js` 将 feature content 注入 `.fp-content.markdown-body`（Feature Panel 区）
+
 > **速度控制**：输出速度变量为 `scenario.playback.tokensPerSecond`，默认值 `200`。读取入口为 `engine/core.js` 的 `currentTokensPerSecond()`。UI 控件在 `index.html` 的 `#ctrlSpeedSlider`（range slider，5~1500，步进 5），当前值显示在 `#dcSpeedRoValue`。绑定逻辑在 `engine/controls-speed.js`（IIFE，随 `player.js` 模块加载后执行）。`typewriter.js` 用 `typeIntervalForChunk()` 实时读取该值；`core.js` 的 `playbackDelay()` 也按 `200 / tps` 缩放 `frameDelay` 和 `stepDelay`，所以调速对打字速度和步进间隔同时生效。
 
 > **本地开发**：使用 `python3 -m http.server 8080` 或 VS Code Live Server，通过 `http://localhost:8080` 访问，不要直接双击 HTML（`engine/` 模块用 ES Module，`file://` 协议不支持）。

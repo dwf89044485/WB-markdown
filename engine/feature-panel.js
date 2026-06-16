@@ -45,12 +45,13 @@ function buildShell() {
   rootEl.innerHTML = `
     <div class="fp-root">
       <nav class="fp-nav">
+        <div class="fp-section-label">交互说明</div>
         <button class="fp-nav-trigger" type="button" id="fpNavTrigger">
           <span id="fpNavTriggerLabel">设计思考（总览）</span>
         </button>
         <div class="fp-nav-menu" id="fpNavMenu" role="menu"></div>
       </nav>
-      <div class="fp-content markdown-body" id="fpContent"></div>
+      <div class="fp-content markdown-body" id="fpContent" data-theme="light"></div>
     </div>
   `;
   navMenuEl = rootEl.querySelector('#fpNavMenu');

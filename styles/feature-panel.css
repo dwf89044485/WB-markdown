@@ -17,6 +17,14 @@
   margin-bottom:24px;
   position:relative;
 }
+.fp-section-label{
+  font-size:18px;
+  font-weight:600;
+  color:#1d1d1f;
+  margin-bottom:12px;
+  padding:0 4px;
+  letter-spacing:-0.02em;
+}
 .fp-nav-trigger{
   display:inline-flex;
   align-items:center;
@@ -270,4 +278,11 @@
 }
 .fp-snapshot-side-desc strong {
   color: #1d1d1f;
+}
+
+/* ── Override github-markdown.css dark mode for feature panel ───── */#fpContent.markdown-body pre {
+  background-color: #f6f8fa !important;
+}
+#fpContent.markdown-body code {
+  background-color: rgba(129,139,152,0.12) !important;
 }

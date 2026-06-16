@@ -552,9 +552,13 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     var colStep = pw / COLS;
     var rowStep = ph / ROWS;
 
-    var lines = '';
+    // demo 区域底部边界（手机底部 + 空1格 + tweak 3格）
+    var demobottom = py + ph + 4 * rowStep;
 
-    // 手机四边像素位置（含右边和底边）
+    var lines = '';
+    var solidLines = '';  // 边界线单独收集：放到 corner-boxes（z-index=2）压在手机上，不被手机 border 遮挡
+
+    // 手机四角（px,py) 用于角标定位，保持原始值不变
     var leftEdge   = px;
     var rightEdge  = px + pw;
     var topEdge    = py;
@@ -564,27 +568,63 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       var s = solid
         ? 'stroke="'+COLOR+'" stroke-width="1"'
         : 'stroke="'+COLOR+'" stroke-width="1" stroke-dasharray="'+DASH+'"';
-      lines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" '+s+'/>';
+      if(solid){
+        solidLines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" '+s+'/>';
+      } else {
+        lines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" '+s+'/>';
+      }
+    }
+
+    // 判断网格线是否落在某个边界线上（含 0.5px 容差）
+    function onEdge(pos, edges){
+      for(var i=0;i<edges.length;i++){
+        if(Math.abs(pos - edges[i]) < 0.5) return true;
+      }
+      return false;
     }
 
     var x, y;
+    var edgeX = [leftEdge, rightEdge];
+    var edgeY = [topEdge, bottomEdge, demobottom];
 
-    // 竖线：从手机左边向左右延伸，碰到手机左右边用实线
-    for(x = px; x >= -1; x -= colStep)
-      line(x, 0, x, ch, Math.abs(x - leftEdge) < 0.5 || Math.abs(x - rightEdge) < 0.5);
-    for(x = px + colStep; x <= cw + 1; x += colStep)
-      line(x, 0, x, ch, Math.abs(x - leftEdge) < 0.5 || Math.abs(x - rightEdge) < 0.5);
+    // 竖线：跳过手机左右边界（后面单独以偏移量绘制）
+    for(x = px; x >= -1; x -= colStep){
+      if(onEdge(x, edgeX)) continue;
+      line(x, 0, x, ch, false);
+    }
+    for(x = px + colStep; x <= cw + 1; x += colStep){
+      if(onEdge(x, edgeX)) continue;
+      line(x, 0, x, ch, false);
+    }
 
-    // 横线：从手机上边向上下延伸，碰到手机上下边用实线
-    for(y = py; y >= -1; y -= rowStep)
-      line(0, y, cw, y, Math.abs(y - topEdge) < 0.5 || Math.abs(y - bottomEdge) < 0.5);
-    for(y = py + rowStep; y <= ch + 1; y += rowStep)
-      line(0, y, cw, y, Math.abs(y - topEdge) < 0.5 || Math.abs(y - bottomEdge) < 0.5);
+    // 横线：跳过手机上下边界和 demo 区域底部边界
+    for(y = py; y >= -1; y -= rowStep){
+      if(onEdge(y, edgeY)) continue;
+      line(0, y, cw, y, false);
+    }
+    for(y = py + rowStep; y <= ch + 1; y += rowStep){
+      if(onEdge(y, edgeY)) continue;
+      line(0, y, cw, y, false);
+    }
+
+    // ═══ 偏移 solid 边界线：stroke-width: 1 居中，偏移 ±0.5 使 stroke 外缘与手机 border-box 对齐 ═══
+    // 边界线画在 corner-boxes（z-index=2）压在手机上，避免被手机 border（rgba(0,0,0,0.08)）覆盖
+    line(px + 0.5, 0, px + 0.5, ch, true);                    // 左边界：stroke 左缘 = px
+    line(px + pw - 0.5, 0, px + pw - 0.5, ch, true);           // 右边界：stroke 右缘 = px + pw
+    line(0, py + 0.5, cw, py + 0.5, true);                    // 上边界：stroke 上缘 = py
+    line(0, py + ph - 0.5, cw, py + ph - 0.5, true);            // 手机底边界：stroke 下缘 = py + ph
+    line(0, demobottom - 0.5, cw, demobottom - 0.5, true);       // demo 区域底边界
+
+    console.log('[grid]', 'demobottom=', demobottom, 'ch=', ch, 'vh=', vh,
+      'draw bottom line:', demobottom - 0.5 <= ch + 1,
+      'draw right line:', px + pw - 0.5 <= cw);
 
     // 四角 10×10 方框单独提出来，压手机上面
     var S = 10, H = S / 2;
     var corners = [[leftEdge,topEdge],[rightEdge,topEdge],[leftEdge,bottomEdge],[rightEdge,bottomEdge]];
     var boxSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(cw)+'" height="'+r(ch)+'">';
+    // 边界线（solid）先画，角标方框压在上面
+    boxSvg += solidLines;
     for(var ci=0;ci<corners.length;ci++){
       var cx=corners[ci][0], cy=corners[ci][1];
       boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="#F8F6F1" stroke="#BBBAB0" stroke-width="1"/>';

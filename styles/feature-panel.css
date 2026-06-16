@@ -45,12 +45,6 @@
 .fp-nav-trigger.is-open::after{
   transform:rotate(-135deg) translateY(1px);
 }
-  width:8px;height:8px;
-  border-right:1.5px solid currentColor;
-  border-bottom:1.5px solid currentColor;
-  transform:rotate(45deg) translateY(-2px);
-  margin-left:4px;
-}
 .fp-nav-menu{
   position:absolute;
   top:calc(100% + 6px);

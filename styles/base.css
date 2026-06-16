@@ -216,7 +216,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#10B981; /* emerald */
+  background:#F59E0B; /* amber */
   flex-shrink:0;
 }
 .status-time{

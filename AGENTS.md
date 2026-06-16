@@ -268,3 +268,33 @@ API Key 存储在 `~/.zshrc` 中（`export OA_PAGES_API_KEY="..."`）。部署�
 ## 回复规范
 
 每次回复必须以 `🎯` 作为第一行，正文从第二行开始。
+
+<claude-mem-context>
+# Memory Context
+
+# [wb-markdown] recent context, 2026-06-16 7:10pm GMT+8
+
+Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
+Format: ID TIME TYPE TITLE
+Fetch details: get_observations([IDs]) | Search: mem-search skill
+
+Stats: 13 obs (2,680t read) | 585,745t work | 100% savings
+
+### Jun 8, 2026
+5070 11:12a 🟣 Composer 上方加透明渐变遮罩消除滚动截断
+### Jun 16, 2026
+5071 5:14p 🔵 AskQuestion nav trigger button located in feature-panel.js
+5072 5:15p 🟣 Feature panel nav trigger redesigned as capsule dropdown
+5073 5:17p 🟣 AskQuestion 导航触发器改为胶囊下拉样式
+5074 " 🔴 修复 feature-panel.css 中孤立 CSS 属性导致下拉菜单异常展开
+5075 5:21p ✅ ask-question feature section heading renamed to "2. 组件构成"
+5076 " ✅ Version indicator dot color changed from cyan to orange
+5077 5:31p 🔵 排序组件状态展示 Bug — 拖拽时与新手指引两个状态未正确渲染
+5078 5:34p 🔵 排序组件多状态展示渲染异常
+5079 5:35p 🔴 排序组件拖拽态和指引态快照视觉差异修复
+5080 " 🔴 排序快照指引态精修：指引仅高亮第2项，去掉多余描边
+5081 6:59p 🟣 AskQuestion 导航按钮改为胶囊下拉样式
+5082 " 🔵 wb-markdown 项目 CSS 架构与 feature-panel 导航结构
+
+Access 586k tokens of past work via get_observations([IDs]) or mem-search skill.
+</claude-mem-context>

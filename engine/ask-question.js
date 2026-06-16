@@ -101,10 +101,15 @@ function escapeAttr(str) {
 }
 
 // ── 选项行 HTML（字符串生成，左右两侧共用）──────
-function createOptionRowHTML(index, text, displayNum, type, isSelected) {
+function createOptionRowHTML(index, text, displayNum, type, isSelected, isDragging = false, showHint = false) {
   const selClass = isSelected ? ' is-selected' : '';
   const sortClass = type === 'sort' ? ' is-sort' : '';
+  const dragClass = isDragging ? ' is-dragging' : '';
+  const hintClass = showHint && type === 'sort' ? ' aq-sort-hint' : '';
 
+  const hintPopHtml = showHint && type === 'sort'
+    ? '<span class="aq-sort-hint-pop">按住拖动排序</span>'
+    : '';
   let rightHtml = '';
   if (type === 'single' && isSelected) {
     rightHtml = `<div class="aq-option-right"><span class="aq-check-icon">${CHECK_BLACK_SVG}</span></div>`;
@@ -117,12 +122,13 @@ function createOptionRowHTML(index, text, displayNum, type, isSelected) {
   }
 
   return `
-    <div class="aq-option${selClass}${sortClass}" data-index="${index}">
+    <div class="aq-option${selClass}${sortClass}${dragClass}${hintClass}" data-index="${index}">
       <div class="aq-option-left">
         <span class="aq-option-num">${displayNum}</span>
         <span class="aq-option-text">${escapeAQHtml(text)}</span>
       </div>
       ${rightHtml}
+      ${hintPopHtml}
     </div>`;
 }
 
@@ -130,7 +136,7 @@ function createOptionRowHTML(index, text, displayNum, type, isSelected) {
 // mode: 'live' → 生成带 id 属性的交互 HTML（注入到 #askQuestion 容器）
 // mode: 'static' → 生成纯静态快照 HTML（无 id，无 data-action，disabled 按钮）
 function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
-  const { mode = 'live', hideHeader = false, hideInput = false } = options;
+  const { mode = 'live', hideHeader = false, hideInput = false, dragging = false, showHint = false } = options;
   const isStatic = mode === 'static';
   const q = questions[stepIndex];
   const a = answers[stepIndex];
@@ -146,7 +152,9 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
   let optionsHtml = '';
   if (q.type === 'sort') {
     a.selected.forEach((optIdx, posIdx) => {
-      optionsHtml += createOptionRowHTML(optIdx, q.options[optIdx], posIdx + 1, q.type, false);
+      const isDragging = dragging && posIdx === 0;  // 模拟拖拽中第一个选项
+      const hasHint = showHint;  // 模拟新手指引
+      optionsHtml += createOptionRowHTML(optIdx, q.options[optIdx], posIdx + 1, q.type, false, isDragging, hasHint);
     });
   } else {
     q.options.forEach((opt, i) => {

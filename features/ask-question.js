@@ -180,7 +180,7 @@ export default {
             <p><strong>⑤ 操作按钮</strong></p>
           </div>
         </div>
-        <button class="fp-anchor-btn" data-anchor="single-appear">在左侧看实例 →</button>
+        <button class="fp-anchor-btn" data-anchor="single-appear">在左侧Demo查看示例 →</button>
       </section>
 
       <section data-section="variants">

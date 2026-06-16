@@ -238,18 +238,6 @@
 
 .fp-snapshot-grid-2 .fp-snapshot-wrap {
   overflow: hidden;
-  max-height: 340px;
-}
-
-.fp-snapshot-grid-2 .fp-snapshot {
-  transform: scale(0.54);
-  transform-origin: top left;
-  width: 185%;
-}
-
-.fp-snapshot-grid-2 .fp-snapshot-label {
-  position: relative;
-  z-index: 1;
 }
 
 /* 3 列题型展示网格 */
@@ -262,13 +250,12 @@
 
 .fp-snapshot-grid-3 .fp-snapshot-wrap {
   overflow: hidden;
-  max-height: 200px;
 }
 
 .fp-snapshot-grid-3 .fp-snapshot {
-  transform: scale(0.37);
+  transform: scale(0.70);
   transform-origin: top left;
-  width: 270%;
+  width: 143%;
 }
 
 .fp-snapshot-grid-3 .fp-snapshot-label {

@@ -45,7 +45,7 @@ function buildShell() {
   rootEl.innerHTML = `
     <div class="fp-root">
       <nav class="fp-nav">
-        <div class="fp-section-label">交互说明</div>
+        <h1 class="fp-section-label">交互说明</h1>
         <button class="fp-nav-trigger" type="button" id="fpNavTrigger">
           <span id="fpNavTriggerLabel">设计思考（总览）</span>
         </button>

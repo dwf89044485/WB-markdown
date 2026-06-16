@@ -199,7 +199,7 @@ export default {
       </section>
 
       <section data-section="states">
-        <h2>4. 状态</h2>
+        <h2>4. 组件状态</h2>
 
         <h3>单选</h3>
         <p>未选 → 白底，无右侧图标 / 已选 → 浅灰底，加粗，✓ 图标</p>

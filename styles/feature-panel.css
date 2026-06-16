@@ -80,59 +80,19 @@
   flex:1;
   min-height:0;
 }
-.fp-content h1{
-  font-size:32px;
-  font-weight:600;
-  letter-spacing:-0.01em;
-  margin-bottom:8px;
+
+/* ── 字号阶梯（复用 .md 体系，右侧阅读区逐级放大）─── */
+.fp-root .md {
+  --md-font-h1: 24px;
+  --md-font-h2: 21px;
+  --md-font-h3: 18px;
+  --md-font-h4: 18px;
+  --md-font-body: 17px;
+  --md-font-li: 17px;
+  --md-font-pre: 15px;
+  --md-line-body: 1.7;
 }
-.fp-content h2{
-  font-size:22px;
-  font-weight:600;
-  margin:32px 0 12px;
-  letter-spacing:-0.005em;
-}
-.fp-content h3{
-  font-size:16px;
-  font-weight:600;
-  margin:16px 0 8px;
-}
-.fp-content p{
-  font-size:14px;
-  line-height:1.7;
-  color:#3a3a3c;
-  margin-bottom:10px;
-}
-.fp-content ul{
-  margin:8px 0 12px 18px;
-}
-.fp-content li{
-  font-size:14px;
-  line-height:1.7;
-  color:#3a3a3c;
-  margin-bottom:4px;
-}
-.fp-content pre{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
-  font-size:12.5px;
-  line-height:1.6;
-  background:#f5f5f7;
-  border:1px solid rgba(0,0,0,0.06);
-  border-radius:8px;
-  padding:12px 16px;
-  overflow-x:auto;
-  white-space:pre;
-}
-.fp-content code{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
-  font-size:0.92em;
-  background:rgba(0,0,0,0.05);
-  padding:1px 6px;
-  border-radius:4px;
-}
-.fp-content section{
-  margin-bottom:24px;
-}
+
 .fp-subtitle{
   font-size:15px;
   color:#86868b;

@@ -7,6 +7,26 @@ const CHECK_WHITE_SVG = '<svg width="11.85" height="7.82" viewBox="0 0 12 8" fil
 
 const DRAG_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.5C4.5 1.9477 4.9477 1.5 5.5 1.5C6.0523 1.5 6.5 1.9477 6.5 2.5C6.5 3.0523 6.0523 3.5 5.5 3.5C4.9477 3.5 4.5 3.0523 4.5 2.5ZM9.5 2.5C9.5 1.9477 9.9477 1.5 10.5 1.5C11.0523 1.5 11.5 1.9477 11.5 2.5C11.5 3.0523 11.0523 3.5 10.5 3.5C9.9477 3.5 9.5 3.0523 9.5 2.5ZM4.5 6.1667C4.5 5.6144 4.9477 5.1667 5.5 5.1667C6.0523 5.1667 6.5 5.6144 6.5 6.1667C6.5 6.719 6.0523 7.1667 5.5 7.1667C4.9477 7.1667 4.5 6.719 4.5 6.1667ZM9.5 6.1667C9.5 5.6144 9.9477 5.1667 10.5 5.1667C11.0523 5.1667 11.5 5.6144 11.5 6.1667C11.5 6.719 11.0523 7.1667 10.5 7.1667C9.9477 7.1667 9.5 6.719 9.5 6.1667ZM4.5 9.8333C4.5 9.281 4.9477 8.8333 5.5 8.8333C6.0523 8.8333 6.5 9.281 6.5 9.8333C6.5 10.3856 6.0523 10.8333 5.5 10.8333C4.9477 10.8333 4.5 10.3856 4.5 9.8333ZM9.5 9.8333C9.5 9.281 9.9477 8.8333 10.5 8.8333C11.0523 8.8333 11.5 9.281 11.5 9.8333C11.5 10.3856 11.0523 10.8333 10.5 10.8333C9.9477 10.8333 9.5 10.3856 9.5 9.8333ZM4.5 13.5C4.5 12.9477 4.9477 12.5 5.5 12.5C6.0523 12.5 6.5 12.9477 6.5 13.5C6.5 14.0523 6.0523 14.5 5.5 14.5C4.9477 14.5 4.5 14.0523 4.5 13.5ZM9.5 13.5C9.5 12.9477 9.9477 12.5 10.5 12.5C11.0523 12.5 11.5 12.9477 11.5 13.5C11.5 14.0523 11.0523 14.5 10.5 14.5C9.9477 14.5 9.5 14.0523 9.5 13.5Z" fill="black"/></svg>';
 
+// ── Glass 按钮 HTML 生成器（与 index.html 中 Demo DOM 结构完全一致）─────────
+// 核心原则：右侧文档面板的静态快照必须与左侧实际组件的 HTML 结构一致，
+// 否则 CSS 类（.glass-btn / .glass-layer）无法生效，导致视觉差异。
+// 三层 glass-layer span + SVG（style="position:relative"）= 玻璃质感按钮
+
+const GLYPH_PREV  = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M10 4L6 8L10 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const GLYPH_NEXT  = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M6 4L10 8L6 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const GLYPH_CLOSE = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+const GLASS_LAYERS = '<span class="glass-layer lg-layer-one"></span><span class="glass-layer lg-layer-two"></span><span class="glass-layer-inner lg-layer-three"></span>';
+
+function glassNavBtn(glyph, disabled) {
+  const d = disabled ? ' disabled' : '';
+  return `<button class="glass-btn aq-nav-btn"${d} type="button" tabindex="-1">${GLASS_LAYERS}${glyph}</button>`;
+}
+
+function glassCloseBtn() {
+  return `<button class="glass-btn aq-close-btn" type="button" tabindex="-1">${GLASS_LAYERS}${GLYPH_CLOSE}</button>`;
+}
+
 // ── 问答会话状态 ─────────────────────────────────
 let askState = null;     // { questions, answers[], stepIndex, resolve }
 
@@ -196,27 +216,27 @@ function renderStaticAskQuestion(questions, stepIndex, answers, options = {}) {
   const buttonClass = buttonLabel === '跳过' ? 'is-skip' : 'is-action';
   const stepText = `${stepIndex + 1} / ${total}`;
 
-  // 导航箭头
-  const PREV_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const NEXT_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const CLOSE_X = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
-
-  const prevDisabled = stepIndex <= 0 ? ' disabled' : '';
-  const nextDisabled = stepIndex >= total - 1 ? ' disabled' : '';
+  const prevDisabled = stepIndex <= 0;
+  const nextDisabled = stepIndex >= total - 1;
 
   const headerHtml = hideHeader ? '' : `
     <div class="aq-header">
       <div class="aq-nav">
-        <button class="aq-nav-btn"${prevDisabled} type="button" tabindex="-1">${PREV_ARROW}</button>
+        ${glassNavBtn(GLYPH_PREV, prevDisabled)}
         <span class="aq-step-indicator">${stepText}</span>
-        <button class="aq-nav-btn"${nextDisabled} type="button" tabindex="-1">${NEXT_ARROW}</button>
+        ${glassNavBtn(GLYPH_NEXT, nextDisabled)}
       </div>
-      <button class="aq-close-btn" type="button" tabindex="-1">${CLOSE_X}</button>
+      ${glassCloseBtn()}
     </div>`;
+
+  // placeholder 文案与左侧实际交互一致（参见 renderAskQuestion 第 177-179 行）
+  const placeholderText = q.type === 'single'
+    ? '以上都不是，我来告诉你'
+    : '我来额外补充说明';
 
   const inputHtml = hideInput ? '' : `
     <div class="aq-input-bar">
-      <input class="aq-input-field" type="text" readonly placeholder="..." tabindex="-1">
+      <input class="aq-input-field" type="text" readonly placeholder="${escapeAQHtml(placeholderText)}" tabindex="-1">
       <button class="aq-action-btn ${buttonClass}" type="button" tabindex="-1">${buttonLabel}</button>
     </div>`;
 

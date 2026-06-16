@@ -505,11 +505,15 @@
   overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   border:none;
-  background:none;
+  background:#fff;
+  position:relative;
 }
 .response-action-source .source-avatar + .source-avatar{
   margin-left:-8px;
 }
+.response-action-source .source-avatar:nth-child(1){z-index:3;}
+.response-action-source .source-avatar:nth-child(2){z-index:2;}
+.response-action-source .source-avatar:nth-child(3){z-index:1;}
 .response-action-source .source-avatar img,
 .response-action-source .source-avatar svg{
   width:12px;height:12px;display:block;

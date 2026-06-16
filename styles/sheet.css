@@ -170,12 +170,12 @@
 }
 .s-text{
   flex:0 1 auto;min-width:0;
-  font-size:15px;line-height:1.42;font-weight:600;
+  font-size:14px;line-height:1.42;font-weight:600;
   color:#1c1c1e;letter-spacing:-0.24px;
   display:inline-flex;align-items:center;
 }
 .s-text.dim{
-  font-size:15px;line-height:1.42;font-weight:500;
+  font-size:14px;line-height:1.42;font-weight:500;
   color:#8e8e93;letter-spacing:-0.22px;
   display:inline-flex;align-items:center;
 }

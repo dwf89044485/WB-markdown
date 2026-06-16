@@ -453,7 +453,7 @@ function commitSortFromDOM() {
 }
 
 // ── 显示/隐藏 ─────────────────────────────────
-function showAskQuestion(questions) {
+function showAskQuestion(questions, silent) {
   return new Promise((resolve) => {
     askState = resetAskState(questions);
     askState.resolve = resolve;
@@ -471,6 +471,9 @@ function showAskQuestion(questions) {
 
     // 首次渲染后标记 settled，后续重渲染不再播入场动画
     if (askEl) askEl.classList.add('aq-settled');
+
+    // silent 模式：立即 resolve，不阻塞调用者（供 feature-jump 锚点跳转使用）
+    if (silent) resolve();
   });
 }
 

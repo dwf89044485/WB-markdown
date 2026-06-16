@@ -11,9 +11,14 @@
 //   5. 调 player.pauseDirector() 暂停
 //   6. 期间不抛错；失败也静默兜底（spec 第七节 4）
 // ============================================================
+//
+// 注意：askUser action 的 showAskQuestion() 返回的 Promise 只等用户操作后 resolve，
+//       导致 jumpDirectorTo 卡住永不返回。解决方案：检测锚点是否含有 questionIndex
+//       （只有 askUser 锚点有此字段），如有则跳过目标 step 的 goToStep，
+//       改跳到前一步，再手动调 showAskQuestion(silent) 让卡片渲染且不阻塞。
 
 import { goToStep, pauseDirector, resolveNodeStep } from './player.js';
-import { navigateToQuestion } from './ask-question.js';
+import { showAskQuestion, hideAskQuestion, navigateToQuestion } from './ask-question.js';
 
 const TIMEOUT_MS = 8000;
 const POLL_MS = 50;
@@ -31,11 +36,56 @@ export async function jumpToAnchor(anchor) {
     return;
   }
 
-  try {
-    await goToStep(targetStep);
-  } catch (err) {
-    console.warn('[feature-jump] goToStep failed silently', err);
-    // 静默继续——尝试用当前 DOM 状态去等条件
+  // 只有 askUser 锚点含有 questionIndex。检测到后，skip 目标 step 的 goToStep
+  // （因为 showAskQuestion 返回的 Promise 只在用户操作后 resolve，会卡住
+  // jumpDirectorTo），改跳到前一步，再手动调 showAskQuestion(silent)。
+  const isAskUser = typeof anchor.questionIndex === 'number';
+
+  if (isAskUser) {
+    const scenario = window.WORKBUDDY_SCENARIO;
+    // 遍历所有 node 的 raw actions，模拟 normalizeActions 逻辑：
+    // 连续 status 合并为一个（只计 1 个 normalized 索引），其余类型各计 1
+    let questions = null;
+    let idx = 4; // 跳过固定入口（用户消息、agent 出现、思考过程、创建平铺容器）
+    for (const node of (scenario.nodes || [])) {
+      const raw = node.actions || [];
+      for (let ai = 0; ai < raw.length; ai++) {
+        const act = raw[ai];
+        if (act.type === 'status') {
+          // 跳过连续 status（normalizeActions 合并为一个 statusGroup）
+          while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
+          // status 不可能是 askUser，仅计数
+          idx++;
+        } else {
+          if (idx === targetStep && act.type === 'askUser') {
+            questions = act.questions;
+            break;
+          }
+          idx++;
+        }
+      }
+      if (questions) break;
+    }
+
+    // 跳到目标的前一步，让前面所有步骤渲染出来
+    const prevStep = Math.max(0, targetStep - 1);
+    try {
+      await goToStep(prevStep);
+    } catch (err) {
+      console.warn('[feature-jump] goToStep(to prev) failed silently', err);
+    }
+
+    // 手动显示 askUser 卡片，silent=true 确保 resolve 立即触发不阻塞
+    if (questions) {
+      hideAskQuestion();
+      showAskQuestion(questions, true);
+    }
+  } else {
+    try {
+      await goToStep(targetStep);
+    } catch (err) {
+      console.warn('[feature-jump] goToStep failed silently', err);
+    }
   }
 
   // 跳转后翻到指定题目（如果锚点指定了 questionIndex）

@@ -88,18 +88,6 @@
   padding:0 8px;
 }
 
-/* ── 字号阶梯（复用 .md 体系，右侧阅读区逐级放大）─── */
-.fp-root .md {
-  --md-font-h1: 26px;
-  --md-font-h2: 23px;
-  --md-font-h3: 20px;
-  --md-font-h4: 19px;
-  --md-font-body: 18px;
-  --md-font-li: 18px;
-  --md-font-pre: 16px;
-  --md-line-body: 1.7;
-}
-
 .fp-subtitle{
   font-size:15px;
   color:#86868b;

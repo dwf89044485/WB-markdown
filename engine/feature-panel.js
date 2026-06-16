@@ -50,7 +50,7 @@ function buildShell() {
         </button>
         <div class="fp-nav-menu" id="fpNavMenu" role="menu"></div>
       </nav>
-      <div class="fp-content md" id="fpContent"></div>
+      <div class="fp-content markdown-body" id="fpContent"></div>
     </div>
   `;
   navMenuEl = rootEl.querySelector('#fpNavMenu');

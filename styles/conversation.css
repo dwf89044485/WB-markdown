@@ -317,7 +317,8 @@
 #mainMd > :last-child{
   margin-bottom:0;
 }
-#mainMd > ul:last-child li:last-child{
+#mainMd > ul:last-child li:last-child,
+#mainMd > ol:last-child li:last-child{
   padding-bottom:0;
 }
 

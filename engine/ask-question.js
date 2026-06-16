@@ -18,13 +18,15 @@ const GLYPH_CLOSE = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
 
 const GLASS_LAYERS = '<span class="glass-layer lg-layer-one"></span><span class="glass-layer lg-layer-two"></span><span class="glass-layer-inner lg-layer-three"></span>';
 
-function glassNavBtn(glyph, disabled) {
+function glassNavBtn(glyph, disabled, opts = {}) {
   const d = disabled ? ' disabled' : '';
-  return `<button class="glass-btn aq-nav-btn"${d} type="button" tabindex="-1">${GLASS_LAYERS}${glyph}</button>`;
+  const da = opts.dataAction ? ` data-action="${opts.dataAction}"` : '';
+  return `<button class="glass-btn aq-nav-btn"${d}${da} type="button" tabindex="-1">${GLASS_LAYERS}${glyph}</button>`;
 }
 
-function glassCloseBtn() {
-  return `<button class="glass-btn aq-close-btn" type="button" tabindex="-1">${GLASS_LAYERS}${GLYPH_CLOSE}</button>`;
+function glassCloseBtn(opts = {}) {
+  const da = opts.dataAction ? ` data-action="${opts.dataAction}"` : '';
+  return `<button class="glass-btn aq-close-btn"${da} type="button" tabindex="-1">${GLASS_LAYERS}${GLYPH_CLOSE}</button>`;
 }
 
 // ── 问答会话状态 ─────────────────────────────────

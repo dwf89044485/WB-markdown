@@ -534,9 +534,11 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       if(ctrl){ctrl.style.position='';ctrl.style.margin='';}
       var boxEl=document.querySelector('.corner-boxes');
       if(boxEl)boxEl.style.display='none';
+      bg.style.display='none';
       return;
     }
 
+    bg.style.display=''; // 桌面端确保显示
     // 重置，获取手机渲染高度
     phone.style.position = '';
     phone.style.marginTop = '';

@@ -545,4 +545,13 @@ function bindAskQuestionEvents() {
   });
 }
 
-export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion };
+/**
+ * 外部翻题 API：供 feature-jump.js 锚点跳转后程序化导航到指定题目。
+ * 封装 module-private 的 goToStep(index)。
+ * @param {number} index 目标 question 索引（0-based）
+ */
+export function navigateToQuestion(index) {
+  goToStep(index);
+}
+
+export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, navigateToQuestion };

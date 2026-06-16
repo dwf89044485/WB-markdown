@@ -66,7 +66,9 @@ function labeled(label, html) {
 
 // 实际 node 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）
 // nodeIndex 由 feature-jump.js 通过 resolveNodeStep() 换算为 director timeline 索引
+// actionOffset=8 指到 n3 的 askUser action（n3 共 9 个 normalized action，最后一个为 askUser）
 const STEP_ASK_QUESTION = 2;
+const ASKUSER_ACTION_OFFSET = 8;
 
 export default {
   id: 'ask-question',
@@ -75,6 +77,8 @@ export default {
   anchors: {
     'single-appear': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 0,
       until: () => {
         const card = document.querySelector('.ask-question-card');
         if (!card) return false;
@@ -85,6 +89,8 @@ export default {
     },
     'single-auto-next': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 1,
       until: () => {
         const stepIndicator = document.querySelector('.aq-step-indicator');
         if (!stepIndicator) return false;
@@ -94,6 +100,8 @@ export default {
     },
     'multi-appear': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 1,
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         return badge && badge.textContent.includes('多选');
@@ -102,6 +110,8 @@ export default {
     },
     'multi-checked': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 1,
       until: () => {
         const checked = document.querySelectorAll('.ask-question-card .aq-option.is-selected');
         return checked.length >= 2;
@@ -110,6 +120,8 @@ export default {
     },
     'sort-appear': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 2,
       until: () => {
         const badge = document.querySelector('.ask-question-card .aq-badge');
         const hint = document.querySelector('.aq-sort-hint');
@@ -119,12 +131,16 @@ export default {
     },
     'sort-after-drag': {
       nodeIndex: STEP_ASK_QUESTION,
+      actionOffset: ASKUSER_ACTION_OFFSET,
+      questionIndex: 2,
+      // 降级：fast-render 无法模拟真实拖拽，仅检查 card 存在 + 排序题 badge
       until: () => {
-        const badge = document.querySelector('.ask-question-card .aq-badge');
-        const hint = document.querySelector('.aq-sort-hint');
-        return badge && badge.textContent.includes('排序') && !hint;
+        const card = document.querySelector('.ask-question-card');
+        if (!card) return false;
+        const badge = card.querySelector('.aq-badge');
+        return badge && badge.textContent.includes('排序');
       },
-      label: '看拖拽后状态',
+      label: '看排序题画面',
     },
   },
   // getter 确保每次读取都重新计算（不过 feature-panel 只读一次）

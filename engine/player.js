@@ -387,7 +387,9 @@ function makeResponseActionsHtml() {
     ).join('')
     + '<span class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>'
     + RESPONSE_SVGS.cost + '<strong>120</strong></span>'
-    + '</div></div>';
+    + '</div>'
+    + '<div class="response-action-right"><span class="response-action-btn response-action-source" style="cursor:default"><span class="source-char">源</span><span class="source-avatars"><span class="source-avatar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAABHNCSVQICAgIfAhkiAAAAQRpQ0NQVEdGWAAAGJVjYGA8wwAELAYMDLl5JUVB7k4KEZFRCuwvGTgZxBnAIDG5uIABN2BkYPh2DUQyMFzWxaMOF+BMSS1OBtIfgFilCGg50EgRIFskHcLWANIGwbELu8pKAEyA4AsYtCgpyB7BQgWyMdiZ2ExE4uKAKp7wGyHXJzSpMR7mbgSc0LDQbSHEAsw1DMEMTgzuAE8j9ESf4iBgaLrwwMzBMQYkkzGRi2tzSNwixKksYGDgb2Fg2HYeIYYIk4LEokSwEAsQM6WlMTB8Ws7AwBvJwCB8gYGBKxoWEDjcpgR2WwhDKkMeQzKYLGFQYPAE8/SALCMGAyA2ZWAAAPaCP+RXa/pgAAADT0lEQVRIib2VX2hbdRTHvzdZmpaNPlSMc9Z/XR34J2MMKyMdq6vFKk6FMrapIJ0+2CF98aUFQYv45MMmgqTd3ARxDqyitBvCMGKGXV8WK52tZVUo1qVpb2K6dE3TLPd+fEia5qarKOIOXO6955zf/X7P73t+50plBgSAXmCSVZss+AL/NV6OVw4e5P+3YCmmUQDeIGlM0rZ12Y31S8nfpC2PSnUtf1tISUUFFKM8ct4wjNZSAuOSHnSsXcrIqPBIbnfeMfW9lF2QRk5K6aTG93+inSM9xfzMno8dCJlzvbr+/hFhS7INuTfXqebMr6UpvYZhHHEVdCmCW1PTSux7WbH7HlNs2+7VdLdXGv1UauqR6lv10MUPtKu6XpJU49mkyguHHQQqn+mQxx+Qa+Mmue+ul6vGJ7PJsRMdQECF5gAg3T9A1Od3XFb8T9L9g6RP92PPjMPxBlg04dTuoqjPXT7KqxMn1hV9aSBI6mgHyxfPkji0tTTUKwrdmj7z9RrwqM9P9I7txeelwfPwUQDSify9xLzhdrzhdoJXv3X4zX0bAEi8eA8Ac4+rNDwpgFxsjuidO4j6/MzU7eL6yc/ITU2Tm/qdhWPHiySyP14G24ZcBiYG1lS6QuJmFt9/W55As/LfKJgAEgc7iPr8pL88i2VZDA8P09nZSSQSyWfZNuaTh4j6/JgtB9fd6o0XXsEbbidnWw7/wrHDAFjXTMyWtQQmZ+5tINn5JgBdXV0YhkFtbS0ul4tQKARANjJalALLCVC+C6WWHf2O7M9hAK71PIvZ6pTAJSlkVHhU+dReAerr61MsFlNjY6MADQ0N5U+HmVjtX5fL0fFIeu3KKc3dSDn82eHPlXqnWZ6H9+TfLw3KfdfW0pSQgEDqvQ+JbX8CgO7ubtra2qiqqqK6uppsNouVSDL7yN68TF+cK9JvGnnXobs33E5D5K1ifP7tAPEDwk6nsNMLmM87qoeV0QxMLJ44Taw+QPqrb4ibJrOzs2ST88y/0cNM7U6iW3awfOmn4spfFq+uaTqLVW0zoSCJl0T8BRE/IJKvO44fFEbyyiT0KD+KH7gxdkXLoR9kTf8ho6JC7vr7Vfl0s9ybb9e/tn8wisvyb/3P6GYkbunv+C9K977RXCNlsQAAAABJRU5ErkJggg==" alt=""></span><span class="source-avatar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAABHNCSVQICAgIfAhkiAAAAQRpQ0NQVEdGWAAAGJVjYGA8wwAELAYMDLl5JUVB7k4KEZFRCuwvGTgZxBnAIDG5uIABN2BkYPh2DUQyMFzWxaMOF+BMSS1OBtIfgFilCGg50EgRIFskHcLWANIGwbELu8pKAEyA4AsYtCgpyB7BQgWyMdiZ2ExE4uKAKp7wGyHXJzSpMR7mbgSc0LDQbSHEAsw1DMEMTgzuAE8j9ESf4iBgaLrwwMzBMQYkkzGRi2tzSNwixKksYGDgb2Fg2HYeIYYIk4LEokSwEAsQM6WlMTB8Ws7AwBvJwCB8gYGBKxoWEDjcpgR2WwhDKkMeQzKYLGFQYPAE8/SALCMGAyA2ZWAAAPaCP+RXa/pgAAADT0lEQVRIib2VX2hbdRTHvzdZmpaNPlSMc9Z/XR34J2MMKyMdq6vFKk6FMrapIJ0+2CF98aUFQYv45MMmgqTd3ARxDqyitBvCMGKGXV8WK52tZVUo1qVpb2K6dE3TLPd+fEia5qarKOIOXO6955zf/X7P73t+50plBgSAXmCSVZss+AL/NV6OVw4e5P+3YCmmUQDeIGlM0rZ12Y31S8nfpC2PSnUtf1tISUUFFKM8ct4wjNZSAuOSHnSsXcrIqPBIbnfeMfW9lF2QRk5K6aTG93+inSM9xfzMno8dCJlzvbr+/hFhS7INuTfXqebMr6UpvYZhHHEVdCmCW1PTSux7WbH7HlNs2+7VdLdXGv1UauqR6lv10MUPtKu6XpJU49mkyguHHQQqn+mQxx+Qa+Mmue+ul6vGJ7PJsRMdQECF5gAg3T9A1Od3XFb8T9L9g6RP92PPjMPxBlg04dTuoqjPXT7KqxMn1hV9aSBI6mgHyxfPkji0tTTUKwrdmj7z9RrwqM9P9I7txeelwfPwUQDSify9xLzhdrzhdoJXv3X4zX0bAEi8eA8Ac4+rNDwpgFxsjuidO4j6/MzU7eL6yc/ITU2Tm/qdhWPHiySyP14G24ZcBiYG1lS6QuJmFt9/W55As/LfKJgAEgc7iPr8pL88i2VZDA8P09nZSSQSyWfZNuaTh4j6/JgtB9fd6o0XXsEbbidnWw7/wrHDAFjXTMyWtQQmZ+5tINn5JgBdXV0YhkFtbS0ul4tQKARANjJalALLCVC+C6WWHf2O7M9hAK71PIvZ6pTAJSlkVHhU+dReAerr61MsFlNjY6MADQ0N5U+HmVjtX5fL0fFIeu3KKc3dSDn82eHPlXqnWZ6H9+TfLw3KfdfW0pSQgEDqvQ+JbX8CgO7ubtra2qiqqqK6uppsNouVSDL7yN68TF+cK9JvGnnXobs33E5D5K1ifP7tAPEDwk6nsNMLmM87qoeV0QxMLJ44Taw+QPqrb4ibJrOzs2ST88y/0cNM7U6iW3awfOmn4spfFq+uaTqLVW0zoSCJl0T8BRE/IJKvO44fFEbyyiT0KD+KH7gxdkXLoR9kTf8ho6JC7vr7Vfl0s9ybb9e/tn8wisvyb/3P6GYkbunv+C9K977RXCNlsQAAAABJRU5ErkJggg==" alt=""></span><span class="source-avatar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAABHNCSVQICAgIfAhkiAAAAQRpQ0NQVEdGWAAAGJVjYGA8wwAELAYMDLl5JUVB7k4KEZFRCuwvGTgZxBnAIDG5uIABN2BkYPh2DUQyMFzWxaMOF+BMSS1OBtIfgFilCGg50EgRIFskHcLWANIGwbELu8pKAEyA4AsYtCgpyB7BQgWyMdiZ2ExE4uKAKp7wGyHXJzSpMR7mbgSc0LDQbSHEAsw1DMEMTgzuAE8j9ESf4iBgaLrwwMzBMQYkkzGRi2tzSNwixKksYGDgb2Fg2HYeIYYIk4LEokSwEAsQM6WlMTB8Ws7AwBvJwCB8gYGBKxoWEDjcpgR2WwhDKkMeQzKYLGFQYPAE8/SALCMGAyA2ZWAAAPaCP+RXa/pgAAADT0lEQVRIib2VX2hbdRTHvzdZmpaNPlSMc9Z/XR34J2MMKyMdq6vFKk6FMrapIJ0+2CF98aUFQYv45MMmgqTd3ARxDqyitBvCMGKGXV8WK52tZVUo1qVpb2K6dE3TLPd+fEia5qarKOIOXO6955zf/X7P73t+50plBgSAXmCSVZss+AL/NV6OVw4e5P+3YCmmUQDeIGlM0rZ12Y31S8nfpC2PSnUtf1tISUUFFKM8ct4wjNZSAuOSHnSsXcrIqPBIbnfeMfW9lF2QRk5K6aTG93+inSM9xfzMno8dCJlzvbr+/hFhS7INuTfXqebMr6UpvYZhHHEVdCmCW1PTSux7WbH7HlNs2+7VdLdXGv1UauqR6lv10MUPtKu6XpJU49mkyguHHQQqn+mQxx+Qa+Mmue+ul6vGJ7PJsRMdQECF5gAg3T9A1Od3XFb8T9L9g6RP92PPjMPxBlg04dTuoqjPXT7KqxMn1hV9aSBI6mgHyxfPkji0tTTUKwrdmj7z9RrwqM9P9I7txeelwfPwUQDSify9xLzhdrzhdoJXv3X4zX0bAEi8eA8Ac4+rNDwpgFxsjuidO4j6/MzU7eL6yc/ITU2Tm/qdhWPHiySyP14G24ZcBiYG1lS6QuJmFt9/W55As/LfKJgAEgc7iPr8pL88i2VZDA8P09nZSSQSyWfZNuaTh4j6/JgtB9fd6o0XXsEbbidnWw7/wrHDAFjXTMyWtQQmZ+5tINn5JgBdXV0YhkFtbS0ul4tQKARANjJalALLCVC+C6WWHf2O7M9hAK71PIvZ6pTAJSlkVHhU+dReAerr61MsFlNjY6MADQ0N5U+HmVjtX5fL0fFIeu3KKc3dSDn82eHPlXqnWZ6H9+TfLw3KfdfW0pSQgEDqvQ+JbX8CgO7ubtra2qiqqqK6uppsNouVSDL7yN68TF+cK9JvGnnXobs33E5D5K1ifP7tAPEDwk6nsNMLmM87qoeV0QxMLJ44Taw+QPqrb4ibJrOzs2ST88y/0cNM7U6iW3awfOmn4spfFq+uaTqLVW0zoSCJl0T8BRE/IJKvO44fFEbyyiT0KD+KH7gxdkXLoR9kTf8ho6JC7vr7Vfl0s9ybb9e/tn8wisvyb/3P6GYkbunv+C9K977RXCNlsQAAAABJRU5ErkJggg==" alt=""></span></span></span></div>'
+    + '</div>';
 }
 
 function renderStaticPreChat() {
@@ -1119,13 +1121,22 @@ export function resumePlayback() {
 /**
  * 将 scenario node 索引转换为 director timeline 索引。
  * 4 个固定入口（showUserMessage / showAgentShell / showThinkingLoading / 创建平铺容器）
- * + 前面所有 node 的 normalized action 数 = 目标 node 首个 action 的 timeline 索引。
+ * + 前面所有 node 的 normalized action 数 + actionOffset = 目标 action 的 timeline 索引。
+ *
+ * @param {number} nodeIndex scenario node 索引
+ * @param {number} [actionOffset=0] node 内 action 偏移量（0 = 该 node 第一个 action）
+ * @returns {number} director timeline 索引，-1 表示无效
  */
-export function resolveNodeStep(nodeIndex) {
+export function resolveNodeStep(nodeIndex, actionOffset = 0) {
   if (typeof nodeIndex !== 'number' || nodeIndex < 0 || !scenario) return -1;
   let ti = 4; // 跳过固定入口
   for (let i = 0; i < nodeIndex && i < scenario.nodes.length; i++) {
     ti += normalizeActions(scenario.nodes[i].actions).length;
+  }
+  if (nodeIndex >= 0 && nodeIndex < scenario.nodes.length) {
+    const actions = normalizeActions(scenario.nodes[nodeIndex].actions);
+    const offset = Math.max(0, Math.min(actionOffset, actions.length - 1));
+    ti += offset;
   }
   return Math.min(ti, directorTimeline.length - 1);
 }

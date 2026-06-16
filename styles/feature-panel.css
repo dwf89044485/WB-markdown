@@ -251,14 +251,3 @@
 .fp-snapshot-grid-3 .fp-snapshot-wrap {
   overflow: hidden;
 }
-
-.fp-snapshot-grid-3 .fp-snapshot {
-  transform: scale(0.70);
-  transform-origin: top left;
-  width: 143%;
-}
-
-.fp-snapshot-grid-3 .fp-snapshot-label {
-  position: relative;
-  z-index: 1;
-}

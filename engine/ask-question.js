@@ -153,7 +153,7 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
   if (q.type === 'sort') {
     a.selected.forEach((optIdx, posIdx) => {
       const isDragging = dragging && posIdx === 0;  // 模拟拖拽中第一个选项
-      const hasHint = showHint;  // 模拟新手指引
+      const hasHint = showHint && posIdx === 1;  // 模拟新手指引
       optionsHtml += createOptionRowHTML(optIdx, q.options[optIdx], posIdx + 1, q.type, false, isDragging, hasHint);
     });
   } else {

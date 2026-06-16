@@ -253,7 +253,7 @@
   background: rgba(255, 255, 255, 0.96) !important;
   box-shadow: 0 16px 40px rgba(0,0,0,0.20), 0 4px 12px rgba(0,0,0,0.12) !important;
   transform: scale(1.03);
-  border: 1.5px solid rgba(0,0,0,0.08);
+
   z-index: 10;
   position: relative;
   cursor: grabbing;

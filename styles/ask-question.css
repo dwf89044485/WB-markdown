@@ -449,3 +449,8 @@
   user-select: none;
   animation: none; /* 禁止入场动效 */
 }
+
+/* ── 重渲染静默：防止每次 innerHTML 替换重播 slide-up ── */
+.ask-question.aq-settled .ask-question-card {
+  animation: none;
+}

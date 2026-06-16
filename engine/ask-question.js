@@ -462,9 +462,15 @@ function showAskQuestion(questions) {
     const composer = document.querySelector('.composer');
     const askEl = document.getElementById('askQuestion');
     if (composer) composer.style.display = 'none';
-    if (askEl) askEl.classList.add('is-active');
+    if (askEl) {
+      askEl.classList.remove('aq-settled'); // 清除旧标记，让入场动画可播
+      askEl.classList.add('is-active');
+    }
 
     renderAskQuestion(); // 内部会处理 sortable 初始化
+
+    // 首次渲染后标记 settled，后续重渲染不再播入场动画
+    if (askEl) askEl.classList.add('aq-settled');
   });
 }
 
@@ -479,7 +485,9 @@ function hideAskQuestion() {
   const composer = document.querySelector('.composer');
   const askEl = document.getElementById('askQuestion');
   if (composer) composer.style.display = '';
-  if (askEl) askEl.classList.remove('is-active');
+  if (askEl) {
+    askEl.classList.remove('is-active', 'aq-settled');
+  }
 
   askState = null;
 }

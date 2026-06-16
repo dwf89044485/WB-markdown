@@ -7,9 +7,11 @@
 // ============================================================
 
 import askQuestion from './ask-question.js';
+import principles from './principles.js';
 
 export const featureList = [
   askQuestion,
+  principles,
 ];
 
 // 按 id 快速查表

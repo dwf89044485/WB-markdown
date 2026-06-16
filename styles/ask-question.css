@@ -247,18 +247,6 @@
   z-index: 9999 !important;
   opacity: 1 !important;
 }
-
-/* 排序拖拽中状态（feature panel 快照用） */
-.aq-option.is-dragging {
-  background: rgba(255, 255, 255, 0.96) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.20), 0 4px 12px rgba(0,0,0,0.12) !important;
-  transform: scale(1.03);
-
-  z-index: 10;
-  position: relative;
-  cursor: grabbing;
-}
-
 /* 排序拖拽提示（停留3秒后高亮第2项） */
 .aq-option.aq-sort-hint {
   background: #fff !important;

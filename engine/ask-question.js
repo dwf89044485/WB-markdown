@@ -104,7 +104,7 @@ function escapeAttr(str) {
 function createOptionRowHTML(index, text, displayNum, type, isSelected, isDragging = false, showHint = false) {
   const selClass = isSelected ? ' is-selected' : '';
   const sortClass = type === 'sort' ? ' is-sort' : '';
-  const dragClass = isDragging ? ' is-dragging' : '';
+  const dragClass = isDragging ? ' aq-sort-chosen' : '';
   const hintClass = showHint && type === 'sort' ? ' aq-sort-hint' : '';
 
   const hintPopHtml = showHint && type === 'sort'

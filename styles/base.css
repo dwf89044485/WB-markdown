@@ -216,7 +216,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#F59E0B; /* amber */
+  background:#F97316; /* orange */
   flex-shrink:0;
 }
 .status-time{
@@ -546,14 +546,13 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 .tag {
   display: inline-flex;
   align-items: center;
-  align-self: flex-start;
   font-size: 13px;
   font-weight: 600;
   line-height: 1;
   padding: 6px 11px;
   border-radius: 8px;
-  background: #f2f2f4;
-  color: #1d1d1f;
+  background: #3b3b3b;
+  color: #fff;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }

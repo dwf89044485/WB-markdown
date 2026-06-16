@@ -9,11 +9,13 @@
 import principles from './principles.js';
 import infoArch from './info-arch.js';
 import askQuestion from './ask-question.js';
+import scrollNav from './scroll-nav.js';
 
 export const featureList = [
   principles,
   infoArch,
   askQuestion,
+  scrollNav,
 ];
 
 // 按 id 快速查表

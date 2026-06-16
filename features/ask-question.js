@@ -225,41 +225,6 @@ export default {
       <section data-section="interaction" id="sec-interaction">
         <h2>4. 交互与状态</h2>
 
-        <h3>输入栏 · 与选项的两种关系（跨题型）</h3>
-        <p>输入栏有两种工作模式，由题型决定——这条规则跨所有题型生效：</p>
-        <table>
-          <thead>
-            <tr>
-              <th>题型</th>
-              <th>用户输入文字时</th>
-              <th>用户点选项时</th>
-              <th>提交结果</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>单选</strong></td>
-              <td>已选项<strong>清空</strong></td>
-              <td>输入框<strong>清空</strong></td>
-              <td>选项 / 输入 二选一（互斥）</td>
-            </tr>
-            <tr>
-              <td><strong>多选</strong></td>
-              <td>已选项<strong>保留</strong></td>
-              <td>输入框<strong>保留</strong></td>
-              <td>选项 + 输入 并存</td>
-            </tr>
-            <tr>
-              <td><strong>排序</strong></td>
-              <td>排序结果<strong>保留</strong></td>
-              <td>—</td>
-              <td>顺序 + 输入 并存</td>
-            </tr>
-          </tbody>
-        </table>
-        <p><strong>理由</strong>：单选语义本身互斥——"选项"与"自定义输入"是同一题的两种回答路径；多选 / 排序的"自定义输入"是补充说明，不替代选项。</p>
-        <p>每种题型下输入栏的 placeholder 文案与具体行为详见 4.1 / 4.2 / 4.3。</p>
-
         <h3 id="sec-single">4.1 单选题</h3>
         <p><strong>未选</strong>：白底，常规字重，无右侧图标<br>
            <strong>已选</strong>：浅灰底，加粗，✓ 图标</p>
@@ -267,7 +232,8 @@ export default {
           ${labeled('未选', s.singleUnselected)}
           ${labeled('已选', s.singleSelected)}
         </div>
-        <p><strong>行为</strong>：点未选项 → 选中该项（其他项取消）+ 输入框清空 + <strong>非最后题自动前进</strong>；点已选项 → 取消选中，留在当前题；在输入框打字 → 已选项清空（互斥），不自动前进。</p>
+        <p><strong>行为</strong>：点未选项 → 选中该项（其他项取消）+ 输入框清空 + <strong>非最后题自动前进</strong>；点已选项 → 取消选中，留在当前题；在输入框打字 → 已选项清空，不自动前进。</p>
+        <p><strong>输入栏关系：互斥</strong>——文本输入与选项对选是二选一的路径。点选项 → 输入框清空；在输入框打字 → 已选项清空。提交结果二者选其一。</p>
         <p><strong>输入栏 placeholder</strong>：「以上都不是，我来告诉你」——明确告诉用户这是 escape hatch。</p>
         <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交，按状态切换。</p>
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
@@ -278,7 +244,8 @@ export default {
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
         </div>
-        <p><strong>行为</strong>：点选项 toggle 选中/取消，<strong>不自动前进</strong>，需手动按"下一步"；在输入框打字 → 已选项保留（共存）。</p>
+        <p><strong>行为</strong>：点选项 toggle 选中/取消，<strong>不自动前进</strong>，需手动按"下一步"；在输入框打字 → 已选项保留。</p>
+        <p><strong>输入栏关系：共存</strong>——文本输入可独立于选项选择存在。点选项 toggle 不影响输入框内容；在输入框打字不影响已选状态。提交结果选项与文本并存。</p>
         <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」——表明是叠加而非替代。</p>
         <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交。</p>
         <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
@@ -291,6 +258,7 @@ export default {
           ${labeled('新手指引', s.sortGuide)}
         </div>
         <p><strong>行为</strong>：按下并位移 ≥ 3px 进入拖拽（无需长按）；松手 → 200ms 缓动落位；首次进入有循环 pop 引导动效，<strong>用户首次拖动后永久消失</strong>；在输入框打字 → 排序结果保留。</p>
+        <p><strong>输入栏关系：共存</strong>——文本输入不影响排序结果。用户拖动选项与输入框打字可同时进行。提交结果顺序与文本并存。</p>
         <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」。</p>
         <p><strong>操作按钮</strong>：<strong>无"跳过"</strong>，只有下一步 / 提交——因为默认顺序即为答案。</p>
         <div class="fp-anchor-row">

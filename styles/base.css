@@ -160,7 +160,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     align-items:flex-start;
     /* 总宽至少 1440：左 600 + 右 840 */
     min-width:1440px;
-    width:max-content;
+    width:100%;
     height:100dvh;
     padding:0;
     gap:0;
@@ -216,7 +216,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#F97316; /* orange */
+  background:#8B5CF6; /* violet */
   flex-shrink:0;
 }
 .status-time{

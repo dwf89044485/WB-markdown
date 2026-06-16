@@ -179,13 +179,14 @@
 
 .fp-snapshot {
   display: flex;
-  justify-content: center;
-  /* 快照内的卡片宽度自适应右侧面板 */
+  justify-content: flex-start;
+  /* 快照内的卡片左对齐 */
 }
 
 .fp-snapshot > .ask-question-card {
   width: 100%;
   max-width: 350px;
+  flex-shrink: 0;
 }
 
 /* 2 列并排对比网格 */
@@ -196,10 +197,32 @@
   margin: 16px 0;
 }
 
-/* 3 列题型展示网格 */
+/* 3 列题型展示：横向平铺，允许水平滚动 */
 .fp-snapshot-grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  display: flex;
+  gap: 16px;
   margin: 16px 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+.fp-snapshot-grid-3::-webkit-scrollbar {
+  height: 4px;
+}
+.fp-snapshot-grid-3::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 2px;
+}
+.fp-snapshot-grid-3 > .fp-snapshot-wrap {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  min-width: 280px;
+}
+.fp-snapshot-grid-3 > .fp-snapshot-wrap > .fp-snapshot {
+  /* 让卡片填满 wrap 的宽度 */
+}
+.fp-snapshot-grid-3 > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
+  width: 100%;
+  max-width: 350px;
 }

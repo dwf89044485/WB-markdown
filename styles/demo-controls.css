@@ -31,10 +31,11 @@
   position:fixed;
   top:0;
   left:0;
-  width:618px;                       /* body 24 + layout-main 44 + .left-area 550 */
+  width:618px;                       /* JS 会覆盖此值 */
   height:100vh;
   background-image:url("../assets/paper/texture.png");
   background-repeat:repeat;
+  border-right:1px solid #A6A59B;
   z-index:0;
   pointer-events:none;
 }
@@ -586,7 +587,6 @@
 @media (max-height:920px) and (min-width:901px){
   .layout-main{padding:10px;gap:16px;}
   .left-area{width:550px;}
-  .phone-shell{transform:scale(.92);transform-origin:center top;}
   .demo-controls{width:393px;padding:16px;}
   .dc-main{gap:14px;}
   .design-notes{height:100%;min-width:240px;}

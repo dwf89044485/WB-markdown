@@ -1,0 +1,37 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Documentation
+README.md
+AGENTS.md
+docs/*.md
+
+# CI/CD
+.github
+
+# Environment
+.env
+.env.local
+
+# Misc
+coverage
+.cache
+tmp
+temp

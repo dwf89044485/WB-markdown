@@ -544,16 +544,18 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     phone.style.marginLeft = '';
 
     var ph = phone.getBoundingClientRect().height;
+    var pw = phone.getBoundingClientRect().width;
 
-    // 手机 + 空一格 + tweak 高两格 的总高度
+    // 手机 + 空一格 + tweak 三格 的总高度
+    var colStep = pw / COLS;
     var rowStep = ph / ROWS;
     var totalH  = ph + 4 * rowStep;
     var vh      = window.innerHeight;
     var startY  = Math.max(0, (vh - totalH) / 2);
 
-    // 手机水平居中于 .paper-bg（fixed left:0, width:618px）
-    var bgW = bg.getBoundingClientRect().width;
-    var pw  = phone.getBoundingClientRect().width;
+    // 左侧宽度 = 手机 + 左右各一格
+    var bgW = pw + 2 * colStep;
+    bg.style.width = r(bgW) + 'px';
     var leftX = (bgW - pw) / 2;
 
     // 固定定位手机

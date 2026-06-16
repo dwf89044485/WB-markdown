@@ -26,6 +26,13 @@
 | `engine/controls-stepper.js` | 步进控制绑定（IIFE）：`#ctrlPrevStep`/`#ctrlAutoStep`/`#ctrlNextStep` 绑定到 `player.js` 导出的 `directorPrevStep`/`directorNextStep`/`toggleDirectorAuto` |
 | `engine/ask-question.js`   | 问答卡片渲染与交互（单选/多选/排序题、拖拽排序、状态管理、事件绑定）                          |
 | `styles/ask-question.css`  | 问答卡片样式（卡片容器、选项行、排序拖拽手柄、导航按钮、输入栏、步骤指示器、玻璃按钮系统）            |
+| `engine/feature-router.js` | URL 路由工具：`parseURL` / `buildURL` / `pushRoute` / `onChange`；`?view=overview` / `?view=feature&id=<id>`；未知 view / 缺 id 一律 fallback 到 overview |
+| `engine/feature-jump.js`   | 跳转锚点引擎：`jumpToAnchor(anchor)` = goToStep + 轮询 until 条件（8s 超时兜底）+ pauseDirector；`consumePendingJump` 处理 reload 后待跳步骤 |
+| `engine/feature-panel.js`  | 右侧说明栏主控：读 URL → 渲染对应 feature 内容；下拉菜单导航；锚点按钮事件代理；屏宽 < 600 时不初始化 |
+| `features/index.js`        | Feature 注册中心（唯一真相源）：import 各 feature 模块，export `featureList` / `featureMap` / `getFeature`；数组顺序 = 下拉菜单顺序 |
+| `features/overview.js`     | 总览「设计思考」feature（v1 占位）；`type: 'overview'`，无锚点 |
+| `features/ask-question.js` | AskQuestion feature：完整说明内容（HTML 模板字符串）+ 6 个细粒度锚点（`single-appear` / `single-auto-next` / `multi-appear` / `multi-checked` / `sort-appear` / `sort-after-drag`） |
+| `styles/feature-panel.css` | 右侧说明栏样式：`.fp-root` / `.fp-nav` / `.fp-nav-menu` / `.fp-content` / `.fp-anchor-btn` / `.fp-placeholder-block` 等 |
 | `icons-inline.js`          | **自动生成，SVG 内联数据，禁止手动修改，AI 操作时无需读取**                                   |
 
 > **注意**：`icons-inline.js` 为自动生成文件（SVG 内联，28KB），禁止手动修改，AI 操作时无需读取此文件。
@@ -49,7 +56,22 @@
    - **交互** → 在 `engine/sheet.js` 的交互事件绑定中扩展
    - 以上 4 个文件之外的任何位置出现浮层渲染代码，均视为违规。
 
-7. **交互与功能——优先使用现成方案，禁止从头造轮子。** 当用户提出交互或功能需求时，必须先搜索是否存在成熟的现成方案（开源库、CDN 可引入的组件、已有生态方案等），优先采用现成方案或在现成方案上做微调和样式适配。只有在确认无任何现成方案可用时，才允许从头实现。搜索途径包括但不限于：Web 搜索（tavily-cli）、npm/GitHub 查找、CDN 目录检索。违反此规则的实现视为违规。
+8. **设计交付物说明系统——必须走 feature-panel 框架，禁止散写。** 右侧说明栏的所有内容必须走以下分层：
+   - **内容** → 在 `features/<id>.js` 里定义 `{ id, type, label, anchors, content }` 对象
+   - **注册** → 在 `features/index.js` 的 `featureList` 数组里追加
+   - **样式** → 在 `styles/feature-panel.css` 里扩展
+   - **锚点** → 在对应 `features/<id>.js` 的 `anchors` 字段里定义 `{ stepIndex, until, label }`
+   - 以上 4 个位置之外出现说明内容渲染代码，均视为违规。
+
+   **内容形态约束：交互说明必须图文并茂，禁止纯文本/纯 HTML 字符串。** 合规的形态包括：
+   - 构成 / 状态 / 类型 → 带标注的截图（放在 `docs/figures/` 里，用 `<img>` 嵌入）
+   - 流程图 → 内联 SVG 或 Mermaid 渲染
+   - 动效 → GIF / 内联 mini preview
+   - Do's / Don'ts → 视觉对比（两列截图）
+
+   纯文字说明只允许出现在"为什么"这类设计原理章节；描述外观和行为的章节，必须有视觉证据。
+
+9. **交互与功能——优先使用现成方案，禁止从头造轮子。** 当用户提出交互或功能需求时，必须先搜索是否存在成熟的现成方案（开源库、CDN 可引入的组件、已有生态方案等），优先采用现成方案或在现成方案上做微调和样式适配。只有在确认无任何现成方案可用时，才允许从头实现。搜索途径包括但不限于：Web 搜索（tavily-cli）、npm/GitHub 查找、CDN 目录检索。违反此规则的实现视为违规。
 
 ### 表格交互专项说明
 
@@ -225,7 +247,7 @@ git push
 bash PAGES/deploy-pages.sh
 ```
 
-部署脚本会收集 27 个文件（index.html、engine/*.js、styles/*.css 等）打包上传。全文本文件，无需 base64 编码。
+部署脚本会收集 index.html、engine/*.js、styles/*.css、features/*.js 等文件打包上传。全文本文件，无需 base64 编码。
 
 另外也有 Python 版可直接调用：
 

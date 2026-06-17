@@ -78,17 +78,6 @@
   margin-top:6px;margin-bottom:12px;
 }
 
-/* ── CLOSE AREA ───────────────────────────────────────────── */
-/* 放在 .bottom-sheet 之外，避免 overflow:hidden 裁切按钮投影 */
-.sheet-close-area{
-  position:absolute;
-  top:calc(60% + 8px);right:var(--sheet-side-padding);
-  z-index:210;
-  opacity:0;
-  transition:opacity 0.28s ease 0.12s;
-}
-.sheet-overlay.show .sheet-close-area{opacity:1;}
-
 .sheet-handle::after{
   content:"";
   width:72px;height:6px;

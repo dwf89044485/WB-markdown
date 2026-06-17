@@ -415,11 +415,16 @@
   color: #c7c7cc;
   font-weight: 200;
 }
-/* Sheet 节纯文本标签（跟随文本宽度，无背景/边框） */
+/* Sheet 节标签（跟随文本宽度） */
 .tag-fp {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #EBEBEB;
   color: #1d1d1f;
   margin-bottom: 10px;
 }

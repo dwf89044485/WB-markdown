@@ -12,8 +12,10 @@
 import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
-import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
+import { goToStep, resolveNodeStep, resumePlayback, toggleToolCallStyle } from './player.js';
 import { openSheet } from './sheet.js';
+import { setStatusLineLabels } from './icons.js';
+import { hideAskQuestion } from './ask-question.js';
 
 const ROOT_SELECTOR = '.design-notes-inner';
 
@@ -21,6 +23,7 @@ let rootEl = null;
 let navMenuEl = null;
 let contentEl = null;
 let currentFeature = null;
+let loadToken = 0;
 
 export function initFeaturePanel() {
   rootEl = document.querySelector(ROOT_SELECTOR);
@@ -145,9 +148,34 @@ function bindEvents() {
       await goToStep(Number.MAX_SAFE_INTEGER);
     } else if (action === 'disclosure-2') {
       await goToStep(resolveNodeStep(0, 3));
+      // 让最后一条状态行处于"正在搜索网页"的扫光状态
+      const cont = document.querySelector('#stepsList .flat-container');
+      const last = cont && cont.querySelector('.step-detail-link:last-child');
+      if (last) {
+        setStatusLineLabels(last, ['正在搜索网页']);
+        last.classList.add('is-running');
+      }
     } else if (action === 'disclosure-3') {
       await goToStep(resolveNodeStep(0, 3));
       openSheet('F1.c,F1.d,F1.e,F1.f,F1.g,F1.h,F1.i', '搜索网页、更新待办');
+    } else if (action === 'tcn-mode-flat') {
+      toggleToolCallStyle('flat');
+    } else if (action === 'tcn-mode-card') {
+      toggleToolCallStyle('card');
+    } else if (action === 'tcn-mode-stack') {
+      toggleToolCallStyle('stack');
+    } else if (action === 'tcn-demo-running') {
+      // 跳到 n1 第一个 statusGroup 起点，然后手动注入 is-running（fast-render 不保留 running 态）
+      const targetStep = resolveNodeStep(0, 1);
+      await goToStep(targetStep);
+      const cont = document.querySelector('#stepsList .flat-container');
+      const link = cont && cont.querySelector('.step-detail-link');
+      if (link) {
+        setStatusLineLabels(link, ['正在搜索网页']);
+        link.classList.add('is-running');
+      }
+    } else if (action === 'tcn-demo-done') {
+      await goToStep(Number.MAX_SAFE_INTEGER);
     }
   });
 
@@ -192,4 +220,27 @@ function renderRoute(route) {
 
   // 滚动到顶
   contentEl.scrollTop = 0;
+
+  // 切换 feature 时清理可能残留的 askUser 卡片
+  hideAskQuestion();
+
+  // 切换到特定 feature 时，左侧 Demo 自动跳转到对应状态
+  loadToken++;
+  const token = loadToken;
+
+  if (f.id === 'principles' || f.id === 'info-arch') {
+    goToStep(Number.MAX_SAFE_INTEGER);
+  } else if (f.id === 'ask-question') {
+    const anchor = f.anchors && f.anchors['single-appear'];
+    if (anchor) {
+      jumpToAnchor(anchor).then(() => {
+        // 如果跳转过程中 feature 已被切换，清除残留的 askUser 卡片
+        if (token !== loadToken) hideAskQuestion();
+      });
+    }
+  } else if (f.id === 'tool-call-node') {
+    // 跳到 n1 第一个 statusGroup 起点，让左侧 demo 展示一组工具调用节点（done 态）
+    const targetStep = resolveNodeStep(0, 1);
+    goToStep(targetStep).catch(() => {});
+  }
 }

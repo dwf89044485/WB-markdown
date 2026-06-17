@@ -277,7 +277,7 @@
 .fp-tcn-modes > .fp-snapshot-wrap {
   display: flex;
   flex-direction: column;
-  width: 360px;
+  width: 393px;
   flex-shrink: 0;
 }
 .fp-tcn-mode-demo {
@@ -305,9 +305,10 @@
   margin-left: 0;
   padding-left: 4px;
 }
-/* card 模式：保留基础边框，padding 略高 */
+/* card 模式：保留基础边框，padding 略高，定宽匹配 demo */
 .fp-tcn-mode-demo.tool-call-card .step-detail-link {
   padding: 7px var(--cv-status-padding-x);
+  width: 393px;
 }
 
 /* ── Tool Call Node Sheet 静态快照 ────────── */

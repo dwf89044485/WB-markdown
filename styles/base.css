@@ -75,7 +75,7 @@ body{
   --composer-padding-bottom:var(--spacing-32);
   --composer-fade-height:var(--spacing-40);
 
-  --status-icon-color:#0F766E;
+  --status-icon-color:#000;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */

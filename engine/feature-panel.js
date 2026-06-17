@@ -132,6 +132,9 @@ function bindEvents() {
       return;
     }
 
+    // 点在侧边栏，隐藏左侧对应的浮层/问答卡片
+    hideAskQuestion();
+
     jumpToAnchor(anchor);
   });
 
@@ -141,6 +144,9 @@ function bindEvents() {
     if (!btn) return;
 
     const action = btn.dataset.action;
+
+    // 操作按钮点击时，隐藏左侧对应的浮层/问答卡片
+    hideAskQuestion();
     if (action === 'running-state') {
       await goToStep(resolveNodeStep(0, 0));
       resumePlayback();
@@ -161,6 +167,10 @@ function bindEvents() {
     } else if (action === 'ask-user') {
       const aqFeature = getFeature('ask-question');
       const anchor = aqFeature && aqFeature.anchors && aqFeature.anchors['single-appear'];
+      if (anchor) await jumpToAnchor(anchor);
+    } else if (action === 'request-permission') {
+      const apFeature = getFeature('approve-permission');
+      const anchor = apFeature && apFeature.anchors && apFeature.anchors['show-card'];
       if (anchor) await jumpToAnchor(anchor);
     }
   });
@@ -238,9 +248,10 @@ function renderRoute(route) {
 
 // ── Tool Call Node「设计样式」3 模式同步循环 ──────────
 // 所有块同时 running（带扫光）→ 同时 done（stack 折叠）→ 循环
+// 标签与 features/tool-call-node.js 的 M_RUN / M_DONE 保持一致
 let tcnModeLoopTimer = null;
-const TCN_RUN_LABELS  = ['正在搜索网页', '正在创建文件', '正在委派 Subagent'];
-const TCN_DONE_LABELS = ['已搜索网页', '已创建文件', '已委派 Subagent'];
+const TCN_RUN_LABELS  = ['正在搜索网页', '正在创建文件', '正在读取文件'];
+const TCN_DONE_LABELS = ['搜索网页',     '创建文件',     '读取文件'];   // drop 正在，不加 已
 const TCN_PHASE_MS = 2500;
 
 function startTcnModeLoop() {

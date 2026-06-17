@@ -12,7 +12,7 @@ import { escapeHtml, markdownToHtml } from './markdown.js';
 import { ICONS, setStatusLineLabels, statusLineHTML, renderActionIcon, statusStackHTML } from './icons.js';
 import { renderSearchItem } from './sheet.js';
 import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
-import { openSheet, closeSheet, maybeClose, renderFileCard } from './sheet.js';
+import { openSheet, closeSheet, maybeClose, renderFileCard, goBackInSheet } from './sheet.js';
 import { initScrollNav, rebuildScrollNav } from './scroll-nav.js';
 import { showAskQuestion, bindAskQuestionEvents } from './ask-question.js';
 
@@ -229,7 +229,7 @@ function renderFinalActions() {
       ${buttons.map(([key, label, svg]) => `<button class="response-action-btn response-action-${key}" type="button" aria-label="${label}">${svg}<span>${label}</span></button>`).join('')}
       <div class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>${RESPONSE_SVGS.cost}<strong>120</strong></div>
     </div>
-    ${showSource ? `<div class="response-action-right"><button class="response-action-source" type="button" aria-label="来源"><span class="source-char">源</span><span class="source-avatars"><span class="source-avatar"><img src="icons/source-weibo.svg" alt=""></span><span class="source-avatar"><img src="icons/source-amazon.svg" alt=""></span><span class="source-avatar"><img src="icons/source-dribbble.svg" alt=""></span></span></button></div>` : ''}`;
+    ${showSource ? `<div class="response-action-right"><button class="response-action-source" type="button" aria-label="10来源"><span class="source-avatars"><span class="source-avatar"><img src="icons/source-weibo.svg" alt=""></span><span class="source-avatar"><img src="icons/source-amazon.svg" alt=""></span><span class="source-avatar"><img src="icons/source-dribbble.svg" alt=""></span></span><span class="source-label">10来源</span></button></div>` : ''}`;
   actionsMount.appendChild(wrap);
 
   // More popover
@@ -392,7 +392,7 @@ function makeResponseActionsHtml() {
     + '<span class="response-cost" aria-label="已消耗 120 积分"><span>已消耗</span>'
     + RESPONSE_SVGS.cost + '<strong>120</strong></span>'
     + '</div>'
-    + '<div class="response-action-right"><span class="response-action-source" style="cursor:default"><span class="source-char">源</span><span class="source-avatars"><span class="source-avatar"><img src="icons/source-weibo.svg" alt=""></span><span class="source-avatar"><img src="icons/source-amazon.svg" alt=""></span><span class="source-avatar"><img src="icons/source-dribbble.svg" alt=""></span></span></span></div>'
+    + '<div class="response-action-right"><span class="response-action-source" style="cursor:default"><span class="source-avatars"><span class="source-avatar"><img src="icons/source-weibo.svg" alt=""></span><span class="source-avatar"><img src="icons/source-amazon.svg" alt=""></span><span class="source-avatar"><img src="icons/source-dribbble.svg" alt=""></span></span><span class="source-label">10来源</span></span></div>'
     + '</div>';
 }
 
@@ -1096,6 +1096,7 @@ export function toggleSteps() {
 // ── Global window bindings (HTML inline onclick needs these) ──
 window.openSheet = openSheet;
 window.closeSheet = closeSheet;
+window.goBackInSheet = goBackInSheet;
 window.maybeClose = maybeClose;
 window.toggleStep = toggleStep;
 window.toggleExec = toggleExec;

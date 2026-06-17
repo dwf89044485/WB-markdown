@@ -306,6 +306,9 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   const ov = $('#overlay');
   ov.style.pointerEvents = 'auto';
   ov.className = 'sheet-overlay vis';
+  // Store current sheet state for back navigation
+  ov.dataset.frames = frameRefs || '';
+  ov.dataset.title = explicitTitle || '';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   if (renderToken !== sheetRenderToken) return;
   ov.className = 'sheet-overlay vis show';
@@ -320,9 +323,112 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   }
 }
 
+// ── Sheet navigation history ───────────────────────────
+let sheetBackState = null; // { frameRefs, title, options }
+
+function showBackButton() {
+  const start = $('#sheetTopStart');
+  if (!start || start.children.length) return;
+  import('./ask-question.js').then(m => {
+    const html = m.glassNavBtn(m.GLYPH_PREV, false);
+    const w = document.createElement('div');
+    w.innerHTML = html;
+    const btn = w.firstElementChild;
+    btn.setAttribute('aria-label', '返回');
+    btn.addEventListener('click', goBackInSheet);
+    start.appendChild(btn);
+  });
+}
+
+function hideBackButton() {
+  const start = $('#sheetTopStart');
+  if (start) start.innerHTML = '';
+}
+
+export function goBackInSheet() {
+  if (!sheetBackState) return;
+  const { frameRefs, title, opts } = sheetBackState;
+  sheetBackState = null;
+  hideBackButton();
+  openSheet(frameRefs, title, { ...opts, replay: false });
+}
+
+function initSheetChevrons() {
+  const body = $('#sheetBody');
+  if (!body) return;
+  body.addEventListener('click', (e) => {
+    const chevron = e.target.closest('.s-row-chevron');
+    if (!chevron) return;
+    const row = chevron.closest('.s-row');
+    if (!row) return;
+    // Extract event data from the row
+    const textEl = row.querySelector('.s-text');
+    const cardBody = row.querySelector('.event-card-body');
+    const dimEl = row.querySelector('.s-text.dim');
+    const text = textEl ? textEl.textContent.trim() : '';
+    const output = cardBody ? cardBody.textContent.trim() : '';
+    const dim = dimEl ? dimEl.textContent.trim() : '';
+
+    // Save current sheet state for back navigation
+    const curOv = $('#overlay');
+    sheetBackState = {
+      frameRefs: curOv ? curOv.dataset.frames : null,
+      title: curOv ? curOv.dataset.title : '',
+      opts: {}
+    };
+
+    showBackButton();
+    openSheet(null, null, {
+      customRenderer(body) {
+        const container = document.createElement('div');
+        container.className = 'sd-container';
+
+        // ── 输入命令 ──
+        const inputSection = document.createElement('div');
+        inputSection.className = 'sd-section';
+        const inputLabel = document.createElement('div');
+        inputLabel.className = 'sd-label';
+        inputLabel.textContent = '输入命令';
+        inputSection.appendChild(inputLabel);
+        const inputCard = document.createElement('div');
+        inputCard.className = 'sd-card';
+        inputCard.textContent = text;
+        inputSection.appendChild(inputCard);
+        container.appendChild(inputSection);
+
+        if (output) {
+          // ── 输出结果 ──
+          const outputSection = document.createElement('div');
+          outputSection.className = 'sd-section';
+          const outputLabel = document.createElement('div');
+          outputLabel.className = 'sd-label';
+          outputLabel.textContent = '输出结果';
+          outputSection.appendChild(outputLabel);
+          const outputCard = document.createElement('div');
+          outputCard.className = 'sd-card';
+          outputCard.textContent = output;
+          outputSection.appendChild(outputCard);
+          container.appendChild(outputSection);
+        }
+
+        if (dim) {
+          const dimCard = document.createElement('div');
+          dimCard.className = 'sd-card sd-dim';
+          dimCard.textContent = dim;
+          container.appendChild(dimCard);
+        }
+
+        body.appendChild(container);
+      }
+    });
+  });
+}
+
 // ── Close sheet ───────────────────────────────────────────
 export function closeSheet() {
   sheetRenderToken += 1;
+  sheetBackState = null;
+  hideBackButton();
   const ov = $('#overlay');
   resetSheetHeight();
   ov.style.pointerEvents = 'none';
@@ -439,10 +545,10 @@ function initSheetDrag() {
   document.addEventListener('touchend', onEnd);
 }
 
-// Initialize drag on first sheet render
+// Initialize on first sheet render
 (function () {
   const check = () => {
-    if ($('#sheet')) { initSheetDrag(); return; }
+    if ($('#sheet')) { initSheetDrag(); initSheetChevrons(); return; }
     requestAnimationFrame(check);
   };
   check();

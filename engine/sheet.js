@@ -357,10 +357,10 @@ function initSheetChevrons() {
   const body = $('#sheetBody');
   if (!body) return;
   body.addEventListener('click', (e) => {
-    const chevron = e.target.closest('.s-row-chevron');
-    if (!chevron) return;
-    const row = chevron.closest('.s-row');
+    const row = e.target.closest('.s-row');
     if (!row) return;
+    const chevron = row.querySelector('.s-row-chevron');
+    if (!chevron) return;
     // Extract event data from the row
     const textEl = row.querySelector('.s-text');
     const cardBody = row.querySelector('.event-card-body');

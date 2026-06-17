@@ -74,17 +74,22 @@
 /* 一行三列：返回按钮 | handle 拖拽条 | 关闭按钮 */
 .sheet-top{
   display:flex;
-  justify-content:space-between;
   align-items:center;
   padding:6px var(--sheet-side-padding) 0;
   flex-shrink:0;
   min-height:48px;
 }
-.sheet-top-start,
+.sheet-top-start{
+  display:flex;
+  align-items:center;
+  flex:1;
+  justify-content:flex-start;
+}
 .sheet-top-end{
   display:flex;
   align-items:center;
-  flex:0 0 auto;
+  flex:1;
+  justify-content:flex-end;
 }
 .sheet-top .sheet-handle{
   width:72px;height:6px;

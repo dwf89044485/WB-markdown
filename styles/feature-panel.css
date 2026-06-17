@@ -193,7 +193,7 @@
 
 /* 段落分割线 */
 .fp-feature section {
-  padding-bottom: 8px;
+  padding-bottom: 0;
 }
 .fp-feature section + section {
   padding-top: 24px;

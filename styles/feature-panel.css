@@ -345,13 +345,19 @@
   margin: 0 0 8px;
   line-height: 1.5;
 }
-/* 状态节纯文本标签（替代 .tag 药丸样式，无背景/边框） */
+/* 状态节标签（现复用 .tag 视觉样式，宽度自适应文案） */
 .fp-label {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #EBEBEB;
   color: #1d1d1f;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  white-space: nowrap;
 }
 
 /* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */

@@ -137,6 +137,22 @@
   background:#F5F5F7;
 }
 
+/* ── SHEET SLIDE ANIMATIONS ───────────────────────────────── */
+.slide-in-right{
+  animation:slideInRight .28s cubic-bezier(0.32,0.72,0,1);
+}
+.slide-in-left{
+  animation:slideInLeft .28s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes slideInRight{
+  from{transform:translateX(48px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+@keyframes slideInLeft{
+  from{transform:translateX(-48px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+
 .sheet-body{
   position:relative;
   padding:var(--sheet-body-padding-top) var(--sheet-side-padding) var(--sheet-body-padding-bottom) var(--sheet-body-left);

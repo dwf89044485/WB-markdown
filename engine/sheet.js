@@ -346,20 +346,22 @@ function hideBackButton() {
   if (start) start.innerHTML = '';
 }
 
-export function goBackInSheet(e) {
+export async function goBackInSheet(e) {
   if (e) e.stopPropagation();
   if (!sheetBackState) return;
   const { frameRefs, title, opts } = sheetBackState;
   sheetBackState = null;
   hideBackButton();
-  openSheet(frameRefs, title, { ...opts, replay: false });
+  await openSheet(frameRefs, title, { ...opts, replay: false });
+  const body = $('#sheetBody');
+  if (body) body.classList.add('slide-in-left');
 }
 
 // ── Render detail content (二级 sheet, 数据驱动) ──────────
 function renderDetailContent(detail, container) {
   container.innerHTML = '';
   const wrapper = document.createElement('div');
-  wrapper.className = 'sd-container';
+  wrapper.className = 'sd-container slide-in-right';
 
   for (const section of (detail.sections || [])) {
     const sec = document.createElement('div');
@@ -400,11 +402,12 @@ function initSheetChevrons() {
     };
 
     showBackButton();
-    openSheet(null, null, {
-      customRenderer(body) {
-        renderDetailContent(detail, body);
-      }
-    });
+    // 直接渲染 body，不走 openSheet（避免 resetSheetHeight 弹跳）
+    const curBody = $('#sheetBody');
+    if (curBody) {
+      curBody.innerHTML = '';
+      renderDetailContent(detail, curBody);
+    }
   });
 }
 

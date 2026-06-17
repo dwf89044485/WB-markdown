@@ -16,6 +16,22 @@ import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
 import { openSheet } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAskQuestion } from './ask-question.js';
+import { hideApprovePermission } from './approve-permission.js';
+
+// ════════════════════════════════════════════════════════════════
+// 覆层面板清理（hideOverlays）
+// 左侧 Demo 区内会弹出各种覆层面板（askUser 问答卡片、approvePermission
+// 批准权限卡片、后加的其他面板等）。当用户从右侧交互说明面板触发任何
+// 导航行为（点锚点按钮 / 操作按钮 / 切换 feature）时，必须清理所有覆
+// 层面板，避免多个面板同时残留。
+//
+// 新增面板类型 → 在此函数中追加 hideXxx() 调用，保证多面板上下文也能
+// 正确清理。
+// ════════════════════════════════════════════════════════════════
+function hideOverlays() {
+  hideAskQuestion();
+  hideApprovePermission();
+}
 
 const ROOT_SELECTOR = '.design-notes-inner';
 
@@ -132,8 +148,8 @@ function bindEvents() {
       return;
     }
 
-    // 点在侧边栏，隐藏左侧对应的浮层/问答卡片
-    hideAskQuestion();
+    // 点在侧边栏，隐藏左侧所有覆层面板
+    hideOverlays();
 
     jumpToAnchor(anchor);
   });
@@ -145,8 +161,8 @@ function bindEvents() {
 
     const action = btn.dataset.action;
 
-    // 操作按钮点击时，隐藏左侧对应的浮层/问答卡片
-    hideAskQuestion();
+    // 操作按钮点击时，隐藏左侧所有覆层面板
+    hideOverlays();
     if (action === 'running-state') {
       await goToStep(resolveNodeStep(0, 0));
       resumePlayback();
@@ -217,8 +233,8 @@ function renderRoute(route) {
   // 滚动到顶
   contentEl.scrollTop = 0;
 
-  // 切换 feature 时清理可能残留的 askUser 卡片
-  hideAskQuestion();
+  // 切换 feature 时清理所有覆层面板
+  hideOverlays();
 
   // 切换 feature 时清理上一 feature 的循环动画
   stopTcnModeLoop();
@@ -233,8 +249,8 @@ function renderRoute(route) {
     const anchor = f.anchors && f.anchors['single-appear'];
     if (anchor) {
       jumpToAnchor(anchor).then(() => {
-        // 如果跳转过程中 feature 已被切换，清除残留的 askUser 卡片
-        if (token !== loadToken) hideAskQuestion();
+        // 如果跳转过程中 feature 已被切换，清除残留的面板
+        if (token !== loadToken) hideOverlays();
       });
     }
   } else if (f.id === 'tool-call-node') {
@@ -271,7 +287,7 @@ function startTcnModeLoop() {
         line.innerHTML = statusLineHTML(TCN_RUN_LABELS);
         line.classList.add('is-running');
       } else {
-        if (mode === 'stack') {
+        if (mode === '堆叠') {
           line.innerHTML = statusStackHTML(TCN_DONE_LABELS) + '<span class="status-chevron">›</span>';
         } else {
           line.innerHTML = statusLineHTML(TCN_DONE_LABELS);

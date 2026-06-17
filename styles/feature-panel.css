@@ -245,9 +245,14 @@
   max-width: 360px;
   padding: 4px 0;
 }
+/* 文字样式内联：状态章节的实样展示，无快照框、无 tag 标签 */
+.fp-tcn-inline {
+  margin: 6px 0 14px;
+}
 /* 文档内的 status line 走 fit-content，避免默认 width:100% 占满列宽 */
 .fp-content .fp-snapshot > .step-detail-link,
-.fp-content .fp-tcn-stack > .step-detail-link {
+.fp-content .fp-tcn-stack > .step-detail-link,
+.fp-content .fp-tcn-inline > .step-detail-link {
   width: fit-content;
   min-width: 180px;
   max-width: 100%;
@@ -291,6 +296,9 @@
   box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
   overflow: hidden;
   background: #FAFAFA;
+}
+.fp-sheet-mock-detail {
+  background: #FFFFFF;
 }
 /* 文档里的 bottom-sheet：脱离 height:40%，按内容自适应 */
 .fp-content .fp-bottom-sheet-static {

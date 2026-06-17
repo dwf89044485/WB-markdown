@@ -288,6 +288,9 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   const baseline = scenario.todosBaseline || [];
   const body = $('#sheetBody');
   body.innerHTML = '';
+  body.classList.remove('detail-mode');
+  const sheet = $('#sheet');
+  if (sheet) sheet.classList.remove('detail-mode');
 
   const hasEvents = frames.some(f => f.events && f.events.length);
   const hasTodos = frames.some(f =>
@@ -355,7 +358,9 @@ export async function goBackInSheet(e) {
   sheetBackState = null;
   hideBackButton();
   const body = $('#sheetBody');
-  if (body) body.classList.remove('slide-in-left', 'slide-in-right');
+  const sheet = body ? body.closest('.bottom-sheet') : null;
+  if (body) body.classList.remove('detail-mode', 'slide-in-left', 'slide-in-right');
+  if (sheet) sheet.classList.remove('detail-mode');
   await openSheet(frameRefs, title, { ...opts, replay: false, skipHeightReset: true });
   if (body) {
     void body.offsetWidth;  // force reflow to restart animation
@@ -366,6 +371,9 @@ export async function goBackInSheet(e) {
 // ── Render detail content (二级 sheet, 数据驱动) ──────────
 function renderDetailContent(detail, container) {
   container.innerHTML = '';
+  container.classList.add('detail-mode');
+  const sheet = container.closest('.bottom-sheet');
+  if (sheet) sheet.classList.add('detail-mode');
   const wrapper = document.createElement('div');
   wrapper.className = 'sd-container slide-in-right';
 
@@ -443,7 +451,11 @@ export function closeSheet() {
   sheetRenderToken += 1;
   sheetBackState = null;
   hideBackButton();
+  const sheet = $('#sheet');
+  const body = $('#sheetBody');
   const ov = $('#overlay');
+  if (body) body.classList.remove('detail-mode');
+  if (sheet) sheet.classList.remove('detail-mode');
   resetSheetHeight();
   ov.style.pointerEvents = 'none';
   ov.className = 'sheet-overlay vis';

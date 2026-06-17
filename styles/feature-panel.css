@@ -259,6 +259,56 @@
   flex-shrink: 0;
 }
 
+/* ── Tool Call Node 设计样式章节（3 模式循环 demo）────────── */
+.fp-tcn-modes {
+  align-items: stretch;
+}
+.fp-tcn-modes > .fp-snapshot-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+}
+.fp-tcn-mode-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  padding: 12px 8px;
+  background: #fafafa;
+  border: 1px dashed rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+/* 循环块里的状态行：让 phone-shell 内的样式规则（圆角、宽度）生效 */
+.fp-tcn-mode-demo .step-detail-link {
+  pointer-events: none;
+}
+
+/* ── Tool Call Node Sheet 静态快照 ────────── */
+.fp-sheet-mock {
+  width: 360px;
+  max-width: 100%;
+  border-radius: 34px 34px 0 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  background: #FAFAFA;
+}
+/* 文档里的 bottom-sheet：脱离 height:40%，按内容自适应 */
+.fp-content .fp-bottom-sheet-static {
+  height: auto;
+  position: relative;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+.fp-content .fp-bottom-sheet-static .sheet-body {
+  max-height: 380px;
+  overflow-y: auto;
+}
+.fp-content .fp-bottom-sheet-static .sheet-handle {
+  cursor: default;
+}
+
 /* 2 列并排对比：flex 横向排列，间距固定 */
 .fp-snapshot-grid-2 {
   display: flex;

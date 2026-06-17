@@ -12,9 +12,9 @@
 import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
-import { goToStep, resolveNodeStep, resumePlayback, toggleToolCallStyle } from './player.js';
+import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
 import { openSheet } from './sheet.js';
-import { setStatusLineLabels } from './icons.js';
+import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAskQuestion } from './ask-question.js';
 
 const ROOT_SELECTOR = '.design-notes-inner';
@@ -158,24 +158,6 @@ function bindEvents() {
     } else if (action === 'disclosure-3') {
       await goToStep(resolveNodeStep(0, 3));
       openSheet('F1.c,F1.d,F1.e,F1.f,F1.g,F1.h,F1.i', '搜索网页、更新待办');
-    } else if (action === 'tcn-mode-flat') {
-      toggleToolCallStyle('flat');
-    } else if (action === 'tcn-mode-card') {
-      toggleToolCallStyle('card');
-    } else if (action === 'tcn-mode-stack') {
-      toggleToolCallStyle('stack');
-    } else if (action === 'tcn-demo-running') {
-      // 跳到 n1 第一个 statusGroup 起点，然后手动注入 is-running（fast-render 不保留 running 态）
-      const targetStep = resolveNodeStep(0, 1);
-      await goToStep(targetStep);
-      const cont = document.querySelector('#stepsList .flat-container');
-      const link = cont && cont.querySelector('.step-detail-link');
-      if (link) {
-        setStatusLineLabels(link, ['正在搜索网页']);
-        link.classList.add('is-running');
-      }
-    } else if (action === 'tcn-demo-done') {
-      await goToStep(Number.MAX_SAFE_INTEGER);
     } else if (action === 'ask-user') {
       const aqFeature = getFeature('ask-question');
       const anchor = aqFeature && aqFeature.anchors && aqFeature.anchors['single-appear'];
@@ -228,6 +210,9 @@ function renderRoute(route) {
   // 切换 feature 时清理可能残留的 askUser 卡片
   hideAskQuestion();
 
+  // 切换 feature 时清理上一 feature 的循环动画
+  stopTcnModeLoop();
+
   // 切换到特定 feature 时，左侧 Demo 自动跳转到对应状态
   loadToken++;
   const token = loadToken;
@@ -243,8 +228,54 @@ function renderRoute(route) {
       });
     }
   } else if (f.id === 'tool-call-node') {
-    // 跳到 n1 第一个 statusGroup 起点，让左侧 demo 展示一组工具调用节点（done 态）
+    // 跳到 n1 第一个 statusGroup 起点，让左侧 demo 展示一组工具调用节点
     const targetStep = resolveNodeStep(0, 1);
     goToStep(targetStep).catch(() => {});
+    // 启动「设计样式」章节的 3 模式同步循环
+    startTcnModeLoop();
+  }
+}
+
+// ── Tool Call Node「设计样式」3 模式同步循环 ──────────
+// 所有块同时 running（带扫光）→ 同时 done（stack 折叠）→ 循环
+let tcnModeLoopTimer = null;
+const TCN_RUN_LABELS  = ['正在搜索网页', '正在创建文件', '正在委派 Subagent'];
+const TCN_DONE_LABELS = ['已搜索网页', '已创建文件', '已委派 Subagent'];
+const TCN_PHASE_MS = 2500;
+
+function startTcnModeLoop() {
+  stopTcnModeLoop();
+  const blocks = contentEl.querySelectorAll('.fp-tcn-mode-demo');
+  if (!blocks.length) return;
+
+  let running = true; // 初始为 running（与 HTML 初始 is-running 类一致）
+
+  function tick() {
+    running = !running;
+    blocks.forEach(block => {
+      const line = block.querySelector('.fp-tcn-mode-line');
+      if (!line) return;
+      const mode = block.dataset.mode;
+      if (running) {
+        line.innerHTML = statusLineHTML(TCN_RUN_LABELS);
+        line.classList.add('is-running');
+      } else {
+        if (mode === 'stack') {
+          line.innerHTML = statusStackHTML(TCN_DONE_LABELS) + '<span class="status-chevron">›</span>';
+        } else {
+          line.innerHTML = statusLineHTML(TCN_DONE_LABELS);
+        }
+        line.classList.remove('is-running');
+      }
+    });
+  }
+
+  tcnModeLoopTimer = setInterval(tick, TCN_PHASE_MS);
+}
+
+function stopTcnModeLoop() {
+  if (tcnModeLoopTimer) {
+    clearInterval(tcnModeLoopTimer);
+    tcnModeLoopTimer = null;
   }
 }

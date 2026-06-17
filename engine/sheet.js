@@ -389,6 +389,26 @@ function renderDetailContent(detail, container) {
   container.appendChild(wrapper);
 }
 
+// ── 静态快照渲染（供右侧文档面板用）─────────────
+// 一级 sheet：把 events 数组渲染为 s-row 列表（不走 streaming）
+export function renderStaticSheet(events) {
+  if (!events || !events.length) return '<div class="sheet-empty">当前状态暂无事件。</div>';
+  return events.map(ev => renderEvent(ev).outerHTML).join('');
+}
+
+// 二级 sheet：把 detail.sections 渲染为 sd-container
+export function renderStaticDetail(detail) {
+  if (!detail || !detail.sections || !detail.sections.length) return '';
+  const sections = detail.sections.map(section => {
+    const cardCls = 'sd-card' + (section.variant === 'code' ? ' sd-variant-code' : '');
+    return `<div class="sd-section">
+      <div class="sd-label">${escapeHtml(section.label || '')}</div>
+      <div class="${cardCls}">${escapeHtml(section.content || '')}</div>
+    </div>`;
+  }).join('');
+  return `<div class="sd-container">${sections}</div>`;
+}
+
 function initSheetChevrons() {
   const body = $('#sheetBody');
   if (!body) return;

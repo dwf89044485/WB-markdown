@@ -79,7 +79,7 @@ flowchart TD
               <th>面向用户</th>
               <th>语言风格</th>
               <th>位置</th>
-              <th>内容</th>
+              <th>用户关注点</th>
             </tr>
           </thead>
           <tbody>
@@ -88,28 +88,28 @@ flowchart TD
               <td>结果型用户</td>
               <td>产品化结论</td>
               <td>主对话流，默认可见</td>
-              <td>总结、交付物、完成状态、下一步</td>
+              <td><strong>任务完成了吗？结果是什么？接下来该做什么？</strong></td>
             </tr>
             <tr>
               <td><strong>L1 执行过程层</strong></td>
               <td>审核型用户</td>
               <td>任务语言</td>
               <td>展开执行过程后可见</td>
-              <td>执行节点（节点内的全部内容：思考过程 + Markdown + 状态行 + askUser），<strong>能看到 AI 在想什么、说了什么、调用了什么工具</strong></td>
+              <td><strong>AI 是怎么做到的？每个步骤的结果是否可信？有没有出问题？</strong></td>
             </tr>
             <tr>
               <td><strong>L2 浮层详情层</strong></td>
               <td>审核型用户</td>
               <td>结构化摘要</td>
               <td>点击某条状态行后弹出 Sheet</td>
-              <td>具体工具调用的内容：<strong>搜索了什么 URL、返回了什么结果、生成了什么图片、执行了什么命令</strong></td>
+              <td><strong>这个操作具体做了什么？查到的信息是什么？为什么得出这个结论？</strong></td>
             </tr>
             <tr>
               <td><strong>L3 原始细节层</strong></td>
               <td>较真型 / Debug 用户</td>
               <td>原始细节</td>
               <td>在 L2 Sheet 内进一步点击展开</td>
-              <td><strong>命令的完整输入/输出、原始 API 响应、执行报错原文、exit code 等</strong></td>
+              <td><strong>到底报了什么错？输入参数对不对？能不能排查到根本原因？</strong></td>
             </tr>
           </tbody>
         </table>

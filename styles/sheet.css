@@ -227,10 +227,11 @@
   flex-wrap:nowrap;
 }
 .s-text{
-  flex:0 1 auto;min-width:0;
+  flex:0 0 auto;min-width:0;
   font-size:14px;line-height:1.42;font-weight:600;
   color:#1c1c1e;letter-spacing:-0.24px;
   display:inline-flex;align-items:center;
+  white-space:nowrap;
 }
 .s-text.dim{
   font-size:14px;line-height:1.42;font-weight:500;

@@ -362,7 +362,7 @@
   align-items: flex-start;
   gap: 16px;
   margin: 20px 0;
-  padding: 20px;
+  padding: 20px 20px 0;
   background: #fff;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 12px;
@@ -405,6 +405,49 @@
   line-height: 1.7;
   color: #424245;
   margin-bottom: 4px;
+}
+
+/* 标题行：标题左侧 + 按钮右侧 */
+.fp-hdr-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.fp-hdr-row h3 {
+  margin-bottom: 0 !important;
+  white-space: nowrap;
+}
+
+/* 操作按钮组：两个按钮横向排列 */
+.fp-action-btn-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* 操作按钮：黑色紧凑型 */
+.fp-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fff;
+  background: #1d1d1f;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s ease;
+}
+.fp-action-btn:hover {
+  opacity: .8;
+}
+.fp-action-btn svg {
+  flex-shrink: 0;
 }
 
 /* 备注 */
@@ -507,6 +550,7 @@
 
 /* ── Override github-markdown.css for feature panel ────────── */#fpContent.markdown-body {
   background-color: #fafafa !important;  /* 与外层 design-notes 底色一致 */
+  padding-right: 4px;
 }
 #fpContent.markdown-body pre {
   background-color: #f6f8fa !important;

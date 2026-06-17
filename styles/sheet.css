@@ -86,7 +86,8 @@
 /* ── SHEET CLOSE AREA (wrapper for aq-close-btn) ───────────── */
 .sheet-close-area{
   position:absolute;
-  top:8px;right:var(--spacing-16);
+  /* 跟随 bottom-sheet 顶部（100% - 40% = 60%）+ 8px 偏移 */
+  top:calc(60% + 8px);right:var(--spacing-16);
   z-index:210;
   opacity:0;
   transition:opacity 0.28s ease 0.12s;

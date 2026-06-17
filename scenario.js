@@ -402,7 +402,14 @@ window.WORKBUDDY_SCENARIO = {
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "python3 -c \""
+          "dim": "python3 -c \"import json; print(json.dumps(plan, ensure_ascii=False))\"",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "python3 -c \"import json; plan = {'title': '日本关西旅行方案', 'days': [{'day': 1, 'city': '大阪', 'spots': ['道顿堀', '大阪城']}, {'day': 2, 'city': '京都', 'spots': ['清水寺', '伏见稻荷']}]}; print(json.dumps(plan, ensure_ascii=False))\"" },
+              { "label": "输出结果", "variant": "text", "content": "{\"title\": \"日本关西旅行方案\", \"days\": [{\"day\": 1, \"city\": \"大阪\", \"spots\": [\"道顿堀\", \"大阪城\"]}, {\"day\": 2, \"city\": \"京都\", \"spots\": [\"清水寺\", \"伏见稻荷\"]}]}" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         }
       ],
       "todos": []
@@ -413,12 +420,26 @@ window.WORKBUDDY_SCENARIO = {
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "python3 -c \""
+          "dim": "python3 -c \"import json; data=json.load(open('/tmp/plan.json')); print(len(data['days']))\"",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "python3 -c \"import json; data=json.load(open('/tmp/plan.json')); print(len(data['days']))\"" },
+              { "label": "输出结果", "variant": "text", "content": "5" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         },
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "cd /sessions/6a2189a4ac3de7…"
+          "dim": "cd /sessions/6a2189a4ac3de7/output && ls -la",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "cd /sessions/6a2189a4ac3de7/output && ls -la" },
+              { "label": "输出结果", "variant": "text", "content": "total 24\ndrwxr-xr-x  2 root root  4096 Jun 16 10:30 .\ndrwxr-xr-x  4 root root  4096 Jun 16 10:30 ..\n-rw-r--r--  1 root root  1240 Jun 16 10:30 plan.json\n-rw-r--r--  1 root root   856 Jun 16 10:30 itinerary.md" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         }
       ],
       "todos": []
@@ -429,17 +450,38 @@ window.WORKBUDDY_SCENARIO = {
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "python3 -c \""
+          "dim": "python3 -c \"import json; d=json.load(open('plan.json')); print(d['title'])\"",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "python3 -c \"import json; d=json.load(open('plan.json')); print(d['title'])\"" },
+              { "label": "输出结果", "variant": "text", "content": "日本关西旅行方案 v1.0" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         },
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "cd /sessions/6a2189a4ac3de7…"
+          "dim": "cd /sessions/6a2189a4ac3de7 && git diff --stat",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "cd /sessions/6a2189a4ac3de7 && git diff --stat" },
+              { "label": "输出结果", "variant": "text", "content": "plan.json      | 2 +-\nitinerary.md   | 15 +++++++++++++++\nREADME.md      | 1 +\n3 files changed, 17 insertions(+), 1 deletion(-)" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         },
         {
           "icon": "🖥️",
           "text": "执行命令",
-          "dim": "python3 -c \""
+          "dim": "python3 -c \"import json; print('Done')\"",
+          "detail": {
+            "sections": [
+              { "label": "输入命令", "variant": "code", "content": "python3 -c \"import json; print('Done')\"" },
+              { "label": "输出结果", "variant": "text", "content": "Done\nAll tasks completed successfully. Output files:\n- /sessions/6a2189a4ac3de7/output/plan.json\n- /sessions/6a2189a4ac3de7/output/itinerary.md" },
+              { "label": "退出码", "variant": "text", "content": "0" }
+            ]
+          }
         }
       ],
       "todos": []

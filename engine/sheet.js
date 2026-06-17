@@ -15,7 +15,7 @@ export function renderEvent(event) {
   const isWarn = isWarningEvent(event);
   const toolKey = isWarn ? 'warning' : inferToolIconKey(event);
   const row = document.createElement('div');
-  const showChevron = /执行命令/.test(event.text || '');
+  const showChevron = !!event.detail;
 
   row.className = `s-row tool-${toolKey}`;
   row.innerHTML = `
@@ -28,6 +28,7 @@ export function renderEvent(event) {
       </div>
       ${event.card ? `<div class="event-card"><div class="event-card-title">${escapeHtml(event.card.title || '')}</div><div class="event-card-body">${escapeHtml(event.card.body || '')}</div></div>` : ''}
     </div>`;
+  if (event.detail) row._sheetDetail = event.detail;
   return row;
 }
 
@@ -353,22 +354,41 @@ export function goBackInSheet() {
   openSheet(frameRefs, title, { ...opts, replay: false });
 }
 
+// ── Render detail content (二级 sheet, 数据驱动) ──────────
+function renderDetailContent(detail, container) {
+  container.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'sd-container';
+
+  for (const section of (detail.sections || [])) {
+    const sec = document.createElement('div');
+    sec.className = 'sd-section';
+
+    const label = document.createElement('div');
+    label.className = 'sd-label';
+    label.textContent = section.label || '';
+    sec.appendChild(label);
+
+    const card = document.createElement('div');
+    card.className = 'sd-card' + (section.variant === 'code' ? ' sd-variant-code' : '');
+    card.textContent = section.content || '';
+    sec.appendChild(card);
+
+    wrapper.appendChild(sec);
+  }
+
+  container.appendChild(wrapper);
+}
+
 function initSheetChevrons() {
   const body = $('#sheetBody');
   if (!body) return;
   body.addEventListener('click', (e) => {
     const row = e.target.closest('.s-row');
     if (!row) return;
-    const chevron = row.querySelector('.s-row-chevron');
-    if (!chevron) return;
+    const detail = row._sheetDetail;
+    if (!detail) return;
     e.stopPropagation();
-    // Extract event data from the row
-    const textEl = row.querySelector('.s-text');
-    const cardBody = row.querySelector('.event-card-body');
-    const dimEl = row.querySelector('.s-text.dim');
-    const text = textEl ? textEl.textContent.trim() : '';
-    const output = cardBody ? cardBody.textContent.trim() : '';
-    const dim = dimEl ? dimEl.textContent.trim() : '';
 
     // Save current sheet state for back navigation
     const curOv = $('#overlay');
@@ -381,45 +401,7 @@ function initSheetChevrons() {
     showBackButton();
     openSheet(null, null, {
       customRenderer(body) {
-        const container = document.createElement('div');
-        container.className = 'sd-container';
-
-        // ── 输入命令 ──
-        const inputSection = document.createElement('div');
-        inputSection.className = 'sd-section';
-        const inputLabel = document.createElement('div');
-        inputLabel.className = 'sd-label';
-        inputLabel.textContent = '输入命令';
-        inputSection.appendChild(inputLabel);
-        const inputCard = document.createElement('div');
-        inputCard.className = 'sd-card';
-        inputCard.textContent = text;
-        inputSection.appendChild(inputCard);
-        container.appendChild(inputSection);
-
-        if (output) {
-          // ── 输出结果 ──
-          const outputSection = document.createElement('div');
-          outputSection.className = 'sd-section';
-          const outputLabel = document.createElement('div');
-          outputLabel.className = 'sd-label';
-          outputLabel.textContent = '输出结果';
-          outputSection.appendChild(outputLabel);
-          const outputCard = document.createElement('div');
-          outputCard.className = 'sd-card';
-          outputCard.textContent = output;
-          outputSection.appendChild(outputCard);
-          container.appendChild(outputSection);
-        }
-
-        if (dim) {
-          const dimCard = document.createElement('div');
-          dimCard.className = 'sd-card sd-dim';
-          dimCard.textContent = dim;
-          container.appendChild(dimCard);
-        }
-
-        body.appendChild(container);
+        renderDetailContent(detail, body);
       }
     });
   });

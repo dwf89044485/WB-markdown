@@ -120,8 +120,6 @@ export default {
         <h2>3. Sheet 交互</h2>
         <p>点击工具调用节点，弹出 Sheet 查看执行详情。以「执行命令」（<code>F3.4d</code>，含 3 个命令事件）为例。</p>
 
-        <p>一级 Sheet 展示事件列表，每行 <code>›</code> 表示可下钻。点击 <code>›</code> 进入二级 Sheet，展示「输入命令 / 输出结果 / 退出码」三段。</p>
-
         <div class="fp-sheet-pair">
           <div class="fp-sheet-pair-item">
             <span class="tag-fp">一级 sheet-概览</span>

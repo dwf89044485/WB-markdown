@@ -15,6 +15,7 @@ import { appendHTMLTypedTo, appendHTML, appendMarkdown } from './typewriter.js';
 import { openSheet, closeSheet, maybeClose, renderFileCard, goBackInSheet } from './sheet.js';
 import { initScrollNav, rebuildScrollNav } from './scroll-nav.js';
 import { showAskQuestion, bindAskQuestionEvents } from './ask-question.js';
+import { showApprovePermission, bindApprovePermissionEvents } from './approve-permission.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -159,6 +160,14 @@ async function runFlatAction(container, action) {
     } else {
       const result = await showAskQuestion(action.questions);
       console.log('[AskUser] answers:', result);
+    }
+  }
+  if (action.type === 'approvePermission') {
+    if (fastRender) {
+      // 快进渲染时跳过
+    } else {
+      const result = await showApprovePermission(action.data);
+      console.log('[ApprovePermission] selected:', result);
     }
   }
 }
@@ -551,6 +560,7 @@ function directorActionLabel(action) {
   if (action.type === 'markdown') return '输出 markdown';
   if (action.type === 'html') return '输出内容';
   if (action.type === 'askUser') return '向用户提问';
+  if (action.type === 'approvePermission') return '请求权限';
   return '子节点';
 }
 
@@ -1064,6 +1074,7 @@ function initializePlayback() {
   updateDirectorControls();
   initScrollNav();
   bindAskQuestionEvents();
+  bindApprovePermissionEvents();
 }
 
 function restartPlayback() {

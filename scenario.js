@@ -596,7 +596,15 @@ window.WORKBUDDY_SCENARIO = {
         {"type": "status", "runningText": "正在搜索文件", "doneText": "搜索文件", "frames": ["F3.3a", "F3.3b", "F3.3c"]},
         {"type": "markdown", "markdown": `这个文件里还残留 \`)))\` 字符，sed 命令执行失效了。我改用 Python 来修复：`},
         {"type": "status", "runningText": "正在执行命令", "doneText": "执行命令", "frames": ["F3.4a", "F3.4b", "F3.4c", "F3.4d"]},
-        {"type": "markdown", "markdown": `没有成功，我来调用 SubAgent 来专门修复这些问题`},
+        {"type": "markdown", "markdown": `没有成功，文件出现了编码问题，让我来删掉重写`},
+        {"type": "approvePermission", "data": {
+          "title": "确认需要删除文件？",
+          "warning": "高风险操作，涉及文件删除",
+          "description": "检测到 generate_plan.js 文件存在编码异常，需要删除后重新创建。确认后，我将执行 rm 命令删除该文件。",
+          "options": ["允许", "本次会话内始终允许该类命令", "拒绝，保持在沙箱内"],
+          "selectedIndex": null
+        }},
+        {"type": "markdown", "markdown": `我发现bash工具不可用，无法写入，让我调用subagent来重写`},
         {"type": "status", "runningText": "正在委派 Subagent", "doneText": "委派 Subagent", "frames": ["F3.5a", "F3.5b", "F3.5c"]},
         {"type": "markdown", "markdown": `文档已成功生成！让我更新进度`},
         {"type": "status", "runningText": "正在更新待办", "doneText": "更新待办", "frames": ["F3.6a", "F3.6b"]},

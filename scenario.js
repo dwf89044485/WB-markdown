@@ -267,11 +267,7 @@ window.WORKBUDDY_SCENARIO = {
         {
           "icon": "📖",
           "text": "调用技能",
-          "dim": "docx",
-          "card": {
-            "title": "Skill card",
-            "body": "docx · 创建和编辑 Word 文档，用于生成旅行方案文档。"
-          }
+          "dim": "docx"
         }
       ],
       "todos": []
@@ -321,11 +317,7 @@ window.WORKBUDDY_SCENARIO = {
         {
           "icon": "👀",
           "text": "读取文件",
-          "dim": "JS …generate_plan.js  308-317",
-          "card": {
-            "title": "JS · generate_plan.js",
-            "body": "定位到疑似异常字符附近，准备修正。"
-          }
+          "dim": "JS …generate_plan.js  308-317"
         }
       ],
       "todos": []

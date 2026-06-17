@@ -303,16 +303,18 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   }
 
   // Show sheet overlay (body starts empty, height at 40%)
-  resetSheetHeight();
   const ov = $('#overlay');
-  ov.style.pointerEvents = 'auto';
-  ov.className = 'sheet-overlay vis';
+  if (!options.skipHeightReset) {
+    resetSheetHeight();
+    ov.style.pointerEvents = 'auto';
+    ov.className = 'sheet-overlay vis';
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    if (renderToken !== sheetRenderToken) return;
+    ov.className = 'sheet-overlay vis show';
+  }
   // Store current sheet state for back navigation
   ov.dataset.frames = frameRefs || '';
   ov.dataset.title = explicitTitle || '';
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  if (renderToken !== sheetRenderToken) return;
-  ov.className = 'sheet-overlay vis show';
 
   // Running: replay animations; completed: render final static content immediately
   await streamSheetContent(frames, baseline, { animated: replay, renderToken });
@@ -352,7 +354,7 @@ export async function goBackInSheet(e) {
   const { frameRefs, title, opts } = sheetBackState;
   sheetBackState = null;
   hideBackButton();
-  await openSheet(frameRefs, title, { ...opts, replay: false });
+  await openSheet(frameRefs, title, { ...opts, replay: false, skipHeightReset: true });
   const body = $('#sheetBody');
   if (body) body.classList.add('slide-in-left');
 }

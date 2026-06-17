@@ -243,21 +243,11 @@
 <script type="module" src="./engine/player.js"></script>
 <script type="module">
   import { initFeaturePanel } from './engine/feature-panel.js';
-  import { glassCloseBtn, glassNavBtn, GLYPH_PREV } from './engine/ask-question.js';
+  import { glassCloseBtn } from './engine/ask-question.js';
 
-  // 注入 sheet 顶部按钮（返回 + 关闭，共享组件）
-  const sheetTopStart = document.getElementById('sheetTopStart');
+  // 注入 sheet 关闭按钮（共享组件）
   const sheetTopEnd = document.getElementById('sheetTopEnd');
-  if (sheetTopStart && sheetTopEnd) {
-    // 返回按钮
-    const backHTML = glassNavBtn(GLYPH_PREV, false);
-    const bw = document.createElement('div');
-    bw.innerHTML = backHTML;
-    const backBtn = bw.firstElementChild;
-    backBtn.setAttribute('aria-label', '返回');
-    sheetTopStart.appendChild(backBtn);
-
-    // 关闭按钮
+  if (sheetTopEnd) {
     const closeHTML = glassCloseBtn();
     const cw = document.createElement('div');
     cw.innerHTML = closeHTML;

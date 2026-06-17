@@ -83,20 +83,6 @@
   background:#d7d7dc;border-radius:99px;
 }
 
-/* ── SHEET CLOSE AREA (wrapper for aq-close-btn) ───────────── */
-.sheet-close-area{
-  position:absolute;
-  /* 跟随 bottom-sheet 顶部（100% - 40% = 60%）+ 8px 偏移 */
-  top:calc(60% + 8px);right:20px;
-  z-index:210;
-  opacity:0;
-  transition:opacity 0.28s ease 0.12s;
-  background:var(--aq-bg,#FAFAFA);
-  border-radius:999px;
-  padding:8px;
-}
-.sheet-overlay.show .sheet-close-area{opacity:1;}
-
 .sheet-body{
   position:relative;
   padding:var(--sheet-body-padding-top) var(--sheet-side-padding) var(--sheet-body-padding-bottom) var(--sheet-body-left);

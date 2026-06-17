@@ -354,9 +354,13 @@ export async function goBackInSheet(e) {
   const { frameRefs, title, opts } = sheetBackState;
   sheetBackState = null;
   hideBackButton();
-  await openSheet(frameRefs, title, { ...opts, replay: false, skipHeightReset: true });
   const body = $('#sheetBody');
-  if (body) body.classList.add('slide-in-left');
+  if (body) body.classList.remove('slide-in-left', 'slide-in-right');
+  await openSheet(frameRefs, title, { ...opts, replay: false, skipHeightReset: true });
+  if (body) {
+    void body.offsetWidth;  // force reflow to restart animation
+    body.classList.add('slide-in-left');
+  }
 }
 
 // ── Render detail content (二级 sheet, 数据驱动) ──────────
@@ -407,6 +411,7 @@ function initSheetChevrons() {
     // 直接渲染 body，不走 openSheet（避免 resetSheetHeight 弹跳）
     const curBody = $('#sheetBody');
     if (curBody) {
+      curBody.classList.remove('slide-in-left', 'slide-in-right');
       curBody.innerHTML = '';
       renderDetailContent(detail, curBody);
     }

@@ -147,6 +147,7 @@
   <!-- Ask User Question (replaces composer when active) -->
   <div class="ask-question" id="askQuestion"></div>
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
+    <div class="sheet-close-area" id="sheetCloseArea"></div>
     <div class="bottom-sheet" id="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-body" id="sheetBody"></div>
@@ -242,15 +243,14 @@
   import { glassCloseBtn } from './engine/ask-question.js';
 
   // 注入 sheet 关闭按钮（复用 ask-question 共享组件）
-  const sheet = document.getElementById('sheet');
-  if (sheet) {
+  const sheetCloseArea = document.getElementById('sheetCloseArea');
+  if (sheetCloseArea) {
     const btnHTML = glassCloseBtn();
     const wrapper = document.createElement('div');
     wrapper.innerHTML = btnHTML;
     const btn = wrapper.firstElementChild;
-    btn.classList.add('sheet-close-btn');
-    btn.addEventListener('click', () => closeSheet());
-    sheet.appendChild(btn);
+    btn.addEventListener('click', (e) => { e.stopPropagation(); closeSheet(); });
+    sheetCloseArea.appendChild(btn);
   }
 
   if (document.readyState === 'loading') {

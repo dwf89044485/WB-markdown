@@ -77,6 +77,27 @@
   flex-shrink:0;cursor:ns-resize;
   margin-top:6px;margin-bottom:12px;
 }
+
+/* ── CLOSE BUTTON ────────────────────────────────────────── */
+.sheet-close-btn {
+  position:absolute;
+  top:6px;right:var(--sheet-side-padding);
+  width:36px;height:36px;
+  border-radius:999px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+  box-sizing:border-box;
+  z-index:10;
+}
+.sheet-close-btn:active {
+  transform:scale(.985);
+}
+.sheet-close-btn svg {
+  position:relative;
+  color:#3D3D3D;
+}
 .sheet-handle::after{
   content:"";
   width:72px;height:6px;

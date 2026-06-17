@@ -110,4 +110,12 @@ function renderStaticApprovePermission(data) {
   return renderApCard(data, { mode: 'static' });
 }
 
-export { showApprovePermission, hideApprovePermission, bindApprovePermissionEvents, renderStaticApprovePermission };
+/**
+ * 外部导航 API：供 feature-jump.js 锚点跳转后程序化控制。
+ * approve-permission 只有一步操作，定义此函数保持接口一致。
+ */
+function navigateToPermission() {
+  // no-op: 审批卡只有一步，无需翻题
+}
+
+export { showApprovePermission, hideApprovePermission, bindApprovePermissionEvents, renderStaticApprovePermission, navigateToPermission };

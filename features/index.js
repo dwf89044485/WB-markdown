@@ -9,6 +9,7 @@
 import principles from './principles.js';
 import infoArch from './info-arch.js';
 import askQuestion from './ask-question.js';
+import approvePermission from './approve-permission.js';
 import scrollNav from './scroll-nav.js';
 import toolCallNode from './tool-call-node.js';
 
@@ -16,6 +17,7 @@ export const featureList = [
   principles,
   infoArch,
   askQuestion,
+  approvePermission,
   toolCallNode,
   scrollNav,
 ];

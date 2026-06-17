@@ -23,9 +23,11 @@ function renderApCard(data, options = {}) {
 
   return `
     <div class="ap-card${isStatic ? ' ap-static' : ''}">
-      <div class="ap-title">${escapeApHtml(data.title)}</div>
-      <div class="ap-warning-wrap">
+      <div class="ap-head">
+        <div class="ap-title">${escapeApHtml(data.title)}</div>
         <div class="ap-warning-line">${escapeApHtml(data.warning)}</div>
+      </div>
+      <div class="ap-desc-wrap">
         <div class="ap-desc-line">${escapeApHtml(data.description)}</div>
       </div>
       <div class="ap-options">${optionsHtml}</div>

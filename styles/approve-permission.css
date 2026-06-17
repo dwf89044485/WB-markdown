@@ -1,9 +1,9 @@
 /* ── Approve Permission ──────────────────────────── */
 :root {
-  --ap-bg: #FAFAFA;
+  --ap-bg: #FFFFFF;
   --ap-radius: 20px;
   --ap-padding: 20px;
-  --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
+  --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
   --ap-width: 350px;
 
   --ap-text: #3D3D3D;
@@ -34,8 +34,6 @@
   --ap-num-color: #3D3D3D;
   --ap-num-selected-color: #FFFFFF;
 
-  --ap-desc-padding-y: 16px;
-  --ap-desc-gap: 8px;
 }
 
 /* 卡片容器 — 替换 composer 显示在相同位置 */
@@ -61,25 +59,24 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  animation: ap-slide-up 0.3s ease-out;
 }
 
-@keyframes ap-slide-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* 标题与风险提示（总高 45） */
+.ap-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-/* 标题 — 45px height area, medium 16px */
 .ap-title {
   font-family: var(--ap-font);
   font-weight: var(--ap-text-medium);
   font-size: var(--ap-font-title);
-  line-height: 45px;
+  line-height: 24px;
   color: var(--ap-text-title);
-  min-height: 45px;
+  margin: 0;
 }
 
-/* 警告区 — 16px padding 上下，warning + desc 两行垂直排列 */
 .ap-warning-line {
   font-family: var(--ap-font);
   font-weight: var(--ap-text-regular);
@@ -89,6 +86,11 @@
   margin: 0;
 }
 
+/* 描述区：上下各 16，文本 15/21 */
+.ap-desc-wrap {
+  padding: 16px 0;
+}
+
 .ap-desc-line {
   font-family: var(--ap-font);
   font-weight: var(--ap-text-regular);
@@ -96,13 +98,7 @@
   line-height: 21px;
   color: var(--ap-text);
   margin: 0;
-}
-
-.ap-warning-wrap {
-  padding: var(--ap-desc-padding-y) 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ap-desc-gap);
+  word-break: break-all;
 }
 
 /* 选项列表 */
@@ -145,7 +141,7 @@
   font-family: var(--ap-font);
   font-weight: var(--ap-text-regular);
   font-size: var(--ap-font-sm);
-  line-height: 1;
+  line-height: 24px;
   color: var(--ap-num-color);
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;

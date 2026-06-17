@@ -67,15 +67,14 @@ export default {
         <div class="fp-states-row">
           <div class="fp-states-group">
             <span class="tag">1.1 单个工具</span>
+            <p class="fp-states-note">进行中行灰 <code>#999</code>，扫光 1.15s 左→右循环；完成后行浅灰 <code>rgba(0,0,0,0.30)</code>，扫光消失，<code>›</code> 保留。</p>
             <div class="fp-states-inner-row">
               <div class="fp-snapshot-wrap">
-                <span class="tag">进行中</span>
-                <p class="fp-state-desc">行灰 <code>#999</code> · 扫光 1.15s 左→右循环</p>
+                <span class="fp-label">进行中</span>
                 <div class="fp-tcn-inline">${sl([L.run], { state: 'running' })}</div>
               </div>
               <div class="fp-snapshot-wrap">
-                <span class="tag">已完成</span>
-                <p class="fp-state-desc">行浅灰 <code>rgba(0,0,0,0.30)</code> · 扫光消失 · <code>›</code> 保留</p>
+                <span class="fp-label">已完成</span>
                 <div class="fp-tcn-inline">${sl([L.done])}</div>
               </div>
             </div>
@@ -86,11 +85,11 @@ export default {
             <p class="fp-states-note">连续工具调用合并为同一条节点。已完成条目留在前面，进行中放在最末——<strong>只有最末那条带扫光</strong>。</p>
             <div class="fp-states-inner-row">
               <div class="fp-snapshot-wrap">
-                <span class="tag">进行中 · 末条扫光</span>
+                <span class="fp-label">进行中 · 末条扫光</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '正在读取文件'], { state: 'running' })}</div>
               </div>
               <div class="fp-snapshot-wrap">
-                <span class="tag">已全部完成</span>
+                <span class="fp-label">已全部完成</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '读取文件'])}</div>
               </div>
             </div>

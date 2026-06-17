@@ -342,6 +342,14 @@
   margin: 0 0 8px;
   line-height: 1.5;
 }
+/* 状态节纯文本标签（替代 .tag 药丸样式，无背景/边框） */
+.fp-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 6px;
+}
 
 /* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */
 .fp-states-row {

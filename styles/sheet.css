@@ -79,24 +79,11 @@
 }
 
 /* ── CLOSE BUTTON ────────────────────────────────────────── */
+/* 按钮视觉样式来自 .aq-close-btn（ask-question.css），这里只加 sheet 定位 */
 .sheet-close-btn {
   position:absolute;
   top:6px;right:var(--sheet-side-padding);
-  width:36px;height:36px;
-  border-radius:999px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:10px;
-  box-sizing:border-box;
   z-index:10;
-}
-.sheet-close-btn:active {
-  transform:scale(.985);
-}
-.sheet-close-btn svg {
-  position:relative;
-  color:#3D3D3D;
 }
 .sheet-handle::after{
   content:"";

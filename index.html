@@ -149,12 +149,6 @@
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
     <div class="bottom-sheet" id="sheet">
       <div class="sheet-handle"></div>
-      <button class="glass-btn sheet-close-btn" type="button" onclick="closeSheet()" tabindex="-1">
-        <span class="glass-layer lg-layer-one"></span>
-        <span class="glass-layer lg-layer-two"></span>
-        <span class="glass-layer-inner lg-layer-three"></span>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      </button>
       <div class="sheet-body" id="sheetBody"></div>
     </div>
   </div>
@@ -245,6 +239,20 @@
 <script type="module" src="./engine/player.js"></script>
 <script type="module">
   import { initFeaturePanel } from './engine/feature-panel.js';
+  import { glassCloseBtn } from './engine/ask-question.js';
+
+  // 注入 sheet 关闭按钮（复用 ask-question 共享组件）
+  const sheet = document.getElementById('sheet');
+  if (sheet) {
+    const btnHTML = glassCloseBtn();
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = btnHTML;
+    const btn = wrapper.firstElementChild;
+    btn.classList.add('sheet-close-btn');
+    btn.addEventListener('click', () => closeSheet());
+    sheet.appendChild(btn);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFeaturePanel);
   } else {

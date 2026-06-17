@@ -104,23 +104,23 @@
 .sd-container{
   display:flex;
   flex-direction:column;
-  gap:12px;
-  padding-top:8px;
+  gap:0;
 }
 .sd-section{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:0;
 }
 .sd-label{
   font-size:14px;font-weight:600;
   color:#3D3D3D;line-height:24px;
+  padding:15px 0 0;
 }
 .sd-card{
   background:#FAFAFA;
   border:1px solid #F2F2F2;
   border-radius:10px;
-  padding:6px 10px;
+  padding:6px;
   font-size:15px;line-height:24px;
   color:#3D3D3D;
   white-space:pre-wrap;

@@ -84,7 +84,6 @@
 }
 
 /* ── SHEET CLOSE AREA (wrapper for aq-close-btn) ───────────── */
-/* 与 ask-question 卡片同款白底 + 阴影，避免按钮投影在半透明遮罩上被吃掉 */
 .sheet-close-area{
   position:absolute;
   /* 跟随 bottom-sheet 顶部（100% - 40% = 60%）+ 8px 偏移 */
@@ -92,12 +91,12 @@
   z-index:210;
   opacity:0;
   transition:opacity 0.28s ease 0.12s;
-  background:var(--aq-bg,#FAFAFA);
-  border-radius:999px;
-  box-shadow:var(--aq-shadow);
-  padding:3px;
 }
 .sheet-overlay.show .sheet-close-area{opacity:1;}
+/* 深色遮罩上按钮投影需加浓，否则被 overlay 半透明黑底吃掉 */
+.sheet-close-area .glass-btn{
+  box-shadow:0 7px 30px rgba(0,0,0,0.28),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(255,255,255,0.12);
+}
 
 .sheet-body{
   position:relative;

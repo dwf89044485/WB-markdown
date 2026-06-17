@@ -346,7 +346,8 @@ function hideBackButton() {
   if (start) start.innerHTML = '';
 }
 
-export function goBackInSheet() {
+export function goBackInSheet(e) {
+  if (e) e.stopPropagation();
   if (!sheetBackState) return;
   const { frameRefs, title, opts } = sheetBackState;
   sheetBackState = null;

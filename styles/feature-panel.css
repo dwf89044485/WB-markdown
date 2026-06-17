@@ -325,7 +325,6 @@
 .fp-content .fp-bottom-sheet-static {
   height: auto;
   position: relative;
-  border-radius: 0;
   box-shadow: none;
   transform: none;
   pointer-events: none;
@@ -358,6 +357,7 @@
   color: #1d1d1f;
   margin-bottom: 8px;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 /* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */
@@ -432,6 +432,8 @@
   background: #EBEBEB;
   color: #1d1d1f;
   margin-bottom: 10px;
+  white-space: nowrap;
+  align-self: flex-start;
 }
 
 /* 2 列并排对比：flex 横向排列，间距固定 */

@@ -547,4 +547,5 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   color: #1d1d1f;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  align-self: flex-start;
 }

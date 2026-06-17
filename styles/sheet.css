@@ -84,13 +84,18 @@
 }
 
 /* ── SHEET CLOSE AREA (wrapper for aq-close-btn) ───────────── */
+/* 与 ask-question 卡片同款白底 + 阴影，避免按钮投影在半透明遮罩上被吃掉 */
 .sheet-close-area{
   position:absolute;
   /* 跟随 bottom-sheet 顶部（100% - 40% = 60%）+ 8px 偏移 */
-  top:calc(60% + 8px);right:var(--spacing-16);
+  top:calc(60% + 8px);right:20px;
   z-index:210;
   opacity:0;
   transition:opacity 0.28s ease 0.12s;
+  background:var(--aq-bg,#FAFAFA);
+  border-radius:999px;
+  box-shadow:var(--aq-shadow);
+  padding:3px;
 }
 .sheet-overlay.show .sheet-close-area{opacity:1;}
 

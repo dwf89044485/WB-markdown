@@ -374,7 +374,7 @@
 /* ── Tool Call Node Sheet 并排展示 ────────── */
 .fp-sheet-pair {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0;
   margin: 16px 0;
 }
@@ -386,6 +386,7 @@
 }
 .fp-sheet-pair-item .fp-sheet-mock {
   width: 100%;
+  flex: 1;
   min-height: 280px;
 }
 .fp-sheet-pair-arrow {
@@ -394,12 +395,20 @@
   align-items: center;
   justify-content: center;
   width: 40px;
-  padding-top: 28px; /* 对齐到 sheet body 起始 */
+  padding-top: 28px;
 }
 .fp-sheet-pair-arrow span {
   font-size: 28px;
   color: #c7c7cc;
   font-weight: 200;
+}
+/* Sheet 节纯文本标签（跟随文本宽度，无背景/边框） */
+.tag-fp {
+  display: inline;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 10px;
 }
 
 /* 2 列并排对比：flex 横向排列，间距固定 */

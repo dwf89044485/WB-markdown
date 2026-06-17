@@ -125,7 +125,7 @@ export default {
 
         <div class="fp-sheet-pair">
           <div class="fp-sheet-pair-item">
-            <span class="tag">一级 · 3 个事件</span>
+            <span class="tag-fp">一级 sheet-概览</span>
             <div class="fp-sheet-mock">
               <div class="bottom-sheet fp-bottom-sheet-static">
                 <div class="sheet-top">
@@ -139,7 +139,7 @@ export default {
           </div>
           <div class="fp-sheet-pair-arrow"><span>›</span></div>
           <div class="fp-sheet-pair-item">
-            <span class="tag">二级 · 第 2 条事件详情</span>
+            <span class="tag-fp">二级 sheet-详情</span>
             <div class="fp-sheet-mock fp-sheet-mock-detail">
               <div class="bottom-sheet detail-mode fp-bottom-sheet-static">
                 <div class="sheet-top">

@@ -35,10 +35,11 @@ function sl(labels, opts = {}) {
 }
 
 // ── 设计样式章节的 demo 块（3 模式顺序循环）──────────
-// 去掉了 phone-shell 白壳和虚线框，直接渲染状态行
+// 样式类直接挂在容器上，替代 phone-shell 的区分作用
 function modeBlock(modeLabel, phoneClass, initialLine) {
-  return `<div class="fp-tcn-mode-demo" data-mode="${modeLabel}">
-    <button type="button" class="step-detail-link is-running fp-tcn-mode-line ${phoneClass === 'tool-call-stack' ? 'tcn-stack-mode' : ''}" tabindex="-1" data-initial-state="running">${initialLine}</button>
+  const isStack = phoneClass === 'tool-call-stack';
+  return `<div class="fp-tcn-mode-demo ${phoneClass}" data-mode="${modeLabel}">
+    <button type="button" class="step-detail-link is-running fp-tcn-mode-line${isStack ? ' tcn-stack-mode' : ''}" tabindex="-1" data-initial-state="running">${initialLine}</button>
   </div>`;
 }
 

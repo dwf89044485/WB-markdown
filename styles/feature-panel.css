@@ -273,17 +273,37 @@
 .fp-tcn-modes > .fp-snapshot-wrap {
   display: flex;
   flex-direction: column;
-  width: 280px;
+  width: 360px;
   flex-shrink: 0;
 }
 .fp-tcn-mode-demo {
   display: flex;
   align-items: center;
 }
-/* 循环块里的状态行 */
+/* 循环块里的状态行：基础（同 card 默认） */
 .fp-tcn-mode-demo .step-detail-link {
   pointer-events: none;
   width: 100%;
+}
+/* flat 和 stack 去边框 */
+.fp-tcn-mode-demo.tool-call-flat .step-detail-link,
+.fp-tcn-mode-demo.tool-call-stack .step-detail-link {
+  display: inline-flex;
+  width: auto;
+  justify-content: flex-start;
+  border: none;
+  border-radius: 0;
+  padding: var(--cv-status-padding-y) 0;
+  gap: 4px;
+}
+.fp-tcn-mode-demo.tool-call-flat .status-chevron,
+.fp-tcn-mode-demo.tool-call-stack .status-chevron {
+  margin-left: 0;
+  padding-left: 4px;
+}
+/* card 模式：保留基础边框，padding 略高 */
+.fp-tcn-mode-demo.tool-call-card .step-detail-link {
+  padding: 7px var(--cv-status-padding-x);
 }
 
 /* ── Tool Call Node Sheet 静态快照 ────────── */

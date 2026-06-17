@@ -17,6 +17,53 @@ export default {
       </header>
 
       <section>
+        <h2>四层信息层级</h2>
+        <p>从用户视角看，对话流的信息按四层组织，从浅到深逐级下钻：</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>层级</th>
+              <th>面向用户</th>
+              <th>用户关注点</th>
+              <th>语言风格</th>
+              <th>位置</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>L0 结果层</strong></td>
+              <td>结果型用户</td>
+              <td><strong>任务完成了吗？结果是什么？接下来该做什么？</strong></td>
+              <td>产品化结论</td>
+              <td>主对话流，默认可见</td>
+            </tr>
+            <tr>
+              <td><strong>L1 执行过程层</strong></td>
+              <td>审核型用户</td>
+              <td><strong>AI 是怎么做到的？每个步骤的结果是否可信？有没有出问题？</strong></td>
+              <td>任务语言</td>
+              <td>展开执行过程后可见</td>
+            </tr>
+            <tr>
+              <td><strong>L2 浮层详情层</strong></td>
+              <td>审核型用户</td>
+              <td><strong>这个操作具体做了什么？查到的信息是什么？为什么得出这个结论？</strong></td>
+              <td>结构化摘要</td>
+              <td>点击某条状态行后弹出 Sheet</td>
+            </tr>
+            <tr>
+              <td><strong>L3 原始细节层</strong></td>
+              <td>较真型 / Debug 用户</td>
+              <td><strong>到底报了什么错？输入参数对不对？能不能排查到根本原因？</strong></td>
+              <td>原始细节</td>
+              <td>在 L2 Sheet 内进一步点击展开</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
         <h2>对话流信息层级结构</h2>
 
         <div class="mermaid">
@@ -66,53 +113,6 @@ flowchart TD
         <blockquote>
           <p><strong>思考过程（Thinking）是节点内的组件，不是平行叙事线。</strong>每个节点内都可能包含思考——Agent 理解任务时思考、遇到错误时重新规划思考、在工具调用之间反复推理。思考过程与 Markdown、Status Line、askUser 等同属于节点内的内容组成部分。</p>
         </blockquote>
-      </section>
-
-      <section>
-        <h2>四层信息层级</h2>
-        <p>从用户视角看，对话流的信息按四层组织，从浅到深逐级下钻：</p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>层级</th>
-              <th>面向用户</th>
-              <th>用户关注点</th>
-              <th>语言风格</th>
-              <th>位置</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>L0 结果层</strong></td>
-              <td>结果型用户</td>
-              <td><strong>任务完成了吗？结果是什么？接下来该做什么？</strong></td>
-              <td>产品化结论</td>
-              <td>主对话流，默认可见</td>
-            </tr>
-            <tr>
-              <td><strong>L1 执行过程层</strong></td>
-              <td>审核型用户</td>
-              <td><strong>AI 是怎么做到的？每个步骤的结果是否可信？有没有出问题？</strong></td>
-              <td>任务语言</td>
-              <td>展开执行过程后可见</td>
-            </tr>
-            <tr>
-              <td><strong>L2 浮层详情层</strong></td>
-              <td>审核型用户</td>
-              <td><strong>这个操作具体做了什么？查到的信息是什么？为什么得出这个结论？</strong></td>
-              <td>结构化摘要</td>
-              <td>点击某条状态行后弹出 Sheet</td>
-            </tr>
-            <tr>
-              <td><strong>L3 原始细节层</strong></td>
-              <td>较真型 / Debug 用户</td>
-              <td><strong>到底报了什么错？输入参数对不对？能不能排查到根本原因？</strong></td>
-              <td>原始细节</td>
-              <td>在 L2 Sheet 内进一步点击展开</td>
-            </tr>
-          </tbody>
-        </table>
       </section>
 
       <section>

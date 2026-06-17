@@ -7,30 +7,35 @@
   --ap-width: 350px;
 
   --ap-text: #3D3D3D;
-  --ap-text-secondary: rgba(61, 61, 61, 0.6);
+  --ap-text-title: rgba(0, 0, 0, 0.9);
   --ap-text-regular: 400;
+  --ap-text-medium: 500;
   --ap-text-semibold: 600;
   --ap-font: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
   --ap-font-sm: 12px;
   --ap-font-base: 14px;
-  --ap-font-title: 15px;
+  --ap-font-title: 16px;
   --ap-line-height: 24px;
 
-  --ap-warning-color: #E53935;
+  --ap-warning-color: #B12B41;
 
-  --ap-option-bg: #F2F2F2;
+  --ap-option-bg: #FAFAFA;
   --ap-option-selected-bg: #EBEBEB;
   --ap-option-height: 46px;
   --ap-option-radius: 10px;
   --ap-option-gap: 10px;
-  --ap-option-padding: 0 12px;
+  --ap-option-padding: 10px;
+  --ap-option-text-gap: 6px;
 
   --ap-num-size: 20px;
   --ap-num-radius: 90px;
-  --ap-num-bg: #ECECEC;
+  --ap-num-bg: #F2F2F2;
   --ap-num-selected-bg: #3D3D3D;
   --ap-num-color: #3D3D3D;
   --ap-num-selected-color: #FFFFFF;
+
+  --ap-desc-padding-y: 16px;
+  --ap-desc-gap: 8px;
 }
 
 /* 卡片容器 — 替换 composer 显示在相同位置 */
@@ -64,22 +69,22 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 标题 — 45px height area, semibold 15px */
+/* 标题 — 45px height area, medium 16px */
 .ap-title {
   font-family: var(--ap-font);
-  font-weight: var(--ap-text-semibold);
+  font-weight: var(--ap-text-medium);
   font-size: var(--ap-font-title);
   line-height: 45px;
-  color: var(--ap-text);
+  color: var(--ap-text-title);
   min-height: 45px;
 }
 
-/* 警告区 — 74px, 直接跟在标题下, 无背景框 */
+/* 警告区 — 16px padding 上下，warning + desc 两行垂直排列 */
 .ap-warning-line {
   font-family: var(--ap-font);
-  font-weight: var(--ap-text-semibold);
-  font-size: 13px;
-  line-height: 20px;
+  font-weight: var(--ap-text-regular);
+  font-size: 15px;
+  line-height: 21px;
   color: var(--ap-warning-color);
   margin: 0;
 }
@@ -87,15 +92,17 @@
 .ap-desc-line {
   font-family: var(--ap-font);
   font-weight: var(--ap-text-regular);
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--ap-text-secondary);
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--ap-text);
   margin: 0;
-  padding-top: 4px;
 }
 
 .ap-warning-wrap {
-  padding: 12px 0 10px;
+  padding: var(--ap-desc-padding-y) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ap-desc-gap);
 }
 
 /* 选项列表 */
@@ -119,7 +126,7 @@
   user-select: none;
   transition: background 0.15s;
   box-sizing: border-box;
-  gap: 10px;
+  gap: var(--ap-option-text-gap);
 }
 
 .ap-option.is-selected {

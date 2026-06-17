@@ -154,8 +154,12 @@ async function runFlatAction(container, action) {
     await appendHTMLTypedTo(wrapper, markdownToHtml(action.markdown));
   }
   if (action.type === 'askUser') {
-    const result = await showAskQuestion(action.questions);
-    console.log('[AskUser] answers:', result);
+    if (fastRender) {
+      // 快进渲染时跳过 askUser 卡片，不阻塞也不残留
+    } else {
+      const result = await showAskQuestion(action.questions);
+      console.log('[AskUser] answers:', result);
+    }
   }
 }
 

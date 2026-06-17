@@ -12,6 +12,8 @@
 import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
+import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
+import { openSheet } from './sheet.js';
 
 const ROOT_SELECTOR = '.design-notes-inner';
 
@@ -128,6 +130,25 @@ function bindEvents() {
     }
 
     jumpToAnchor(anchor);
+  });
+
+  // 操作按钮事件代理（在 contentEl 上）
+  contentEl.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.fp-action-btn');
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    if (action === 'running-state') {
+      await goToStep(resolveNodeStep(0, 0));
+      resumePlayback();
+    } else if (action === 'completed-state' || action === 'disclosure-1') {
+      await goToStep(Number.MAX_SAFE_INTEGER);
+    } else if (action === 'disclosure-2') {
+      await goToStep(resolveNodeStep(0, 3));
+    } else if (action === 'disclosure-3') {
+      await goToStep(resolveNodeStep(0, 3));
+      openSheet('F1.c,F1.d,F1.e,F1.f,F1.g,F1.h,F1.i', '搜索网页、更新待办');
+    }
   });
 
   // 屏宽变化：跨过 600 边界时重新初始化

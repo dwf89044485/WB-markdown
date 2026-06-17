@@ -34,7 +34,19 @@ export default {
         <div class="fp-principle-card">
           <div class="fp-principle-number">1</div>
           <div class="fp-principle-body">
-            <h3>结果优先，过程可追溯</h3>
+            <div class="fp-hdr-row">
+              <h3>结果优先，过程可追溯</h3>
+              <div class="fp-action-btn-group">
+                <button class="fp-action-btn" data-action="running-state">
+                  查看运行态
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="fp-action-btn" data-action="completed-state">
+                  查看完成态
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
             <p>对话流默认服务结果交付；执行过程折叠为追溯入口，用户需要时可逐层还原完整执行链路。</p>
             <ul>
               <li>默认展示结果（状态、总结、交付物、下一步），不是内部细节</li>
@@ -47,7 +59,14 @@ export default {
         <div class="fp-principle-card">
           <div class="fp-principle-number">2</div>
           <div class="fp-principle-body">
-            <h3>渐进式披露</h3>
+            <div class="fp-hdr-row">
+              <h3>渐进式披露</h3>
+              <div class="fp-action-btn-group">
+                <button class="fp-action-btn" data-action="disclosure-1">第一层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-2">第二层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-3">第三层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
             <p>结果、过程、原始信息不在信息流中混排避免信息过载；用不同的容器收纳不同深度信息，用户按需追溯下钻。</p>
             <ul>
               <li>思考、执行、结果三者分层收纳，不混排</li>

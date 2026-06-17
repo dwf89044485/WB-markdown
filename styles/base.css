@@ -211,14 +211,6 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   justify-content:center;
   gap:5px;
 }
-/* === VERSION DOT: 每次 git commit 前改 background 颜色 === */
-.status-version-dot{
-  display:inline-block;
-  width:7px;height:7px;
-  border-radius:50%;
-  background:#F43F5E; /* rose */
-  flex-shrink:0;
-}
 .status-time{
   font-family:'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   font-size:17px;

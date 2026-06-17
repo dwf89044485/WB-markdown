@@ -233,16 +233,6 @@ git push
 
 如果用户报告 hash 显示有问题，先看 `docs/commit-hash.md` 的"排查指南"。
 
-### 版本指示圆点
-
-`.status-version-dot`（状态栏时间右侧）用于用户确认线上页面是否最新代码。
-
-**git commit 前**（必须执行）：
-1. 打开 `styles/base.css`，搜索 `=== VERSION DOT`
-2. 把 `.status-version-dot { background: #xxxxxx }` 改成另一种颜色（任意，不重复上次即可）
-
-**git commit 后**：在对话中告知用户 `hash: xxxxxxxx`，同时说明 `圆点颜色：XX色（#xxxxxx）`。
-
 ## 部署到 pages.woa.com
 
 本项目部署在 https://workbuddy-markdown.pages.woa.com。

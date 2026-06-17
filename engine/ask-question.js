@@ -565,4 +565,4 @@ function navigateToQuestion(index) {
   goToStep(index);
 }
 
-export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, navigateToQuestion, glassCloseBtn };
+export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, navigateToQuestion, glassCloseBtn, glassNavBtn, GLYPH_PREV };

@@ -70,28 +70,29 @@
 }
 .sheet-overlay.show .bottom-sheet{transform:translateY(0);}
 
-.sheet-handle{
-  position:relative;
-  width:100%;height:36px;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;cursor:ns-resize;
-  margin-top:6px;margin-bottom:12px;
+/* ── SHEET TOP ROW ─────────────────────────────────────────── */
+/* 一行三列：返回按钮 | handle 拖拽条 | 关闭按钮 */
+.sheet-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px var(--sheet-side-padding) 0;
+  flex-shrink:0;
+  min-height:48px;
 }
-
-.sheet-handle::after{
-  content:"";
+.sheet-top-start,
+.sheet-top-end{
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
+}
+.sheet-top .sheet-handle{
   width:72px;height:6px;
   background:#d7d7dc;border-radius:99px;
-}
-
-/* ── SHEET HEADER ─────────────────────────────────────────── */
-.sheet-header{
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  padding:0 var(--sheet-side-padding);
-  height:36px;
+  cursor:ns-resize;
   flex-shrink:0;
+  position:static;
+  margin:0;
 }
 
 .sheet-body{

@@ -148,8 +148,11 @@
   <div class="ask-question" id="askQuestion"></div>
   <div class="sheet-overlay" id="overlay" onclick="maybeClose(event)">
     <div class="bottom-sheet" id="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-header" id="sheetHeader"></div>
+      <div class="sheet-top" id="sheetTop">
+        <div class="sheet-top-start" id="sheetTopStart"></div>
+        <div class="sheet-handle"></div>
+        <div class="sheet-top-end" id="sheetTopEnd"></div>
+      </div>
       <div class="sheet-body" id="sheetBody"></div>
     </div>
   </div>
@@ -240,17 +243,27 @@
 <script type="module" src="./engine/player.js"></script>
 <script type="module">
   import { initFeaturePanel } from './engine/feature-panel.js';
-  import { glassCloseBtn } from './engine/ask-question.js';
+  import { glassCloseBtn, glassNavBtn, GLYPH_PREV } from './engine/ask-question.js';
 
-  // 注入 sheet header 关闭按钮（复用共享组件）
-  const sheetHeader = document.getElementById('sheetHeader');
-  if (sheetHeader) {
-    const btnHTML = glassCloseBtn();
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = btnHTML;
-    const btn = wrapper.firstElementChild;
-    btn.addEventListener('click', () => closeSheet());
-    sheetHeader.appendChild(btn);
+  // 注入 sheet 顶部按钮（返回 + 关闭，共享组件）
+  const sheetTopStart = document.getElementById('sheetTopStart');
+  const sheetTopEnd = document.getElementById('sheetTopEnd');
+  if (sheetTopStart && sheetTopEnd) {
+    // 返回按钮
+    const backHTML = glassNavBtn(GLYPH_PREV, false);
+    const bw = document.createElement('div');
+    bw.innerHTML = backHTML;
+    const backBtn = bw.firstElementChild;
+    backBtn.setAttribute('aria-label', '返回');
+    sheetTopStart.appendChild(backBtn);
+
+    // 关闭按钮
+    const closeHTML = glassCloseBtn();
+    const cw = document.createElement('div');
+    cw.innerHTML = closeHTML;
+    const closeBtn = cw.firstElementChild;
+    closeBtn.addEventListener('click', () => closeSheet());
+    sheetTopEnd.appendChild(closeBtn);
   }
 
   if (document.readyState === 'loading') {

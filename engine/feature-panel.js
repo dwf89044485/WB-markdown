@@ -176,6 +176,10 @@ function bindEvents() {
       }
     } else if (action === 'tcn-demo-done') {
       await goToStep(Number.MAX_SAFE_INTEGER);
+    } else if (action === 'ask-user') {
+      const aqFeature = getFeature('ask-question');
+      const anchor = aqFeature && aqFeature.anchors && aqFeature.anchors['single-appear'];
+      if (anchor) await jumpToAnchor(anchor);
     }
   });
 

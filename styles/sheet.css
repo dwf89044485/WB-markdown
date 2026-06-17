@@ -84,6 +84,16 @@
   background:#d7d7dc;border-radius:99px;
 }
 
+/* ── SHEET HEADER ─────────────────────────────────────────── */
+.sheet-header{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  padding:0 var(--sheet-side-padding);
+  height:36px;
+  flex-shrink:0;
+}
+
 .sheet-body{
   position:relative;
   padding:var(--sheet-body-padding-top) var(--sheet-side-padding) var(--sheet-body-padding-bottom) var(--sheet-body-left);

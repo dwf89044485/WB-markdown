@@ -323,6 +323,34 @@
   line-height: 1.5;
 }
 
+/* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */
+.fp-states-row {
+  display: flex;
+  gap: 24px;
+  margin: 16px 0;
+}
+.fp-states-group {
+  flex: 1;
+  min-width: 0;
+}
+.fp-states-inner-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.fp-states-inner-row > .fp-snapshot-wrap {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0;
+}
+.fp-states-note {
+  font-size: 13px;
+  color: #424245;
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+
 /* ── Tool Call Node Sheet 并排展示 ────────── */
 .fp-sheet-pair {
   display: flex;

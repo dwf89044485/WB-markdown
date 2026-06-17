@@ -262,39 +262,70 @@ function renderRoute(route) {
   }
 }
 
-// ── Tool Call Node「设计样式」3 模式同步循环 ──────────
-// 所有块同时 running（带扫光）→ 同时 done（stack 折叠）→ 循环
+// ── Tool Call Node「设计样式」顺序播放 ──────────
+// 模拟逐条执行过程：Phase 1→2→3→4→5→循环
+// Phase 1: 第 1 条 running
+// Phase 2: 第 1 条 done + 第 2 条 running
+// Phase 3: 第 1-2 条 done + 第 3 条 running
+// Phase 4: 全部 done
+// Phase 5: stack 折叠为图标堆；flat/card 保持不变
 // 标签与 features/tool-call-node.js 的 M_RUN / M_DONE 保持一致
 let tcnModeLoopTimer = null;
-const TCN_RUN_LABELS  = ['正在搜索网页', '正在创建文件', '正在读取文件'];
-const TCN_DONE_LABELS = ['搜索网页',     '创建文件',     '读取文件'];   // drop 正在，不加 已
-const TCN_PHASE_MS = 2500;
+const TCN_PHASES = [
+  { labels: ['正在搜索网页'],            isRunning: true },
+  { labels: ['搜索网页', '正在创建文件'],   isRunning: true },
+  { labels: ['搜索网页', '创建文件', '正在读取文件'], isRunning: true },
+  { labels: ['搜索网页', '创建文件', '读取文件'],       isRunning: false },
+  // phase 4 是标准全部完成；phase 5 仅对 stack 模式做折叠
+];
+const TCN_STACK_LABELS = ['搜索网页', '创建文件', '读取文件'];
+const TCN_PHASE_MS = 2200;
 
 function startTcnModeLoop() {
   stopTcnModeLoop();
   const blocks = contentEl.querySelectorAll('.fp-tcn-mode-demo');
   if (!blocks.length) return;
 
-  let running = true; // 初始为 running（与 HTML 初始 is-running 类一致）
+  let phaseIndex = 0;
 
-  function tick() {
-    running = !running;
+  function applyPhase(phase) {
     blocks.forEach(block => {
       const line = block.querySelector('.fp-tcn-mode-line');
       if (!line) return;
-      const mode = block.dataset.mode;
-      if (running) {
-        line.innerHTML = statusLineHTML(TCN_RUN_LABELS);
+      const isStack = line.classList.contains('tcn-stack-mode');
+
+      if (phase === null) {
+        // 折叠阶段：仅 stack 模式改变，flat/card 保持不变
+        if (isStack) {
+          line.innerHTML = statusStackHTML(TCN_STACK_LABELS) + '<span class="status-chevron">›</span>';
+          line.classList.remove('is-running');
+        }
+        return;
+      }
+
+      if (phase.isRunning) {
+        line.innerHTML = statusLineHTML(phase.labels);
         line.classList.add('is-running');
       } else {
-        if (mode === '堆叠') {
-          line.innerHTML = statusStackHTML(TCN_DONE_LABELS) + '<span class="status-chevron">›</span>';
+        if (isStack) {
+          line.innerHTML = statusStackHTML(TCN_STACK_LABELS) + '<span class="status-chevron">›</span>';
         } else {
-          line.innerHTML = statusLineHTML(TCN_DONE_LABELS);
+          line.innerHTML = statusLineHTML(phase.labels);
         }
         line.classList.remove('is-running');
       }
     });
+  }
+
+  function tick() {
+    const phase = TCN_PHASES[phaseIndex];
+    applyPhase(phase);
+    phaseIndex++;
+    if (phaseIndex >= TCN_PHASES.length) {
+      // 再追加一个折叠 phase（仅 stack）
+      applyPhase(null);
+      phaseIndex = 0;
+    }
   }
 
   tcnModeLoopTimer = setInterval(tick, TCN_PHASE_MS);

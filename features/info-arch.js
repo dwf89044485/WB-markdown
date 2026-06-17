@@ -28,6 +28,7 @@ export default {
               <th>用户关注点</th>
               <th>语言风格</th>
               <th>位置</th>
+              <th>查看示例</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,7 @@ export default {
               <td><strong>任务完成了吗？结果是什么？接下来该做什么？</strong></td>
               <td>产品化结论</td>
               <td>主对话流，默认可见</td>
+              <td><button class="fp-action-btn" data-action="infoarch-l0" type="button">查看示例</button></td>
             </tr>
             <tr>
               <td><strong>L1 执行过程层</strong></td>
@@ -44,6 +46,7 @@ export default {
               <td><strong>AI 是怎么做到的？每个步骤的结果是否可信？有没有出问题？</strong></td>
               <td>任务语言</td>
               <td>展开执行过程后可见</td>
+              <td><button class="fp-action-btn" data-action="infoarch-l1" type="button">查看示例</button></td>
             </tr>
             <tr>
               <td><strong>L2 浮层详情层</strong></td>
@@ -51,6 +54,7 @@ export default {
               <td><strong>这个操作具体做了什么？查到的信息是什么？为什么得出这个结论？</strong></td>
               <td>结构化摘要</td>
               <td>点击某条状态行后弹出 Sheet</td>
+              <td><button class="fp-action-btn" data-action="infoarch-l2" type="button">查看示例</button></td>
             </tr>
             <tr>
               <td><strong>L3 原始细节层</strong></td>
@@ -58,6 +62,7 @@ export default {
               <td><strong>到底报了什么错？输入参数对不对？能不能排查到根本原因？</strong></td>
               <td>原始细节</td>
               <td>在 L2 Sheet 内进一步点击展开</td>
+              <td><button class="fp-action-btn" data-action="infoarch-l3" type="button">查看示例</button></td>
             </tr>
           </tbody>
         </table>

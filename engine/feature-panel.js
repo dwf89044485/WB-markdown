@@ -12,10 +12,11 @@
 import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
-import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
+import { goToStep, resolveNodeStep, resumePlayback, toggleExec } from './player.js';
 import { openSheet } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAllOverlays } from './overlay-registry.js';
+import { sleep } from './core.js';
 
 // ════════════════════════════════════════════════════════════════
 // 覆层面板清理（hideOverlays）
@@ -185,6 +186,43 @@ function bindEvents() {
       const apFeature = getFeature('approve-permission');
       const anchor = apFeature && apFeature.anchors && apFeature.anchors['show-card'];
       if (anchor) await jumpToAnchor(anchor);
+    } else if (action === 'infoarch-l0') {
+      // L0: 对话流完成态
+      await goToStep(Number.MAX_SAFE_INTEGER);
+    } else if (action === 'infoarch-l1') {
+      // L1: 完成态 + 展开执行过程 + 定位到"执行命令"状态行
+      await goToStep(Number.MAX_SAFE_INTEGER);
+      toggleExec();
+      await sleep(100);
+      const execLines = document.querySelectorAll('#stepsList .step-detail-link');
+      for (const line of execLines) {
+        const labels = line.dataset.labels;
+        if (labels && labels.includes('执行命令')) {
+          line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+    } else if (action === 'infoarch-l2') {
+      // L2: 完成态 + 展开执行过程 + 拉起"执行命令"Sheet
+      await goToStep(Number.MAX_SAFE_INTEGER);
+      toggleExec();
+      await sleep(100);
+      openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
+    } else if (action === 'infoarch-l3') {
+      // L3: 完成态 + 展开执行过程 + 拉起Sheet + 进入二级详情
+      await goToStep(Number.MAX_SAFE_INTEGER);
+      toggleExec();
+      await sleep(100);
+      await openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
+      await sleep(100);
+      // 找到第一个带 detail 的事件行，点击进入二级 sheet
+      const rows = document.querySelectorAll('#sheetBody .s-row');
+      for (const row of rows) {
+        if (row._sheetDetail) {
+          row.click();
+          break;
+        }
+      }
     }
   });
 

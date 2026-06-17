@@ -102,14 +102,14 @@
 
 /* ── SHEET DETAIL VIEW (二级 sheet) ──────────────────────── */
 .sheet-body.detail-mode{
-  background:#FFFFFF;
+  background:#FAFAFA;
   padding-top:0;
   padding-bottom:20px;
   gap:0;
 }
 .sheet-body.detail-mode::before{display:none;}
 .bottom-sheet.detail-mode{
-  background:#FFFFFF;
+  background:#FAFAFA;
 }
 .sd-container{
   display:flex;
@@ -127,7 +127,7 @@
   padding:15px 0;
 }
 .sd-card{
-  background:#FAFAFA;
+  background:#FFFFFF;
   border:1px solid #F2F2F2;
   border-radius:10px;
   padding:6px;

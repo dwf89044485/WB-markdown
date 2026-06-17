@@ -269,6 +269,10 @@
 /* ── Tool Call Node 设计样式章节（3 模式循环 demo）────────── */
 .fp-tcn-modes {
   align-items: stretch;
+  height: 113px;
+}
+.fp-snapshot-grid-3.fp-tcn-modes {
+  padding: 0;
 }
 .fp-tcn-modes > .fp-snapshot-wrap {
   display: flex;
@@ -316,7 +320,7 @@
   background: #FAFAFA;
 }
 .fp-sheet-mock-detail {
-  background: #FFFFFF;
+  background: #FAFAFA;
 }
 /* 文档里的 bottom-sheet：脱离 height:40%，按内容自适应 */
 .fp-content .fp-bottom-sheet-static {

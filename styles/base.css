@@ -75,7 +75,7 @@ body{
   --composer-padding-bottom:var(--spacing-32);
   --composer-fade-height:var(--spacing-40);
 
-  --status-icon-color:#112233;
+  --status-icon-color:#1E3A8A;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
@@ -216,7 +216,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:inline-block;
   width:7px;height:7px;
   border-radius:50%;
-  background:#F97316; /* orange */
+  background:#D946EF; /* fuchsia */
   flex-shrink:0;
 }
 .status-time{

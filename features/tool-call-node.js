@@ -13,6 +13,7 @@
 
 import { statusLineHTML, statusStackHTML } from '../engine/icons.js';
 import { renderStaticSheet, renderStaticDetail, getFrames } from '../engine/sheet.js';
+import { glassCloseBtn, glassNavBtn, GLYPH_PREV } from '../engine/ask-question.js';
 
 // ── 第 1 节「状态」用「执行命令」作为唯一示例（用户口径）──────────
 const L = {
@@ -110,7 +111,7 @@ export default {
                 <div class="sheet-top">
                   <div class="sheet-top-start"></div>
                   <div class="sheet-handle"></div>
-                  <div class="sheet-top-end"></div>
+                  <div class="sheet-top-end">${glassCloseBtn()}</div>
                 </div>
                 <div class="sheet-body">${renderStaticSheet(SHEET_EVENTS)}</div>
               </div>
@@ -126,9 +127,9 @@ export default {
             <div class="fp-sheet-mock fp-sheet-mock-detail">
               <div class="bottom-sheet detail-mode fp-bottom-sheet-static">
                 <div class="sheet-top">
-                  <div class="sheet-top-start"></div>
+                  <div class="sheet-top-start">${glassNavBtn(GLYPH_PREV, false)}</div>
                   <div class="sheet-handle"></div>
-                  <div class="sheet-top-end"></div>
+                  <div class="sheet-top-end">${glassCloseBtn()}</div>
                 </div>
                 <div class="sheet-body detail-mode">${renderStaticDetail(SHEET_DETAIL)}</div>
               </div>

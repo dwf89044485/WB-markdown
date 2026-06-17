@@ -15,22 +15,19 @@ import { jumpToAnchor } from './feature-jump.js';
 import { goToStep, resolveNodeStep, resumePlayback } from './player.js';
 import { openSheet } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
-import { hideAskQuestion } from './ask-question.js';
-import { hideApprovePermission } from './approve-permission.js';
+import { hideAllOverlays } from './overlay-registry.js';
 
 // ════════════════════════════════════════════════════════════════
 // 覆层面板清理（hideOverlays）
 // 左侧 Demo 区内会弹出各种覆层面板（askUser 问答卡片、approvePermission
-// 批准权限卡片、后加的其他面板等）。当用户从右侧交互说明面板触发任何
-// 导航行为（点锚点按钮 / 操作按钮 / 切换 feature）时，必须清理所有覆
-// 层面板，避免多个面板同时残留。
+// 批准权限卡片等）。当用户从右侧交互说明面板触发任何导航行为
+// （点锚点按钮 / 操作按钮 / 切换 feature）时，必须清理所有覆层面板。
 //
-// 新增面板类型 → 在此函数中追加 hideXxx() 调用，保证多面板上下文也能
-// 正确清理。
+// 使用统一注册表（overlay-registry.js）而非手动枚举，新增面板类型只需
+// 在面板模块中 registerOverlayCleanup(hideXxx)，此处无需修改。
 // ════════════════════════════════════════════════════════════════
 function hideOverlays() {
-  hideAskQuestion();
-  hideApprovePermission();
+  hideAllOverlays();
 }
 
 const ROOT_SELECTOR = '.design-notes-inner';
@@ -272,14 +269,14 @@ function renderRoute(route) {
 // 标签与 features/tool-call-node.js 的 M_RUN / M_DONE 保持一致
 let tcnModeLoopTimer = null;
 const TCN_PHASES = [
-  { labels: ['正在搜索网页'],            isRunning: true },
-  { labels: ['搜索网页', '正在创建文件'],   isRunning: true },
-  { labels: ['搜索网页', '创建文件', '正在读取文件'], isRunning: true },
-  { labels: ['搜索网页', '创建文件', '读取文件'],       isRunning: false },
-  // phase 4 是标准全部完成；phase 5 仅对 stack 模式做折叠
+  { labels: ['正在搜索网页'],            isRunning: true, ms: 1000 },
+  { labels: ['搜索网页', '正在创建文件'],   isRunning: true, ms: 1000 },
+  { labels: ['搜索网页', '创建文件', '正在读取文件'], isRunning: true, ms: 1000 },
+  { labels: ['搜索网页', '创建文件', '读取文件'],       isRunning: false, ms: 3000 },
+  // phase 4 是标准全部完成；之后追加一个折叠 phase（仅 stack）
 ];
 const TCN_STACK_LABELS = ['搜索网页', '创建文件', '读取文件'];
-const TCN_PHASE_MS = 2200;
+const TCN_COMPLETED_MS = 3000; // 完成态停留时长（包括 stack 折叠）
 
 function startTcnModeLoop() {
   stopTcnModeLoop();
@@ -317,23 +314,33 @@ function startTcnModeLoop() {
     });
   }
 
-  function tick() {
-    const phase = TCN_PHASES[phaseIndex];
-    applyPhase(phase);
-    phaseIndex++;
-    if (phaseIndex >= TCN_PHASES.length) {
-      // 再追加一个折叠 phase（仅 stack）
-      applyPhase(null);
-      phaseIndex = 0;
+  function scheduleNext() {
+    if (phaseIndex < TCN_PHASES.length) {
+      const phase = TCN_PHASES[phaseIndex];
+      applyPhase(phase);
+      phaseIndex++;
+      tcnModeLoopTimer = setTimeout(() => {
+        if (phaseIndex >= TCN_PHASES.length) {
+          // 已完成态显示完后，追加 stack 折叠
+          applyPhase(null);
+          // 让折叠状态也停留相同时长再循环
+          tcnModeLoopTimer = setTimeout(() => {
+            phaseIndex = 0;
+            scheduleNext();
+          }, TCN_COMPLETED_MS);
+        } else {
+          scheduleNext();
+        }
+      }, phase.ms);
     }
   }
 
-  tcnModeLoopTimer = setInterval(tick, TCN_PHASE_MS);
+  scheduleNext();
 }
 
 function stopTcnModeLoop() {
   if (tcnModeLoopTimer) {
-    clearInterval(tcnModeLoopTimer);
+    clearTimeout(tcnModeLoopTimer);
     tcnModeLoopTimer = null;
   }
 }

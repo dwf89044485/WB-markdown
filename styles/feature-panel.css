@@ -199,6 +199,15 @@
   padding-top: 24px;
   margin-top: 24px;
 }
+.fp-feature-header h1 {
+  width: 718px;
+  height: 50px;
+  padding: 0 0 9.6px 0;
+  font-size: 32px;
+  line-height: 40px;
+  color: #1F2328;
+  border-radius: 0;
+}
 .fp-feature h2 {
   margin-top: 32px;
 }
@@ -376,7 +385,7 @@
   flex: 1;
   min-width: 0;
 }
-.fp-principle-body h3 {
+.fp-principle-card .fp-principle-body h3 {
   margin: 0 0 8px;
   font-size: 15px;
   font-weight: 600;
@@ -388,8 +397,8 @@
   margin: 0 0 12px;
 }
 .fp-principle-body ul {
+  padding: 0 0 0 14px;
   margin: 8px 0 0;
-  padding-left: 18px;
 }
 .fp-principle-body ul li {
   font-size: 14px;

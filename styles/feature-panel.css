@@ -529,6 +529,10 @@
 .fp-snapshot-side-desc h4:first-child {
   margin-top: 0;
 }
+.fp-snapshot-side-desc p,
+.fp-snapshot-side-desc li {
+  font-size: 14px;
+}
 .fp-snapshot-side-desc p {
   margin: 0 0 6px;
 }

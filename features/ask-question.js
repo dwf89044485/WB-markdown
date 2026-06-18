@@ -258,8 +258,8 @@ export default {
           ${labeled('默认状态', s.sortDefault)}
           ${labeled('拖拽时', s.sortDragging)}
           ${labeled('新手指引', s.sortGuide)}
+          ${labeled('用户输入', s.sortInput)}
         </div>
-        ${labeled('用户输入', s.sortInput)}
         <blockquote>
           <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>

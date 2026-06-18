@@ -527,7 +527,14 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     // 可视区域边界（视口坐标系）
     var leftEdge   = pR.left - colStep;
     var rightEdge  = pR.right + colStep;
-    var demoBottom = pR.bottom + 4 * rowStep;  // 手机底 + 1 格空 + 3 格控制面板
+
+    // demo 区域底部：以控制面板实际底部为准
+    var demoBottom = pR.bottom + 4 * rowStep;  // fallback
+    var ctrl = document.querySelector('.demo-controls');
+    if(ctrl){
+      var ctrlR = ctrl.getBoundingClientRect();
+      if(ctrlR.bottom > pR.bottom) demoBottom = ctrlR.bottom;
+    }
 
     var vw = Math.max(window.innerWidth, rightEdge);
     var vh = Math.max(window.innerHeight, demoBottom);
@@ -540,12 +547,40 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     }
 
     var x, y;
-    // 竖线：从手机左边缘向左向右延展
-    for(x = pR.left; x <= rightEdge; x += colStep){ dashLine(x, 0, x, vh); }
-    for(x = pR.left - colStep; x >= leftEdge; x -= colStep){ dashLine(x, 0, x, vh); }
-    // 横线：从手机顶边向下延展
-    for(y = pR.top; y <= demoBottom; y += rowStep){ dashLine(leftEdge, y, rightEdge, y); }
-    for(y = pR.top - rowStep; y >= 0; y -= rowStep){ dashLine(leftEdge, y, rightEdge, y); }
+    // 手机边缘坐标，虚线跳过这些位置（由实线边界线覆盖）
+    var edgeX = [pR.left, pR.right];
+    var edgeY = [pR.top, pR.bottom];
+    function onEdge(pos, edges){
+      for(var i=0;i<edges.length;i++){
+        if(Math.abs(pos - edges[i]) < 0.5) return true;
+      }
+      return false;
+    }
+    // 竖线：从手机左边缘向左向右延展，跳过手机左右边界
+    for(x = pR.left; x <= rightEdge; x += colStep){
+      if(onEdge(x, edgeX)) continue;
+      dashLine(x, 0, x, vh);
+    }
+    for(x = pR.left - colStep; x >= leftEdge; x -= colStep){
+      if(onEdge(x, edgeX)) continue;
+      dashLine(x, 0, x, vh);
+    }
+    // 横线：从手机顶边向下延展，跳过手机上下边界
+    for(y = pR.top; y <= demoBottom; y += rowStep){
+      if(onEdge(y, edgeY)) continue;
+      dashLine(leftEdge, y, rightEdge, y);
+    }
+    for(y = pR.top - rowStep; y >= 0; y -= rowStep){
+      if(onEdge(y, edgeY)) continue;
+      dashLine(leftEdge, y, rightEdge, y);
+    }
+
+    // demo 区域底部边界：以控制面板实际底部为准
+    var ctrl = document.querySelector('.demo-controls');
+    if(ctrl){
+      var ctrlR = ctrl.getBoundingClientRect();
+      demoBottom = ctrlR.bottom;
+    }
 
     var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">'
             + lines + '</svg>';

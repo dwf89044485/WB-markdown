@@ -171,6 +171,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     gap:0;
   }
   .left-area{
+    position:relative;
     width:524px;
     flex:0 0 524px;
     height:100dvh;

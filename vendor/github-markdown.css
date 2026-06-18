@@ -65,6 +65,8 @@
     --color-prettylights-syntax-invalid-illegal-text: var(--fgColor-danger);
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
+    --blockquote-border-color: #5B5953;
+    --blockquote-bg-color: #1C1E22;
   }
 }
 @media (prefers-color-scheme: light) {
@@ -121,6 +123,8 @@
     --fgColor-default: #1f2328;
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
+    --blockquote-border-color: #A6A59B;
+    --blockquote-bg-color: #F2F0EE;
   }
 }
 
@@ -446,8 +450,8 @@
   margin: 0;
   padding: 12px 16px;
   color: var(--fgColor-muted);
-  border-left: 3px solid #A6A59B;
-  background-color: #F2F0EE;
+  border-left: 3px solid var(--blockquote-border-color);
+  background-color: var(--blockquote-bg-color);
 }
 
 .markdown-body ul,

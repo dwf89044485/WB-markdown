@@ -85,11 +85,11 @@ export default {
             <p class="fp-states-note">连续工具调用合并为同一条节点。已完成条目留在前面，进行中放在最末——<strong>只有最末那条带扫光</strong>。</p>
             <div class="fp-states-inner-row">
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">进行中 · 末条扫光</span>
+                <span class="fp-label">进行中</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '正在读取文件'], { state: 'running' })}</div>
               </div>
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">已全部完成</span>
+                <span class="fp-label">已完成</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '读取文件'])}</div>
               </div>
             </div>

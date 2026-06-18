@@ -230,9 +230,8 @@
   margin-top: 24px;
   margin-bottom: 8px;
 }
-/* 正文段落最大宽度限制，保证阅读舒适度 */
+/* 正文段落 */
 .fp-feature p {
-  max-width: 65ch;
   line-height: 1.65;
 }
 .fp-feature li {
@@ -349,15 +348,28 @@
 
 /* ── Tool Call Node 设计样式章节（3 模式循环 demo）────────── */
 .fp-tcn-modes {
+  flex-direction: column;
   align-items: stretch;
-  height: 113px;
+  gap: 8px;
+  height: auto;
 }
 .fp-tcn-modes > .fp-snapshot-wrap {
   display: flex;
-  flex-direction: column;
-  width: 393px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: auto;
   flex-shrink: 0;
-  padding: 4px 8px;         /* TCN 模式内部样式需要水平 padding */
+  padding: 2px 0;
+  margin: 0;
+}
+.fp-tcn-modes > .fp-snapshot-wrap > .tag {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  align-self: center;
+}
+.fp-tcn-modes > .fp-snapshot-wrap > .fp-snapshot {
+  flex: none;
 }
 .fp-tcn-mode-demo {
   display: flex;
@@ -453,22 +465,39 @@
   flex: 1;
   min-width: 0;
 }
+.fp-states-group > .tag {
+  margin-bottom: 12px;
+}
 .fp-states-inner-row {
   display: flex;
-  gap: 16px;
-  margin-top: 8px;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
 }
 .fp-states-inner-row > .fp-snapshot-wrap {
-  flex: 1;
+  flex: none;
   min-width: 0;
   margin: 0;
-  padding: 4px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.fp-states-inner-row > .fp-snapshot-wrap > .fp-label {
+  padding: 7px 10px;
+  flex-shrink: 0;
+  align-self: center;
+  margin-bottom: 0;
+}
+.fp-states-inner-row > .fp-snapshot-wrap > .fp-tcn-inline {
+  margin: 0;
 }
 .fp-states-note {
   font-size: 13px;
   color: #424245;
   line-height: 1.65;
-  margin: 10px 0 0;
+  margin: 0 0 12px;
 }
 
 /* ── Tool Call Node Sheet 并排展示 ────────── */
@@ -575,7 +604,7 @@
 .fp-snapshot-side-desc h4 {
   font-size: 15px;
   font-weight: 600;
-  margin: 16px 0 8px;
+  margin: 16px 0;
   color: #1a1a1c;
 }
 .fp-snapshot-side-desc h4:first-child {
@@ -625,7 +654,8 @@
   color: #f0f0f0;
   padding: 20px 24px;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: 600;
   line-height: 1.65;
   margin: 16px 0 12px;
   letter-spacing: 0.01em;
@@ -936,7 +966,6 @@
   margin-bottom: 8px;
 }
 #fpContent .markdown-body p {
-  max-width: 65ch;
   margin-bottom: 14px;
 }
 #fpContent .markdown-body li {
@@ -979,16 +1008,22 @@
   letter-spacing: 0.04em;
   background-color: transparent;
 }
+#fpContent .markdown-body table tr:nth-child(2n) {
+  background-color: #f9f8f6;
+}
 #fpContent .markdown-body blockquote {
   border-left-color: rgba(0,0,0,0.1);
   padding: 12px 20px;
   color: #424245;
-  margin-bottom: 0;
 }
-/* 代码块 */
+/* 代码块 — 参考 fp-principle-card 卡片样式 */
 #fpContent .markdown-body pre {
-  border-radius: 6px;
+  background: #fff;
   border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #424245;
+  margin-bottom: 24px;
 }
 #fpContent .markdown-body code {
   font-size: 13px;

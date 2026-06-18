@@ -29,6 +29,7 @@ const A = {
   unanswered:   defaultAnswers(),                                                        // 全未答
   singleSel:    (() => { const a=defaultAnswers(); a[0].selected=1; return a; })(),      // q1 选第2项
   multiSel:     (() => { const a=defaultAnswers(); a[1].selected=[0,2]; return a; })(),  // q2 选第1、3项
+  multiInput:   (() => { const a=defaultAnswers(); a[1].selected=[0,2]; a[1].customInput='代订机票和酒店'; return a; })(), // q2 已选 + 输入
   sortReordered:(() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; return a; })(), // 交通便利→顶
 };
 
@@ -54,6 +55,7 @@ function getSnapshots() {
     singleSelected:   snap('singleSelected', SAMPLE_Q, 0, A.singleSel, { hideHeader: false, hideInput: false }),
     multiUnselected:  snap('multiUnselected', SAMPLE_Q, 1, A.unanswered, { hideHeader: false, hideInput: false }),
     multiChecked:     snap('multiChecked', SAMPLE_Q, 1, A.multiSel, { hideHeader: false, hideInput: false }),
+    multiInput:       snap('multiInput', SAMPLE_Q, 1, A.multiInput, { hideHeader: false, hideInput: false }),
     sortDefault:      snap('sortDefault', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false }),
     sortReordered:    snap('sortReordered', SAMPLE_Q, 2, A.sortReordered, { hideHeader: false, hideInput: false }),
     sortDragging:     snap('sortDragging', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, dragging: true }),
@@ -65,6 +67,11 @@ function getSnapshots() {
 // 标签走全局排版组件 .tag（styles/base.css），本文件不再持有标签样式
 function labeled(label, html) {
   return `<div class="fp-snapshot-wrap"><span class="tag">${label}</span><div class="fp-snapshot">${html}</div></div>`;
+}
+
+// tag 右侧带锚点按钮
+function labeledWithAnchor(label, html, anchorId) {
+  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="fp-anchor-btn" data-anchor="${anchorId}">查看示例></button></div><div class="fp-snapshot">${html}</div></div>`;
 }
 
 // 实际 node 索引：nodes[2]（n3，scenario.js 第 592 行，含 askUser action）
@@ -176,15 +183,20 @@ export default {
           ${labeled('完整卡片结构', s.anatomy)}
           <div class="fp-snapshot-side-desc">
             <h4>① 顶栏 · 题间导航</h4>
+            <blockquote>
             <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
             <p><strong>左 / 右箭头</strong>：上下题切换；第 1 题时左箭头不可点，最后题时右箭头不可点（视觉降饱和度）。</p>
             <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
             <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
+            </blockquote>
 
             <h4>④ 输入栏</h4>
+            <blockquote>
             <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
+            </blockquote>
 
             <h4>⑤ 操作按钮</h4>
+            <blockquote>
             <p>卡片底部单按钮，随状态切换三态：</p>
             <ul>
               <li><strong>跳过</strong>：浅灰底 → 用户未作答</li>
@@ -194,24 +206,19 @@ export default {
             <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
             <p><strong>底色变化是主信号，文案变化是辅助</strong>——用户快速作答时先用余光感知底色，真要按之前才会读文案确认。</p>
             <p><strong>排序题无"跳过"按钮</strong>：默认顺序即为答案，没有"未答"概念。具体行为见 <a href="#sec-sort">第 4.3 节</a>。</p>
+            </blockquote>
           </div>
         </div>
 
-        <button class="fp-anchor-btn" data-anchor="single-appear">在左侧Demo查看示例</button>
       </section>
 
       <section data-section="variants">
         <h2>3. 题型</h2>
         <p>支持三种题型，由 agent 在生成问题时声明，用户不可切换：</p>
         <div class="fp-snapshot-grid-3">
-          ${labeled('单选', s.typeSingle)}
-          ${labeled('多选', s.typeMulti)}
-          ${labeled('排序', s.typeSort)}
-        </div>
-        <div class="fp-anchor-row">
-          <button class="fp-anchor-btn" data-anchor="single-appear">单选 →</button>
-          <button class="fp-anchor-btn" data-anchor="multi-appear">多选 →</button>
-          <button class="fp-anchor-btn" data-anchor="sort-appear">排序 →</button>
+          ${labeledWithAnchor('单选', s.typeSingle, 'single-appear')}
+          ${labeledWithAnchor('多选', s.typeMulti, 'multi-appear')}
+          ${labeledWithAnchor('排序', s.typeSort, 'sort-appear')}
         </div>
       </section>
 
@@ -230,9 +237,10 @@ export default {
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
         <h3>4.2 多选题</h3>
-        <div class="fp-snapshot-grid-2">
+        <div class="fp-snapshot-grid-3">
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
+          ${labeled('用户输入', s.multiInput)}
         </div>
         <blockquote>
           <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>

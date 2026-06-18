@@ -439,6 +439,7 @@ function constrainContentWidth(scrollEl, inner) {
     if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
   });
 
-  const targetWidth = Math.max(maxNatural, 840);
+  const minW = parseInt(window.getComputedStyle(scrollEl).getPropertyValue('--fp-min-content-width')) || 840;
+  const targetWidth = Math.max(maxNatural, minW);
   inner.style.setProperty('--fp-max-content-width', targetWidth + 'px');
 }

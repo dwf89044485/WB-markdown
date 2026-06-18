@@ -14,6 +14,7 @@
   gap:0;
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
   color:#1a1a1c;
+  --fp-min-content-width:1000;
 }
 
 /* ── 顶部导航 ─────────────────────────────────────────────── */

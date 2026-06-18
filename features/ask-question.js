@@ -28,9 +28,9 @@ function defaultAnswers() {
 const A = {
   unanswered:   defaultAnswers(),                                                        // 全未答
   singleSel:    (() => { const a=defaultAnswers(); a[0].selected=1; return a; })(),      // q1 选第2项
-  singleInput:  (() => { const a=defaultAnswers(); a[0].selected=null; a[0].customInput='特色民宿更接地气'; return a; })(), // q1 输入(互斥清空选项)
+  singleInput:  (() => { const a=defaultAnswers(); a[0].selected=null; a[0].customInput='找找当地的特色名宿'; return a; })(), // q1 输入(互斥清空选项)
   multiSel:     (() => { const a=defaultAnswers(); a[1].selected=[0,2]; return a; })(),  // q2 选第1、3项
-  multiInput:   (() => { const a=defaultAnswers(); a[1].selected=[0,2]; a[1].customInput='代订机票和酒店'; return a; })(), // q2 已选 + 输入
+  multiInput:   (() => { const a=defaultAnswers(); a[1].selected=[0,2]; a[1].customInput='也找点当地的特色美食'; return a; })(), // q2 已选 + 输入
   sortReordered:(() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; return a; })(), // 交通便利→顶
   sortInput:    (() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; a[2].customInput='安全和便利也需要重点考虑'; return a; })(), // q3 排序 + 输入
 };

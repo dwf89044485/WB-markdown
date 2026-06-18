@@ -419,16 +419,11 @@ function stopTcnModeLoop() {
  * 大屏时不拉宽，小屏时自动折行，首次绘制即生效，无闪动。
  */
 function constrainContentWidth(scrollEl, inner) {
-  const rows = inner.querySelectorAll('.fp-snapshot-row');
-  if (!rows.length) {
-    inner.style.removeProperty('--fp-max-content-width');
-    return;
-  }
-
   // 强制重排
   scrollEl.offsetHeight;
 
   let maxNatural = 0;
+  const rows = inner.querySelectorAll('.fp-snapshot-row');
   rows.forEach((row) => {
     const fd = window.getComputedStyle(row).flexDirection;
     if (fd !== 'row') return;
@@ -444,9 +439,6 @@ function constrainContentWidth(scrollEl, inner) {
     if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
   });
 
-  if (maxNatural > 840) {
-    inner.style.setProperty('--fp-max-content-width', maxNatural + 'px');
-  } else {
-    inner.style.removeProperty('--fp-max-content-width');
-  }
+  const targetWidth = Math.max(maxNatural, 840);
+  inner.style.setProperty('--fp-max-content-width', targetWidth + 'px');
 }

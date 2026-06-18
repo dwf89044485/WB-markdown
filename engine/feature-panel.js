@@ -439,7 +439,9 @@ function constrainContentWidth(scrollEl) {
 
   if (maxNatural > 840) {
     scrollEl.style.setProperty('--fp-max-content-width', maxNatural + 'px');
+    console.log('[约束] 设定 max-width =', maxNatural, 'px');
   } else {
     scrollEl.style.removeProperty('--fp-max-content-width');
+    console.log('[约束] 不约束，maxNatural =', maxNatural);
   }
 }

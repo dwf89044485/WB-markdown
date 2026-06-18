@@ -37,7 +37,9 @@ function getSnapshots() {
 
 // 实际 node 索引
 const STEP_APPROVE = 2;   // n3
-const APPROVE_ACTION_OFFSET = 9;  // approvePermission action 在 n3 中的 normalized 索引
+// approvePermission 在 n3 的 raw actions 索引为 7，normalizeActions 合并连续 status 后
+// 为 normalized 索引 5（markdown + statusGroup* + markdown + status + markdown = 5）
+const APPROVE_ACTION_OFFSET = 5;
 
 export default {
   id: 'approve-permission',
@@ -45,6 +47,7 @@ export default {
   label: '批准权限',
   anchors: {
     'show-card': {
+      isApprovePermission: true,
       nodeIndex: STEP_APPROVE,
       actionOffset: APPROVE_ACTION_OFFSET,
       until: () => {
@@ -80,7 +83,7 @@ export default {
       <section data-section="anatomy">
         <h2>2. 卡片构成</h2>
         <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wide">
+          <div class="fp-snapshot-wrap">
             <span class="tag">完整卡片</span>
             <div class="fp-snapshot">${s.anatomy}</div>
           </div>
@@ -96,10 +99,14 @@ export default {
       <section data-section="states">
         <h2>3. 状态</h2>
         <div class="fp-snapshot-grid-2">
-          <span class="tag">未选</span>
-          <div class="fp-snapshot">${s.unselected}</div>
-          <span class="tag">已选（当前会话内允许）</span>
-          <div class="fp-snapshot">${s.selected}</div>
+          <div class="fp-snapshot-wrap">
+            <span class="tag">未选</span>
+            <div class="fp-snapshot">${s.unselected}</div>
+          </div>
+          <div class="fp-snapshot-wrap">
+            <span class="tag">已选（当前会话内允许）</span>
+            <div class="fp-snapshot">${s.selected}</div>
+          </div>
         </div>
         <p><strong>未选</strong>：灰色序号圆标，灰色选项行底色<br>
            <strong>已选</strong>：序号圆标变黑底白字，选项行底色略深（浅灰），文字加粗</p>
@@ -122,7 +129,7 @@ export default {
         </ul>
       </section>
 
-      <button class="fp-anchor-btn" data-anchor="show-card">在左侧Demo查看示例</button>
+      <button class="fp-anchor-btn" data-anchor="show-card">查看运行态</button>
     </article>`;
   },
 };

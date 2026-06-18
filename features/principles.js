@@ -62,9 +62,10 @@ export default {
             <div class="fp-hdr-row">
               <h3>渐进式披露</h3>
               <div class="fp-action-btn-group">
-                <button class="fp-action-btn" data-action="disclosure-1">第一层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                <button class="fp-action-btn" data-action="disclosure-2">第二层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                <button class="fp-action-btn" data-action="disclosure-3">第三层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-1">第一层披露：执行结果<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-2">第二层披露：执行过程<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-3">第三层披露：工具调用<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="fp-action-btn" data-action="disclosure-4">第四层披露：工具细节<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
             </div>
             <p>结果、过程、原始信息不在信息流中混排避免信息过载；用不同的容器收纳不同深度信息，用户按需追溯下钻。</p>
@@ -95,12 +96,10 @@ export default {
               <h3>主动对齐，人在回路</h3>
               <div class="fp-action-btn-group">
                 <button class="fp-action-btn" data-action="ask-user">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 6a1.5 1.5 0 113 0c0 1-1.5 1.5-1.5 2.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11" r=".6" fill="currentColor"/></svg>
-                  询问用户
+                  查看运行态
                 </button>
                 <button class="fp-action-btn" data-action="request-permission">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 7V4.5a2.5 2.5 0 015 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-                  请求权限
+                  查看运行态
                 </button>
               </div>
             </div>

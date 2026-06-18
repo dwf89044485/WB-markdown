@@ -28,9 +28,11 @@ function defaultAnswers() {
 const A = {
   unanswered:   defaultAnswers(),                                                        // 全未答
   singleSel:    (() => { const a=defaultAnswers(); a[0].selected=1; return a; })(),      // q1 选第2项
+  singleInput:  (() => { const a=defaultAnswers(); a[0].selected=null; a[0].customInput='特色民宿更接地气'; return a; })(), // q1 输入(互斥清空选项)
   multiSel:     (() => { const a=defaultAnswers(); a[1].selected=[0,2]; return a; })(),  // q2 选第1、3项
   multiInput:   (() => { const a=defaultAnswers(); a[1].selected=[0,2]; a[1].customInput='代订机票和酒店'; return a; })(), // q2 已选 + 输入
   sortReordered:(() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; return a; })(), // 交通便利→顶
+  sortInput:    (() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; a[2].customInput='安全和便利也需要重点考虑'; return a; })(), // q3 排序 + 输入
 };
 
 // ── 预渲染所有快照（lazy：首次访问时才计算）─────────
@@ -53,6 +55,7 @@ function getSnapshots() {
     // §4 状态：各种状态对比
     singleUnselected: snap('singleUnselected', SAMPLE_Q, 0, A.unanswered, { hideHeader: false, hideInput: false }),
     singleSelected:   snap('singleSelected', SAMPLE_Q, 0, A.singleSel, { hideHeader: false, hideInput: false }),
+    singleInput:      snap('singleInput', SAMPLE_Q, 0, A.singleInput, { hideHeader: false, hideInput: false }),
     multiUnselected:  snap('multiUnselected', SAMPLE_Q, 1, A.unanswered, { hideHeader: false, hideInput: false }),
     multiChecked:     snap('multiChecked', SAMPLE_Q, 1, A.multiSel, { hideHeader: false, hideInput: false }),
     multiInput:       snap('multiInput', SAMPLE_Q, 1, A.multiInput, { hideHeader: false, hideInput: false }),
@@ -60,6 +63,7 @@ function getSnapshots() {
     sortReordered:    snap('sortReordered', SAMPLE_Q, 2, A.sortReordered, { hideHeader: false, hideInput: false }),
     sortDragging:     snap('sortDragging', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, dragging: true }),
     sortGuide:       snap('sortGuide', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, showHint: true }),
+    sortInput:        snap('sortInput', SAMPLE_Q, 2, A.sortInput, { hideHeader: false, hideInput: false }),
   };
 }
 
@@ -71,7 +75,7 @@ function labeled(label, html) {
 
 // tag 右侧带锚点按钮
 function labeledWithAnchor(label, html, anchorId) {
-  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="fp-anchor-btn" data-anchor="${anchorId}">查看示例></button></div><div class="fp-snapshot">${html}</div></div>`;
+  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="fp-anchor-btn" data-anchor="${anchorId}">查看运行态</button></div><div class="fp-snapshot">${html}</div></div>`;
 }
 
 // 实际 node 索引：nodes[2]（n3，scenario.js 第 592 行，含 askUser action）
@@ -226,15 +230,16 @@ export default {
         <h2>4. 交互与状态</h2>
 
         <h3 id="sec-single">4.1 单选题</h3>
-        <div class="fp-snapshot-grid-2">
+        <div class="fp-snapshot-grid-3">
           ${labeled('未选', s.singleUnselected)}
           ${labeled('已选', s.singleSelected)}
+          ${labeled('用户输入', s.singleInput)}
         </div>
         <blockquote>
           <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
           <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         </blockquote>
-        <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
+        <button class="fp-anchor-btn" data-anchor="single-auto-next">查看运行态</button>
 
         <h3>4.2 多选题</h3>
         <div class="fp-snapshot-grid-3">
@@ -246,7 +251,7 @@ export default {
           <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
           <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         </blockquote>
-        <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
+        <button class="fp-anchor-btn" data-anchor="multi-checked">查看运行态</button>
 
         <h3 id="sec-sort">4.3 排序题</h3>
         <div class="fp-snapshot-grid-3">
@@ -254,13 +259,14 @@ export default {
           ${labeled('拖拽时', s.sortDragging)}
           ${labeled('新手指引', s.sortGuide)}
         </div>
+        ${labeled('用户输入', s.sortInput)}
         <blockquote>
           <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         </blockquote>
         <div class="fp-anchor-row">
-          <button class="fp-anchor-btn" data-anchor="sort-appear">看引导动效 →</button>
-          <button class="fp-anchor-btn" data-anchor="sort-after-drag">看拖拽后状态 →</button>
+          <button class="fp-anchor-btn" data-anchor="sort-appear">查看运行态</button>
+          <button class="fp-anchor-btn" data-anchor="sort-after-drag">查看运行态</button>
         </div>
       </section>
 

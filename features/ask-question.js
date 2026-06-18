@@ -175,33 +175,27 @@ export default {
         <div class="fp-snapshot-side">
           ${labeled('完整卡片结构', s.anatomy)}
           <div class="fp-snapshot-side-desc">
-            <p>AskQuestion 卡片自上而下五层结构：</p>
-            <p><strong>① 顶栏</strong>（导航箭头 + 步骤指示器 + 关闭）</p>
-            <p><strong>② 问题区</strong>（题型药丸 + 题干）</p>
-            <p><strong>③ 选项列表</strong></p>
-            <p><strong>④ 输入栏</strong></p>
-            <p><strong>⑤ 操作按钮</strong></p>
+            <h4>① 顶栏 · 题间导航</h4>
+            <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
+            <p><strong>左 / 右箭头</strong>：上下题切换；第 1 题时左箭头不可点，最后题时右箭头不可点（视觉降饱和度）。</p>
+            <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
+            <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
+
+            <h4>④ 输入栏</h4>
+            <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
+
+            <h4>⑤ 操作按钮</h4>
+            <p>卡片底部单按钮，随状态切换三态：</p>
+            <ul>
+              <li><strong>跳过</strong>：浅灰底 → 用户未作答</li>
+              <li><strong>下一步</strong>：深色底 → 用户已作答，非最后题</li>
+              <li><strong>提交</strong>：深色底 → 用户已作答，最后一题</li>
+            </ul>
+            <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
+            <p><strong>底色变化是主信号，文案变化是辅助</strong>——用户快速作答时先用余光感知底色，真要按之前才会读文案确认。</p>
+            <p><strong>排序题无"跳过"按钮</strong>：默认顺序即为答案，没有"未答"概念。具体行为见 <a href="#sec-sort">第 4.3 节</a>。</p>
           </div>
         </div>
-
-        <h3>① 顶栏 · 题间导航</h3>
-        <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
-        <p><strong>左 / 右箭头</strong>：题目前进后退；首题左箭头不可点，尾题右箭头不可点。</p>
-        <p><strong>关闭 ✕</strong>：点击即全部跳过，agent 收到空答案继续。</p>
-        <p><strong>切题保留状态</strong>：左右箭头切题保留之前选择数据。</p>
-
-        <h3>④ 输入栏</h3>
-        <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
-
-        <h3>⑤ 操作按钮</h3>
-        <p>卡片底部始终有一个操作按钮，文案随作答进度自动切换：</p>
-        <ul>
-          <li><strong>跳过</strong>：当前题未作答时出现——点按即跳过此题，不选答案直接进入下一题</li>
-          <li><strong>下一步</strong>：已作答且非最后题——进入下一题</li>
-          <li><strong>提交</strong>：已作答且是最后题——提交全部答案，agent 收到后继续</li>
-        </ul>
-        <p><strong>已答判定</strong>（排序题除外）：选项已选中 <strong>或</strong> 输入框非空，满足其一即视为已答。</p>
-        <p><strong>排序题无"跳过"</strong>：默认顺序即为答案，不存在"未答"状态，始终显示"下一步"或"提交"。</p>
 
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧Demo查看示例</button>
       </section>

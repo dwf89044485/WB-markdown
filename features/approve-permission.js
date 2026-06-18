@@ -126,7 +126,7 @@ export default {
         </ul>
       </section>
 
-      <button class="fp-anchor-btn" data-anchor="show-card">在左侧Demo查看示例</button>
+      <button class="dc-btn" data-anchor="show-card">在左侧Demo查看示例<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </article>`;
   },
 };

@@ -146,7 +146,7 @@
 .aq-question-area {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 16px 0;
   width: 100%;
@@ -189,7 +189,7 @@
 }
 /* 选项过多时允许内部滚动 */
 .aq-options.many-options {
-  max-height: 280px;
+  max-height: 235px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -211,7 +211,7 @@
   align-items: center;
   align-self: stretch;
   padding: var(--aq-option-padding);
-  height: var(--aq-option-height);
+  min-height: var(--aq-option-height);
   background: var(--aq-option-bg);
   border-radius: var(--aq-option-radius);
   cursor: pointer;
@@ -348,9 +348,6 @@
   font-size: var(--aq-font-base);
   line-height: var(--aq-line-height);
   color: var(--aq-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .aq-option.is-selected .aq-option-text {
   font-weight: var(--aq-text-semibold);

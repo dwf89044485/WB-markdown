@@ -143,10 +143,7 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
   const total = questions.length;
 
   // ── badge ──
-  let badgeLabel = '';
-  if (q.type === 'single') badgeLabel = '单选';
-  else if (q.type === 'multiple') badgeLabel = '多选';
-  else if (q.type === 'sort') badgeLabel = '排序';
+  const badgeLabel = `${stepIndex + 1}/${total}`;
 
   // ── 选项 ──
   let optionsHtml = '';

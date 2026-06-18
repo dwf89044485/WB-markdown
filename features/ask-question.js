@@ -316,10 +316,10 @@ export default {
       <section data-section="edge-cases">
         <h2>6. 边界与异常</h2>
         <p>演示组件在极端数据下的表现——可滚动的选项区域支持鼠标交互。</p>
-        ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
-        <div class="fp-snapshot-grid-2">
+        <div class="fp-snapshot-grid-3">
+          ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
           ${labeled('选项过多（≥8 项）——纵向滚动', s.edgeMany)}
-          ${labeled('选项文字过长——省略号截断', s.edgeLongOpt)}
+          ${labeled('选项文字过长——自然折行', s.edgeLongOpt)}
         </div>
         <p class="fp-note"><strong>中途关闭</strong>：不保存草稿，下次进入相当于全部跳过。<br><strong>误触关闭</strong>：无二次确认（轻量打扰原则）。</p>
       </section>

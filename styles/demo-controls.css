@@ -183,6 +183,9 @@
 /* ── Token 速度只读显示 ────────────────────────────────────── */
 .dc-speed-ro{
   display:flex;
+  flex:0 1 auto;
+  width:63px;
+  justify-content:center;
   align-items:center;
   height:var(--dc-control-height);
   padding:0 12px;
@@ -190,11 +193,11 @@
   background:#EBEBEB;
 }
 .dc-speed-ro-value{
-  font-size:13px;
+  font-size:12px;
+  flex:1 1 0px;
   font-weight:500;
   line-height:22px;
   color:#000;
-  min-width:32px;
   text-align:center;
   font-variant-numeric:tabular-nums;
   letter-spacing:0.5px;
@@ -244,7 +247,7 @@
   border:0;
   background:#EBEBEB;
   color:rgba(0,0,0,.7);
-  font-size:13px;
+  font-size:12px;
   font-weight:500;
   line-height:22px;
   cursor:pointer;
@@ -296,7 +299,7 @@
   border-radius:var(--dc-control-radius);
   background:transparent;
   color:rgba(0,0,0,.7);
-  font-size:13px;
+  font-size:12px;
   font-weight:500;
   line-height:22px;
   cursor:pointer;
@@ -321,7 +324,7 @@
   flex:1;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:6px;
 }
 
 .dc-speed-track{

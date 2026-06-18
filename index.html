@@ -549,7 +549,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     var x, y;
     // 手机边缘坐标和纸纹右边框，虚线跳过这些位置（由实线边界线覆盖）
     var edgeX = [pR.left, pR.right, rightEdge];
-    var edgeY = [pR.top, pR.bottom, demoBottom];
+    var edgeY = [pR.top, pR.bottom, controlsTop, demoBottom];
     function onEdge(pos, edges){
       for(var i=0;i<edges.length;i++){
         if(Math.abs(pos - edges[i]) < 0.5) return true;
@@ -581,6 +581,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       var ctrlR = ctrl.getBoundingClientRect();
       demoBottom = ctrlR.bottom;
     }
+    var controlsTop = pR.bottom + rowStep;  // 控制面板顶部（手机底 + 1格间距）
 
     var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">'
             + lines + '</svg>';
@@ -599,6 +600,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     solidLine(pR.right - 0.5, 0, pR.right - 0.5, vh);            // 右边界
     solidLine(leftEdge, pR.top + 0.5, rightEdge, pR.top + 0.5);                // 上边界
     solidLine(leftEdge, pR.bottom - 0.5, rightEdge, pR.bottom - 0.5);          // 手机底边界
+    solidLine(leftEdge, controlsTop + 0.5, rightEdge, controlsTop + 0.5);      // 控制面板顶边界
     solidLine(leftEdge, demoBottom - 0.5, rightEdge, demoBottom - 0.5);        // demo 区域底边界
 
     // 四角 10×10 方框压手机上面

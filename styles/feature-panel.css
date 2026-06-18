@@ -505,12 +505,10 @@
   margin-top: 0;
   margin-bottom: 0;
 }
-/* 边界异常专用的可滚动行（3 张 350px 卡片超出面板宽度） */
+/* 边界异常行：卡片高度不一时自然换行，无裁切 */
 .fp-snapshot-row.edge-scroll {
-  overflow-x: auto;
-  padding: 0 20px;
-  margin-left: -4px;
-  margin-right: -4px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 /* 快照底部描述 */

@@ -229,16 +229,23 @@
         │ 布局类              │ 用途                         │
         ├────────────────────┼──────────────────────────────┤
         │ fp-snapshot-side   │ 1 个快照 + 右侧文字描述        │
-        │ fp-snapshot-grid-2 │ 2 个快照并排对比               │
-        │ fp-snapshot-grid-3 │ 3 个快照横向平铺               │
+        │ fp-snapshot-row    │ 多个快照单元横向平铺（数量不限） │
         │ (直接使用 wrap)     │ 单个快照，无布局容器           │
         └────────────────────┴──────────────────────────────┘
+
+       每个快照单元的内部结构：
+         ┌─────────────────────────────────┐
+         │ .fp-snapshot-wrap               │
+         │  ├─ .tag                        │ ← 标题角标
+         │  ├─ .fp-snapshot                │ ← 组件快照本体
+         │  └─ .fp-snapshot-caption (可选)  │ ← 底部描述文字
+         └─────────────────────────────────┘
 
      3. 各 feature 在 CSS 中设定自己的组件宽度（可选）：
         .fp-snapshot > .my-component { width: 350px }
 
    核心规则（MUST）：
-     ─ 布局容器（fp-snapshot-grid-2 / -3）禁止设置 overflow:hidden/auto/scroll，
+     ─ 布局容器（fp-snapshot-row / fp-snapshot-side）禁止设置 overflow:hidden/auto/scroll，
        否则带 box-shadow 的组件阴影会被裁切。
      ─ 快照的左对齐由 .markdown-body 的 padding 统一保证，
        布局容器不应再有水平 padding，否则与文字产生错位。
@@ -485,32 +492,26 @@
   align-self: flex-start;
 }
 
-/* 2 列并排对比：flex 横向排列，间距固定 */
-.fp-snapshot-grid-2 {
+/* 多个快照单元横向平铺（数量不限） */
+.fp-snapshot-row {
   display: flex;
-  gap: 20px;
+  gap: var(--fp-row-gap, 30px);
   margin: 16px 0;
 }
-.fp-snapshot-grid-2 > .fp-snapshot-wrap {
-  flex-shrink: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  /* 无水平 padding — 由 .markdown-body 统一提供 */
-}
-/* grid-2 中的卡片继承 .fp-snapshot > .ask-question-card 基础样式 */
-/* margin 由 .markdown-body 的 padding 统一承载 */
-
-/* 3 列题型展示：横向平铺 */
-.fp-snapshot-grid-3 {
-  display: flex;
-  gap: 16px;
-  margin: 16px 0;
-}
-.fp-snapshot-grid-3 > .fp-snapshot-wrap {
+.fp-snapshot-row > .fp-snapshot-wrap {
   flex-shrink: 0;
   min-width: 280px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
-/* grid-3 中的卡片继承 .fp-snapshot > .ask-question-card 基础样式 */
+
+/* 快照底部描述 */
+.fp-snapshot-caption {
+  font-size: 13px;
+  color: #86868b;
+  line-height: 1.5;
+  margin-top: 8px;
+}
 
 /* 卡片 + 文字描述 左右并排布局 */
 .fp-snapshot-side {

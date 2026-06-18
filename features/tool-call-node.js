@@ -100,7 +100,7 @@ export default {
       <section data-section="modes">
         <h2>2. 设计样式</h2>
         <p>工具调用节点有 3 种视觉样式：<strong>文字</strong>（默认内联）/ <strong>堆叠</strong>（多条完成时折叠）/ <strong>边框</strong>（卡片强调）。下方同步演示从逐条执行到全部完成的完整过程——<strong>堆叠模式在完成时折叠为「图标堆 + 已执行 3 项」</strong>。</p>
-        <div class="fp-snapshot-grid-3 fp-tcn-modes">
+        <div class="fp-snapshot-row fp-tcn-modes">
           <div class="fp-snapshot-wrap">
             <span class="tag">文字</span>
             <div class="fp-snapshot">${modeBlock('文字', 'tool-call-flat', statusLineHTML(M_PHASE0))}</div>

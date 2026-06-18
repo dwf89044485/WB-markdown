@@ -84,16 +84,15 @@
    | 布局类 | 用途 | HTML 结构 |
    |--------|------|-----------|
    | `.fp-snapshot-side` | 1 个快照 + 右侧文字描述 | `div.fp-snapshot-side > div.fp-snapshot-wrap + div.fp-snapshot-side-desc` |
-   | `.fp-snapshot-grid-2` | 2 个快照并排对比 | `div.fp-snapshot-grid-2 > div.fp-snapshot-wrap × 2` |
-   | `.fp-snapshot-grid-3` | 3 个快照横向平铺 | `div.fp-snapshot-grid-3 > div.fp-snapshot-wrap × 3` |
+   | `.fp-snapshot-row` | 多个快照单元横向平铺（数量不限） | `div.fp-snapshot-row > div.fp-snapshot-wrap × N` |
    | 直接使用 `fp-snapshot-wrap` | 单个快照，无布局容器 | 直接放在 `.fp-content.markdown-body` 下 |
 
    每个快照块的内部结构（由 `labeled()` 辅助函数生成）：
    ```
    div.fp-snapshot-wrap
-     span.tag      ← 标签文字（如"未选"、"已选"）
-     div.fp-snapshot
-       [组件HTML]  ← 直接插入 Demo 组件的静态 HTML
+     span.tag              ← 标签文字（如"未选"、"已选"）
+     div.fp-snapshot         ← 组件快照本体
+     div.fp-snapshot-caption ← 底部描述（可选）
    ```
 
    使用步骤：
@@ -108,7 +107,7 @@
    content: `
      <h2>...</h2>
      <p>...</p>
-     <div class="fp-snapshot-grid-3">
+     <div class="fp-snapshot-row">
        ${labeled('状态A', renderStaticMyComponent({...}))}
        ${labeled('状态B', renderStaticMyComponent({...}))}
        ${labeled('状态C', renderStaticMyComponent({...}))}
@@ -120,7 +119,7 @@
    ```
 
    **核心规则（违反必出 Bug）：**
-   - 布局容器（`fp-snapshot-grid-2 / -3`）**禁止设置 `overflow: hidden/auto/scroll`**，否则 box-shadow 会被裁切
+   - 布局容器（`fp-snapshot-row / fp-snapshot-side`）**禁止设置 `overflow: hidden/auto/scroll`**，否则 box-shadow 会被裁切
    - 布局容器 **禁止有水平 `padding`**（左对齐由 `.markdown-body` 的 `padding: 0 16px` 统一保证）
    - 带投影的组件按照 CSS 默认不会裁切；要裁切它的唯一方式是父容器设了 overflow
    - 不带投影的组件不存在裁切风险，但左对齐规则同样适用

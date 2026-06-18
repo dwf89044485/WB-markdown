@@ -219,7 +219,7 @@ export default {
       <section data-section="variants">
         <h2>3. 题型</h2>
         <p>支持三种题型，由 agent 在生成问题时声明，用户不可切换：</p>
-        <div class="fp-snapshot-grid-3">
+        <div class="fp-snapshot-row">
           ${labeledWithAnchor('单选', s.typeSingle, 'single-appear')}
           ${labeledWithAnchor('多选', s.typeMulti, 'multi-appear')}
           ${labeledWithAnchor('排序', s.typeSort, 'sort-appear')}
@@ -230,7 +230,7 @@ export default {
         <h2>4. 交互与状态</h2>
 
         <h3 id="sec-single">4.1 单选题</h3>
-        <div class="fp-snapshot-grid-3">
+        <div class="fp-snapshot-row">
           ${labeled('未选', s.singleUnselected)}
           ${labeled('已选', s.singleSelected)}
           ${labeled('用户输入', s.singleInput)}
@@ -242,7 +242,7 @@ export default {
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
         <h3>4.2 多选题</h3>
-        <div class="fp-snapshot-grid-3">
+        <div class="fp-snapshot-row">
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
           ${labeled('用户输入', s.multiInput)}
@@ -254,7 +254,7 @@ export default {
         <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
 
         <h3 id="sec-sort">4.3 排序题</h3>
-        <div class="fp-snapshot-grid-3">
+        <div class="fp-snapshot-row">
           ${labeled('默认状态', s.sortDefault)}
           ${labeled('拖拽时', s.sortDragging)}
           ${labeled('新手指引', s.sortGuide)}

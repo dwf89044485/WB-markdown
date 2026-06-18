@@ -95,11 +95,15 @@ export default {
 
       <section data-section="states">
         <h2>3. 状态</h2>
-        <div class="fp-snapshot-grid-2">
-          <span class="tag">未选</span>
-          <div class="fp-snapshot">${s.unselected}</div>
-          <span class="tag">已选（当前会话内允许）</span>
-          <div class="fp-snapshot">${s.selected}</div>
+        <div class="fp-snapshot-row">
+          <div class="fp-snapshot-wrap">
+            <span class="tag">未选</span>
+            <div class="fp-snapshot">${s.unselected}</div>
+          </div>
+          <div class="fp-snapshot-wrap">
+            <span class="tag">已选（当前会话内允许）</span>
+            <div class="fp-snapshot">${s.selected}</div>
+          </div>
         </div>
         <p><strong>未选</strong>：灰色序号圆标，灰色选项行底色<br>
            <strong>已选</strong>：序号圆标变黑底白字，选项行底色略深（浅灰），文字加粗</p>

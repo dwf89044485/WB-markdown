@@ -35,24 +35,15 @@ const A = {
   sortInput:    (() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; a[2].customInput='安全和便利也需要重点考虑'; return a; })(), // q3 排序 + 输入
 };
 
-// ── 边界异常样本数据（4 题结构，badge 显示 1/4）─────────
+// ── 边界异常样本数据（单题）────────────────────
 const LONG_Q = [
-  { id: 'q1', type: 'single', question: '请根据以下要求，从候选方案中选择最符合当前项目需求的实施方案，需综合考虑成本、周期、团队能力等多方面因素。', options: ['方案 A：独立部署', '方案 B：云托管', '方案 C：混合架构', '方案 D：外包开发'] },
-  { id: 'q2', type: 'single', question: '请选择', options: ['是', '否'] },
-  { id: 'q3', type: 'single', question: '请选择', options: ['是', '否'] },
-  { id: 'q4', type: 'single', question: '请选择', options: ['是', '否'] },
+  { id: 'q-long', type: 'single', question: '请根据以下要求，从候选方案中选择最符合当前项目需求的实施方案，需综合考虑成本、周期、团队能力等多方面因素。', options: ['方案 A：独立部署', '方案 B：云托管', '方案 C：混合架构', '方案 D：外包开发'] },
 ];
 const MANY_OPTS = [
-  { id: 'q1', type: 'multiple', question: '请选择', options: ['是', '否'] },
-  { id: 'q2', type: 'multiple', question: '请选择您感兴趣的主题领域：', options: Array.from({ length: 10 }, (_, i) => `主题领域 ${i + 1}：详细描述内容`) },
-  { id: 'q3', type: 'multiple', question: '请选择', options: ['是', '否'] },
-  { id: 'q4', type: 'multiple', question: '请选择', options: ['是', '否'] },
+  { id: 'q-many', type: 'multiple', question: '请选择您感兴趣的主题领域：', options: Array.from({ length: 10 }, (_, i) => `主题领域 ${i + 1}：详细描述内容`) },
 ];
 const LONG_OPT = [
-  { id: 'q1', type: 'single', question: '请选择', options: ['是', '否'] },
-  { id: 'q2', type: 'single', question: '请选择', options: ['是', '否'] },
-  { id: 'q3', type: 'single', question: '请选择：', options: ['这是一个非常长的选项描述文本，用于测试在交互说明中长选项文字的显示与截断处理方式'] },
-  { id: 'q4', type: 'single', question: '请选择', options: ['是', '否'] },
+  { id: 'q-longopt', type: 'single', question: '请选择：', options: ['这是一个非常长的选项描述文本，用于测试在交互说明中长选项文字的显示与截断处理方式'] },
 ];
 
 function singleAnswer(questions) {
@@ -91,10 +82,10 @@ function getSnapshots() {
     sortGuide:       snap('sortGuide', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, showHint: true }),
     sortInput:        snap('sortInput', SAMPLE_Q, 2, A.sortInput, { hideHeader: false, hideInput: false }),
 
-    // §6 边界异常（badge 显示对应序号）
+    // §6 边界异常
     edgeLongQ: snap('edgeLongQ', LONG_Q, 0, singleAnswer(LONG_Q), { hideInput: false }),
-    edgeMany: snap('edgeMany', MANY_OPTS, 1, singleAnswer(MANY_OPTS), { hideInput: false }),
-    edgeLongOpt: snap('edgeLongOpt', LONG_OPT, 2, singleAnswer(LONG_OPT), { hideInput: false }),
+    edgeMany: snap('edgeMany', MANY_OPTS, 0, singleAnswer(MANY_OPTS), { hideInput: false }),
+    edgeLongOpt: snap('edgeLongOpt', LONG_OPT, 0, singleAnswer(LONG_OPT), { hideInput: false }),
   };
 }
 
@@ -325,7 +316,7 @@ export default {
       <section data-section="edge-cases">
         <h2>6. 边界与异常</h2>
         <p>演示组件在极端数据下的表现——可滚动的选项区域支持鼠标交互。</p>
-        <div class="fp-snapshot-grid-3">
+        <div class="fp-snapshot-row edge-scroll">
           ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
           ${labeled('选项过多（≥8 项）——纵向滚动', s.edgeMany)}
           ${labeled('选项文字过长——自然折行', s.edgeLongOpt)}

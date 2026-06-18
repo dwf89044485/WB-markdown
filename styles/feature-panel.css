@@ -19,6 +19,7 @@
   display:flex;
   align-items:center;
   gap:12px;
+  padding:0 24px;
 }
 .fp-section-label{
   font-size:2em;
@@ -504,6 +505,13 @@
   margin-top: 0;
   margin-bottom: 0;
 }
+/* 边界异常专用的可滚动行（3 张 350px 卡片超出面板宽度） */
+.fp-snapshot-row.edge-scroll {
+  overflow-x: auto;
+  padding: 0 20px;
+  margin-left: -4px;
+  margin-right: -4px;
+}
 
 /* 快照底部描述 */
 .fp-snapshot-caption {
@@ -843,7 +851,7 @@
 /* 只保留容器级样式（非 markdown 内容样式） */
 #fpContent.markdown-body {
   background-color: #fafafa !important;
-  padding: 0 16px;
+  padding: 0 24px;
 }
 /* Mermaid 图：防止溢出内容区 */
 #fpContent.markdown-body .mermaid {

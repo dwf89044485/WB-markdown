@@ -785,19 +785,15 @@
   font-family: 'SF Mono', 'Menlo', monospace;
 }
 
-/* ── Override github-markdown.css for feature panel ────────── */#fpContent.markdown-body {
-  background-color: #fafafa !important;  /* 与外层 design-notes 底色一致 */
-  padding: 0 16px;                       /* 统一呼吸间距 + 为阴影留 >10px 余量 */
-}
-#fpContent.markdown-body pre {
-  background-color: #f6f8fa !important;
+/* ── Override github-markdown.css for feature panel ────────── */
+/* 只保留容器级样式（非 markdown 内容样式） */
+#fpContent.markdown-body {
+  background-color: #fafafa !important;
+  padding: 0 16px;
 }
 /* Mermaid 图：防止溢出内容区 */
 #fpContent.markdown-body .mermaid {
   margin: 20px 0;
   overflow-x: auto;
   text-align: center;
-}
-#fpContent.markdown-body code {
-  background-color: rgba(129,139,152,0.12) !important;
 }

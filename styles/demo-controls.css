@@ -93,7 +93,7 @@
   border-radius:8px;
   background:transparent;
   cursor:pointer;
-  min-height:28px;
+  height:30px;
   transition:background .12s ease;
 }
 

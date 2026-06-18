@@ -57,7 +57,9 @@
   flex-direction:row;
   gap:0;
   padding:20px 20px 20px;
-  background:transparent;
+  background-image:url("../assets/paper/texture.png");
+  background-repeat:repeat;
+  background-attachment:fixed;
   border:1px solid rgba(0,0,0,0.08);
   border-radius:0;
   box-shadow:none;

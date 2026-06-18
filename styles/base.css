@@ -183,6 +183,11 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     min-width:840px;
     height:100dvh;
     padding:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+      url("../assets/paper/texture.png");
+    background-repeat:no-repeat, repeat;
+    background-attachment:scroll, fixed;
     border-left:1px solid rgba(0,0,0,0.04);
   }
 }

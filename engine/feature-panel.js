@@ -259,6 +259,9 @@ function renderRoute(route) {
   const scrollEl = contentEl.querySelector('.fp-scroll');
   scrollEl.innerHTML = f.content;
 
+  // 自适应约束：同步测量 .fp-snapshot-row 卡片的自然平铺宽度
+  constrainContentWidth(scrollEl);
+
   // 渲染 Mermaid 流程图
   if (window.mermaid) {
     Promise.resolve().then(() => {
@@ -394,5 +397,40 @@ function stopTcnModeLoop() {
   if (tcnModeLoopTimer) {
     clearTimeout(tcnModeLoopTimer);
     tcnModeLoopTimer = null;
+  }
+}
+
+/* ── 内容宽度自适应约束 ──────────────────────────────────────
+ * 渲染完成后同步测量 .fp-snapshot-row 中卡片的自然平铺宽度
+ * （所有卡片自身宽度 + gap 之和），以此约束内容区 max-width。
+ * 大屏时不拉宽，小屏时自动折行，首次绘制即生效，无闪动。
+ */
+function constrainContentWidth(scrollEl) {
+  const rows = scrollEl.querySelectorAll('.fp-snapshot-row');
+  if (!rows.length) {
+    scrollEl.style.removeProperty('--fp-max-content-width');
+    return;
+  }
+
+  let maxNatural = 0;
+
+  rows.forEach((row) => {
+    const wraps = row.querySelectorAll(':scope > .fp-snapshot-wrap');
+    if (wraps.length < 2) return; // 单张卡不存在平铺宽度问题
+
+    // 通过 offsetWidth 同步触发重排，确保尺寸准确
+    let sum = 0;
+    wraps.forEach((w) => { sum += w.offsetWidth; });
+
+    const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
+    const natural = sum + gap * (wraps.length - 1);
+    if (natural > maxNatural) maxNatural = natural;
+  });
+
+  // 自然宽度超过 840px 才约束（小于 840 时内容按默认宽度填充）
+  if (maxNatural > 840) {
+    scrollEl.style.setProperty('--fp-max-content-width', maxNatural + 'px');
+  } else {
+    scrollEl.style.removeProperty('--fp-max-content-width');
   }
 }

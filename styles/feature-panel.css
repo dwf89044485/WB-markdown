@@ -94,6 +94,7 @@
   padding:20px 32px 0 64px;         /* top:20px 与导航间距；left:64px 与导航对齐；≥32px 右侧为阴影留足空间 */
   height:100%;
   scrollbar-width:none;
+  max-width:var(--fp-max-content-width, none);
 }
 #fpContent .fp-scroll.markdown-body::-webkit-scrollbar{
   display:none;

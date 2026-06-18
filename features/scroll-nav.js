@@ -11,7 +11,7 @@ export default {
     return `
     <article class="fp-feature">
       <header class="fp-feature-header">
-        <h1>快速滚动 ↑↓</h1>
+        <h1>快速滚动</h1>
         <p class="fp-subtitle">按轮次跳转 · 两个毛玻璃圆形按钮悬浮在对话右下角，输入框上方</p>
       </header>
 

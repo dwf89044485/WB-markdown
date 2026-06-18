@@ -967,7 +967,8 @@
 }
 /* 快照侧边说明中的 h4 覆盖上面的通用规则（同特异性，靠后优先） */
 #fpContent .fp-snapshot-side-desc h4 {
-  margin: 16px 0 !important;
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
 }
 #fpContent .markdown-body p {
   margin-bottom: 14px;
@@ -1017,7 +1018,7 @@
 }
 #fpContent .markdown-body blockquote {
   border-left-color: rgba(0,0,0,0.1);
-  padding: 12px 20px;
+  padding: 12px 20px 1px;
   color: #424245;
 }
 /* 代码块 — 参考 fp-principle-card 卡片样式 */

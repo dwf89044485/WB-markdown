@@ -3,6 +3,7 @@
 
 # Cache & logs
 .cache/
+cache/
 server.log
 .ardot-cache/
 

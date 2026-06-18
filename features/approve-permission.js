@@ -16,11 +16,7 @@ const SAMPLE_DATA = {
   selectedIndex: null,
 };
 
-// ── 不同状态的 data ──────────────────────────
-const unselectedData = { ...SAMPLE_DATA, selectedIndex: null };
-const selectedData  = { ...SAMPLE_DATA, selectedIndex: 1 };
-
-// ── 预渲染所有快照（lazy）─────────────────────────
+// ── 预渲染快照（lazy）─────────────────────────
 const snapCache = {};
 function snap(key, data) {
   if (!snapCache[key]) snapCache[key] = renderStaticApprovePermission(data);
@@ -29,9 +25,7 @@ function snap(key, data) {
 
 function getSnapshots() {
   return {
-    anatomy: snap('anatomy', unselectedData),
-    unselected: snap('unselected', unselectedData),
-    selected: snap('selected', selectedData),
+    anatomy: snap('anatomy', SAMPLE_DATA),
   };
 }
 
@@ -91,29 +85,13 @@ export default {
             <p><strong>③ 选项列表</strong> — 3 个单选路径，点击任一即放行</p>
           </div>
         </div>
-      </section>
-
-      <section data-section="states">
-        <h2>3. 状态</h2>
-        <div class="fp-snapshot-row">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">未选</span>
-            <div class="fp-snapshot">${s.unselected}</div>
-          </div>
-          <div class="fp-snapshot-wrap">
-            <span class="tag">已选（当前会话内允许）</span>
-            <div class="fp-snapshot">${s.selected}</div>
-          </div>
-        </div>
         <blockquote>
-          <p><strong>未选</strong>：灰色序号圆标，灰色选项行底色</p>
-          <p><strong>已选</strong>：序号圆标变黑底白字，选项行底色略深（浅灰），文字加粗</p>
-          <p><strong>行为</strong>：点击任意选项 → 视觉反馈选中态 → 自动 resolve 并继续。无二次确认，无取消。</p>
+          <p>点击任意选项 → 直接 resolve 并继续。选项无选中态停留，卡片在点击后随即消失。无二次确认，无取消。</p>
         </blockquote>
       </section>
 
       <section data-section="rationale">
-        <h2>4. 设计原理</h2>
+        <h2>3. 设计原理</h2>
         <h3>为什么点任意选项都放行</h3>
         <p>三个选项本质上是"风险感知梯度"：从完全放行到拒绝，覆盖用户对风险的不同接受程度。无论选哪个，系统都完成了一次授权决策——不需要再用二次确认加重用户负担。</p>
         <h3>为什么没有"提交"按钮</h3>
@@ -121,7 +99,7 @@ export default {
       </section>
 
       <section data-section="edge-cases">
-        <h2>5. 边界与异常</h2>
+        <h2>4. 边界与异常</h2>
         <ul>
           <li><strong>快速双击选项</strong>：第一次点击已 resolve，第二次点击时卡片已隐藏，无副作用</li>
           <li><strong>同时打开多个审批</strong>：同一时间只有一个 approval 卡片可见，先到先得</li>

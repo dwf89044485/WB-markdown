@@ -35,15 +35,28 @@ const A = {
   sortInput:    (() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; a[2].customInput='安全和便利也需要重点考虑'; return a; })(), // q3 排序 + 输入
 };
 
-// ── 边界异常样本数据（单题）────────────────────
+// ── 边界异常样本数据（4 题结构，step indicator 显示 1/4）─────
 const LONG_Q = [
   { id: 'q-long', type: 'single', question: '请根据以下要求，从候选方案中选择最符合当前项目需求的实施方案，需综合考虑成本、周期、团队能力等多方面因素。', options: ['方案 A：独立部署', '方案 B：云托管', '方案 C：混合架构', '方案 D：外包开发'] },
+  { id: '_1', type: 'single', question: '', options: ['—'] },
+  { id: '_2', type: 'single', question: '', options: ['—'] },
+  { id: '_3', type: 'single', question: '', options: ['—'] },
 ];
 const MANY_OPTS = [
   { id: 'q-many', type: 'multiple', question: '请选择您感兴趣的主题领域：', options: Array.from({ length: 10 }, (_, i) => `主题领域 ${i + 1}：详细描述内容`) },
+  { id: '_1', type: 'multiple', question: '', options: ['—'] },
+  { id: '_2', type: 'multiple', question: '', options: ['—'] },
+  { id: '_3', type: 'multiple', question: '', options: ['—'] },
 ];
 const LONG_OPT = [
-  { id: 'q-longopt', type: 'single', question: '请选择：', options: ['这是一个非常长的选项描述文本，用于测试在交互说明中长选项文字的显示与截断处理方式'] },
+  { id: 'q-longopt', type: 'single', question: '请从以下选项中选择最合适的方案：', options: [
+    '方案一：搭建本地私有化部署方案，数据完全由企业内部管控，安全性最高但需要自建运维团队',
+    '方案二：采用混合云架构，核心数据本地存储，弹性计算上云，兼顾安全与灵活性',
+    '方案三：全托管 SaaS 服务，零运维成本，快速上线，但数据存储在服务商侧',
+  ]},
+  { id: '_1', type: 'single', question: '', options: ['—'] },
+  { id: '_2', type: 'single', question: '', options: ['—'] },
+  { id: '_3', type: 'single', question: '', options: ['—'] },
 ];
 
 function singleAnswer(questions) {

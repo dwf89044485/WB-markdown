@@ -289,6 +289,10 @@
   width: var(--aq-width, 350px);
   min-width: var(--aq-width, 350px);
 }
+.fp-snapshot > .ap-card {
+  width: var(--app-width, 350px);
+  min-width: var(--app-width, 350px);
+}
 
 /* ── Tool Call Node 快照（status line）────────── */
 .fp-tcn-stack {

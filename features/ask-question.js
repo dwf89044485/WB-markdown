@@ -194,15 +194,14 @@ export default {
         <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
 
         <h3>⑤ 操作按钮</h3>
-        <p>卡片底部单按钮，随状态切换三态：</p>
+        <p>卡片底部始终有一个操作按钮，文案随作答进度自动切换：</p>
         <ul>
-          <li><strong>跳过</strong>：浅灰底 → 用户未作答</li>
-          <li><strong>下一步</strong>：深色底 → 用户已作答，非最后题</li>
-          <li><strong>提交</strong>：深色底 → 用户已作答，最后一题</li>
+          <li><strong>跳过</strong>：当前题未作答时出现——点按即跳过此题，不选答案直接进入下一题</li>
+          <li><strong>下一步</strong>：已作答且非最后题——进入下一题</li>
+          <li><strong>提交</strong>：已作答且是最后题——提交全部答案，agent 收到后继续</li>
         </ul>
-        <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
-        <p><strong>底色变化是主信号，文案变化是辅助</strong>——用户快速作答时先用余光感知底色，真要按之前才会读文案确认。</p>
-        <p><strong>排序题无"跳过"按钮</strong>：默认顺序即为答案，没有"未答"概念。具体行为见 <a href="#sec-sort">第 4.3 节</a>。</p>
+        <p><strong>已答判定</strong>（排序题除外）：选项已选中 <strong>或</strong> 输入框非空，满足其一即视为已答。</p>
+        <p><strong>排序题无"跳过"</strong>：默认顺序即为答案，不存在"未答"状态，始终显示"下一步"或"提交"。</p>
 
         <button class="fp-anchor-btn" data-anchor="single-appear">在左侧Demo查看示例</button>
       </section>

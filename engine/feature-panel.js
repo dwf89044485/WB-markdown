@@ -307,7 +307,6 @@ function renderRoute(route) {
   });
 
   // 滚动到顶
-  const scrollEl = contentEl.querySelector('.fp-scroll');
   if (scrollEl) scrollEl.scrollTop = 0;
 
   // 切换 feature 时清理所有覆层面板

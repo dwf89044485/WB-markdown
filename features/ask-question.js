@@ -223,8 +223,10 @@ export default {
           ${labeled('未选', s.singleUnselected)}
           ${labeled('已选', s.singleSelected)}
         </div>
-        <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
-        <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
+        <blockquote>
+          <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
+          <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
+        </blockquote>
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
         <h3>4.2 多选题</h3>
@@ -232,8 +234,10 @@ export default {
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
         </div>
-        <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
-        <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
+        <blockquote>
+          <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
+          <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
+        </blockquote>
         <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
 
         <h3 id="sec-sort">4.3 排序题</h3>
@@ -242,8 +246,10 @@ export default {
           ${labeled('拖拽时', s.sortDragging)}
           ${labeled('新手指引', s.sortGuide)}
         </div>
-        <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
-        <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
+        <blockquote>
+          <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
+          <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
+        </blockquote>
         <div class="fp-anchor-row">
           <button class="fp-anchor-btn" data-anchor="sort-appear">看引导动效 →</button>
           <button class="fp-anchor-btn" data-anchor="sort-after-drag">看拖拽后状态 →</button>

@@ -34,7 +34,7 @@ function hideOverlays() {
 const ROOT_SELECTOR = '.design-notes-inner';
 
 let rootEl = null;
-let navMenuEl = null;
+let tabBarEl = null;
 let contentEl = null;
 let currentFeature = null;
 let loadToken = 0;
@@ -65,68 +65,37 @@ function buildShell() {
     <div class="fp-root">
       <nav class="fp-nav">
         <span class="fp-section-label">交互说明</span>
-        <button class="fp-nav-trigger" type="button" id="fpNavTrigger">
-          <span class="fp-trigger-label" id="fpNavTriggerLabel">设计思考（总览）</span>
-        </button>
-        <div class="fp-nav-menu" id="fpNavMenu" role="menu"></div>
+        <div class="fp-tab-bar" id="fpTabBar"></div>
       </nav>
       <div class="fp-content" id="fpContent">
         <div class="fp-scroll markdown-body" data-theme="light"></div>
       </div>
     </div>
   `;
-  navMenuEl = rootEl.querySelector('#fpNavMenu');
   contentEl = rootEl.querySelector('#fpContent');
-  renderMenu();
+  tabBarEl = rootEl.querySelector('#fpTabBar');
+  renderTabs();
 }
 
-function renderMenu() {
-  const overview = featureList.filter((f) => f.type === 'overview');
-  const features = featureList.filter((f) => f.type === 'feature');
-
-  const itemHtml = (f) => `
-    <button type="button" class="fp-nav-item" data-fp-id="${f.id}" role="menuitem">
+function renderTabs() {
+  const tabBar = rootEl.querySelector('#fpTabBar');
+  const parts = featureList.map((f) => `
+    <button type="button" class="fp-tab${f.type === 'overview' ? ' fp-tab-overview' : ''}" data-fp-id="${f.id}">
       ${f.label}
     </button>
-  `;
-
-  const parts = [];
-  overview.forEach((f) => parts.push(itemHtml(f)));
-  if (overview.length && features.length) {
-    parts.push('<div class="fp-nav-divider" role="separator"></div>');
-  }
-  features.forEach((f) => parts.push(itemHtml(f)));
-
-  navMenuEl.innerHTML = parts.join('');
+  `);
+  tabBar.innerHTML = parts.join('');
 }
 
 function bindEvents() {
-  const trigger = rootEl.querySelector('#fpNavTrigger');
-
-  trigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navMenuEl.classList.toggle('is-open');
-    trigger.classList.toggle('is-open');
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!navMenuEl.contains(e.target) && !trigger.contains(e.target)) {
-      navMenuEl.classList.remove('is-open');
-      trigger.classList.remove('is-open');
-    }
-  });
-
-  navMenuEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('.fp-nav-item');
-    if (!btn) return;
-    const id = btn.dataset.fpId;
+  tabBarEl.addEventListener('click', (e) => {
+    const tab = e.target.closest('.fp-tab');
+    if (!tab) return;
+    const id = tab.dataset.fpId;
     if (!id) return;
 
     const f = getFeature(id);
     if (!f) return;
-
-    navMenuEl.classList.remove('is-open');
-    trigger.classList.remove('is-open');
 
     if (f.type === 'overview') {
       pushRoute('overview', null);
@@ -297,13 +266,9 @@ function renderRoute(route) {
     });
   }
 
-  // 同步 trigger label
-  const labelEl = rootEl.querySelector('#fpNavTriggerLabel');
-  if (labelEl) labelEl.textContent = f.label;
-
   // 同步导航激活态
-  navMenuEl.querySelectorAll('.fp-nav-item').forEach((item) => {
-    item.classList.toggle('is-active', item.dataset.fpId === f.id);
+  tabBarEl.querySelectorAll('.fp-tab').forEach((t) => {
+    t.classList.toggle('is-active', t.dataset.fpId === f.id);
   });
 
   // 滚动到顶

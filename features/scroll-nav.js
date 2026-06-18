@@ -5,7 +5,7 @@
 export default {
   id: 'scroll-nav',
   type: 'feature',
-  label: '快速滚动 ↑↓',
+  label: '快速滚动',
   anchors: {},
   get content() {
     return `

@@ -23,8 +23,9 @@
   border-bottom:1px solid rgba(0,0,0,0.06);
   position:relative;
   display:flex;
-  align-items:center;
-  gap:16px;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:0;
 }
 /* 区域标签：同 feature header h1 风格 */
 .fp-section-label{
@@ -35,88 +36,44 @@
   color:#111114;
   letter-spacing:-0.015em;
   white-space:nowrap;
+  margin-bottom:18px;
 }
-/* 下拉触发器 */
-.fp-nav-trigger{
+/* Tab 标签栏 */
+.fp-tab-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.fp-tab{
   display:inline-flex;
-  align-self:auto;
   align-items:center;
-  justify-content:space-between;
-  padding:0 14px 0 18px;
-  width:240px;
-  height:38px;
-  font-size:14px;
+  justify-content:center;
+  padding:7px 14px;
+  font-size:13px;
   font-weight:500;
-  color:#1a1a1c;
+  line-height:1.3;
+  color:#6e6e73;
   background:transparent;
-  border:1px solid rgba(0,0,0,0.1);
-  border-radius:6px;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:7px;
   cursor:pointer;
   user-select:none;
-  transition:border-color .15s ease,background .15s ease;
-  letter-spacing:0.01em;
-}
-.fp-nav-trigger:hover{ border-color:rgba(0,0,0,0.2); background:rgba(0,0,0,0.02); }
-.fp-nav-trigger:active{ background:rgba(0,0,0,0.04); }
-.fp-nav-trigger::after{
-  content:'';
-  width:14px;height:14px;
-  background:#8a8a8f;
-  mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M4 3.1515L0.4243 -0.4243L-0.4243 0.4243L3.5757 4.4243L4 4.8485L8.4243 0.4243L7.5757 -0.4243L4 3.1515Z' fill-rule='evenodd' transform='matrix(-1 0 0 -1 12 10)'/></svg>");
-  mask-size:contain;
-  mask-repeat:no-repeat;
-  mask-position:center;
-  flex-shrink:0;
-  transform:rotate(180deg);
-  transition:transform .2s ease;
-}
-.fp-nav-trigger.is-open::after{
-  transform:rotate(0deg);
-}
-/* 下拉标签：左对齐 + 溢出省略 */
-.fp-trigger-label{
-  overflow:hidden;
-  text-overflow:ellipsis;
   white-space:nowrap;
-  text-align:left;
-  flex:1;
-  min-width:0;
-}
-/* 下拉菜单 */
-.fp-nav-menu{
-  position:absolute;
-  top:calc(100% + 6px);
-  left:0;
-  min-width:260px;
-  background:#fff;
-  border:1px solid rgba(0,0,0,0.06);
-  border-radius:8px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  padding:6px;
-  display:none;
-  z-index:100;
-}
-.fp-nav-menu.is-open{ display:block; }
-.fp-nav-item{
-  display:block;
-  width:100%;
-  padding:10px 14px;
-  font-size:14px;
-  text-align:left;
-  border:none;
-  background:transparent;
-  border-radius:5px;
-  cursor:pointer;
-  color:#1a1a1c;
+  transition:color .15s ease,background .15s ease,border-color .15s ease;
   letter-spacing:0.01em;
-  transition:background .1s ease;
 }
-.fp-nav-item:hover{ background:rgba(0,0,0,0.03); }
-.fp-nav-item.is-active{ background:rgba(0,0,0,0.05); font-weight:600; color:#1a1a1c; }
-.fp-nav-divider{
-  height:1px;
-  background:rgba(0,0,0,0.06);
-  margin:4px 10px;
+.fp-tab:hover{
+  color:#1a1a1c;
+  border-color:rgba(0,0,0,0.15);
+  background:rgba(0,0,0,0.02);
+}
+.fp-tab:active{
+  background:rgba(0,0,0,0.04);
+}
+.fp-tab.is-active{
+  color:#fff;
+  background:#1a1a1c;
+  border-color:#1a1a1c;
 }
 
 /* ── 内容区 ─────────────────────────────────────────────────── */
@@ -618,7 +575,7 @@
 .fp-snapshot-side-desc h4 {
   font-size: 15px;
   font-weight: 600;
-  margin: 24px 0 8px;
+  margin: 16px 0 8px;
   color: #1a1a1c;
 }
 .fp-snapshot-side-desc h4:first-child {
@@ -1026,6 +983,7 @@
   border-left-color: rgba(0,0,0,0.1);
   padding: 12px 20px;
   color: #424245;
+  margin-bottom: 0;
 }
 /* 代码块 */
 #fpContent .markdown-body pre {
@@ -1034,4 +992,8 @@
 }
 #fpContent .markdown-body code {
   font-size: 13px;
+}
+/* 无序列表缩进与标题对齐 */
+#fpContent .markdown-body ul {
+  padding-left: 14px;
 }

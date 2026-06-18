@@ -70,7 +70,9 @@ function buildShell() {
         </button>
         <div class="fp-nav-menu" id="fpNavMenu" role="menu"></div>
       </nav>
-      <div class="fp-content markdown-body" id="fpContent" data-theme="light"></div>
+      <div class="fp-content" id="fpContent">
+        <div class="fp-scroll markdown-body" data-theme="light"></div>
+      </div>
     </div>
   `;
   navMenuEl = rootEl.querySelector('#fpNavMenu');
@@ -285,12 +287,13 @@ function renderRoute(route) {
   }
 
   currentFeature = f;
-  contentEl.innerHTML = f.content;
+  const scrollEl = contentEl.querySelector('.fp-scroll');
+  scrollEl.innerHTML = f.content;
 
   // 渲染 Mermaid 流程图
   if (window.mermaid) {
     Promise.resolve().then(() => {
-      mermaid.run({ nodes: contentEl.querySelectorAll('.mermaid') }).catch(console.warn);
+      mermaid.run({ nodes: scrollEl.querySelectorAll('.mermaid') }).catch(console.warn);
     });
   }
 
@@ -304,7 +307,8 @@ function renderRoute(route) {
   });
 
   // 滚动到顶
-  contentEl.scrollTop = 0;
+  const scrollEl = contentEl.querySelector('.fp-scroll');
+  if (scrollEl) scrollEl.scrollTop = 0;
 
   // 切换 feature 时清理所有覆层面板
   hideOverlays();

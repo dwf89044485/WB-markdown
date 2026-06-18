@@ -27,14 +27,15 @@
   align-items:center;
   gap:16px;
 }
-/* 区域标签：编辑式小标 */
+/* 区域标签：同 feature header h1 风格 */
 .fp-section-label{
-  font-size:11px;
-  font-weight:500;
-  color:#8a8a8f;
+  font-family:Georgia,'Noto Serif SC','Songti SC',serif;
+  font-size:36px;
+  font-weight:400;
+  line-height:1.15;
+  color:#111114;
+  letter-spacing:-0.015em;
   white-space:nowrap;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
 }
 /* 下拉触发器 */
 .fp-nav-trigger{
@@ -123,12 +124,20 @@
 .fp-content{
   flex:1;
   min-height:0;
-  overflow-y:auto;
-  overflow-x:visible;
-  scrollbar-width:none;           /* Firefox：不显示滚动条 */
+  overflow:visible;
 }
-.fp-content::-webkit-scrollbar{
-  display:none;                   /* WebKit：不显示滚动条 */
+/* 滚动容器：overflow-y:auto 会迫使 overflow-x 也 auto（CSS 规范）。
+   卡片阴影因此被裁切。解法：加 padding: 24px 让阴影落在 padding
+   区域内（overflow 裁切的是 content box，padding box 内可见）。 */
+.fp-scroll{
+  overflow-y:auto;
+  overflow-x:auto;        /* 显式声明，消除歧义 */
+  padding:0 24px;         /* ≥20px（阴影 blur），为两侧留足空间 */
+  height:100%;
+  scrollbar-width:none;
+}
+.fp-scroll::-webkit-scrollbar{
+  display:none;
 }
 
 .fp-subtitle{
@@ -919,7 +928,7 @@
 
 /* ── Override github-markdown.css for feature panel ────────── */
 /* 容器级样式 + 排版覆写（衬线标题 + 间距调优） */
-#fpContent.markdown-body {
+#fpContent .markdown-body {
   background-color: transparent !important;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
@@ -928,7 +937,7 @@
   line-height: 1.65;
 }
 /* 衬线标题覆写 */
-#fpContent.markdown-body h1 {
+#fpContent .markdown-body h1 {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
   font-weight: 400;
   font-size: 32px;
@@ -940,7 +949,7 @@
   margin-top: 0;
   margin-bottom: 20px;
 }
-#fpContent.markdown-body h2 {
+#fpContent .markdown-body h2 {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
   font-weight: 400;
   font-size: 24px;
@@ -952,7 +961,7 @@
   margin-top: 40px;
   margin-bottom: 16px;
 }
-#fpContent.markdown-body h3 {
+#fpContent .markdown-body h3 {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   font-weight: 600;
   font-size: 17px;
@@ -961,7 +970,7 @@
   margin-top: 32px;
   margin-bottom: 12px;
 }
-#fpContent.markdown-body h4 {
+#fpContent .markdown-body h4 {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   font-weight: 600;
   font-size: 15px;
@@ -970,25 +979,25 @@
   margin-top: 24px;
   margin-bottom: 8px;
 }
-#fpContent.markdown-body p {
+#fpContent .markdown-body p {
   max-width: 65ch;
   margin-bottom: 14px;
 }
-#fpContent.markdown-body li {
+#fpContent .markdown-body li {
   line-height: 1.65;
 }
-#fpContent.markdown-body a {
+#fpContent .markdown-body a {
   color: #5a4a3a;
   text-decoration: underline;
   text-decoration-color: rgba(90,74,58,0.3);
   text-underline-offset: 2px;
 }
-#fpContent.markdown-body a:hover {
+#fpContent .markdown-body a:hover {
   color: #3a2e22;
   text-decoration-color: rgba(58,46,34,0.5);
 }
 /* Mermaid 图：防止溢出内容区 */
-#fpContent.markdown-body .mermaid {
+#fpContent .markdown-body .mermaid {
   margin: 24px 0;
   overflow-x: auto;
   text-align: center;
@@ -1003,10 +1012,10 @@
   line-height: 1.7;
 }
 /* 表格样式微调 */
-#fpContent.markdown-body table {
+#fpContent .markdown-body table {
   border-color: rgba(0,0,0,0.06);
 }
-#fpContent.markdown-body table th {
+#fpContent .markdown-body table th {
   font-weight: 600;
   font-size: 13px;
   color: #6e6e73;
@@ -1014,16 +1023,16 @@
   letter-spacing: 0.04em;
   background-color: transparent;
 }
-#fpContent.markdown-body blockquote {
+#fpContent .markdown-body blockquote {
   border-left-color: rgba(0,0,0,0.1);
-  padding: 8px 20px;
+  padding: 12px 20px;
   color: #424245;
 }
 /* 代码块 */
-#fpContent.markdown-body pre {
+#fpContent .markdown-body pre {
   border-radius: 6px;
   border: 1px solid rgba(0,0,0,0.05);
 }
-#fpContent.markdown-body code {
+#fpContent .markdown-body code {
   font-size: 13px;
 }

@@ -814,3 +814,12 @@
   overflow-x: auto;
   text-align: center;
 }
+/* 使用流程 ASCII 图 —— 底色与引用块一致 */
+#fpContent section[data-section="flow"] pre {
+  background-color: var(--blockquote-bg-color);
+  border: 1px solid var(--blockquote-border-color);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+}

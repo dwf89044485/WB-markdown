@@ -424,13 +424,16 @@ function constrainContentWidth(scrollEl) {
     if (wraps.length < 2) return;
 
     let sum = 0;
+    const widths = [];
     wraps.forEach((w) => {
-      // getBoundingClientRect 返回渲染后的真实像素
-      sum += w.getBoundingClientRect().width;
+      const cw = w.getBoundingClientRect().width;
+      widths.push(cw);
+      sum += cw;
     });
 
     const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
     const natural = sum + gap * (wraps.length - 1);
+    console.log('[约束] 行', wraps.length, '张卡，宽度:', widths.map(w => w.toFixed(1)), 'gap:', gap, '→ natural:', natural.toFixed(1));
     if (natural > maxNatural) {
       // 加上 2px 余量避免子像素舍入导致折行
       maxNatural = Math.ceil(natural) + 2;

@@ -539,14 +539,17 @@
 .fp-snapshot-side-desc p:last-child {
   margin-bottom: 0;
 }
-.fp-snapshot-side-desc ul {
+#fpContent .fp-snapshot-side-desc ul {
   margin: 0 0 6px;
   padding-left: 18px;
 }
-.fp-snapshot-side-desc ul li {
+#fpContent .fp-snapshot-side-desc ul li {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #424245;
   margin-bottom: 4px;
 }
-.fp-snapshot-side-desc ul li:last-child {
+#fpContent .fp-snapshot-side-desc ul li:last-child {
   margin-bottom: 0;
 }
 .fp-snapshot-side-desc strong {
@@ -633,11 +636,11 @@
   color: #424245;
   margin: 0 0 12px;
 }
-.fp-principle-body ul {
+#fpContent .fp-principle-body ul {
   padding: 0 0 0 14px;
   margin: 8px 0 0;
 }
-.fp-principle-body ul li {
+#fpContent .fp-principle-body ul li {
   font-size: 14px;
   line-height: 1.7;
   color: #424245;
@@ -734,8 +737,9 @@
   margin: 0;
   padding-left: 16px;
 }
-.fp-do li,
-.fp-dont li {
+#fpContent .fp-do li,
+#fpContent .fp-dont li {
+  font-size: 13px;
   line-height: 1.65;
   margin-bottom: 3px;
   color: #3a3a3c;
@@ -777,8 +781,9 @@
   margin: 0;
   padding-left: 16px;
 }
-.fp-example-good li,
-.fp-example-bad li {
+#fpContent .fp-example-good li,
+#fpContent .fp-example-bad li {
+  font-size: 13px;
   line-height: 1.65;
   margin-bottom: 3px;
   color: #3a3a3c;

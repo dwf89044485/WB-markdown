@@ -4,7 +4,6 @@
   --aq-radius: 20px;
   --aq-padding: 20px;
   --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
-  --aq-width: 350px;
 
   --aq-text: #3D3D3D;
   --aq-text-regular: 400;
@@ -58,12 +57,10 @@
 }
 .ask-question.is-active {
   display: flex;
-  justify-content: center;
 }
 
 .ask-question-card {
   width: 100%;
-  max-width: var(--aq-width);
   background: var(--aq-bg);
   border-radius: var(--aq-radius);
   box-shadow: var(--aq-shadow);
@@ -398,7 +395,7 @@
   margin-top: var(--aq-option-gap);
 }
 
-.aq-input-field {
+.aq-input-bar .aq-input-field {
   flex: 1;
   height: 100%;
   border: none;
@@ -411,7 +408,7 @@
   color: var(--aq-text);
   padding: 0;
 }
-.aq-input-field::placeholder {
+.aq-input-bar .aq-input-field::placeholder {
   color: var(--aq-text);
   opacity: var(--aq-input-placeholder-opacity);
 }

@@ -80,7 +80,7 @@ export default {
       <section data-section="anatomy">
         <h2>2. 卡片构成</h2>
         <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wide">
+          <div class="fp-snapshot-wrap">
             <span class="tag">完整卡片</span>
             <div class="fp-snapshot">${s.anatomy}</div>
           </div>
@@ -105,9 +105,11 @@ export default {
             <div class="fp-snapshot">${s.selected}</div>
           </div>
         </div>
-        <p><strong>未选</strong>：灰色序号圆标，灰色选项行底色<br>
-           <strong>已选</strong>：序号圆标变黑底白字，选项行底色略深（浅灰），文字加粗</p>
-        <p><strong>行为</strong>：点击任意选项 → 视觉反馈选中态 → 自动 resolve 并继续。无二次确认，无取消。</p>
+        <blockquote>
+          <p><strong>未选</strong>：灰色序号圆标，灰色选项行底色</p>
+          <p><strong>已选</strong>：序号圆标变黑底白字，选项行底色略深（浅灰），文字加粗</p>
+          <p><strong>行为</strong>：点击任意选项 → 视觉反馈选中态 → 自动 resolve 并继续。无二次确认，无取消。</p>
+        </blockquote>
       </section>
 
       <section data-section="rationale">
@@ -126,7 +128,9 @@ export default {
         </ul>
       </section>
 
-      <button class="dc-btn" data-anchor="show-card">在左侧Demo查看示例<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <section data-section="demo-cta">
+        <button class="dc-btn" data-anchor="show-card">在左侧Demo查看示例<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </section>
     </article>`;
   },
 };

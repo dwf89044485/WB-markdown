@@ -412,18 +412,29 @@ function constrainContentWidth(scrollEl) {
     return;
   }
 
-  // 强制重排：确保所有子元素的布局已计算
+  // 强制重排
   scrollEl.offsetHeight;
 
   let maxNatural = 0;
   rows.forEach((row) => {
-    // 跳过列方向布局的行（如 .fp-tcn-modes 用 flex-direction:column 堆叠）
     const fd = window.getComputedStyle(row).flexDirection;
     if (fd !== 'row') return;
 
-    // scrollWidth = 容器的内容宽度，不折行时等于所有子项 + gap 之和
-    const w = row.scrollWidth;
-    if (w > maxNatural) maxNatural = w;
+    const wraps = row.querySelectorAll(':scope > .fp-snapshot-wrap');
+    if (wraps.length < 2) return;
+
+    let sum = 0;
+    wraps.forEach((w) => {
+      // getBoundingClientRect 返回渲染后的真实像素
+      sum += w.getBoundingClientRect().width;
+    });
+
+    const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
+    const natural = sum + gap * (wraps.length - 1);
+    if (natural > maxNatural) {
+      // 加上 2px 余量避免子像素舍入导致折行
+      maxNatural = Math.ceil(natural) + 2;
+    }
   });
 
   if (maxNatural > 840) {

@@ -294,6 +294,14 @@ function renderRoute(route) {
         if (token !== loadToken) hideOverlays();
       });
     }
+  } else if (f.id === 'approve-permission') {
+    const anchor = f.anchors && f.anchors['show-card'];
+    if (anchor) {
+      anchor.isApprovePermission = true;
+      jumpToAnchor(anchor).then(() => {
+        if (token !== loadToken) hideOverlays();
+      });
+    }
   } else if (f.id === 'tool-call-node') {
     // 跳到 n1 第一个 statusGroup 起点，让左侧 demo 展示一组工具调用节点
     const targetStep = resolveNodeStep(0, 1);

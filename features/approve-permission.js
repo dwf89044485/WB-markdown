@@ -41,6 +41,7 @@ export default {
     'show-card': {
       nodeIndex: STEP_APPROVE,
       actionOffset: APPROVE_ACTION_OFFSET,
+      isApprovePermission: true,
       until: () => {
         const card = document.querySelector('.ap-card');
         return !!card;

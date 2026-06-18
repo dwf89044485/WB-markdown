@@ -32,7 +32,6 @@ window.WORKBUDDY_SCENARIO = {
     "任务理解与分解：明确需求、约束和输出格式",
     "联网搜索：签证/入境政策、交通卡、景点开放情况",
     "天气趋势与穿衣建议",
-    "汇率与预算换算",
     "城际交通与路线时间",
     "生成关西主要地点图片",
     "整合信息，输出完整旅行方案文档"
@@ -133,7 +132,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "正在查询汇率与预算换算"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"}]
     },
     "F1.f": {
       "title": "搜索网页",
@@ -144,7 +143,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "正在查询城际交通与路线时间"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"active"}]
     },
     "F1.g": {
       "title": "搜索网页",
@@ -167,7 +166,7 @@ window.WORKBUDDY_SCENARIO = {
           ]
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"}]
     },
     "F1.h": {
       "title": "更新待办",
@@ -178,7 +177,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "搜索信息已收集完毕，更新任务进度"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F1.i": {
       "title": "更新待办",
@@ -189,12 +188,12 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "搜索信息已收集完毕，更新任务进度"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F2.a": {
       "title": "生成图片",
       "events": [],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F2.b": {
       "title": "生成图片",
@@ -204,7 +203,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F2.c": {
       "title": "生成图片",
@@ -218,7 +217,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"active"}]
     },
     "F2.d": {
       "title": "生成图片",
@@ -232,7 +231,7 @@ window.WORKBUDDY_SCENARIO = {
           "text": "生成图片"
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"}]
     },
     "F2.e": {
       "title": "更新待办",
@@ -243,7 +242,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F2.f": {
       "title": "更新待办",
@@ -254,7 +253,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F3.1a": {
       "title": "调用技能",
@@ -522,7 +521,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"active"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"active"}]
     },
     "F3.6b": {
       "title": "更新待办",
@@ -533,7 +532,7 @@ window.WORKBUDDY_SCENARIO = {
           "dim": "任务理解与分解：明确需求、约束和输..."
         }
       ],
-      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"},{"index":6,"status":"done"}]
+      "todoOverrides": [{"index":0,"status":"done"},{"index":1,"status":"done"},{"index":2,"status":"done"},{"index":3,"status":"done"},{"index":4,"status":"done"},{"index":5,"status":"done"}]
     }
   },
   "nodes": [

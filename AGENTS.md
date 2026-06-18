@@ -31,6 +31,7 @@
 | 6 | `icons-inline.js` → 禁止手动修改，AI 无需读取 | — |
 | 7 | 剧本数据 → 只改 `scenario.js`，不写进 HTML | — |
 | 8 | commit → 每完成一件事立即提交，不等用户说 | — |
+| 9 | `git reset` → 只能用 `--keep`，禁止用 `--hard` | `git reset --hard HEAD~1` |
 
 ---
 
@@ -239,6 +240,23 @@ git push
 ```
 
 push 失败时（远程有更新），先 `pull --rebase` 再推送。
+
+### 回退 commit
+
+任何时候要回退 commit，禁止用 `git reset --hard`。**只能用 `git reset --keep`**：
+
+```bash
+git reset --keep HEAD~1
+```
+
+`--keep` 保证只回退 commit 记录，不动工作区未提交的改动。如果工作区改动与目标 commit 冲突导致 `--keep` 拒绝执行，改用两步法：
+
+```bash
+git reset HEAD~1        # 仅移动 HEAD，不动工作区
+git restore --staged .  # 把 commit 中带入暂存区的改动撤掉
+```
+
+**为什么不用 `--hard`**：`--hard` 会清空工作区所有未提交的改动（包括暂存过的和没暂存过的），丢失不可逆。
 
 ### 例外情况（先确认再提交）
 

@@ -4,7 +4,6 @@
   --ap-radius: 20px;
   --ap-padding: 20px;
   --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
-  --ap-width: 350px;
 
   --ap-text: #3D3D3D;
   --ap-text-title: rgba(0, 0, 0, 0.9);
@@ -46,12 +45,10 @@
 }
 .approve-permission.is-active {
   display: flex;
-  justify-content: center;
 }
 
 .ap-card {
   width: 100%;
-  max-width: var(--ap-width);
   background: var(--ap-bg);
   border-radius: var(--ap-radius);
   box-shadow: var(--ap-shadow);

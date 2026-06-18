@@ -16,6 +16,7 @@ import { openSheet, closeSheet, maybeClose, renderFileCard, goBackInSheet } from
 import { initScrollNav, rebuildScrollNav } from './scroll-nav.js';
 import { showAskQuestion, bindAskQuestionEvents } from './ask-question.js';
 import { showApprovePermission, bindApprovePermissionEvents } from './approve-permission.js';
+import { hideAllOverlays } from './overlay-registry.js';
 
 const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -527,6 +528,11 @@ function resetPlaybackDom() {
   if (mainActions) mainActions.innerHTML = '';
   if (execArea) execArea.className = 'exec-area open is-hidden';
   setComposerGenerating(false);
+  // 清理覆层面板（#askQuestion / #approvePermission 等）。
+  // 所有跳转（goToStep / directorPrevStep / directorNextStep / restartPlayback）
+  // 都经过 resetPlaybackDom，因此内置清理可覆盖所有路径。
+  // 新增面板类型 → 在面板模块中 registerOverlayCleanup(hideXxx)，无需改此文件。
+  hideAllOverlays();
   initScrollGuard();
   scrollToBottom();
 }

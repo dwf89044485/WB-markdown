@@ -332,6 +332,11 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
 // ── Sheet navigation history ───────────────────────────
 let sheetBackState = null; // { frameRefs, title, options }
 
+export function setSheetBackState(frameRefs, title) {
+  sheetBackState = { frameRefs, title, opts: {} };
+  showBackButton();
+}
+
 function showBackButton() {
   const start = $('#sheetTopStart');
   if (!start || start.children.length) return;

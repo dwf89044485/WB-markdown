@@ -315,13 +315,13 @@ API Key 存储在 `~/.zshrc` 中（`export OA_PAGES_API_KEY="..."`）。部署�
 <claude-mem-context>
 # Memory Context
 
-# [wb-markdown] recent context, 2026-06-16 7:10pm GMT+8
+# [wb-markdown] recent context, 2026-06-18 5:14pm GMT+8
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 13 obs (2,680t read) | 585,745t work | 100% savings
+Stats: 16 obs (3,141t read) | 723,245t work | 100% savings
 
 ### Jun 8, 2026
 5070 11:12a 🟣 Composer 上方加透明渐变遮罩消除滚动截断
@@ -338,6 +338,9 @@ Stats: 13 obs (2,680t read) | 585,745t work | 100% savings
 5080 " 🔴 排序快照指引态精修：指引仅高亮第2项，去掉多余描边
 5081 6:59p 🟣 AskQuestion 导航按钮改为胶囊下拉样式
 5082 " 🔵 wb-markdown 项目 CSS 架构与 feature-panel 导航结构
+5083 7:10p 🔴 排序题组件"拖拽时"和"新手指引"状态显示错误
+5084 7:11p 🔴 排序题"拖拽时"快照状态改用已有 CSS 类 aq-sort-chosen
+5085 " ✅ 版本圆点颜色从翠绿(emerald)改为琥珀色(amber)
 
-Access 586k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 723k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>

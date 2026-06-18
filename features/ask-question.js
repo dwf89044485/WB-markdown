@@ -274,8 +274,6 @@ export default {
           <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
           <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         </blockquote>
-        <button class="dc-btn" data-anchor="single-auto-next">看自动前进效果<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-
         <h3>4.2 多选题</h3>
         <div class="fp-snapshot-row">
           ${labeled('未选', s.multiUnselected)}
@@ -286,8 +284,6 @@ export default {
           <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
           <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         </blockquote>
-        <button class="dc-btn" data-anchor="multi-checked">看已勾选状态<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-
         <h3 id="sec-sort">4.3 排序题</h3>
         <div class="fp-snapshot-row">
           ${labeled('默认状态', s.sortDefault)}
@@ -299,46 +295,20 @@ export default {
           <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         </blockquote>
-        <div class="fp-anchor-row">
-          <button class="dc-btn" data-anchor="sort-appear">看引导动效<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="dc-btn" data-anchor="sort-after-drag">看拖拽后状态<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        </div>
-      </section>
-
-      <section data-section="flow">
-        <h2>5. 使用流程</h2>
-        <pre>agent 输出中
-   │
-   ▼
-遇到不确定 → 暂停输出 → 对话流底部展开问答卡片
-   │
-   ▼
-逐题作答（任意顺序、任意跳过）
-   │
-   ├─ 单选：点选项自动前进（最后题除外）
-   ├─ 多选：点选项 toggle，手动按"下一步"
-   └─ 排序：按下即拖（3px 触发，无需长按），手动按"下一步"
-   │
-   ▼
-最后题作答完 → 按钮文案变"提交"
-   │
-   ├─ 点提交 → 卡片消失 → agent 收到结构化答案 → 继续输出
-   └─ 点关闭 ✕ → 视为全部跳过 → agent 收到空答案 → 继续输出</pre>
       </section>
 
       <section data-section="edge-cases">
-        <h2>6. 边界与异常</h2>
+        <h2>5. 边界与异常</h2>
         <p>演示组件在极端数据下的表现——可滚动的选项区域支持鼠标交互。</p>
         <div class="fp-snapshot-row edge-scroll">
           ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
           ${labeled('选项过多（≥8 项）——纵向滚动', s.edgeMany)}
           ${labeled('选项文字过长——自然折行', s.edgeLongOpt)}
         </div>
-        <p class="fp-note"><strong>中途关闭</strong>：不保存草稿，下次进入相当于全部跳过。<br><strong>误触关闭</strong>：无二次确认（轻量打扰原则）。</p>
       </section>
 
       <section data-section="rationale">
-        <h2>7. 设计原理</h2>
+        <h2>6. 设计原理</h2>
         <h3>为什么单选自动前进、多选不自动前进</h3>
         <p>单选有明确的"作答完成"信号——选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明"我选完了"。强行让多选自动前进会"系统替用户做决定"，违反用户主导原则。</p>
         <h3>为什么排序题没有"跳过"按钮</h3>
@@ -349,7 +319,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>8. Do's / Don'ts</h2>
+        <h2>7. Do's / Don'ts</h2>
         <h3>Do's</h3>
         <ul>
           <li>agent 应在<strong>真正不确定时</strong>使用——避免"问以确认"的礼貌性提问</li>

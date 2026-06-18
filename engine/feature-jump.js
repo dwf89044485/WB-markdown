@@ -18,7 +18,9 @@
 //       改跳到前一步，再手动调 showAskQuestion(silent) 让卡片渲染且不阻塞。
 
 import { goToStep, pauseDirector, resolveNodeStep } from './player.js';
-import { showAskQuestion, hideAskQuestion, navigateToQuestion } from './ask-question.js';
+import { showAskQuestion, navigateToQuestion } from './ask-question.js';
+import { showApprovePermission } from './approve-permission.js';
+import { hideAllOverlays } from './overlay-registry.js';
 
 const TIMEOUT_MS = 8000;
 const POLL_MS = 50;
@@ -40,31 +42,56 @@ export async function jumpToAnchor(anchor) {
   // （因为 showAskQuestion 返回的 Promise 只在用户操作后 resolve，会卡住
   // jumpDirectorTo），改跳到前一步，再手动调 showAskQuestion(silent)。
   const isAskUser = typeof anchor.questionIndex === 'number';
+  const isApprovePermission = anchor.isApprovePermission === true;
+  const needsManualRender = isAskUser || isApprovePermission;
 
-  if (isAskUser) {
+  if (needsManualRender) {
+    let actionData = null;
     const scenario = window.WORKBUDDY_SCENARIO;
-    // 遍历所有 node 的 raw actions，模拟 normalizeActions 逻辑：
-    // 连续 status 合并为一个（只计 1 个 normalized 索引），其余类型各计 1
-    let questions = null;
-    let idx = 4; // 跳过固定入口（用户消息、agent 出现、思考过程、创建平铺容器）
-    for (const node of (scenario.nodes || [])) {
-      const raw = node.actions || [];
-      for (let ai = 0; ai < raw.length; ai++) {
-        const act = raw[ai];
-        if (act.type === 'status') {
-          // 跳过连续 status（normalizeActions 合并为一个 statusGroup）
-          while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
-          // status 不可能是 askUser，仅计数
-          idx++;
-        } else {
-          if (idx === targetStep && act.type === 'askUser') {
-            questions = act.questions;
-            break;
+
+    if (isAskUser) {
+      // 遍历所有 node 的 raw actions，模拟 normalizeActions 逻辑：
+      // 连续 status 合并为一个（只计 1 个 normalized 索引），其余类型各计 1
+      let idx = 4; // 跳过固定入口（用户消息、agent 出现、思考过程、创建平铺容器）
+      for (const node of (scenario.nodes || [])) {
+        const raw = node.actions || [];
+        for (let ai = 0; ai < raw.length; ai++) {
+          const act = raw[ai];
+          if (act.type === 'status') {
+            // 跳过连续 status（normalizeActions 合并为一个 statusGroup）
+            while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
+            // status 不可能是 askUser，仅计数
+            idx++;
+          } else {
+            if (idx === targetStep && act.type === 'askUser') {
+              actionData = act.questions;
+              break;
+            }
+            idx++;
           }
-          idx++;
         }
+        if (actionData) break;
       }
-      if (questions) break;
+    } else if (isApprovePermission) {
+      // 同样的扫描逻辑，找 approvePermission 的 data
+      let idx = 4;
+      for (const node of (scenario.nodes || [])) {
+        const raw = node.actions || [];
+        for (let ai = 0; ai < raw.length; ai++) {
+          const act = raw[ai];
+          if (act.type === 'status') {
+            while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
+            idx++;
+          } else {
+            if (idx === targetStep && act.type === 'approvePermission') {
+              actionData = act.data;
+              break;
+            }
+            idx++;
+          }
+        }
+        if (actionData) break;
+      }
     }
 
     // 跳到目标的前一步，让前面所有步骤渲染出来
@@ -75,12 +102,18 @@ export async function jumpToAnchor(anchor) {
       console.warn('[feature-jump] goToStep(to prev) failed silently', err);
     }
 
-    // 手动显示 askUser 卡片，silent=true 确保 resolve 立即触发不阻塞
-    if (questions) {
-      hideAskQuestion();
-      showAskQuestion(questions, true);
+    // 手动显示卡片，silent/sync 确保不阻塞
+    // 显示前统一清理所有覆层面板，避免同类型或异类面板同时残留
+    if (isAskUser && actionData) {
+      hideAllOverlays();
+      showAskQuestion(actionData, true);
+    } else if (isApprovePermission && actionData) {
+      hideAllOverlays();
+      showApprovePermission(actionData);
     }
   } else {
+    // 非手动渲染的锚点：goToStep→jumpDirectorTo 的 resetPlaybackDom 已内置
+    // hideAllOverlays()，此处无需额外清理（但保留备调用以对非 reset 路径安全）
     try {
       await goToStep(targetStep);
     } catch (err) {

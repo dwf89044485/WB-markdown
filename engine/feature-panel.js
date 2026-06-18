@@ -13,7 +13,7 @@ import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
 import { goToStep, resolveNodeStep, resumePlayback, toggleExec } from './player.js';
-import { openSheet } from './sheet.js';
+import { openSheet, getFrames, renderStaticDetail, setSheetBackState } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAllOverlays } from './overlay-registry.js';
 import { sleep } from './core.js';
@@ -178,6 +178,33 @@ function bindEvents() {
     } else if (action === 'disclosure-3') {
       await goToStep(resolveNodeStep(0, 3));
       openSheet('F1.c,F1.d,F1.e,F1.f,F1.g,F1.h,F1.i', '搜索网页、更新待办');
+    } else if (action === 'disclosure-4') {
+      await goToStep(Number.MAX_SAFE_INTEGER);
+      toggleExec();
+      await sleep(100);
+      // 直接渲染二级 sheet，跳过一级 sheet 过渡
+      const frames = getFrames('F3.4b,F3.4c,F3.4d');
+      let detail = null;
+      for (const f of frames) {
+        if (f.events) {
+          for (const ev of f.events) {
+            if (ev.detail) { detail = ev.detail; break; }
+          }
+        }
+        if (detail) break;
+      }
+      if (detail) {
+        // 设置返回状态，让二级 sheet 左上角出现返回按钮 → 回到一级 sheet
+        setSheetBackState('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
+        openSheet(null, '执行命令', {
+          customRenderer: (body) => {
+            body.classList.add('detail-mode');
+            body.innerHTML = renderStaticDetail(detail);
+            const sheet = body.closest('.bottom-sheet');
+            if (sheet) sheet.classList.add('detail-mode');
+          }
+        });
+      }
     } else if (action === 'ask-user') {
       const aqFeature = getFeature('ask-question');
       const anchor = aqFeature && aqFeature.anchors && aqFeature.anchors['single-appear'];
@@ -186,11 +213,11 @@ function bindEvents() {
       const apFeature = getFeature('approve-permission');
       const anchor = apFeature && apFeature.anchors && apFeature.anchors['show-card'];
       if (anchor) await jumpToAnchor(anchor);
-    } else if (action === 'infoarch-l0') {
-      // L0: 对话流完成态
-      await goToStep(Number.MAX_SAFE_INTEGER);
     } else if (action === 'infoarch-l1') {
-      // L1: 完成态 + 展开执行过程 + 定位到"执行命令"状态行
+      // L1: 对话流完成态
+      await goToStep(Number.MAX_SAFE_INTEGER);
+    } else if (action === 'infoarch-l2') {
+      // L2: 完成态 + 展开执行过程 + 定位到"执行命令"状态行
       await goToStep(Number.MAX_SAFE_INTEGER);
       toggleExec();
       await sleep(100);
@@ -202,26 +229,37 @@ function bindEvents() {
           break;
         }
       }
-    } else if (action === 'infoarch-l2') {
-      // L2: 完成态 + 展开执行过程 + 拉起"执行命令"Sheet
+    } else if (action === 'infoarch-l3') {
+      // L3: 完成态 + 展开执行过程 + 拉起"执行命令"Sheet
       await goToStep(Number.MAX_SAFE_INTEGER);
       toggleExec();
       await sleep(100);
       openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
-    } else if (action === 'infoarch-l3') {
-      // L3: 完成态 + 展开执行过程 + 拉起Sheet + 进入二级详情
+    } else if (action === 'infoarch-l4') {
+      // L4: 完成态 + 展开执行过程 + 直接进入二级细节 sheet，跳过一级 sheet 过渡
       await goToStep(Number.MAX_SAFE_INTEGER);
       toggleExec();
       await sleep(100);
-      await openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
-      await sleep(100);
-      // 找到第一个带 detail 的事件行，点击进入二级 sheet
-      const rows = document.querySelectorAll('#sheetBody .s-row');
-      for (const row of rows) {
-        if (row._sheetDetail) {
-          row.click();
-          break;
+      const l3frames = getFrames('F3.4b,F3.4c,F3.4d');
+      let l3detail = null;
+      for (const f of l3frames) {
+        if (f.events) {
+          for (const ev of f.events) {
+            if (ev.detail) { l3detail = ev.detail; break; }
+          }
         }
+        if (l3detail) break;
+      }
+      if (l3detail) {
+        setSheetBackState('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
+        openSheet(null, '执行命令', {
+          customRenderer: (body) => {
+            body.classList.add('detail-mode');
+            body.innerHTML = renderStaticDetail(l3detail);
+            const sheet = body.closest('.bottom-sheet');
+            if (sheet) sheet.classList.add('detail-mode');
+          }
+        });
       }
     }
   });

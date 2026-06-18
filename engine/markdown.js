@@ -1,3 +1,11 @@
+/* === markdown.js 架构注释 ===
+ * 表格渲染入口：markdownToHtml（约第65-77行）中检测到 Markdown 表格时，
+ * 自动包裹 .tbl-wrapper 并注入工具栏。
+ * 工具栏按钮定义（约第73行）：tbl-copy / tbl-save-image / tbl-share / tbl-maximize
+ * 全屏 JS 交互（tbl-maximize 点击事件）在 index.html 底部内联 <script> 中实现，
+ * 非 engine 文件，注意勿在此重复实现。
+ */
+
 // ============================================================
 // MARKDOWN — escapeHtml · inlineMarkdown · markdownToHtml
 // ============================================================

@@ -1,3 +1,12 @@
+/* === markdown.css 架构注释 ===
+ * 第397行起：表格全屏交互样式
+ *   .tbl-fullscreen-overlay — 全屏浮层
+ *   .tbl-landscape — 手机壳横屏模式（桌面端 852×393，移动端竖向全屏）
+ *   .tbl-fs-nav / .tbl-fs-content / .tbl-fs-actions — 全屏导航组件
+ *   .phone-shell.tbl-landscape — 桌面端：手机壳变为 852×393，隐藏状态栏/对话流/输入框
+ *   html:not(.force-desktop) .phone-shell.tbl-landscape — 移动端：竖向全屏，不旋转
+ */
+
 /* ============================================================
    MARKDOWN — CSS Design Tokens · .md reading system · .md-node
               Tables · Typewriter · Code · File Card

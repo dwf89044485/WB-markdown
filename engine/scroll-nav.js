@@ -1,3 +1,8 @@
+/* === scroll-nav.js 架构注释 ===
+ * initScrollNav / rebuildScrollNav 由 player.js import 调用。
+ * 内含 isTblFullscreen 状态感知，全屏时禁用滚动按钮。
+ */
+
 // ============================================================
 // SCROLL NAV — Quick-scroll buttons (↑ ↓) for turn-by-turn navigation
 // ============================================================

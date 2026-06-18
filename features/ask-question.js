@@ -104,8 +104,13 @@ function getSnapshots() {
 
 // ── 辅助：带标签的快照块 ──────────────────────────
 // 标签走全局排版组件 .tag（styles/base.css），本文件不再持有标签样式
-function labeled(label, html) {
-  return `<div class="fp-snapshot-wrap"><span class="tag">${label}</span><div class="fp-snapshot">${html}</div></div>`;
+function labeled(label, html, btnAnchor, desc) {
+  const btn = btnAnchor
+    ? `<button class="fp-anchor-btn" data-anchor="${btnAnchor}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
+    : '';
+  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const rightPart = descHtml + btn;
+  return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
 }
 
 // tag 右侧带锚点按钮
@@ -219,7 +224,11 @@ export default {
       <section data-section="anatomy">
         <h2>2. 卡片构成（结构）</h2>
         <div class="fp-snapshot-side">
-          ${labeled('完整卡片结构', s.anatomy)}
+          <div class="fp-snapshot-wrap">
+            <span class="tag">完整卡片结构</span>
+            <div class="fp-snapshot">${s.anatomy}</div>
+            <button class="fp-anchor-btn" data-anchor="single-appear" style="margin-top:12px">在左侧Demo查看示例</button>
+          </div>
           <div class="fp-snapshot-side-desc">
             <h4>① 顶栏 · 题间导航</h4>
             <blockquote>
@@ -248,6 +257,7 @@ export default {
             </blockquote>
           </div>
         </div>
+
 
       </section>
 

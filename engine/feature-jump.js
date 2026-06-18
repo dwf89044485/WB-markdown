@@ -1,3 +1,9 @@
+/* === feature-jump.js 架构注释 ===
+ * jumpToAnchor(anchor) 完整流程：
+ * 解析 nodeIndex → resolveNodeStep → goToStep（jumpDirectorTo fast-render）
+ * → resumePlayback → 轮询 until 条件（超时兜底 8s）→ pauseDirector
+ */
+
 // ============================================================
 // FEATURE JUMP — 跳转锚点引擎
 // ============================================================

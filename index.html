@@ -279,9 +279,9 @@
   }
 </script>
 <script type="module">
-  import { goToStep, resolveNodeStep, pauseDirector } from './engine/player.js';
+  import { goToStep, resolveNodeStep, pauseDirector, resumePlayback } from './engine/player.js';
 
-  // 场景按钮场景按钮：点击后跳转到对应步骤
+  // 场景按钮场景按钮：点击后跳转到对应步骤并自动播放
   document.querySelectorAll('.dc-scene-btn[data-node-index]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
       var nodeIndex = parseInt(btn.dataset.nodeIndex);
@@ -289,7 +289,7 @@
       var step = resolveNodeStep(nodeIndex, actionOffset);
       try {
         await goToStep(step);
-        pauseDirector();
+        resumePlayback();
       } catch(e) {
         console.warn('[scene] jump failed', e);
       }

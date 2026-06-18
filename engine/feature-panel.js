@@ -424,16 +424,12 @@ function constrainContentWidth(scrollEl) {
     if (wraps.length < 2) return;
 
     let sum = 0;
-    const widths = [];
     wraps.forEach((w) => {
-      const cw = w.getBoundingClientRect().width;
-      widths.push(cw);
-      sum += cw;
+      sum += w.getBoundingClientRect().width;
     });
 
     const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
     const natural = sum + gap * (wraps.length - 1);
-    console.log('[约束] 行', wraps.length, '张卡，宽度:', widths.map(w => w.toFixed(1)), 'gap:', gap, '→ natural:', natural.toFixed(1));
     if (natural > maxNatural) {
       // 加上 2px 余量避免子像素舍入导致折行
       maxNatural = Math.ceil(natural) + 2;
@@ -441,8 +437,12 @@ function constrainContentWidth(scrollEl) {
   });
 
   if (maxNatural > 840) {
-    scrollEl.style.setProperty('--fp-max-content-width', maxNatural + 'px');
-    console.log('[约束] 设定 max-width =', maxNatural, 'px');
+    // 补偿纵向滚动条宽：滚动条占用了 content box 的部分宽度，
+    // 若不加补偿，实际可用空间 < 自然宽度，卡片会非预期折行
+    const scrollbarW = scrollEl.offsetWidth - scrollEl.clientWidth;
+    const compensated = maxNatural + scrollbarW;
+    scrollEl.style.setProperty('--fp-max-content-width', compensated + 'px');
+    console.log('[约束] max-width =', compensated, 'px (自然', maxNatural, '+ 滚动条', scrollbarW, ')');
   } else {
     scrollEl.style.removeProperty('--fp-max-content-width');
     console.log('[约束] 不约束，maxNatural =', maxNatural);

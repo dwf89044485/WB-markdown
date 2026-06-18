@@ -182,7 +182,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     flex:1 1 840px;
     min-width:840px;
     height:100dvh;
-    padding:48px 48px;
+    padding:48px 0 48px 48px;
     background-color:#FAF9F6;
     background-image:radial-gradient(circle, #F2F0ED 1px, transparent 1px);
     background-size:20px 20px;

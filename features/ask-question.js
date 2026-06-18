@@ -225,41 +225,31 @@ export default {
         <h2>4. 交互与状态</h2>
 
         <h3 id="sec-single">4.1 单选题</h3>
-        <p><strong>未选</strong>：白底，常规字重，无右侧图标<br>
-           <strong>已选</strong>：浅灰底，加粗，✓ 图标</p>
         <div class="fp-snapshot-grid-2">
           ${labeled('未选', s.singleUnselected)}
           ${labeled('已选', s.singleSelected)}
         </div>
-        <p><strong>行为</strong>：点未选项 → 选中该项（其他项取消）+ 输入框清空 + <strong>非最后题自动前进</strong>；点已选项 → 取消选中，留在当前题；在输入框打字 → 已选项清空，不自动前进。</p>
-        <p><strong>输入栏关系：互斥</strong>——文本输入与选项对选是二选一的路径。点选项 → 输入框清空；在输入框打字 → 已选项清空。提交结果二者选其一。</p>
-        <p><strong>输入栏 placeholder</strong>：「以上都不是，我来告诉你」——明确告诉用户这是 escape hatch。</p>
-        <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交，按状态切换。</p>
+        <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
+        <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
         <h3>4.2 多选题</h3>
-        <p><strong>未选</strong>：空框 □ / <strong>已选</strong>：实心 ☑，可同时多选</p>
         <div class="fp-snapshot-grid-2">
           ${labeled('未选', s.multiUnselected)}
           ${labeled('已选（2项）', s.multiChecked)}
         </div>
-        <p><strong>行为</strong>：点选项 toggle 选中/取消，<strong>不自动前进</strong>，需手动按"下一步"；在输入框打字 → 已选项保留。</p>
-        <p><strong>输入栏关系：共存</strong>——文本输入可独立于选项选择存在。点选项 toggle 不影响输入框内容；在输入框打字不影响已选状态。提交结果选项与文本并存。</p>
-        <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」——表明是叠加而非替代。</p>
-        <p><strong>操作按钮</strong>：跳过 / 下一步 / 提交。</p>
+        <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
+        <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
 
         <h3 id="sec-sort">4.3 排序题</h3>
-        <p>右侧 ≡ 拖拽手柄，序号动态跟随位置。</p>
         <div class="fp-snapshot-grid-3">
           ${labeled('默认状态', s.sortDefault)}
           ${labeled('拖拽时', s.sortDragging)}
           ${labeled('新手指引', s.sortGuide)}
         </div>
-        <p><strong>行为</strong>：按下并位移 ≥ 3px 进入拖拽（无需长按）；松手 → 200ms 缓动落位；首次进入有循环 pop 引导动效，<strong>用户首次拖动后永久消失</strong>；在输入框打字 → 排序结果保留。</p>
-        <p><strong>输入栏关系：共存</strong>——文本输入不影响排序结果。用户拖动选项与输入框打字可同时进行。提交结果顺序与文本并存。</p>
-        <p><strong>输入栏 placeholder</strong>：「我来额外补充说明」。</p>
-        <p><strong>操作按钮</strong>：<strong>无"跳过"</strong>，只有下一步 / 提交——因为默认顺序即为答案。</p>
+        <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
+        <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         <div class="fp-anchor-row">
           <button class="fp-anchor-btn" data-anchor="sort-appear">看引导动效 →</button>
           <button class="fp-anchor-btn" data-anchor="sort-after-drag">看拖拽后状态 →</button>

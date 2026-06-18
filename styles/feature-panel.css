@@ -679,26 +679,25 @@
   flex-shrink: 0;
 }
 
-/* 操作按钮：视觉统一为 fp-anchor-btn 风格 */
+/* 操作按钮：黑色紧凑型 */
 .fp-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
+  gap: 4px;
+  padding: 4px 4px 4px 8px;
+  font-size: 11px;
   font-weight: 500;
   line-height: 1.4;
-  color: #1d1d1f;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.12);
-  border-radius: 8px;
+  color: #fff;
+  background: #1d1d1f;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all .15s ease;
+  transition: opacity .15s ease;
 }
 .fp-action-btn:hover {
-  background: #f5f5f7;
-  border-color: rgba(0,0,0,0.25);
+  opacity: .8;
 }
 .fp-action-btn svg {
   flex-shrink: 0;

@@ -75,7 +75,7 @@ function labeled(label, html) {
 
 // tag 右侧带锚点按钮
 function labeledWithAnchor(label, html, anchorId) {
-  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="fp-anchor-btn" data-anchor="${anchorId}">查看运行态</button></div><div class="fp-snapshot">${html}</div></div>`;
+  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="fp-anchor-btn" data-anchor="${anchorId}">查看示例></button></div><div class="fp-snapshot">${html}</div></div>`;
 }
 
 // 实际 node 索引：nodes[2]（n3，scenario.js 第 592 行，含 askUser action）
@@ -239,7 +239,7 @@ export default {
           <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
           <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         </blockquote>
-        <button class="fp-anchor-btn" data-anchor="single-auto-next">查看运行态</button>
+        <button class="fp-anchor-btn" data-anchor="single-auto-next">看自动前进效果 →</button>
 
         <h3>4.2 多选题</h3>
         <div class="fp-snapshot-grid-3">
@@ -251,7 +251,7 @@ export default {
           <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
           <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         </blockquote>
-        <button class="fp-anchor-btn" data-anchor="multi-checked">查看运行态</button>
+        <button class="fp-anchor-btn" data-anchor="multi-checked">看已勾选状态 →</button>
 
         <h3 id="sec-sort">4.3 排序题</h3>
         <div class="fp-snapshot-grid-3">
@@ -265,8 +265,8 @@ export default {
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         </blockquote>
         <div class="fp-anchor-row">
-          <button class="fp-anchor-btn" data-anchor="sort-appear">查看运行态</button>
-          <button class="fp-anchor-btn" data-anchor="sort-after-drag">查看运行态</button>
+          <button class="fp-anchor-btn" data-anchor="sort-appear">看引导动效 →</button>
+          <button class="fp-anchor-btn" data-anchor="sort-after-drag">看拖拽后状态 →</button>
         </div>
       </section>
 

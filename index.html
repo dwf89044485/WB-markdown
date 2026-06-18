@@ -547,9 +547,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     }
 
     var x, y;
-    // 手机边缘坐标和纸纹右边框，虚线跳过这些位置（由实线边界线覆盖）
-    var edgeX = [pR.left, pR.right, rightEdge];
-    var edgeY = [pR.top, pR.bottom];
+    // 纸纹右边框位置，虚线跳过这里
+    var edgeX = [rightEdge];
+    var edgeY = [];
     function onEdge(pos, edges){
       for(var i=0;i<edges.length;i++){
         if(Math.abs(pos - edges[i]) < 0.5) return true;

@@ -95,10 +95,19 @@
   cursor:pointer;
   height:30px;
   transition:background .12s ease;
+  font-size:12px;
+  line-height:22px;
+  color:rgba(0,0,0,.7);
+  padding:0 4px;
 }
 
 .dc-scene-btn:hover{ background:rgba(0,0,0,0.04); }
 .dc-scene-btn:active{ background:rgba(0,0,0,0.08); }
+.dc-scene-btn.is-active{
+  background:#3B3B3B;
+  color:#fff;
+  font-weight:600;
+}
 
 /* ── Divider ────────────────────────────────────────────────── */
 .dc-divider{

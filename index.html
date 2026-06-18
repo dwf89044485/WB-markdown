@@ -188,8 +188,8 @@
     <div class="dc-scene-title">Scene</div>
     <div class="dc-scene-grid">
       <button class="dc-scene-btn" type="button" data-node-index="0" data-action-offset="0">工具调用</button>
-      <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="7">权限审批</button>
-      <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="12">询问用户</button>
+      <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="5">权限审批</button>
+      <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="10">询问用户</button>
       <button class="dc-scene-btn" type="button">场景4</button>
       <button class="dc-scene-btn" type="button">场景5</button>
       <button class="dc-scene-btn" type="button">场景6</button>
@@ -281,9 +281,15 @@
 <script type="module">
   import { goToStep, resolveNodeStep, pauseDirector, resumePlayback } from './engine/player.js';
 
-  // 场景按钮场景按钮：点击后跳转到对应步骤并自动播放
+  // 场景按钮：点击后切换到选中态、跳转对应步骤并自动播放
   document.querySelectorAll('.dc-scene-btn[data-node-index]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
+      // 清除所有按钮的选中态
+      document.querySelectorAll('.dc-scene-btn[data-node-index]').forEach(function(b) {
+        b.classList.remove('is-active');
+      });
+      btn.classList.add('is-active');
+
       var nodeIndex = parseInt(btn.dataset.nodeIndex);
       var actionOffset = parseInt(btn.dataset.actionOffset) || 0;
       var step = resolveNodeStep(nodeIndex, actionOffset);

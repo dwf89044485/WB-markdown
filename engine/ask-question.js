@@ -193,8 +193,9 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
 
   // ── 选项列表 ──
   const manyClass = q.options.length >= 8 ? ' many-options' : '';
+  const scrollShadow = q.options.length >= 8 ? '<div class="aq-scroll-shadow"></div>' : '';
   const optionsContainerHtml = `
-    <div class="aq-options${manyClass}"${id(' id="aqOptions"')}>${optionsHtml}</div>`;
+    <div class="aq-options${manyClass}"${id(' id="aqOptions"')}>${optionsHtml}${scrollShadow}</div>`;
 
   // ── 输入栏 ──
   const placeholderText = q.type === 'single'

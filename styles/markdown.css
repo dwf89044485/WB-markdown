@@ -383,7 +383,8 @@
   padding:1px 5px;
   border-radius:6px;
   color:var(--md-purple);
-  background:rgba(94,92,230,.08);
+  background-color:transparent;
+  background-image:linear-gradient(rgba(103,96,82,.12),rgba(103,96,82,.12));
 }
 
 /* ── CODE BLOCK ──────────────────────────────────────────── */

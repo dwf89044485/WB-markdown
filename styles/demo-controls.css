@@ -58,7 +58,7 @@
   flex-direction:column;
   gap:20px;
   padding:20px 20px 30px;
-  background:#fff;
+  background:transparent;
   border:1px solid rgba(0,0,0,0.08);
   border-radius:0;
   box-shadow:none;

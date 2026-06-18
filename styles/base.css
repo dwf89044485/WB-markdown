@@ -177,7 +177,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
+    justify-content:flex-start;
     gap:71px;  /* 手机与面板间距 = 网格一行 */
   }
   .design-notes{

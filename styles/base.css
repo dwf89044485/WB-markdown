@@ -177,8 +177,6 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    gap:71px;  /* 手机与面板间距 = 网格一行 */
   }
   .design-notes{
     flex:1 1 840px;
@@ -198,6 +196,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   box-shadow:none;
   border:1px solid rgba(0,0,0,0.08);
   display:flex;flex-direction:column;overflow:hidden;position:relative;
+  margin:auto;
 }
 
 /* ── STATUS BAR ──────────────────────────────────────────── */

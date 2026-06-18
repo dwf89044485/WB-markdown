@@ -52,7 +52,7 @@
 .demo-controls{
   --dc-control-height:30px;
   --dc-control-radius:10px;
-  width:393px;
+  width:100%;
   height:213px;          /* = 3 格网格高度 (3 × 71px) */
   display:flex;
   flex-direction:column;
@@ -63,6 +63,7 @@
   border-radius:0;
   box-shadow:none;
   font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
+  flex-shrink:0;
 }
 
 .dc-main{

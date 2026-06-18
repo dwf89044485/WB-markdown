@@ -108,7 +108,8 @@
   flex:1;
   min-height:0;
   overflow-y:auto;
-  overflow-x:hidden;
+  overflow-x:auto;
+  scrollbar-gutter:stable;
   scrollbar-width:none;           /* Firefox：不显示滚动条 */
 }
 .fp-content::-webkit-scrollbar{

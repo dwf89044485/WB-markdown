@@ -412,22 +412,20 @@ function constrainContentWidth(scrollEl) {
     return;
   }
 
+  // 强制重排：确保所有子元素的布局已计算
+  scrollEl.offsetHeight;
+
   let maxNatural = 0;
-
   rows.forEach((row) => {
-    const wraps = row.querySelectorAll(':scope > .fp-snapshot-wrap');
-    if (wraps.length < 2) return; // 单张卡不存在平铺宽度问题
+    // 跳过列方向布局的行（如 .fp-tcn-modes 用 flex-direction:column 堆叠）
+    const fd = window.getComputedStyle(row).flexDirection;
+    if (fd !== 'row') return;
 
-    // 通过 offsetWidth 同步触发重排，确保尺寸准确
-    let sum = 0;
-    wraps.forEach((w) => { sum += w.offsetWidth; });
-
-    const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
-    const natural = sum + gap * (wraps.length - 1);
-    if (natural > maxNatural) maxNatural = natural;
+    // scrollWidth = 容器的内容宽度，不折行时等于所有子项 + gap 之和
+    const w = row.scrollWidth;
+    if (w > maxNatural) maxNatural = w;
   });
 
-  // 自然宽度超过 840px 才约束（小于 840 时内容按默认宽度填充）
   if (maxNatural > 840) {
     scrollEl.style.setProperty('--fp-max-content-width', maxNatural + 'px');
   } else {

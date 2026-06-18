@@ -1,0 +1,23 @@
+# Version control
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+AGENTS.md
+MARKDOWN_STYLE_TOKENS.md
+
+# CI/CD
+.github
+
+# Misc
+.with

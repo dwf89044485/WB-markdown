@@ -68,7 +68,37 @@
 /* ── Left panel (30%) ───────────────────────────────────────── */
 .dc-left{
   flex:3;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
+
+.dc-scene-title{
+  font-size:13px;
+  font-weight:500;
+  line-height:22px;
+  color:#000;
+  white-space:nowrap;
+}
+
+.dc-scene-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  flex:1;
+}
+
+.dc-scene-btn{
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  min-height:28px;
+  transition:background .12s ease;
+}
+
+.dc-scene-btn:hover{ background:rgba(0,0,0,0.04); }
+.dc-scene-btn:active{ background:rgba(0,0,0,0.08); }
 
 /* ── Divider ────────────────────────────────────────────────── */
 .dc-divider{

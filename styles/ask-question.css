@@ -187,6 +187,22 @@
   gap: var(--aq-option-gap);
   align-self: stretch;
 }
+/* 选项过多时允许内部滚动 */
+.aq-options.many-options {
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.aq-options.many-options::-webkit-scrollbar {
+  width: 4px;
+}
+.aq-options.many-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+.aq-options.many-options::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 2px;
+}
 
 /* 单个选项行 */
 .aq-option {
@@ -444,6 +460,10 @@
   pointer-events: none;
   user-select: none;
   animation: none; /* 禁止入场动效 */
+}
+/* 静态快照中允许选项区域滚动交互 */
+.aq-static .aq-options.many-options {
+  pointer-events: auto;
 }
 
 /* ── 重渲染静默：防止每次 innerHTML 替换重播 slide-up ── */

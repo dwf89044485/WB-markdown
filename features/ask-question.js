@@ -35,7 +35,24 @@ const A = {
   sortInput:    (() => { const a=defaultAnswers(); a[2].selected=[3,0,1,2]; a[2].customInput='安全和便利也需要重点考虑'; return a; })(), // q3 排序 + 输入
 };
 
-// ── 预渲染所有快照（lazy：首次访问时才计算）─────────
+// ── 边界异常样本数据（单题）────────────────────
+const LONG_Q = [
+  { id: 'q-long', type: 'single', question: '请根据以下要求，从候选方案中选择最符合当前项目需求的实施方案，需综合考虑成本、周期、团队能力等多方面因素。', options: ['方案 A：独立部署', '方案 B：云托管', '方案 C：混合架构', '方案 D：外包开发'] },
+];
+const MANY_OPTS = [
+  { id: 'q-many', type: 'multiple', question: '请选择您感兴趣的主题领域：', options: Array.from({ length: 10 }, (_, i) => `主题领域 ${i + 1}：详细描述内容`) },
+];
+const LONG_OPT = [
+  { id: 'q-longopt', type: 'single', question: '请选择：', options: ['这是一个非常长的选项描述文本，用于测试在交互说明中长选项文字的显示与截断处理方式'] },
+];
+
+function singleAnswer(questions) {
+  return questions.map(q => ({
+    type: q.type,
+    selected: q.type === 'single' ? null : (q.type === 'sort' ? q.options.map((_, i) => i) : []),
+    customInput: '',
+  }));
+}
 const snapCache = {};
 function snap(key, ...args) {
   if (!snapCache[key]) snapCache[key] = renderStaticAskQuestion(...args);
@@ -64,6 +81,11 @@ function getSnapshots() {
     sortDragging:     snap('sortDragging', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, dragging: true }),
     sortGuide:       snap('sortGuide', SAMPLE_Q, 2, A.unanswered, { hideHeader: false, hideInput: false, showHint: true }),
     sortInput:        snap('sortInput', SAMPLE_Q, 2, A.sortInput, { hideHeader: false, hideInput: false }),
+
+    // §6 边界异常
+    edgeLongQ: snap('edgeLongQ', LONG_Q, 0, singleAnswer(LONG_Q), { hideInput: false }),
+    edgeMany: snap('edgeMany', MANY_OPTS, 0, singleAnswer(MANY_OPTS), { hideInput: false }),
+    edgeLongOpt: snap('edgeLongOpt', LONG_OPT, 0, singleAnswer(LONG_OPT), { hideInput: false }),
   };
 }
 
@@ -293,12 +315,13 @@ export default {
 
       <section data-section="edge-cases">
         <h2>6. 边界与异常</h2>
-        <ul>
-          <li><strong>问题文字过长</strong>：自然换行</li>
-          <li><strong>选项过多（≥ 8 项）</strong>：选项列表内部纵向滚动，顶栏与按钮固定</li>
-          <li><strong>中途关闭</strong>：不保存草稿，下次进入相当于全部跳过</li>
-          <li><strong>误触关闭</strong>：无二次确认（轻量打扰原则）</li>
-        </ul>
+        <p>演示组件在极端数据下的表现——可滚动的选项区域支持鼠标交互。</p>
+        ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
+        <div class="fp-snapshot-grid-2">
+          ${labeled('选项过多（≥8 项）——纵向滚动', s.edgeMany)}
+          ${labeled('选项文字过长——省略号截断', s.edgeLongOpt)}
+        </div>
+        <p class="fp-note"><strong>中途关闭</strong>：不保存草稿，下次进入相当于全部跳过。<br><strong>误触关闭</strong>：无二次确认（轻量打扰原则）。</p>
       </section>
 
       <section data-section="rationale">

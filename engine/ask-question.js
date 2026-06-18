@@ -192,8 +192,9 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
     </div>`;
 
   // ── 选项列表 ──
+  const manyClass = q.options.length >= 8 ? ' many-options' : '';
   const optionsContainerHtml = `
-    <div class="aq-options"${id(' id="aqOptions"')}>${optionsHtml}</div>`;
+    <div class="aq-options${manyClass}"${id(' id="aqOptions"')}>${optionsHtml}</div>`;
 
   // ── 输入栏 ──
   const placeholderText = q.type === 'single'
@@ -564,5 +565,9 @@ function bindAskQuestionEvents() {
 function navigateToQuestion(index) {
   goToStep(index);
 }
+
+import { registerOverlayCleanup } from './overlay-registry.js';
+// 注册清理函数，新增面板类型只需在本模块注册自己的 hideXxx
+registerOverlayCleanup(hideAskQuestion);
 
 export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, navigateToQuestion, glassCloseBtn, glassNavBtn, GLYPH_PREV };

@@ -193,16 +193,6 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-/* 底部渐隐覆盖层：粘在可视底部，溢出时示意"下面还有" */
-.aq-scroll-shadow {
-  position: sticky;
-  bottom: 0;
-  height: 0;
-  padding-bottom: 40px;
-  background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
-  pointer-events: none;
-  flex-shrink: 0;
-}
 .aq-options.many-options::-webkit-scrollbar {
   width: 4px;
 }

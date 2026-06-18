@@ -55,8 +55,8 @@
   width:100%;
   height:213px;          /* = 3 格网格高度 (3 × 71px) */
   display:flex;
-  flex-direction:column;
-  gap:20px;
+  flex-direction:row;
+  gap:0;
   padding:20px 20px 30px;
   background:#fff;
   border:1px solid rgba(0,0,0,0.08);
@@ -66,10 +66,31 @@
   flex-shrink:0;
 }
 
+/* ── Left panel (30%) ───────────────────────────────────────── */
+.dc-left{
+  flex:3;
+}
+
+/* ── Divider ────────────────────────────────────────────────── */
+.dc-divider{
+  width:1px;
+  align-self:stretch;
+  background:rgba(0,0,0,0.08);
+  margin:0 16px;
+}
+
+/* ── Right panel (70%) ──────────────────────────────────────── */
+.dc-right{
+  flex:7;
+  display:flex;
+  flex-direction:column;
+}
+
 .dc-main{
   display:flex;
   flex-direction:column;
   gap:16px;
+  flex:1;
 }
 
 /* ── Row ───────────────────────────────────────────────────── */

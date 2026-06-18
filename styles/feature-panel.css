@@ -19,7 +19,7 @@
 /* ── 顶部导航 ─────────────────────────────────────────────── */
 .fp-nav{
   flex-shrink:0;
-  padding:28px 0 0 64px;
+  padding:20px 0 28px 64px;
   position:relative;
   display:flex;
   flex-direction:column;
@@ -27,6 +27,8 @@
   gap:0;
   background-color:transparent;
   background-image:none;
+  box-shadow:none;
+  border-bottom:1px solid rgba(0,0,0,0.12);
 }
 /* 区域标签：同 feature header h1 风格 */
 .fp-section-label{
@@ -89,7 +91,7 @@
 #fpContent .fp-scroll.markdown-body{
   overflow-y:auto;
   overflow-x:auto;        /* 显式声明，消除歧义 */
-  padding:0 32px 0 64px;         /* ≥20px（阴影 blur），左侧 64px 与导航对齐 */
+  padding:20px 32px 0 64px;         /* top:20px 与导航间距；left:64px 与导航对齐；≥32px 右侧为阴影留足空间 */
   height:100%;
   scrollbar-width:none;
 }
@@ -552,9 +554,10 @@
   text-transform: uppercase;
 }
 
-/* 多个快照单元横向平铺（数量不限） */
+/* 多个快照单元横向平铺（数量不限），宽度不足时自动折行 */
 .fp-snapshot-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--fp-row-gap, 30px);
   margin: 16px 0;
 }
@@ -564,9 +567,8 @@
   margin-top: 0;
   margin-bottom: 0;
 }
-/* 边界异常行：卡片高度不一时自然换行，无裁切 */
+/* 卡片高度不一时顶部对齐，避免拉伸 */
 .fp-snapshot-row.edge-scroll {
-  flex-wrap: wrap;
   align-items: flex-start;
 }
 

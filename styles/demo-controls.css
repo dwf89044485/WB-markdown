@@ -220,7 +220,6 @@
 
 /* ── Label ─────────────────────────────────────────────────── */
 .dc-label{
-  width:75px;
   flex-shrink:0;
   font-size:13px;
   font-weight:500;
@@ -228,7 +227,6 @@
   line-height:22px;
   letter-spacing:0;
   white-space:nowrap;
-  text-align:right;
 }
 
 /* ── Pill buttons (Row 1: 上一步/自动播放/下一步) ─────────── */

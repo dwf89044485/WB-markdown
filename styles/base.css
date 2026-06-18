@@ -183,9 +183,11 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     min-width:840px;
     height:100dvh;
     overflow-y:auto;   /* 右侧栏内部可纵向滚 */
-    padding:32px 60px;
-    background:#fafafa;
-    border-left:1px solid rgba(0,0,0,0.06);
+    padding:48px 48px;
+    background-color:#FAF9F6;
+    background-image:radial-gradient(circle, #F2F0ED 1px, transparent 1px);
+    background-size:20px 20px;
+    border-left:1px solid rgba(0,0,0,0.04);
   }
 }
 
@@ -542,14 +544,16 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 .tag {
   display: inline-flex;
   align-items: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   line-height: 1;
-  padding: 6px 11px;
-  border-radius: 8px;
-  background: #EBEBEB;
-  color: #1d1d1f;
-  letter-spacing: 0.01em;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: transparent;
+  color: #6e6e73;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
   align-self: flex-start;
+  border: 1px solid rgba(0,0,0,0.1);
 }

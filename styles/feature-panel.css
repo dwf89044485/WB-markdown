@@ -13,7 +13,7 @@
   flex-direction:column;
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
   color:#1a1a1c;
-  max-width:780px;
+  max-width:920px;
 }
 
 /* ── 顶部导航 ─────────────────────────────────────────────── */
@@ -124,8 +124,7 @@
   flex:1;
   min-height:0;
   overflow-y:auto;
-  overflow-x:auto;
-  scrollbar-gutter:stable;
+  overflow-x:visible;
   scrollbar-width:none;           /* Firefox：不显示滚动条 */
 }
 .fp-content::-webkit-scrollbar{

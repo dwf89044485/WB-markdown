@@ -801,14 +801,3 @@
 #fpContent.markdown-body code {
   background-color: rgba(129,139,152,0.12) !important;
 }
-
-/* ── Override markdown-body list styles ────────────────────── */
-#fpContent.markdown-body ul {
-  padding-left: 14px;
-}
-#fpContent.markdown-body ul li {
-  font-size: 16px;
-  line-height: 24px;
-  color: #1F2328;
-  padding: 0;
-}

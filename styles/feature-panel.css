@@ -215,6 +215,37 @@
   margin-top: 36px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   组件快照系统（Component Snapshot System）
+   用于在交互说明（Feature Panel）中嵌入 Demo 组件的实样展示。
+
+   使用方式：
+     1. 在 features/<id>.js 里用 labeled() 辅助函数生成快照块：
+        labeled('标题', componentHtml)
+        → 产生 <div.fp-snapshot-wrap><span.tag>标题</span><div.fp-snapshot>...</div></div>
+
+     2. 选择布局容器包裹一组快照块：
+        ┌────────────────────┬──────────────────────────────┐
+        │ 布局类              │ 用途                         │
+        ├────────────────────┼──────────────────────────────┤
+        │ fp-snapshot-side   │ 1 个快照 + 右侧文字描述        │
+        │ fp-snapshot-grid-2 │ 2 个快照并排对比               │
+        │ fp-snapshot-grid-3 │ 3 个快照横向平铺               │
+        │ (直接使用 wrap)     │ 单个快照，无布局容器           │
+        └────────────────────┴──────────────────────────────┘
+
+     3. 各 feature 在 CSS 中设定自己的组件宽度（可选）：
+        .fp-snapshot > .my-component { width: 350px }
+
+   核心规则（MUST）：
+     ─ 布局容器（fp-snapshot-grid-2 / -3）禁止设置 overflow:hidden/auto/scroll，
+       否则带 box-shadow 的组件阴影会被裁切。
+     ─ 快照的左对齐由 .markdown-body 的 padding 统一保证，
+       布局容器不应再有水平 padding，否则与文字产生错位。
+     ─ 布局容器内部的 .fp-snapshot-wrap 只处理垂直间距（margin/padding），
+       不设水平 padding。
+   ═══════════════════════════════════════════════════════════════════ */
+
 .fp-snapshot-wrap {
   margin: 16px 0;
   padding: 4px 0;
@@ -229,13 +260,15 @@
 .fp-snapshot {
   display: flex;
   justify-content: flex-start;
-  /* 快照内的卡片左对齐 */
+  /* 快照内的组件左对齐 */
 }
-
+.fp-snapshot > * {
+  flex-shrink: 0;           /* 防止组件宽度被挤压 */
+}
+/* 组件具体宽度由各 feature 文件自行控制，此处只设基础宽度避免 stretching */
 .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);
   min-width: var(--aq-width, 350px);
-  flex-shrink: 0;
 }
 
 /* ── Tool Call Node 快照（status line）────────── */
@@ -271,9 +304,6 @@
 .fp-tcn-modes {
   align-items: stretch;
   height: 113px;
-}
-.fp-snapshot-grid-3.fp-tcn-modes {
-  padding: 0;
 }
 .fp-tcn-modes > .fp-snapshot-wrap {
   display: flex;

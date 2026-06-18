@@ -32,6 +32,7 @@
   --dc-control-height:30px;
   --dc-control-radius:10px;
   width:393px;
+  height:213px;          /* = 3 格网格高度 (3 × 71px) */
   display:flex;
   flex-direction:column;
   gap:20px;

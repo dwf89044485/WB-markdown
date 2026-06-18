@@ -547,8 +547,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     }
 
     var x, y;
-    // 手机边缘坐标，虚线跳过这些位置（由实线边界线覆盖）
-    var edgeX = [pR.left, pR.right];
+    // 手机边缘坐标和纸纹右边框，虚线跳过这些位置（由实线边界线覆盖）
+    var edgeX = [pR.left, pR.right, rightEdge];
     var edgeY = [pR.top, pR.bottom];
     function onEdge(pos, edges){
       for(var i=0;i<edges.length;i++){
@@ -556,7 +556,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       }
       return false;
     }
-    // 竖线：从手机左边缘向左向右延展，跳过手机左右边界
+    // 竖线：从手机左边缘向左向右延展，跳过手机左右边界和纸纹右边框
     for(x = pR.left; x <= rightEdge; x += colStep){
       if(onEdge(x, edgeX)) continue;
       dashLine(x, 0, x, vh);
@@ -565,8 +565,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       if(onEdge(x, edgeX)) continue;
       dashLine(x, 0, x, vh);
     }
-    // 横线：从手机顶边向下延展，跳过手机上下边界
-    for(y = pR.top; y <= demoBottom; y += rowStep){
+    // 横线：从手机顶边向下延展到可视区底部，跳过手机上下边界
+    for(y = pR.top; y <= vh; y += rowStep){
       if(onEdge(y, edgeY)) continue;
       dashLine(leftEdge, y, rightEdge, y);
     }

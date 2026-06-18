@@ -67,11 +67,11 @@ function labeled(label, html) {
   return `<div class="fp-snapshot-wrap"><span class="tag">${label}</span><div class="fp-snapshot">${html}</div></div>`;
 }
 
-// 实际 node 索引：nodes[2]（n3，scenario.js 第 548 行，含 askUser action）
+// 实际 node 索引：nodes[2]（n3，scenario.js 第 592 行，含 askUser action）
 // nodeIndex 由 feature-jump.js 通过 resolveNodeStep() 换算为 director timeline 索引
-// actionOffset=8 指到 n3 的 askUser action（n3 共 9 个 normalized action，最后一个为 askUser）
+// 初始 actionOffset=8，提交 434a0987 新增 approvePermission + markdown 两个 action 后 → 变为 10
 const STEP_ASK_QUESTION = 2;
-const ASKUSER_ACTION_OFFSET = 8;
+const ASKUSER_ACTION_OFFSET = 10;
 
 export default {
   id: 'ask-question',
@@ -186,9 +186,9 @@ export default {
 
         <h3>① 顶栏 · 题间导航</h3>
         <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
-        <p><strong>左 / 右箭头</strong>：上下题切换；第 1 题时左箭头不可点，最后题时右箭头不可点（视觉降饱和度）。</p>
-        <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
-        <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
+        <p><strong>左 / 右箭头</strong>：题目前进后退；首题左箭头不可点，尾题右箭头不可点。</p>
+        <p><strong>关闭 ✕</strong>：点击即全部跳过，agent 收到空答案继续。</p>
+        <p><strong>切题保留状态</strong>：左右箭头切题保留之前选择数据。</p>
 
         <h3>④ 输入栏</h3>
         <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>

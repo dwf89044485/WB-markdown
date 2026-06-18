@@ -105,7 +105,6 @@
 /* ── Tweak row ──────────────────────────────────────────────── */
 .dc-row-tweak{
   justify-content:space-between;
-  height:30px;
   gap:0;
 }
 .dc-tweak-labels{

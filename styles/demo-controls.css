@@ -57,9 +57,11 @@
   flex-direction:row;
   gap:0;
   padding:20px 20px 20px;
-  background-image:url("../assets/paper/texture.png");
-  background-repeat:repeat;
-  background-attachment:fixed;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    url("../assets/paper/texture.png");
+  background-repeat:no-repeat, repeat;
+  background-attachment:scroll, fixed;
   border:1px solid rgba(0,0,0,0.08);
   border-radius:0;
   box-shadow:none;

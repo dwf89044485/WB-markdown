@@ -89,7 +89,7 @@
 .dc-main{
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:10px;
   flex:1;
 }
 

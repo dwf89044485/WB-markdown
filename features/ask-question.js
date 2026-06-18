@@ -301,22 +301,8 @@ export default {
         </ul>
       </section>
 
-      <section data-section="motion">
-        <h2>7. 动效</h2>
-        <h3>节奏分级</h3>
-        <p><strong>快（100-150ms）</strong>：选项点击反馈、按钮按下态、复选框打勾——必须感觉"零延迟"</p>
-        <p><strong>中（200-300ms）</strong>：切题、排序拖拽落位（200ms）、按钮文案与底色切换</p>
-        <p><strong>慢（600-1000ms）</strong>：卡片首次展开、排序首次的 pop 引导动效</p>
-        <h3>反原则</h3>
-        <ul>
-          <li>不为了动而动——AskQuestion 本身已经是打断，过多动效加重打扰</li>
-          <li>快档不允许超过 200ms——否则点击感会"粘滞"</li>
-          <li>教学性动效绝不重复——首次播完一轮后永久消失</li>
-        </ul>
-      </section>
-
       <section data-section="rationale">
-        <h2>8. 设计原理</h2>
+        <h2>7. 设计原理</h2>
         <h3>为什么单选自动前进、多选不自动前进</h3>
         <p>单选有明确的"作答完成"信号——选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明"我选完了"。强行让多选自动前进会"系统替用户做决定"，违反用户主导原则。</p>
         <h3>为什么排序题没有"跳过"按钮</h3>
@@ -327,7 +313,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>9. Do's / Don'ts</h2>
+        <h2>8. Do's / Don'ts</h2>
         <h3>Do's</h3>
         <ul>
           <li>agent 应在<strong>真正不确定时</strong>使用——避免"问以确认"的礼貌性提问</li>

@@ -189,7 +189,7 @@
 }
 /* 选项过多时允许内部滚动 */
 .aq-options.many-options {
-  max-height: 235px;
+  max-height: 247px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }

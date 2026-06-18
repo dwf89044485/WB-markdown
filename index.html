@@ -594,11 +594,11 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       solidLines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" stroke="'+COLOR+'" stroke-width="1"/>';
     }
 
-    // 手机四周实线，精确沿手机壳边缘描边
-    solidLine(pR.left + 0.5, pR.top, pR.left + 0.5, pR.bottom);  // 左边
-    solidLine(pR.right - 0.5, pR.top, pR.right - 0.5, pR.bottom);  // 右边
-    solidLine(pR.left, pR.top + 0.5, pR.right, pR.top + 0.5);    // 上边
-    solidLine(pR.left, pR.bottom - 0.5, pR.right, pR.bottom - 0.5);  // 下边
+    // 手机四周实线，与虚线网格在同一条坐标上，精确重叠
+    solidLine(pR.left, pR.top, pR.left, pR.bottom);      // 左边
+    solidLine(pR.right, pR.top, pR.right, pR.bottom);    // 右边
+    solidLine(pR.left, pR.top, pR.right, pR.top);       // 上边
+    solidLine(pR.left, pR.bottom, pR.right, pR.bottom);  // 下边
 
     // 四角 10×10 方框压手机上面
     var S = 10, H = S / 2;

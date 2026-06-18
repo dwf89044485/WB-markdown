@@ -2,19 +2,6 @@
    DEMO CONTROLS — Playback control bar outside phone shell
    ============================================================ */
 
-/* ── Main layout: phone top, panel below ──────────────────── */
-.layout-main{
-  position:relative;
-  z-index:1;
-  width:100%;
-  display:flex;
-  flex-direction:row;
-  align-items:flex-start;
-  justify-content:flex-start;
-  gap:24px;
-  padding:14px 10px 14px 44px;
-}
-
 /* ── Paper background panel (paper.design style) ───────── */
 /* 全屏高的左侧纸纹背景，纯装饰 */
 .paper-bg{

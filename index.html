@@ -562,9 +562,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     // 偏移 ±0.5 使 stroke 外缘与手机 border-box 对齐
     solidLine(pR.left + 0.5, 0, pR.left + 0.5, vh);              // 左边界
     solidLine(pR.right - 0.5, 0, pR.right - 0.5, vh);            // 右边界
-    solidLine(0, pR.top + 0.5, vw, pR.top + 0.5);                // 上边界
-    solidLine(0, pR.bottom - 0.5, vw, pR.bottom - 0.5);          // 手机底边界
-    solidLine(0, demoBottom - 0.5, vw, demoBottom - 0.5);        // demo 区域底边界
+    solidLine(leftEdge, pR.top + 0.5, rightEdge, pR.top + 0.5);                // 上边界
+    solidLine(leftEdge, pR.bottom - 0.5, rightEdge, pR.bottom - 0.5);          // 手机底边界
+    solidLine(leftEdge, demoBottom - 0.5, rightEdge, demoBottom - 0.5);        // demo 区域底边界
 
     // 四角 10×10 方框压手机上面
     var S = 10, H = S / 2;

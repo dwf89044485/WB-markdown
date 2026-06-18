@@ -1,5 +1,3 @@
-# AGENTS.md
-
 本文档为 AI 助手提供项目上下文与工作约束。**修改前请确认与现有规约不冲突。**
 
 ---
@@ -15,7 +13,7 @@
 - 聚焦"这个体验对不对"，而不只是"代码能不能跑"
 - 发现潜在问题（体验缺陷、架构隐患）时，主动提出，不要沉默
 
-**核心决策原则**：不破坏现有系统，新功能优先搜寻现有成熟的解决方案或复用现有框架，不造新轮子。
+**核心决策原则**：少改、不破坏现有系统。新功能优先复用现有框架，不造新轮子。
 
 ---
 
@@ -95,54 +93,9 @@
 
 ### 本地开发
 
-   **组件快照系统（Component Snapshot System）—— 嵌入 Demo 实样的方法。**
-
-   在交互说明中嵌入 Demo 组件的实样展示时，使用以下 CSS 布局类（定义在 `styles/feature-panel.css`）：
-
-   | 布局类 | 用途 | HTML 结构 |
-   |--------|------|-----------|
-   | `.fp-snapshot-side` | 1 个快照 + 右侧文字描述 | `div.fp-snapshot-side > div.fp-snapshot-wrap + div.fp-snapshot-side-desc` |
-   | `.fp-snapshot-row` | 多个快照单元横向平铺（数量不限） | `div.fp-snapshot-row > div.fp-snapshot-wrap × N` |
-   | 直接使用 `fp-snapshot-wrap` | 单个快照，无布局容器 | 直接放在 `.fp-content.markdown-body` 下 |
-
-   每个快照块的内部结构（由 `labeled()` 辅助函数生成）：
-   ```
-   div.fp-snapshot-wrap
-     span.tag              ← 标签文字（如"未选"、"已选"）
-     div.fp-snapshot         ← 组件快照本体
-     div.fp-snapshot-caption ← 底部描述（可选）
-   ```
-
-   使用步骤：
-   ```
-   // 1. 在 features/<id>.js 中用 labeled() 辅助函数创建带标签的快照块
-   import { renderStaticMyComponent } from 'engine/my-component.js';
-   function labeled(label, html) {
-     return `<div class="fp-snapshot-wrap"><span class="tag">${label}</span><div class="fp-snapshot">${html}</div></div>`;
-   }
-
-   // 2. 用布局容器包裹快照块组
-   content: `
-     <h2>...</h2>
-     <p>...</p>
-     <div class="fp-snapshot-row">
-       ${labeled('状态A', renderStaticMyComponent({...}))}
-       ${labeled('状态B', renderStaticMyComponent({...}))}
-       ${labeled('状态C', renderStaticMyComponent({...}))}
-     </div>
-   `
-
-   // 3. 在 styles/feature-panel.css 中设定组件宽度
-   .fp-snapshot > .my-component-class { width: 350px }
-   ```
-
-   **核心规则（违反必出 Bug）：**
-   - 布局容器（`fp-snapshot-row / fp-snapshot-side`）**禁止设置 `overflow: hidden/auto/scroll`**，否则 box-shadow 会被裁切
-   - 布局容器 **禁止有水平 `padding`**（左对齐由 `.markdown-body` 的 `padding: 0 16px` 统一保证）
-   - 带投影的组件按照 CSS 默认不会裁切；要裁切它的唯一方式是父容器设了 overflow
-   - 不带投影的组件不存在裁切风险，但左对齐规则同样适用
-
-9. **交互与功能——优先使用现成方案，禁止从头造轮子。** 当用户提出交互或功能需求时，必须先搜索是否存在成熟的现成方案（开源库、CDN 可引入的组件、已有生态方案等），优先采用现成方案或在现成方案上做微调和样式适配。只有在确认无任何现成方案可用时，才允许从头实现。搜索途径包括但不限于：Web 搜索（tavily-cli）、npm/GitHub 查找、CDN 目录检索。违反此规则的实现视为违规。
+```bash
+python3 -m http.server 8080
+```
 
 访问 `http://localhost:8080`。**不要直接双击 HTML**（`engine/` 用 ES Module，`file://` 协议不支持）。
 
@@ -300,7 +253,7 @@ push 失败时（远程有更新），先 `pull --rebase` 再推送。
 
 hash 显示异常时，先看 `docs/commit-hash.md` 的"排查指南"。
 
-如果用户报告 hash 显示有问题，先看 `docs/commit-hash.md` 的"排查指南"。
+---
 
 ## 部署到 pages.woa.com
 
@@ -333,36 +286,3 @@ API Key 在 `~/.zshrc`（`export OA_PAGES_API_KEY="..."`），脚本自动读取
 ## 回复规范
 
 每次回复必须以 `🎯` 作为第一行，正文从第二行开始。
-
-<claude-mem-context>
-# Memory Context
-
-# [wb-markdown] recent context, 2026-06-18 5:14pm GMT+8
-
-Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
-Format: ID TIME TYPE TITLE
-Fetch details: get_observations([IDs]) | Search: mem-search skill
-
-Stats: 16 obs (3,141t read) | 723,245t work | 100% savings
-
-### Jun 8, 2026
-5070 11:12a 🟣 Composer 上方加透明渐变遮罩消除滚动截断
-### Jun 16, 2026
-5071 5:14p 🔵 AskQuestion nav trigger button located in feature-panel.js
-5072 5:15p 🟣 Feature panel nav trigger redesigned as capsule dropdown
-5073 5:17p 🟣 AskQuestion 导航触发器改为胶囊下拉样式
-5074 " 🔴 修复 feature-panel.css 中孤立 CSS 属性导致下拉菜单异常展开
-5075 5:21p ✅ ask-question feature section heading renamed to "2. 组件构成"
-5076 " ✅ Version indicator dot color changed from cyan to orange
-5077 5:31p 🔵 排序组件状态展示 Bug — 拖拽时与新手指引两个状态未正确渲染
-5078 5:34p 🔵 排序组件多状态展示渲染异常
-5079 5:35p 🔴 排序组件拖拽态和指引态快照视觉差异修复
-5080 " 🔴 排序快照指引态精修：指引仅高亮第2项，去掉多余描边
-5081 6:59p 🟣 AskQuestion 导航按钮改为胶囊下拉样式
-5082 " 🔵 wb-markdown 项目 CSS 架构与 feature-panel 导航结构
-5083 7:10p 🔴 排序题组件"拖拽时"和"新手指引"状态显示错误
-5084 7:11p 🔴 排序题"拖拽时"快照状态改用已有 CSS 类 aq-sort-chosen
-5085 " ✅ 版本圆点颜色从翠绿(emerald)改为琥珀色(amber)
-
-Access 723k tokens of past work via get_observations([IDs]) or mem-search skill.
-</claude-mem-context>

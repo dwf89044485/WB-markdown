@@ -15,23 +15,13 @@
   padding:14px 10px 14px 44px;
 }
 
-/* ── Left area: phone container, 550px, centered ────────── */
-.left-area{
-  width:550px;
-  flex-shrink:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:24px;
-}
-
 /* ── Paper background panel (paper.design style) ───────── */
-/* 全屏高的左侧面板：覆盖 .left-area + 其左侧 padding，page 顶/底/左到边 */
+/* 全屏高的左侧纸纹背景，纯装饰 */
 .paper-bg{
   position:fixed;
   top:0;
   left:0;
-  width:618px;                       /* JS 会覆盖此值 */
+  width:524px;
   height:100vh;
   background-image:url("../assets/paper/texture.png");
   background-repeat:repeat;
@@ -39,25 +29,22 @@
   z-index:0;
   pointer-events:none;
 }
-.paper-bg::before{
-  content:"";
-  position:absolute;
+
+/* ── Grid overlay: 网格虚线独立层 ────────────────────── */
+.grid-overlay{
+  position:fixed;
   inset:0;
-  background-image:var(--grid-svg, none);
-  background-size:var(--grid-cw, 618px) var(--grid-ch, 100vh);
+  z-index:1;
+  pointer-events:none;
   background-repeat:no-repeat;
   opacity:0.6;
-  pointer-events:none;
-}
-.paper-bg::after{
-  display:none;
 }
 
 /* ── Panel container ───────────────────────────────────────── */
 .demo-controls{
   --dc-control-height:30px;
   --dc-control-radius:10px;
-  position:fixed;
+  width:393px;
   display:flex;
   flex-direction:column;
   gap:20px;
@@ -66,7 +53,6 @@
   border:1px solid rgba(0,0,0,0.08);
   border-radius:0;
   box-shadow:none;
-  z-index:3;
   font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
 }
 
@@ -586,8 +572,7 @@
 /* ── Media query: compact layout on short screens ─────────── */
 @media (max-height:920px) and (min-width:901px){
   .layout-main{padding:10px;gap:16px;}
-  .left-area{width:550px;}
-  .demo-controls{width:393px;padding:16px;}
+  .demo-controls{padding:16px;}
   .dc-main{gap:14px;}
   .design-notes{height:100%;min-width:240px;}
 }

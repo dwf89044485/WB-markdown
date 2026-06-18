@@ -137,7 +137,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .nav-bar{top:0;padding-top:10px;}
   html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
   html:not(.force-desktop) .design-notes,
-  html:not(.force-desktop) .demo-controls{display:none;}
+  html:not(.force-desktop) .demo-controls,
+  html:not(.force-desktop) .grid-overlay{display:none;}
   html:not(.force-desktop) .left-area{width:100%;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
@@ -158,7 +159,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:row;
     align-items:flex-start;
-    /* 总宽至少 1440：左 600 + 右 840 */
+    /* 总宽至少 1364：左 524 + 右 840 */
     min-width:1440px;
     width:100%;
     height:100dvh;
@@ -167,12 +168,13 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   }
   .left-area{
     width:524px;
-    flex:0 0 524px;     /* JS 网格引擎覆盖此值 */
+    flex:0 0 524px;
     height:100dvh;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    padding:24px 25px;  /* 25px 让 550px 手机壳在 600px 区里居中 */
+    gap:71px;  /* 手机与面板间距 = 网格一行 */
   }
   .design-notes{
     flex:1 1 840px;

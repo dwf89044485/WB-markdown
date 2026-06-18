@@ -31,6 +31,7 @@
 </head>
 <body>
 <div class="paper-bg" aria-hidden="true"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
 <div class="layout-main">
 <div class="left-area">
 <div class="phone-shell">
@@ -488,7 +489,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 })();
 </script>
 <script>
-/* ── 网格：手机宽切 5 份，高切 10 份（高份数 = 宽份数 ×2）── */
+/* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
 (function(){
   var COLS  = 6;
   var ROWS  = 12;
@@ -498,151 +499,84 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   function r(n){ return Math.round(n * 10) / 10; }
 
   function buildGrid(){
-    var bg    = document.querySelector('.paper-bg');
-    var phone = document.querySelector('.phone-shell');
-    if(!bg || !phone) return;
+    var phone  = document.querySelector('.phone-shell');
+    var overlay = document.querySelector('.grid-overlay');
+    if(!phone || !overlay) return;
 
-    // 移动端/standalone：不干预手机定位，不画网格和tweak
+    // 移动端/standalone：隐藏网格装饰
     var isMobile = document.documentElement.classList.contains('force-standalone') ||
       (!document.documentElement.classList.contains('force-desktop') && window.innerWidth <= 900);
     if(isMobile){
-      phone.style.position = '';
-      phone.style.marginTop = '';
-      phone.style.left = '';
-      phone.style.marginLeft = '';
-      var ctrl=document.querySelector('.demo-controls');
-      if(ctrl){ctrl.style.position='';ctrl.style.margin='';}
+      overlay.style.display = 'none';
       var boxEl=document.querySelector('.corner-boxes');
       if(boxEl)boxEl.style.display='none';
-      bg.style.display='none';
       return;
     }
 
-    bg.style.display=''; // 桌面端确保显示
-    // 重置，获取手机渲染高度
-    phone.style.position = '';
-    phone.style.marginTop = '';
-    phone.style.left = '';
-    phone.style.marginLeft = '';
+    overlay.style.display = '';
 
-    var ph = phone.getBoundingClientRect().height;
-    var pw = phone.getBoundingClientRect().width;
-
-    // 手机 + 空一格 + tweak 三格 的总高度
-    var colStep = pw / COLS;
-    var rowStep = ph / ROWS;
-    var totalH  = ph + 4 * rowStep;
-    var vh      = window.innerHeight;
-    var startY  = Math.max(0, (vh - totalH) / 2);
-
-    // 左侧宽度 = 手机 + 左右各一格
-    var bgW = pw + 2 * colStep;
-    bg.style.width = r(bgW) + 'px';
-    // 同步 flex 左区域宽度，保证与纸张纹理区一致
-    var la = document.querySelector('.left-area');
-    if (la) la.style.flex = '0 0 ' + r(bgW) + 'px';
-    var leftX = (bgW - pw) / 2;
-
-    // 固定定位手机
-    phone.style.position = 'fixed';
-    phone.style.left = leftX + 'px';
-    phone.style.top  = startY + 'px';
-    phone.style.margin = '0';
-
-    // 网格参数 = 基于手机新位置
-    var pR  = phone.getBoundingClientRect();
-    var bgR = bg.getBoundingClientRect();
-
-    var px = pR.left - bgR.left;
-    var py = pR.top  - bgR.top;
+    // 手机在正常文档流中，直接读实际位置
+    var pR = phone.getBoundingClientRect();
     var pw = pR.width;
     var ph = pR.height;
-    var cw = bgR.width;
-    var ch = bgR.height;
 
+    // 网格步长由手机尺寸定义（colStep = pw/6, rowStep = ph/12）
     var colStep = pw / COLS;
     var rowStep = ph / ROWS;
 
-    // demo 区域底部边界（手机底部 + 空1格 + tweak 3格）
-    var demobottom = py + ph + 4 * rowStep;
+    // 可视区域边界（视口坐标系）
+    var leftEdge   = pR.left - colStep;
+    var rightEdge  = pR.right + colStep;
+    var demoBottom = pR.bottom + 4 * rowStep;  // 手机底 + 1 格空 + 3 格控制面板
 
+    var vw = Math.max(window.innerWidth, rightEdge);
+    var vh = Math.max(window.innerHeight, demoBottom);
+
+    // ── 网格虚线（画在 grid-overlay 上） ──────────
     var lines = '';
-    var solidLines = '';  // 边界线单独收集：放到 corner-boxes（z-index=2）压在手机上，不被手机 border 遮挡
 
-    // 手机四角（px,py) 用于角标定位，保持原始值不变
-    var leftEdge   = px;
-    var rightEdge  = px + pw;
-    var topEdge    = py;
-    var bottomEdge = py + ph;
-
-    function line(x1,y1,x2,y2,solid){
-      var s = solid
-        ? 'stroke="'+COLOR+'" stroke-width="1"'
-        : 'stroke="'+COLOR+'" stroke-width="1" stroke-dasharray="'+DASH+'"';
-      if(solid){
-        solidLines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" '+s+'/>';
-      } else {
-        lines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" '+s+'/>';
-      }
-    }
-
-    // 判断网格线是否落在某个边界线上（含 0.5px 容差）
-    function onEdge(pos, edges){
-      for(var i=0;i<edges.length;i++){
-        if(Math.abs(pos - edges[i]) < 0.5) return true;
-      }
-      return false;
+    function dashLine(x1,y1,x2,y2){
+      lines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" stroke="'+COLOR+'" stroke-width="1" stroke-dasharray="'+DASH+'"/>';
     }
 
     var x, y;
-    var edgeX = [leftEdge, rightEdge];
-    var edgeY = [topEdge, bottomEdge, demobottom];
+    // 竖线：从手机左边缘向左向右延展
+    for(x = pR.left; x <= rightEdge; x += colStep){ dashLine(x, 0, x, vh); }
+    for(x = pR.left - colStep; x >= leftEdge; x -= colStep){ dashLine(x, 0, x, vh); }
+    // 横线：从手机顶边向下延展
+    for(y = pR.top; y <= demoBottom; y += rowStep){ dashLine(leftEdge, y, rightEdge, y); }
+    for(y = pR.top - rowStep; y >= 0; y -= rowStep){ dashLine(leftEdge, y, rightEdge, y); }
 
-    // 竖线：跳过手机左右边界（后面单独以偏移量绘制）
-    for(x = px; x >= -1; x -= colStep){
-      if(onEdge(x, edgeX)) continue;
-      line(x, 0, x, ch, false);
-    }
-    for(x = px + colStep; x <= cw + 1; x += colStep){
-      if(onEdge(x, edgeX)) continue;
-      line(x, 0, x, ch, false);
-    }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">'
+            + lines + '</svg>';
 
-    // 横线：跳过手机上下边界和 demo 区域底部边界
-    for(y = py; y >= -1; y -= rowStep){
-      if(onEdge(y, edgeY)) continue;
-      line(0, y, cw, y, false);
-    }
-    for(y = py + rowStep; y <= ch + 1; y += rowStep){
-      if(onEdge(y, edgeY)) continue;
-      line(0, y, cw, y, false);
+    overlay.style.backgroundImage = 'url(data:image/svg+xml,'+encodeURIComponent(svg)+')';
+    overlay.style.backgroundSize = r(vw)+'px '+r(vh)+'px';
+
+    // ── 边界线 + 四角方框（corner-boxes，z-index=2） ────
+    var solidLines = '';
+    function solidLine(x1,y1,x2,y2){
+      solidLines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" stroke="'+COLOR+'" stroke-width="1"/>';
     }
 
-    // ═══ 偏移 solid 边界线：stroke-width: 1 居中，偏移 ±0.5 使 stroke 外缘与手机 border-box 对齐 ═══
-    // 边界线画在 corner-boxes（z-index=2）压在手机上，避免被手机 border（rgba(0,0,0,0.08)）覆盖
-    line(px + 0.5, 0, px + 0.5, ch, true);                    // 左边界：stroke 左缘 = px
-    line(px + pw - 0.5, 0, px + pw - 0.5, ch, true);           // 右边界：stroke 右缘 = px + pw
-    line(0, py + 0.5, cw, py + 0.5, true);                    // 上边界：stroke 上缘 = py
-    line(0, py + ph - 0.5, cw, py + ph - 0.5, true);            // 手机底边界：stroke 下缘 = py + ph
-    line(0, demobottom - 0.5, cw, demobottom - 0.5, true);       // demo 区域底边界
+    // 偏移 ±0.5 使 stroke 外缘与手机 border-box 对齐
+    solidLine(pR.left + 0.5, 0, pR.left + 0.5, vh);              // 左边界
+    solidLine(pR.right - 0.5, 0, pR.right - 0.5, vh);            // 右边界
+    solidLine(0, pR.top + 0.5, vw, pR.top + 0.5);                // 上边界
+    solidLine(0, pR.bottom - 0.5, vw, pR.bottom - 0.5);          // 手机底边界
+    solidLine(0, demoBottom - 0.5, vw, demoBottom - 0.5);        // demo 区域底边界
 
-    console.log('[grid]', 'demobottom=', demobottom, 'ch=', ch, 'vh=', vh,
-      'draw bottom line:', demobottom - 0.5 <= ch + 1,
-      'draw right line:', px + pw - 0.5 <= cw);
-
-    // 四角 10×10 方框单独提出来，压手机上面
+    // 四角 10×10 方框压手机上面
     var S = 10, H = S / 2;
-    var corners = [[leftEdge,topEdge],[rightEdge,topEdge],[leftEdge,bottomEdge],[rightEdge,bottomEdge]];
-    var boxSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(cw)+'" height="'+r(ch)+'">';
-    // 边界线（solid）先画，角标方框压在上面
+    var corners = [[pR.left,pR.top],[pR.right,pR.top],[pR.left,pR.bottom],[pR.right,pR.bottom]];
+    var boxSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">';
     boxSvg += solidLines;
     for(var ci=0;ci<corners.length;ci++){
       var cx=corners[ci][0], cy=corners[ci][1];
-      boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="#F8F6F1" stroke="#BBBAB0" stroke-width="1"/>';
+      boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="#F8F6F1" stroke="'+COLOR+'" stroke-width="1"/>';
     }
     boxSvg += '</svg>';
 
-    // 创建/更新压手机层的方框元素
     var boxEl = document.querySelector('.corner-boxes');
     if(!boxEl){
       boxEl = document.createElement('div');
@@ -650,24 +584,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       boxEl.setAttribute('aria-hidden','true');
       document.body.appendChild(boxEl);
     }
-    boxEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2;background-image:url(data:image/svg+xml,'+encodeURIComponent(boxSvg)+');background-size:'+r(cw)+'px '+r(ch)+'px;background-repeat:no-repeat';
-
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(cw)+'" height="'+r(ch)+'">'
-            + lines + '</svg>';
-    bg.style.setProperty('--grid-svg', 'url(data:image/svg+xml,'+encodeURIComponent(svg)+')');
-    bg.style.setProperty('--grid-cw', r(cw)+'px');
-    bg.style.setProperty('--grid-ch', r(ch)+'px');
-
-    // ── Tweak 面板：定位在手机下方空一格 + 高度三格 ───
-    var ctrl = document.querySelector('.demo-controls');
-    if(ctrl){
-      ctrl.style.position = 'fixed';
-      ctrl.style.left = pR.left + 'px';
-      ctrl.style.top  = r(pR.bottom + rowStep) + 'px';
-      ctrl.style.width  = r(pw) + 'px';
-      ctrl.style.height = r(3 * rowStep) + 'px';
-      ctrl.style.margin = '0';
-    }
+    boxEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2;background-image:url(data:image/svg+xml,'+encodeURIComponent(boxSvg)+');background-size:'+r(vw)+'px '+r(vh)+'px;background-repeat:no-repeat';
+    boxEl.style.display = '';
   }
 
   buildGrid();

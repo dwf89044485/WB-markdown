@@ -135,7 +135,7 @@ function bindEvents() {
 
   // 锚点按钮事件代理（在 contentEl 上）
   contentEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('.fp-anchor-btn');
+    const btn = e.target.closest('.dc-btn[data-anchor]');
     if (!btn) return;
     const anchorId = btn.dataset.anchor;
     if (!anchorId || !currentFeature) return;
@@ -154,7 +154,7 @@ function bindEvents() {
 
   // 操作按钮事件代理（在 contentEl 上）
   contentEl.addEventListener('click', async (e) => {
-    const btn = e.target.closest('.fp-action-btn');
+    const btn = e.target.closest('.dc-btn[data-action]');
     if (!btn) return;
 
     const action = btn.dataset.action;

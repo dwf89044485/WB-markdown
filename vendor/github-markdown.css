@@ -123,7 +123,7 @@
     --fgColor-default: #1f2328;
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
-    --blockquote-border-color: #A6A59B;
+    --blockquote-border-color: #BBBAB0;
     --blockquote-bg-color: #F5F4F2;
   }
 }

@@ -259,8 +259,19 @@ function renderRoute(route) {
   const scrollEl = contentEl.querySelector('.fp-scroll');
   scrollEl.innerHTML = f.content;
 
+  // 将内容移入内层容器，max-width 约束加在内层上，不受滚动条影响
+  let inner = scrollEl.querySelector('.fp-scroll-inner');
+  if (!inner) {
+    inner = document.createElement('div');
+    inner.className = 'fp-scroll-inner';
+    while (scrollEl.firstChild) {
+      inner.appendChild(scrollEl.firstChild);
+    }
+    scrollEl.appendChild(inner);
+  }
+
   // 自适应约束：同步测量 .fp-snapshot-row 卡片的自然平铺宽度
-  constrainContentWidth(scrollEl);
+  constrainContentWidth(scrollEl, inner);
 
   // 渲染 Mermaid 流程图
   if (window.mermaid) {
@@ -402,13 +413,15 @@ function stopTcnModeLoop() {
 
 /* ── 内容宽度自适应约束 ──────────────────────────────────────
  * 渲染完成后同步测量 .fp-snapshot-row 中卡片的自然平铺宽度
- * （所有卡片自身宽度 + gap 之和），以此约束内容区 max-width。
+ * （所有卡片自身宽度 + gap 之和），以此约束内层容器 max-width。
+ * 约束加在 .fp-scroll-inner（内层）而非 .fp-scroll（外层），
+ * 避免滚动条吃掉可用宽度导致非预期折行。
  * 大屏时不拉宽，小屏时自动折行，首次绘制即生效，无闪动。
  */
-function constrainContentWidth(scrollEl) {
-  const rows = scrollEl.querySelectorAll('.fp-snapshot-row');
+function constrainContentWidth(scrollEl, inner) {
+  const rows = inner.querySelectorAll('.fp-snapshot-row');
   if (!rows.length) {
-    scrollEl.style.removeProperty('--fp-max-content-width');
+    inner.style.removeProperty('--fp-max-content-width');
     return;
   }
 
@@ -424,27 +437,16 @@ function constrainContentWidth(scrollEl) {
     if (wraps.length < 2) return;
 
     let sum = 0;
-    wraps.forEach((w) => {
-      sum += w.getBoundingClientRect().width;
-    });
+    wraps.forEach((w) => { sum += w.getBoundingClientRect().width; });
 
     const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
     const natural = sum + gap * (wraps.length - 1);
-    if (natural > maxNatural) {
-      // 加上 2px 余量避免子像素舍入导致折行
-      maxNatural = Math.ceil(natural) + 2;
-    }
+    if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
   });
 
   if (maxNatural > 840) {
-    // 补偿纵向滚动条宽：滚动条占用了 content box 的部分宽度，
-    // 若不加补偿，实际可用空间 < 自然宽度，卡片会非预期折行
-    const scrollbarW = scrollEl.offsetWidth - scrollEl.clientWidth;
-    const compensated = maxNatural + scrollbarW;
-    scrollEl.style.setProperty('--fp-max-content-width', compensated + 'px');
-    console.log('[约束] max-width =', compensated, 'px (自然', maxNatural, '+ 滚动条', scrollbarW, ')');
+    inner.style.setProperty('--fp-max-content-width', maxNatural + 'px');
   } else {
-    scrollEl.style.removeProperty('--fp-max-content-width');
-    console.log('[约束] 不约束，maxNatural =', maxNatural);
+    inner.style.removeProperty('--fp-max-content-width');
   }
 }

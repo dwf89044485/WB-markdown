@@ -192,6 +192,7 @@
   max-height: 247px;
   overflow-y: auto;
   overscroll-behavior: contain;
+  box-shadow: inset 0 -15px 15px -15px rgba(0,0,0,0.08);
 }
 .aq-options.many-options::-webkit-scrollbar {
   width: 4px;

@@ -930,14 +930,6 @@ function setupDemoControls() {
   const tweakReload = document.getElementById('ctrlTweakReload');
   if (tweakReload) tweakReload.onclick = () => restartPlayback();
 
-  // Tweak hash — 从 commitHashReady 读取
-  if (window.commitHashReady) {
-    window.commitHashReady.then((hash) => {
-      const el = document.getElementById('dcTweakHash');
-      if (el) el.textContent = hash;
-    });
-  }
-
   // 停止生成按钮
   const stopBtn = document.getElementById('composerStopBtn');
   if (stopBtn) stopBtn.addEventListener('click', stopPlayback);

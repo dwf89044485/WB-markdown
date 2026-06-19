@@ -14,8 +14,8 @@ if ! git diff --quiet --cached -- "$INDEX" 2>/dev/null; then
   exit 0
 fi
 
-# 匹配当前版本号
-CURRENT=$(grep -oP '日本关西旅行策划 v0\.\K\d+' "$INDEX" 2>/dev/null || echo "")
+# 匹配当前版本号（macOS grep 不支持 -P）
+CURRENT=$(sed -n 's/.*日本关西旅行策划 v0\.\([0-9]\+\).*/\1/p' "$INDEX" | head -1)
 
 if [ -z "$CURRENT" ]; then
   echo ""

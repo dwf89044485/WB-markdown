@@ -176,7 +176,6 @@ python3 -m http.server 8080
 
 - 运行相关测试，确保通过
 - 运行 lint 检查（如项目有配置）
-- 打开 `styles/base.css`，搜索 `=== VERSION DOT`，将圆点颜色改为新颜色（不重复上次）
 - 确认只提交本次任务直接相关的文件
 
 ### 提交信息规范
@@ -209,7 +208,6 @@ fix(ui/*): 统一调整所有圆角
 ```
 已提交：{commit message}
 hash：{短 hash（8 位）}
-圆点颜色：{颜色名}（{#xxxxxx}）
 ```
 
 `hash` 必须取 `git rev-parse HEAD | cut -c1-8`，**固定 8 位**。不要用 `--short HEAD` 或 `--short=N`（位数不稳定，会破坏三端一致）。

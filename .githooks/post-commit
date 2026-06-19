@@ -1,0 +1,48 @@
+#!/bin/bash
+# post-commit hook: 提交后自动递增版本号并 amend 到当前 commit
+# 版本号格式: 日本关西旅行策划 v0.x → v0.x+1
+# 安装: git config core.hooksPath .githooks
+#
+# 效果：每次 git commit 后，版本号自动 +1 并合并到同一个 commit 里
+# 推送时版本号变更自然跟着走，远端部署链接可验证
+
+set -e
+
+INDEX="index.html"
+
+# 跳过自动生成的版本号递增 commit（避免死循环）
+# 检查最近一条 commit message 是否以 [auto] 结尾
+LAST_MSG=$(git log -1 --pretty=%s 2>/dev/null || echo "")
+if echo "$LAST_MSG" | grep -q '\[auto\]$'; then
+  exit 0
+fi
+
+# 匹配当前版本号（macOS sed 兼容写法）
+CURRENT=$(sed -n 's/.*日本关西旅行策划 v0\.\([0-9][0-9]*\).*/\1/p' "$INDEX" | head -1)
+
+if [ -z "$CURRENT" ]; then
+  echo ""
+  echo "  ⚠️  [post-commit] 未找到版本号 (日本关西旅行策划 v0.x)，跳过自动递增"
+  echo ""
+  exit 0
+fi
+
+NEXT=$((CURRENT + 1))
+
+# 精确替换版本号
+sed -i '' "s/日本关西旅行策划 v0\.$CURRENT/日本关西旅行策划 v0.$NEXT/" "$INDEX"
+
+echo ""
+echo "  🔢  [post-commit] 版本号自动递增: v0.$CURRENT → v0.$NEXT"
+
+git add "$INDEX"
+
+# 判断最近一次提交是否已经是 amend 过的（避免重复 amend 导致冲突）
+# 简单策略：直接 amend，--no-edit 保留原 commit message
+if git commit --amend --no-edit > /dev/null 2>&1; then
+  echo "  ✅  已合并到最近一次提交"
+else
+  echo "  ⚠️  合并失败，创建独立版本号 commit"
+  git commit -m "chore: 版本号 v0.$CURRENT → v0.$NEXT [auto]"
+fi
+echo ""

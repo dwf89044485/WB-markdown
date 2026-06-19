@@ -261,14 +261,6 @@ git restore --staged .  # 把 commit 中带入暂存区的改动撤掉
 - 用户明确说"先不提交"、"等一下再推"
 - 当前改动是多步任务的中间状态，后续还有关联改动未完成
 
-### Commit hash 显示机制
-
-页面右下角 8 位 hash 供用户验证当前页面是否最新。机制详见 `docs/commit-hash.md`。
-
-**已废弃**：commit-hash 机制已整体移除。如需验证线上版本，在提交前手动修改 `index.html` 中 `dcTweakHash` 的占位值即可。
-
-**禁止**：写 git hook 维护 hash 文件 / 重新引入被 git 跟踪的 `COMMIT_HASH` 文件 / 前端做环境判断 / 屏蔽 `python3 -m http.server` 对 `.git/` 的访问。
-
 ---
 
 ## 部署到 pages.woa.com

@@ -9,11 +9,11 @@
 set -e
 
 INDEX="index.html"
+LOCK_FILE="/tmp/git-version-bump.lock"
 
-# 跳过自动生成的版本号递增 commit（避免死循环）
-# 检查最近一条 commit message 是否以 [auto] 结尾
-LAST_MSG=$(git log -1 --pretty=%s 2>/dev/null || echo "")
-if echo "$LAST_MSG" | grep -q '\[auto\]$'; then
+# 防死循环：如果锁文件存在，说明是 amend 触发的递归调用，直接退出
+if [ -f "$LOCK_FILE" ]; then
+  rm -f "$LOCK_FILE"
   exit 0
 fi
 
@@ -37,12 +37,8 @@ echo "  🔢  [post-commit] 版本号自动递增: v0.$CURRENT → v0.$NEXT"
 
 git add "$INDEX"
 
-# 判断最近一次提交是否已经是 amend 过的（避免重复 amend 导致冲突）
-# 简单策略：直接 amend，--no-edit 保留原 commit message
-if git commit --amend --no-edit > /dev/null 2>&1; then
-  echo "  ✅  已合并到最近一次提交"
-else
-  echo "  ⚠️  合并失败，创建独立版本号 commit"
-  git commit -m "chore: 版本号 v0.$CURRENT → v0.$NEXT [auto]"
-fi
+# 创建锁文件后 amend，防止递归
+touch "$LOCK_FILE"
+git commit --amend --no-edit > /dev/null 2>&1
+echo "  ✅  已合并到最近一次提交"
 echo ""

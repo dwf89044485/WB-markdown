@@ -54,6 +54,7 @@
 | `engine/markdown.js` | Markdown parser；**表格渲染入口**（工具栏按钮：tbl-copy / tbl-save-image / tbl-share / tbl-maximize） |
 | `engine/icons.js` | 图标系统（SVG 注册表、tool icon 推断、status line 渲染） |
 | `engine/typewriter.js` | Token 流式输出（typeText、appendHTMLTypedTo） |
+| `engine/table-fullscreen.js` | 表格全屏查看（overlay 开关、方向同步、复制/分享/保存图片）— 从 index.html 内联脚本抽离 |
 | `engine/sheet.js` | 底部浮层渲染（renderSheet、openSheet、renderEvent、renderTodo） |
 | `engine/player.js` | 播放引擎主入口（Director timeline、步进控制、final render、displayMode）；导出 goToStep / pauseDirector / resumePlayback / resolveNodeStep |
 | `engine/scroll-nav.js` | 快速滚动按钮（↑↓）——按 turn 跳转对话消息；全屏时自动禁用 |

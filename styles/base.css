@@ -83,6 +83,7 @@ body{
   --layout-left-area-w:524px;
   --layout-min-w:1440px;
   --layout-notes-min-w:840px;
+  --scroll-nav-overlap-extra:40px;
 }
 /* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */
 :root.device-pad {
@@ -91,6 +92,7 @@ body{
   --layout-left-area-w:976px;
   --layout-min-w:1860px;
   --layout-notes-min-w:840px;
+  --scroll-nav-overlap-extra:40px;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */

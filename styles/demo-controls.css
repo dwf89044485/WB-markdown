@@ -19,7 +19,7 @@
   content:'';
   position:fixed;
   top:0;
-  left:524px;
+  left:var(--layout-left-area-w);
   right:0;
   height:100vh;
   background:rgba(255,255,255,0.3);
@@ -30,7 +30,7 @@
   content:'';
   position:fixed;
   top:0;
-  left:524px;
+  left:var(--layout-left-area-w);
   width:1px;
   height:100vh;
   background:#A6A59B;

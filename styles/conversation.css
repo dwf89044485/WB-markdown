@@ -36,7 +36,7 @@
 }
 
 /* ── CONVERSATION ────────────────────────────────────────── */
-.conversation{flex:1;overflow-y:auto;height:718px;padding:var(--cv-conversation-padding-top) 0 0;background:#fafafa;overscroll-behavior:contain;}
+.conversation{flex:1;overflow-y:auto;padding:var(--cv-conversation-padding-top) 0 0;background:#fafafa;overscroll-behavior:contain;}
 .conversation::-webkit-scrollbar{width:0;}
 
 /* ── USER MESSAGE ────────────────────────────────────────── */

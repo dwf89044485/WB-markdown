@@ -89,7 +89,7 @@ function createStatusLineIn(container, text, frameIds, title) {
 }
 
 // ── Action normalization ──────────────────────────────────
-function normalizeActions(actions) {
+export function normalizeActions(actions) {
   const result = [];
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];

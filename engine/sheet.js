@@ -67,7 +67,10 @@ function computeTodoSnapshot(frames, baseline) {
   if (!lastOverrideFrame) return [];
   if (lastOverrideFrame.todoOverrides !== undefined) {
     const overrideMap = {};
-    (lastOverrideFrame.todoOverrides || []).forEach(o => { overrideMap[o.index] = o.status; });
+    (lastOverrideFrame.todoOverrides || []).forEach(o => {
+      if (o.index >= baseline.length) { console.warn('[sheet] todoOverride index out of bounds:', o.index, '>=', baseline.length); return; }
+      overrideMap[o.index] = o.status;
+    });
     return baseline.map((text, i) => ({ text, status: overrideMap[i] || 'todo' }));
   }
   return lastOverrideFrame.todos;

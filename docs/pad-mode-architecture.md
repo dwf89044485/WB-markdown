@@ -1,12 +1,23 @@
 # Pad 模式架构方案
 
 > 记录时间：2026-06-19 · 最后更新：2026-06-20
-> 状态：Phase 1 全部完成（含 scroll-nav、表格全屏抽离）
+> 状态：Phase 0/1 ✅ · 技术债 ①②④⑤ ✅ · ③⑥ 待做
 > 本文档系统性记录了从需求讨论 → 架构盘查 → Knot 审查 → 方案精炼 → Phase 0/1 实施的全过程
 
 ---
 
 ## 实施进度
+
+### 总览
+
+| Phase / 扩展 | 内容 | 提交 | 状态 |
+|-------------|------|------|------|
+| Phase 0 | CSS 变量化（5 变量，14+1 处替换） | `e69d22fd` | ✅ |
+| Phase 1 | Pad 切换 + 网格动态 COLS/ROWS | `d16fae7c` | ✅ |
+| 扩展 ①② | scroll-nav 变量化 + 表格全屏抽离 | `d584bfd0` | ✅ |
+| 扩展 ④⑤ | todoOverrides 防御 + normalizeActions DRY | `710e9d9b` | ✅ |
+| 扩展 ③ | player.js 拆分为 4 文件 | — | ⏳ P2 |
+| 扩展 ⑥ | feature-panel.js ANCHOR_MAP 提取 | — | ⏳ P3 |
 
 ### Phase 0：CSS 变量化 ✅ 已完成（2026-06-20）
 

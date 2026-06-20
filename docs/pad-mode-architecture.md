@@ -1,7 +1,7 @@
 # Pad 模式架构方案
 
 > 记录时间：2026-06-19 · 最后更新：2026-06-20
-> 状态：Phase 0/1 ✅ · 技术债 ①②④⑤ ✅ · ③⑥ 待做
+> 状态：Phase 0/1 ✅ · ①②③④⑤ ✅ · ⑥ 待做
 > 本文档系统性记录了从需求讨论 → 架构盘查 → Knot 审查 → 方案精炼 → Phase 0/1 实施的全过程
 
 ---
@@ -16,7 +16,7 @@
 | Phase 1 | Pad 切换 + 网格动态 COLS/ROWS | `d16fae7c` | ✅ |
 | 扩展 ①② | scroll-nav 变量化 + 表格全屏抽离 | `d584bfd0` | ✅ |
 | 扩展 ④⑤ | todoOverrides 防御 + normalizeActions DRY | `710e9d9b` | ✅ |
-| 扩展 ③ | player.js 拆分为 4 文件 | — | ⏳ P2 |
+| 扩展 ③ | player.js 拆分为 5 文件（player-state/player-dom/player-final/player-ui + 瘦身） | `b9b4945b` | ✅ |
 | 扩展 ⑥ | feature-panel.js ANCHOR_MAP 提取 | — | ⏳ P3 |
 
 ### Phase 0：CSS 变量化 ✅ 已完成（2026-06-20）
@@ -76,6 +76,7 @@
 |---|------|------|------|
 | ① | `scroll-nav.js` `+40` → `--scroll-nav-overlap-extra` CSS 变量 | `d584bfd0` | ✅ |
 | ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` ES module | `d584bfd0` | ✅ |
+| ③ | `player.js` 1188 行拆分 → 5 文件（player-state / player-dom / player-final / player-ui + 瘦身） | `b9b4945b` | ✅ |
 | ④ | `todoOverrides` 防御性校验（越界 `console.warn`） | `710e9d9b` | ✅ |
 | ⑤ | `feature-jump.js` 消除 normalizeActions DRY 违反 → import player.js | `710e9d9b` | ✅ |
 
@@ -83,7 +84,6 @@
 
 | # | 项目 | 优先级 | 说明 |
 |---|------|--------|------|
-| ③ | `player.js` 拆分为 4 文件 | P2 | 1188 行单体，代码可维护性核心风险 |
 | ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型——改剧本时顺手做 |
 
 ---
@@ -535,11 +535,11 @@ DeviceManager 单例虽然更规范，但对于只有 2 种模式的 Demo 来说
 
 | # | 项目 | 优先级 | 预估 | 依赖 |
 |---|------|--------|------|------|
-| ① | `scroll-nav.js` `+40` 偏移变量化 | **P0** | 5 行 | 无 |
-| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` | P1 | 搬迁为主 | 无 |
-| ③ | `player.js` 1188 行 → 4 文件拆分 | P2 | 需仔细梳理 | Phase 0+1 确认稳定后 |
-| ④ | `todoOverrides` 加防御性校验 | P2 | 3 行 | 无 |
-| ⑤ | `feature-jump.js` 消除 normalizeActions 复现 | P2 | 直接 import | 无 |
+| ① | `scroll-nav.js` `+40` 偏移变量化 | P0 | 5 行 | ✅ `d584bfd0` |
+| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` | P1 | 搬迁为主 | ✅ `d584bfd0` |
+| ③ | `player.js` 1188 行 → 5 文件拆分 | P2 | 需仔细梳理 | ✅ `b9b4945b` |
+| ④ | `todoOverrides` 加防御性校验 | P2 | 3 行 | ✅ `710e9d9b` |
+| ⑤ | `feature-jump.js` 消除 normalizeActions 复现 | P2 | 直接 import | ✅ `710e9d9b` |
 | ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型 | 改剧本时顺手做 |
 
 ---
@@ -550,9 +550,9 @@ DeviceManager 单例虽然更规范，但对于只有 2 种模式的 Demo 来说
 
 Pad 切换核心通路已打通：点击"设备"按钮 → CSS 变量切换 → 网格自动重算 → 所有内容自适应。Phone/Pad 两种模式均可在桌面浏览器中正常工作。
 
-### 建议优先做 ③④⑤
+### 全部完成（③ 也已完成）
 
-Phase 0 + Phase 1 + 扩展清理已全部完成。当前状态：
+Phase 0 + Phase 1 + ①②③④⑤ 扩展清理已全部完成。当前状态：
 
 | 已完成 | 提交 |
 |--------|------|
@@ -560,17 +560,17 @@ Phase 0 + Phase 1 + 扩展清理已全部完成。当前状态：
 | Phase 1: Pad 切换 + 网格动态化 | `d16fae7c` |
 | 扩展: scroll-nav +40 变量化 | `d584bfd0` |
 | 扩展: 表格全屏抽离为 engine/table-fullscreen.js | `d584bfd0` |
+| 扩展: todoOverrides 越界防御 | `710e9d9b` |
+| 扩展: normalizeActions DRY 消除 | `710e9d9b` |
+| 扩展: player.js 1188 行 → 5 文件拆分 | `b9b4945b` |
 
-**index.html 内联脚本已从 ~250 行降至 ~100 行**（降幅 60%）。
+**index.html 内联脚本已从 ~250 行降至 ~100 行**（降幅 60%）。**player.js 从 1188 行拆为 5 文件**：player-state（状态）、player-dom（DOM 渲染）、player-final（Final 渲染）、player-ui（UI 控件）、player.js（Director 主控 ~400 行）。
 
-### 接下来做什么
+### 唯一待做
 
-| 优先级 | 做什么 | 工作量 | 为什么 |
-|--------|--------|--------|--------|
-| P2 | ③ player.js 拆分 | 独立 PR，需仔细梳理 | 最大架构风险，与 Pad 正交 |
-| P3 | ⑥ ANCHOR_MAP | 触发型 | 不改剧本就不做 |
-
-> ④⑤ 已在 `710e9d9b` 完成：todoOverrides 越界防御 + feature-jump 消除 normalizeActions DRY。
+| 优先级 | 做什么 | 为什么 |
+|--------|--------|--------|
+| P3 | ⑥ ANCHOR_MAP 提取 | 触发型——不改剧本就不做 |
 
 ### 如果要继续推进 Pad 完整支持
 

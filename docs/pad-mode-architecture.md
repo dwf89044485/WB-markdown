@@ -59,20 +59,20 @@
 
 > 表格全屏横竖切换时，`tbl-landscape` class 使壳子物理宽高互换，ResizeObserver 自动触发 `buildGrid()`，动态 COLS/ROWS 自动适配——**零额外代码**。
 
-**Phase 1 扩展 — 技术债清理（commit `d584bfd0`）**：
+**Phase 1 扩展 — 技术债清理**：
 
-| # | 项目 | 状态 |
-|---|------|------|
-| ① | `scroll-nav.js` `+40` → `--scroll-nav-overlap-extra` CSS 变量 | ✅ |
-| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` ES module | ✅ |
+| # | 项目 | 提交 | 状态 |
+|---|------|------|------|
+| ① | `scroll-nav.js` `+40` → `--scroll-nav-overlap-extra` CSS 变量 | `d584bfd0` | ✅ |
+| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` ES module | `d584bfd0` | ✅ |
+| ④ | `todoOverrides` 防御性校验（越界 `console.warn`） | `710e9d9b` | ✅ |
+| ⑤ | `feature-jump.js` 消除 normalizeActions DRY 违反 → import player.js | `710e9d9b` | ✅ |
 
 **仍待完成**：
 
 | # | 项目 | 优先级 | 说明 |
 |---|------|--------|------|
 | ③ | `player.js` 拆分为 4 文件 | P2 | 1188 行单体，代码可维护性核心风险 |
-| ④ | `todoOverrides` 防御性校验（3 行） | P2 | 静默错乱风险，加 `console.warn` 防御 |
-| ⑤ | `feature-jump.js` 消除 normalizeActions 复现 | P2 | DRY 违反，直接 import player.js 即可 |
 | ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型——改剧本时顺手做 |
 
 ---
@@ -556,10 +556,10 @@ Phase 0 + Phase 1 + 扩展清理已全部完成。当前状态：
 
 | 优先级 | 做什么 | 工作量 | 为什么 |
 |--------|--------|--------|--------|
-| P2 | ③ player.js 拆分 | 独立 PR，需仔细梳理 | 最大架构风险，与 Pad 正交，混做违反分区原则 |
-| P2 | ④ todoOverrides 防御性校验 | 3 行 | 消除静默错乱，随时可做 |
-| P2 | ⑤ feature-jump.js 消除 DRY 违反 | 直接 import | 消除隐式耦合 |
+| P2 | ③ player.js 拆分 | 独立 PR，需仔细梳理 | 最大架构风险，与 Pad 正交 |
 | P3 | ⑥ ANCHOR_MAP | 触发型 | 不改剧本就不做 |
+
+> ④⑤ 已在 `710e9d9b` 完成：todoOverrides 越界防御 + feature-jump 消除 normalizeActions DRY。
 
 ### 如果要继续推进 Pad 完整支持
 

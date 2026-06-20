@@ -239,6 +239,15 @@
           <button id="ctrlToolCard" type="button" class="dc-seg-btn">边框</button>
         </div>
       </div>
+
+      <!-- Row 4: 设备模式 -->
+      <div class="dc-row">
+        <span class="dc-label">设备：</span>
+        <div class="dc-segment">
+          <button id="ctrlDevicePhone" type="button" class="dc-seg-btn is-active">📱 Phone</button>
+          <button id="ctrlDevicePad" type="button" class="dc-seg-btn">📱 Pad</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -526,6 +535,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 <script>
 /* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
 (function(){
+  var TARGET_CELL = 68; // 目标格子尺寸（px），手机模式 393/6≈65.5, 852/12=71，取中值
   var COLS  = 6;
   var ROWS  = 12;
   var COLOR = '#BBBAB0';
@@ -555,7 +565,11 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     var pw = pR.width;
     var ph = pR.height;
 
-    // 网格步长由手机尺寸定义（colStep = pw/6, rowStep = ph/12）
+    // 动态计算网格份数：确保格子接近正方形
+    COLS = Math.max(1, Math.round(pw / TARGET_CELL));
+    ROWS = Math.max(1, Math.round(ph / TARGET_CELL));
+
+    // 网格步长由壳子尺寸动态计算（colStep = pw/COLS, rowStep = ph/ROWS）
     var colStep = pw / COLS;
     var rowStep = ph / ROWS;
 
@@ -656,6 +670,26 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     boxEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2;background-image:url(data:image/svg+xml,'+encodeURIComponent(boxSvg)+');background-size:'+r(vw)+'px '+r(vh)+'px;background-repeat:no-repeat';
     boxEl.style.display = '';
   }
+
+  /* ── 设备模式切换 ────────────────────────────────── */
+  function setDeviceMode(mode){
+    var root = document.documentElement;
+    var isPad = mode === 'pad';
+    if (isPad) {
+      root.classList.add('device-pad');
+    } else {
+      root.classList.remove('device-pad');
+    }
+    // 更新 segment 按钮状态
+    var btnPhone = document.getElementById('ctrlDevicePhone');
+    var btnPad = document.getElementById('ctrlDevicePad');
+    if (btnPhone) { btnPhone.classList.toggle('is-active', !isPad); }
+    if (btnPad)   { btnPad.classList.toggle('is-active', isPad); }
+    buildGrid();
+  }
+
+  document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
+  document.getElementById('ctrlDevicePad').addEventListener('click', function(){ setDeviceMode('pad'); });
 
   buildGrid();
   window.addEventListener('resize', buildGrid);

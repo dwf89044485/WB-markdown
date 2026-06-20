@@ -1,7 +1,7 @@
 # Pad 模式架构方案
 
 > 记录时间：2026-06-19 · 最后更新：2026-06-20
-> 状态：Phase 1 完成，Pad 切换核心通路已打通
+> 状态：Phase 1 全部完成（含 scroll-nav、表格全屏抽离）
 > 本文档系统性记录了从需求讨论 → 架构盘查 → Knot 审查 → 方案精炼 → Phase 0/1 实施的全过程
 
 ---
@@ -59,16 +59,21 @@
 
 > 表格全屏横竖切换时，`tbl-landscape` class 使壳子物理宽高互换，ResizeObserver 自动触发 `buildGrid()`，动态 COLS/ROWS 自动适配——**零额外代码**。
 
+**Phase 1 扩展 — 技术债清理（commit `d584bfd0`）**：
+
+| # | 项目 | 状态 |
+|---|------|------|
+| ① | `scroll-nav.js` `+40` → `--scroll-nav-overlap-extra` CSS 变量 | ✅ |
+| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` ES module | ✅ |
+
 **仍待完成**：
 
 | # | 项目 | 优先级 | 说明 |
 |---|------|--------|------|
-| 1 | `scroll-nav.js` `+40` 偏移变量化 | P0 | Pad 模式下偏移量可能不同 |
-| 2 | 表格全屏 ~150 行抽离为 `engine/table-fullscreen.js` | P1 | index.html 最大内联脚本块，独立功能零耦合 |
-| 3 | `player.js` 拆分为 4 文件 | P2 | 1188 行单体，代码可维护性核心风险 |
-| 4 | `todoOverrides` 防御性校验（3 行） | P2 | 静默错乱风险，加 `console.warn` 防御 |
-| 5 | `feature-jump.js` 消除 normalizeActions 复现 | P2 | DRY 违反，直接 import player.js 即可 |
-| 6 | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型——改剧本时顺手做 |
+| ③ | `player.js` 拆分为 4 文件 | P2 | 1188 行单体，代码可维护性核心风险 |
+| ④ | `todoOverrides` 防御性校验（3 行） | P2 | 静默错乱风险，加 `console.warn` 防御 |
+| ⑤ | `feature-jump.js` 消除 normalizeActions 复现 | P2 | DRY 违反，直接 import player.js 即可 |
+| ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型——改剧本时顺手做 |
 
 ---
 
@@ -126,7 +131,7 @@
 | `engine/markdown.js` | 渲染逻辑无尺寸依赖 |
 | `engine/typewriter.js` | 流式输出无尺寸依赖 |
 | `engine/core.js` | 滚动等核心函数无尺寸依赖 |
-| `engine/scroll-nav.js` | ⚠️ 有一个 `+40` 硬编码偏移，需变量化 |
+| `engine/scroll-nav.js` | ✅ `+40` 偏移已变量化为 `--scroll-nav-overlap-extra`（Phase 1） |
 | `engine/ask-question.js` | 问答卡片布局基于 CSS 流式布局 |
 | `engine/feature-router.js` | URL 路由无尺寸依赖 |
 | `engine/feature-jump.js` | 跳转锚点无尺寸依赖 |
@@ -534,23 +539,27 @@ DeviceManager 单例虽然更规范，但对于只有 2 种模式的 Demo 来说
 
 Pad 切换核心通路已打通：点击"设备"按钮 → CSS 变量切换 → 网格自动重算 → 所有内容自适应。Phone/Pad 两种模式均可在桌面浏览器中正常工作。
 
-### 建议优先做 ① + ②
+### 建议优先做 ③④⑤
 
-**① `scroll-nav.js` +40 偏移变量化**（P0，5 分钟）
+Phase 0 + Phase 1 + 扩展清理已全部完成。当前状态：
 
-Pad 模式下 nav-bar 高度可能与 Phone 不同，40px 硬编码偏移在 Pad 下可能不准确。在 `:root` 和 `:root.device-pad` 中各加一个 `--scroll-nav-overlap-extra` 变量即可。
+| 已完成 | 提交 |
+|--------|------|
+| Phase 0: CSS 变量化（14 处硬编码 → 变量） | `e69d22fd` |
+| Phase 1: Pad 切换 + 网格动态化 | `d16fae7c` |
+| 扩展: scroll-nav +40 变量化 | `d584bfd0` |
+| 扩展: 表格全屏抽离为 engine/table-fullscreen.js | `d584bfd0` |
 
-**② 表格全屏抽离**（P1，30 分钟）
+**index.html 内联脚本已从 ~250 行降至 ~100 行**（降幅 60%）。
 
-当前 `index.html` 底部第三个 `<script>` 块约 150 行，是最大的内联脚本。功能完全内聚（只依赖 `#tblOverlay` 和 `.phone-shell`），与 HTML 骨架零耦合，搬迁风险极低。抽离后 `index.html` 内联脚本从 ~250 行降至 ~100 行。
+### 接下来做什么
 
-### ③④⑤⑥ 建议
-
-③ player.js 拆分：P2，独立 PR，不在 Pad PR 中混做。拆分前需确认 Phase 0+1 稳定运行。
-
-④⑤ 防御性修复：都是 3-5 行的小改动，可在任何时间顺手做，收益是消除静默风险。
-
-⑥ ANCHOR_MAP：触发型，不改剧本就不做。
+| 优先级 | 做什么 | 工作量 | 为什么 |
+|--------|--------|--------|--------|
+| P2 | ③ player.js 拆分 | 独立 PR，需仔细梳理 | 最大架构风险，与 Pad 正交，混做违反分区原则 |
+| P2 | ④ todoOverrides 防御性校验 | 3 行 | 消除静默错乱，随时可做 |
+| P2 | ⑤ feature-jump.js 消除 DRY 违反 | 直接 import | 消除隐式耦合 |
+| P3 | ⑥ ANCHOR_MAP | 触发型 | 不改剧本就不做 |
 
 ### 如果要继续推进 Pad 完整支持
 

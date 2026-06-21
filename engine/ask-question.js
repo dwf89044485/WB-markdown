@@ -68,6 +68,9 @@ function getButtonLabel(stepIndex, totalSteps, question, answer) {
   return '跳过';
 }
 
+// ── 切题动画防抖 ──────────────────────────────
+let isTransitioning = false;
+
 // ── 渲染函数 ─────────────────────────────────
 // 左侧 Demo：注入完整 HTML 到 #askQuestion 容器，并恢复交互状态
 function renderAskQuestion() {
@@ -210,9 +213,11 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
   return `
     <div class="ask-question-card${isStatic ? ' aq-static' : ''}">
       ${headerHtml}
-      ${questionAreaHtml}
-      ${optionsContainerHtml}
-      ${inputHtml}
+      <div class="aq-body">
+        ${questionAreaHtml}
+        ${optionsContainerHtml}
+        ${inputHtml}
+      </div>
     </div>`;
 }
 
@@ -284,10 +289,95 @@ function onInputChange(text) {
 function goToStep(index) {
   if (!askState) return;
   if (index < 0 || index >= askState.questions.length) return;
+  if (isTransitioning) return;
+  if (index === askState.stepIndex) return;
+
+  const direction = index > askState.stepIndex ? 'forward' : 'backward';
   clearSortHint();
   sortHintFirstShow = true;
-  askState.stepIndex = index;
-  renderAskQuestion();
+
+  const container = document.getElementById('askQuestion');
+  const card = container?.querySelector('.ask-question-card');
+  const oldBody = card?.querySelector('.aq-body');
+
+  if (!oldBody || !card) {
+    askState.stepIndex = index;
+    renderAskQuestion();
+    return;
+  }
+
+  isTransitioning = true;
+
+  // 1) Capture old body content
+  const oldBodyHTML = oldBody.innerHTML;
+
+  // 2) Generate new body HTML (without changing stepIndex yet)
+  const fullHTML = renderAskQuestionHTML(askState.questions, index, askState.answers, { mode: 'live' });
+  const temp = document.createElement('div');
+  temp.innerHTML = fullHTML;
+  const newBodyHTML = temp.querySelector('.aq-body').innerHTML;
+
+  // 3) Update step indicator immediately
+  const stepText = `${index + 1} / ${askState.questions.length}`;
+  const stepEl = card.querySelector('.aq-step-indicator');
+  if (stepEl) stepEl.textContent = stepText;
+
+  // 4) Build slide track with absolute positioning
+  //    Track width = card width (100%), panes positioned via left, track translated
+  const GAP = 40; // visual gap between panes
+  const track = document.createElement('div');
+  track.className = 'aq-slide-track';
+
+  const makePane = (html) => {
+    const pane = document.createElement('div');
+    pane.innerHTML = html;
+    return pane;
+  };
+
+  if (direction === 'forward') {
+    // [oldPane, newPane]
+    // oldPane: left:0 (visible), newPane: left:calc(100% + 40px) (right outside)
+    // track: translateX(0) → translateX(calc(-100% - 40px))
+    const oldPane = makePane(oldBodyHTML);
+    const newPane = makePane(newBodyHTML);
+    oldPane.style.left = '0';
+    newPane.style.left = 'calc(100% + ' + GAP + 'px)';
+    track.appendChild(oldPane);
+    track.appendChild(newPane);
+
+    // Set track height to oldBody's offsetHeight to prevent collapse
+    track.style.height = oldBody.offsetHeight + 'px';
+
+    oldBody.replaceWith(track);
+    void track.offsetHeight; // force reflow so initial position (0) is painted
+    track.style.transition = 'transform 0.3s ease-out';
+    track.style.transform = 'translateX(calc(-100% - ' + GAP + 'px))';
+  } else {
+    // [newPane, oldPane]
+    // newPane: left:calc(-100% - 40px) (left outside), oldPane: left:0 (visible)
+    // track: translateX(0) → translateX(calc(100% + 40px))
+    const newPane = makePane(newBodyHTML);
+    const oldPane = makePane(oldBodyHTML);
+    newPane.style.left = 'calc(-100% - ' + GAP + 'px)';
+    oldPane.style.left = '0';
+    track.appendChild(newPane);
+    track.appendChild(oldPane);
+
+    // Set track height to oldBody's offsetHeight to prevent collapse
+    track.style.height = oldBody.offsetHeight + 'px';
+
+    oldBody.replaceWith(track);
+    void track.offsetHeight; // force reflow so initial position is painted
+    track.style.transition = 'transform 0.3s ease-out';
+    track.style.transform = 'translateX(calc(100% + ' + GAP + 'px))';
+  }
+
+  // 5) After animation completes, rebuild as clean single-body content
+  setTimeout(() => {
+    askState.stepIndex = index;
+    renderAskQuestion();
+    isTransitioning = false;
+  }, 320);
 }
 
 function onActionClick() {

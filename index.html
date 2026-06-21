@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorkBuddy — Agent 对话流动态原型</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./vendor/fonts/inter.css">
 <link rel="stylesheet" href="./styles/base.css?v=2">
 <link rel="stylesheet" href="./styles/conversation.css">
 <link rel="stylesheet" href="./styles/markdown.css">
@@ -25,7 +23,7 @@
   if (sp === '0') root.classList.add('force-desktop');
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="./vendor/mermaid.min.js"></script>
 </head>
 <body>
 <div class="paper-bg" aria-hidden="true"></div>
@@ -181,7 +179,12 @@
   </div>
 </div> <!-- /phone-shell -->
 
-<div class="demo-controls" aria-label="演示参数控制">
+<button class="dc-toggle" id="dcToggle" aria-label="收起控制面板" title="收起控制面板">
+  <img src="icons/open.svg" class="dc-toggle-open" alt="">
+  <img src="icons/close.svg" class="dc-toggle-close" alt="">
+</button>
+
+<div class="demo-controls is-expanded" aria-label="演示参数控制">
   <div class="dc-left">
     <div class="dc-scene-title">Scene</div>
     <div class="dc-scene-grid">
@@ -191,6 +194,8 @@
       <button class="dc-scene-btn" type="button">场景4</button>
       <button class="dc-scene-btn" type="button">场景5</button>
       <button class="dc-scene-btn" type="button">场景6</button>
+      <button class="dc-scene-btn" type="button">场景7</button>
+      <button class="dc-scene-btn" type="button">场景8</button>
     </div>
   </div>
   <div class="dc-divider"></div>
@@ -224,9 +229,16 @@
       <div class="dc-row" data-phone-hide>
         <span class="dc-label">演示进度：</span>
         <div class="dc-pills">
-          <button id="ctrlPrevStep" type="button" class="dc-pill" disabled>上一步</button>
-          <button id="ctrlAutoStep" type="button" class="dc-pill is-active">自动播放</button>
-          <button id="ctrlNextStep" type="button" class="dc-pill">下一步</button>
+          <button id="ctrlPrevStep" type="button" class="dc-pill" disabled>
+            <svg width="13" height="13" viewBox="0 0 13 12" fill="none"><rect width="3" height="12" rx="1.5" fill="currentColor"/><path d="M13 8.46762V3.53238C13 1.96627 13 1.18322 12.4927 0.89599C11.9854 0.608761 11.3139 1.01164 9.97101 1.8174L5.85831 4.28501C4.58187 5.05088 3.94365 5.43381 3.94365 6C3.94365 6.56619 4.58187 6.94912 5.85831 7.71499L9.97101 10.1826C11.3139 10.9884 11.9854 11.3912 12.4927 11.104C13 10.8168 13 10.0337 13 8.46762Z" fill="currentColor"/></svg>
+          </button>
+          <button id="ctrlAutoStep" type="button" class="dc-pill is-active">
+            <svg class="dc-play-icon" width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M0 10.5179V3.48207C0 1.93549 0 1.16219 0.501939 0.873895C1.00388 0.585596 1.67183 0.975235 3.00774 1.75451L9.03847 5.27244C10.3564 6.04123 11.0154 6.42563 11.0154 7C11.0154 7.57437 10.3564 7.95877 9.03847 8.72756L3.00774 12.2455C1.67183 13.0248 1.00388 13.4144 0.501939 13.1261C0 12.8378 0 12.0645 0 10.5179Z" fill="currentColor"/></svg>
+            <svg class="dc-pause-icon" width="11" height="14" viewBox="0 0 11 14" fill="none"><rect width="3" height="14" rx="1.5" fill="currentColor"/><rect x="8" width="3" height="14" rx="1.5" fill="currentColor"/></svg>
+          </button>
+          <button id="ctrlNextStep" type="button" class="dc-pill">
+            <svg width="13" height="13" viewBox="0 0 13 12" fill="none"><path d="M0 8.46762V3.53238C0 1.96627 0 1.18322 0.507301 0.89599C1.0146 0.608761 1.68607 1.01164 3.02899 1.8174L7.14169 4.28501C8.41813 5.05088 9.05635 5.43381 9.05635 6C9.05635 6.56619 8.41813 6.94912 7.14169 7.71499L3.02899 10.1826C1.68607 10.9884 1.0146 11.3912 0.507301 11.104C0 10.8168 0 10.0337 0 8.46762Z" fill="currentColor"/><rect x="10" width="3" height="12" rx="1.5" fill="currentColor"/></svg>
+          </button>
         </div>
       </div>
 
@@ -237,6 +249,15 @@
           <button id="ctrlToolFlat" type="button" class="dc-seg-btn is-active">文字</button>
           <button id="ctrlToolStack" type="button" class="dc-seg-btn">堆叠</button>
           <button id="ctrlToolCard" type="button" class="dc-seg-btn">边框</button>
+        </div>
+      </div>
+
+      <!-- Row 4: 设备模式 -->
+      <div class="dc-row">
+        <span class="dc-label">展示设备：</span>
+        <div class="dc-segment">
+          <button id="ctrlDevicePhone" type="button" class="dc-seg-btn is-active">手机</button>
+          <button id="ctrlDevicePad" type="button" class="dc-seg-btn">Pad</button>
         </div>
       </div>
     </div>
@@ -368,164 +389,13 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     console.log('保存图片：待实现');
   });
 
-/* ── 表格全屏查看 ───────────────────────────────────────── */
-(function(){
-  var shell = document.querySelector('.phone-shell');
-  var overlay = document.getElementById('tblOverlay');
-  var content = document.getElementById('tblFsContent');
-  var fsBack = document.getElementById('tblFsBack');
-
-  /* ── 获取注册表中图标 ────────────────────────────────── */
-  var INLINE = window.WORKBUDDY_INLINE_ICONS || {};
-  function fsIcon(file) {
-    var raw = INLINE[file];
-    if (!raw) return '';
-    return raw
-      .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
-      .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
-  }
-
-  var FS_COPY = fsIcon('wb-copy.svg');
-  var FS_IMAGE = fsIcon('image.svg');
-
-  /* ── 初始化按钮图标 ──────────────────────────────────── */
-  var actionBtns = document.querySelectorAll('.tbl-fs-btn[data-action]');
-  actionBtns.forEach(function(b){
-    var a = b.getAttribute('data-action');
-    if (a === 'copy') b.innerHTML = FS_COPY || COPY_SVG;
-    if (a === 'save-image') b.innerHTML = FS_IMAGE;
-  });
-
-  function isMobileFsMode(){
-    return !document.documentElement.classList.contains('force-desktop') &&
-      window.matchMedia('(max-width: 900px)').matches;
-  }
-
-  function isLandscapeViewport(){
-    var vv = window.visualViewport;
-    var width = vv ? vv.width : window.innerWidth;
-    var height = vv ? vv.height : window.innerHeight;
-    return width > height;
-  }
-
-  function syncFullscreenOrientation(){
-    if (!overlay.classList.contains('is-active')) return;
-    if (!isMobileFsMode()) {
-      overlay.classList.remove('tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
-      shell.classList.add('tbl-landscape');
-      return;
-    }
-    shell.classList.remove('tbl-landscape');
-    overlay.classList.add('tbl-mobile');
-    if (isLandscapeViewport()) {
-      overlay.classList.add('tbl-mobile-landscape');
-      overlay.classList.remove('tbl-mobile-portrait');
-    } else {
-      overlay.classList.add('tbl-mobile-portrait');
-      overlay.classList.remove('tbl-mobile-landscape');
-    }
-  }
-
-  /* ── 全屏入口 ────────────────────────────────────────── */
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.tbl-btn.tbl-maximize');
-    if (!btn) return;
-    var outer = btn.closest('.tbl-outer');
-    if (!outer) return;
-    var table = outer.querySelector('table');
-    if (!table) return;
-    /* 克隆表格 HTML 放入内容区 */
-    content.innerHTML = '<div class="tbl-outer"><div class="tbl-wrap">' + table.outerHTML + '</div></div>';
-    overlay.classList.add('is-active');
-    syncFullscreenOrientation();
-  });
-
-  window.addEventListener('resize', syncFullscreenOrientation);
-  window.addEventListener('orientationchange', syncFullscreenOrientation);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', syncFullscreenOrientation);
-  }
-
-  /* ── 返回 ─────────────────────────────────────────────── */
-  function closeFullscreen(){
-    overlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
-    shell.classList.remove('tbl-landscape');
-    content.innerHTML = '';
-  }
-  fsBack.addEventListener('click', closeFullscreen);
-
-  /* ── 复制 ─────────────────────────────────────────────── */
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.tbl-fs-btn[data-action="copy"]');
-    if (!btn) return;
-    var tbl = content.querySelector('table');
-    if (!tbl) return;
-    var txt = '';
-    tbl.querySelectorAll('tr').forEach(function(row){
-      var cells = row.querySelectorAll('th, td');
-      txt += Array.from(cells).map(function(c){ return c.innerText.trim(); }).join('\t') + '\n';
-    });
-    var text = txt.trim();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).catch(function(){});
-    } else {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-    }
-    /* 反馈 */
-    var orig = btn.innerHTML;
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="22" height="22" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
-    btn.style.color = '#34C759';
-    btn.classList.add('is-checked');
-    setTimeout(function(){
-      btn.innerHTML = orig;
-      btn.style.color = '';
-      btn.classList.remove('is-checked');
-    }, 1000);
-  });
-
-  /* ── 保存图片（占位） ──────────────────────────────────── */
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.tbl-fs-btn[data-action="save-image"]');
-    if (!btn) return;
-    console.log('保存图片：待实现');
-  });
-
-  /* ── 分享（占位） ───────────────────────────────────────── */
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.tbl-fs-btn[data-action="share"]');
-    if (!btn) return;
-    var tbl = content.querySelector('table');
-    if (!tbl) return;
-    var txt = '';
-    tbl.querySelectorAll('tr').forEach(function(row){
-      var cells = row.querySelectorAll('th, td');
-      txt += Array.from(cells).map(function(c){ return c.innerText.trim(); }).join('\t') + '\n';
-    });
-    if (navigator.share) {
-      navigator.share({ text: txt.trim() }).catch(function(){});
-    } else {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(txt.trim()).catch(function(){});
-      } else {
-        var ta = document.createElement('textarea');
-        ta.value = txt.trim();
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-    }
-  });
-})();
 </script>
+<!-- Table Fullscreen — 已抽离到 engine/table-fullscreen.js -->
+<script type="module" src="./engine/table-fullscreen.js"></script>
 <script>
 /* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
 (function(){
+  var TARGET_CELL = 68; // 目标格子尺寸（px），手机模式 393/6≈65.5, 852/12=71，取中值
   var COLS  = 6;
   var ROWS  = 12;
   var COLOR = '#BBBAB0';
@@ -555,7 +425,11 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     var pw = pR.width;
     var ph = pR.height;
 
-    // 网格步长由手机尺寸定义（colStep = pw/6, rowStep = ph/12）
+    // 动态计算网格份数：确保格子接近正方形
+    COLS = Math.max(1, Math.round(pw / TARGET_CELL));
+    ROWS = Math.max(1, Math.round(ph / TARGET_CELL));
+
+    // 网格步长由壳子尺寸动态计算（colStep = pw/COLS, rowStep = ph/ROWS）
     var colStep = pw / COLS;
     var rowStep = ph / ROWS;
 
@@ -657,11 +531,44 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     boxEl.style.display = '';
   }
 
+  /* ── 设备模式切换 ────────────────────────────────── */
+  function setDeviceMode(mode){
+    var root = document.documentElement;
+    var isPad = mode === 'pad';
+    if (isPad) {
+      root.classList.add('device-pad');
+    } else {
+      root.classList.remove('device-pad');
+    }
+    // 更新 segment 按钮状态
+    var btnPhone = document.getElementById('ctrlDevicePhone');
+    var btnPad = document.getElementById('ctrlDevicePad');
+    if (btnPhone) { btnPhone.classList.toggle('is-active', !isPad); }
+    if (btnPad)   { btnPad.classList.toggle('is-active', isPad); }
+    buildGrid();
+  }
+
+  document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
+  document.getElementById('ctrlDevicePad').addEventListener('click', function(){ setDeviceMode('pad'); });
+
   buildGrid();
   window.addEventListener('resize', buildGrid);
   var ro = new ResizeObserver(buildGrid);
   var shell = document.querySelector('.phone-shell');
   if(shell) ro.observe(shell);
+
+  /* ── 控制面板展开/收起 ──────────────────────────── */
+  var dcToggle = document.getElementById('dcToggle');
+  if (dcToggle) {
+    dcToggle.addEventListener('click', function() {
+      var controls = document.querySelector('.demo-controls');
+      var isExpanded = controls.classList.toggle('is-expanded');
+      this.classList.toggle('is-collapsed', !isExpanded);
+      this.setAttribute('aria-label', isExpanded ? '收起控制面板' : '展开控制面板');
+      this.setAttribute('title', isExpanded ? '收起控制面板' : '展开控制面板');
+      setTimeout(function() { buildGrid(); }, 400);
+    });
+  }
 })();
 </script>
 </body>

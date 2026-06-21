@@ -727,8 +727,8 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 /* ── LANDSCAPE (phone shell physically wide) ────────────── */
 /* 手机壳真的变成横屏尺寸：852x393，内容区域跟着变宽 */
 .phone-shell.tbl-landscape{
-  width:852px;
-  height:393px;
+  width:var(--layout-shell-h);
+  height:var(--layout-shell-w);
   flex-shrink:0;
   align-self:flex-start;
   margin-left:-14px;
@@ -739,13 +739,13 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 }
 @media (min-width:901px){
   .layout-main .left-area > .phone-shell.tbl-landscape{
-    margin-top:calc((852px - 393px)/2);
-    margin-bottom:calc((852px - 393px)/2);
+    margin-top:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
+    margin-bottom:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
   }
 }
 html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
-  margin-top:calc((852px - 393px)/2);
-  margin-bottom:calc((852px - 393px)/2);
+  margin-top:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
+  margin-bottom:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;

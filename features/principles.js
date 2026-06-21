@@ -35,7 +35,7 @@ export default {
           <div class="fp-principle-number">1</div>
           <div class="fp-principle-body">
             <div class="fp-hdr-row">
-              <h3>结果优先，过程可追溯</h3>
+              <h2>结果优先，过程可追溯</h2>
               <div class="dc-btn-group">
                 <button class="dc-btn" data-action="running-state">
                   查看运行态
@@ -60,11 +60,12 @@ export default {
           <div class="fp-principle-number">2</div>
           <div class="fp-principle-body">
             <div class="fp-hdr-row">
-              <h3>渐进式披露</h3>
+              <h2>渐进式披露</h2>
               <div class="dc-btn-group">
                 <button class="dc-btn" data-action="disclosure-1">第一层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 <button class="dc-btn" data-action="disclosure-2">第二层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 <button class="dc-btn" data-action="disclosure-3">第三层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="dc-btn" data-action="disclosure-4">第四层披露<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
             </div>
             <p>结果、过程、原始信息不在信息流中混排避免信息过载；用不同的容器收纳不同深度信息，用户按需追溯下钻。</p>
@@ -79,7 +80,7 @@ export default {
         <div class="fp-principle-card">
           <div class="fp-principle-number">3</div>
           <div class="fp-principle-body">
-            <h3>任务语言优先</h3>
+            <h2>任务语言优先</h2>
             <p>外层用任务语义表达，里层呈现原始细节；用户首先看到做了什么任务，追溯下去能看到调用了什么接口。</p>
             <ul>
               <li>节点用"理解任务""搜索信息""生成图片"等语义命名，而非 tool_call_1、web_search</li>
@@ -92,7 +93,7 @@ export default {
           <div class="fp-principle-number">4</div>
           <div class="fp-principle-body">
             <div class="fp-hdr-row">
-              <h3>主动对齐，人在回路</h3>
+              <h2>主动对齐，人在回路</h2>
               <div class="dc-btn-group">
                 <button class="dc-btn" data-action="ask-user">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 6a1.5 1.5 0 113 0c0 1-1.5 1.5-1.5 2.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11" r=".6" fill="currentColor"/></svg>

@@ -36,7 +36,7 @@
 }
 
 /* ── CONVERSATION ────────────────────────────────────────── */
-.conversation{flex:1;overflow-y:auto;height:718px;padding:var(--cv-conversation-padding-top) 0 0;background:#fafafa;overscroll-behavior:contain;}
+.conversation{flex:1;overflow-y:auto;padding:var(--cv-conversation-padding-top) 0 0;background:#fafafa;overscroll-behavior:contain;}
 .conversation::-webkit-scrollbar{width:0;}
 
 /* ── USER MESSAGE ────────────────────────────────────────── */
@@ -72,11 +72,10 @@
   font-size:14px;
   line-height:1;
   color:rgba(0,0,0,0.30);
-  transition:transform 0.25s ease;
   flex-shrink:0;
-  transform:rotate(-90deg);
 }
-.timing-arrow.collapsed{transform:rotate(90deg);}
+.timing-arrow.collapsed{transform:rotate(0deg);transition:transform 0.3s ease-out;}
+.timing-arrow:not(.collapsed){transform:rotate(90deg);transition:transform 1.2s ease-in-out;}
 #timingMount:empty{display:none;}
 
 /* ── EXEC AREA ───────────────────────────────────────────── */
@@ -85,10 +84,7 @@
   flex-direction:column;
   gap:var(--cv-exec-stack-gap);
   overflow:hidden;
-  transition:max-height 0.38s cubic-bezier(0.4,0,0.2,1);
 }
-.exec-area.open{display:flex;max-height:2000px;}
-.exec-area.closed{display:none;max-height:0;}
 
 /* ── THINKING ────────────────────────────────────────────── */
 .thinking-btn{display:inline-flex;align-items:center;gap:var(--cv-thinking-inline-gap);padding:var(--cv-thinking-padding-top) 0 var(--cv-thinking-padding-bottom);cursor:pointer;border:none;background:none;}

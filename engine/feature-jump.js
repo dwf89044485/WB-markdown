@@ -23,7 +23,7 @@
 //       （只有 askUser 锚点有此字段），如有则跳过目标 step 的 goToStep，
 //       改跳到前一步，再手动调 showAskQuestion(silent) 让卡片渲染且不阻塞。
 
-import { goToStep, pauseDirector, resolveNodeStep } from './player.js';
+import { goToStep, pauseDirector, resolveNodeStep, normalizeActions } from './player.js';
 import { showAskQuestion, navigateToQuestion } from './ask-question.js';
 import { showApprovePermission } from './approve-permission.js';
 import { hideAllOverlays } from './overlay-registry.js';
@@ -56,48 +56,22 @@ export async function jumpToAnchor(anchor) {
     const scenario = window.WORKBUDDY_SCENARIO;
 
     if (isAskUser) {
-      // 遍历所有 node 的 raw actions，模拟 normalizeActions 逻辑：
-      // 连续 status 合并为一个（只计 1 个 normalized 索引），其余类型各计 1
-      let idx = 4; // 跳过固定入口（用户消息、agent 出现、思考过程、创建平铺容器）
+      // 用 player.js 的 normalizeActions 构建所有节点归一化后的扁平 action 列表，
+      // 消除此处与 player.js 的重复实现（DRY）
+      const allActions = [];
       for (const node of (scenario.nodes || [])) {
-        const raw = node.actions || [];
-        for (let ai = 0; ai < raw.length; ai++) {
-          const act = raw[ai];
-          if (act.type === 'status') {
-            // 跳过连续 status（normalizeActions 合并为一个 statusGroup）
-            while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
-            // status 不可能是 askUser，仅计数
-            idx++;
-          } else {
-            if (idx === targetStep && act.type === 'askUser') {
-              actionData = act.questions;
-              break;
-            }
-            idx++;
-          }
-        }
-        if (actionData) break;
+        allActions.push(...normalizeActions(node.actions || []));
       }
+      // targetStep 内含 4 个固定入口偏移，减 4 得到扁平列表索引
+      const act = allActions[targetStep - 4];
+      if (act && act.type === 'askUser') actionData = act.questions;
     } else if (isApprovePermission) {
-      // 同样的扫描逻辑，找 approvePermission 的 data
-      let idx = 4;
+      const allActions = [];
       for (const node of (scenario.nodes || [])) {
-        const raw = node.actions || [];
-        for (let ai = 0; ai < raw.length; ai++) {
-          const act = raw[ai];
-          if (act.type === 'status') {
-            while (ai + 1 < raw.length && raw[ai + 1].type === 'status') ai++;
-            idx++;
-          } else {
-            if (idx === targetStep && act.type === 'approvePermission') {
-              actionData = act.data;
-              break;
-            }
-            idx++;
-          }
-        }
-        if (actionData) break;
+        allActions.push(...normalizeActions(node.actions || []));
       }
+      const act = allActions[targetStep - 4];
+      if (act && act.type === 'approvePermission') actionData = act.data;
     }
 
     // 跳到目标的前一步，让前面所有步骤渲染出来

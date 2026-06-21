@@ -19,7 +19,7 @@
   content:'';
   position:fixed;
   top:0;
-  left:524px;
+  left:var(--layout-left-area-w);
   right:0;
   height:100vh;
   background:rgba(255,255,255,0.3);
@@ -30,7 +30,7 @@
   content:'';
   position:fixed;
   top:0;
-  left:524px;
+  left:var(--layout-left-area-w);
   width:1px;
   height:100vh;
   background:#A6A59B;
@@ -49,6 +49,26 @@
 }
 
 /* ── Panel container ───────────────────────────────────────── */
+/* ── Toggle button (梯形拉手) ────────────────────────────────── */
+.dc-toggle{
+  position:relative;
+  z-index:1;
+  display:block;
+  margin:0 auto 0;
+  padding:0;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  line-height:0;
+  flex-shrink:0;
+}
+.dc-toggle img{ display:none; }
+.dc-toggle:not(.is-collapsed) .dc-toggle-open{ display:block; }
+.dc-toggle.is-collapsed .dc-toggle-close{ display:block; }
+
+/* 按钮底部 1px 重叠盖住面板顶边线 */
+.dc-toggle + .demo-controls{ margin-top:-2px; }
+
 .demo-controls{
   --dc-control-height:30px;
   --dc-control-radius:10px;
@@ -57,16 +77,31 @@
   flex-direction:row;
   gap:0;
   padding:20px 20px 20px;
-  background-image:
+  background:
     linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
     url("../assets/paper/texture.png");
   background-repeat:no-repeat, repeat;
   background-attachment:scroll, fixed;
-  border:1px solid rgba(0,0,0,0.08);
+  border:none;
+  border-top:1px solid #BBBAB1;
   border-radius:0;
   box-shadow:none;
   font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
   flex-shrink:0;
+  overflow:hidden;
+  max-height:600px;
+  transition:max-height .36s cubic-bezier(.32,.72,0,1),
+             opacity .36s ease,
+             padding .36s ease,
+             border-width .36s ease;
+}
+
+.demo-controls:not(.is-expanded){
+  max-height:0;
+  opacity:0;
+  padding-top:0;
+  padding-bottom:0;
+  border-width:0;
 }
 
 /* ── Left panel (30%) ───────────────────────────────────────── */
@@ -255,6 +290,9 @@
 }
 
 .dc-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   height:var(--dc-control-height);
   padding:0;
   border:0;
@@ -276,8 +314,14 @@
   width:auto;
 }
 
+/* ── Auto button icon toggle ─────────────────────────── */
+.dc-pill .dc-play-icon  { display:inline; }
+.dc-pill .dc-pause-icon { display:none; }
+.dc-pill.is-active .dc-play-icon  { display:none; }
+.dc-pill.is-active .dc-pause-icon { display:inline; }
+
 .dc-pill:disabled{
-  opacity:1;
+  opacity:.35;
   cursor:default;
 }
 

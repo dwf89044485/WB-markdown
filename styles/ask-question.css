@@ -69,6 +69,7 @@
   flex-direction: column;
   gap: 0;
   animation: aq-slide-up 0.3s ease-out;
+  overflow: hidden; /* 滑切时裁剪 aq-body 溢出 */
 }
 
 @keyframes aq-slide-up {
@@ -466,4 +467,18 @@
 /* ── 重渲染静默：防止每次 innerHTML 替换重播 slide-up ── */
 .ask-question.aq-settled .ask-question-card {
   animation: none;
+}
+
+/* ── 切题滑切：滑轨（goToStep 中动态构建，transition 驱动 transform）─── */
+.aq-slide-track {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+.aq-slide-track > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

@@ -13,7 +13,9 @@ import { featureList, getFeature } from '../features/index.js';
 import { parseURL, pushRoute, onChange as onRouteChange } from './feature-router.js';
 import { jumpToAnchor } from './feature-jump.js';
 import { goToStep, resolveNodeStep, resumePlayback, toggleExec } from './player.js';
-import { openSheet, getFrames, renderStaticDetail, setSheetBackState } from './sheet.js';
+import { state } from './player-state.js';
+import { showClickIndicator } from './click-indicator.js';
+import { openSheet, getFrames, renderStaticDetail, renderStaticSheet, setSheetBackState, renderDetailContent } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAllOverlays } from './overlay-registry.js';
 import { sleep } from './core.js';
@@ -135,28 +137,122 @@ function bindEvents() {
     if (action === 'running-state') {
       await goToStep(resolveNodeStep(0, 0));
       resumePlayback();
-    } else if (action === 'completed-state' || action === 'disclosure-1') {
+    } else if (action === 'completed-state') {
       await goToStep(Number.MAX_SAFE_INTEGER);
+    } else if (action === 'disclosure-1') {
+      // 第一层披露 → L1 结果层: 完成态 + 强制滚动到底
+      await goToStep(Number.MAX_SAFE_INTEGER);
+      const conv1 = document.querySelector('#conv');
+      if (conv1) conv1.scrollTop = conv1.scrollHeight;
     } else if (action === 'disclosure-2') {
-      await goToStep(resolveNodeStep(0, 3));
-      // 让最后一条状态行处于"正在搜索网页"的扫光状态
-      const cont = document.querySelector('#stepsList .flat-container');
-      const last = cont && cont.querySelector('.step-detail-link:last-child');
-      if (last) {
-        setStatusLineLabels(last, ['正在搜索网页']);
-        last.classList.add('is-running');
-      }
-    } else if (action === 'disclosure-3') {
-      await goToStep(resolveNodeStep(0, 3));
-      openSheet('F1.c,F1.d,F1.e,F1.f,F1.g,F1.h,F1.i', '搜索网页、更新待办');
-    } else if (action === 'disclosure-4') {
+      // 第二层披露 → L2 执行过程层: 完成态 → 用户消息置顶 → 点击指示动画 → 展开执行过程
       await goToStep(Number.MAX_SAFE_INTEGER);
+      const conv2 = document.querySelector('#conv');
+      const userMsg2 = document.querySelector('#userMsgWrap');
+      if (conv2 && userMsg2) {
+        const navBar = conv2.querySelector('.nav-bar');
+        const navHeight = navBar ? navBar.offsetHeight : 0;
+        const scrollTarget = (userMsg2.offsetTop - conv2.offsetTop) - navHeight - 12;
+        if (scrollTarget > 0) conv2.scrollTop = scrollTarget;
+      }
+      await sleep(200);
+      // 点击指示点：从右屏幕外贴边飞入，落点在 target 中心左 60px
+      await showClickIndicator(
+        document.querySelector('#timingMount .timing-bar'),
+        { from: 'right', endOffsetX: -80 }
+      );
       toggleExec();
-      await sleep(100);
-      // 直接渲染二级 sheet，跳过一级 sheet 过渡
-      const frames = getFrames('F3.4b,F3.4c,F3.4d');
+    } else if (action === 'disclosure-3') {
+      // 第三层披露 → L3 浮层详情层:
+      // 完成态 → 瞬间展开执行过程 + "执行命令"滚动到视口中央 → 指示点 → 拉起 Sheet
+      await goToStep(Number.MAX_SAFE_INTEGER);
+
+      // 瞬间展开执行过程（跳过 toggleExec 动画）
+      const execArea = document.querySelector('#execArea');
+      const timingArrow = document.querySelector('#timingArrow');
+      if (execArea) {
+        execArea.style.display = 'flex';
+        execArea.style.maxHeight = '';
+        execArea.style.transition = 'none';
+      }
+      if (timingArrow) timingArrow.className = 'timing-arrow';
+      state.execOpen = true;
+
+      // 瞬间将"执行命令"滚动到视口中央
+      const conv3 = document.querySelector('#conv');
+      const execBtn = Array.from(document.querySelectorAll('#stepsList .step-detail-link'))
+        .find(btn => btn.textContent.includes('执行命令'));
+      if (conv3 && execBtn) {
+        const targetRect = execBtn.getBoundingClientRect();
+        const convRect = conv3.getBoundingClientRect();
+        conv3.scrollTop += (
+          targetRect.top + targetRect.height / 2 -
+          convRect.top - convRect.height / 2
+        );
+      }
+
+      await showClickIndicator(execBtn, { from: 'right', endOffsetX: -100, endOffsetY: -20 });
+      openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令', { replay: false });
+    } else if (action === 'disclosure-4') {
+      // 第四层披露 → L4 原始细节层:
+      // 完成态 → 瞬间展开 + 滚动"执行命令"到视口中央 → 一级 Sheet 常显 → 指示点引导 → 二级 Sheet
+      await goToStep(Number.MAX_SAFE_INTEGER);
+
+      // 瞬间展开执行过程
+      const execArea4 = document.querySelector('#execArea');
+      const timingArrow4 = document.querySelector('#timingArrow');
+      if (execArea4) {
+        execArea4.style.display = 'flex';
+        execArea4.style.maxHeight = '';
+        execArea4.style.transition = 'none';
+      }
+      if (timingArrow4) timingArrow4.className = 'timing-arrow';
+      state.execOpen = true;
+
+      // 瞬间将"执行命令"滚动到视口中央
+      const conv4 = document.querySelector('#conv');
+      const execBtn4 = Array.from(document.querySelectorAll('#stepsList .step-detail-link'))
+        .find(btn => btn.textContent.includes('执行命令'));
+      if (conv4 && execBtn4) {
+        const targetRect = execBtn4.getBoundingClientRect();
+        const convRect = conv4.getBoundingClientRect();
+        conv4.scrollTop += (
+          targetRect.top + targetRect.height / 2 -
+          convRect.top - convRect.height / 2
+        );
+      }
+
+      // 直接渲染一级 Sheet（无打开动画，初始即显示）
+      const frames4 = getFrames('F3.4a,F3.4b,F3.4c,F3.4d');
+      const allEvents = frames4.flatMap(f => f.events || []);
+      const body4 = document.querySelector('#sheetBody');
+      if (body4) {
+        body4.innerHTML = renderStaticSheet(allEvents);
+        body4.classList.remove('detail-mode');
+        body4.scrollTop = 0;
+      }
+      const sheet4 = document.querySelector('#sheet');
+      if (sheet4) {
+        sheet4.classList.remove('expanded', 'detail-mode');
+        sheet4.style.height = '';
+      }
+      const ov4 = document.querySelector('#overlay');
+      if (ov4) {
+        ov4.style.pointerEvents = 'auto';
+        ov4.className = 'sheet-overlay vis show';
+      }
+
+      await sleep(50);
+
+      // 指示点引导点击第一个 chevron
+      const chevron = document.querySelector('#sheetBody .s-row-chevron');
+      if (chevron) {
+        await showClickIndicator(chevron, { from: 'right', endOffsetX: -40, container: document.querySelector('#overlay') });
+      }
+
+      // 获取 detail 数据，展示二级 Sheet
       let detail = null;
-      for (const f of frames) {
+      for (const f of frames4) {
         if (f.events) {
           for (const ev of f.events) {
             if (ev.detail) { detail = ev.detail; break; }
@@ -165,16 +261,11 @@ function bindEvents() {
         if (detail) break;
       }
       if (detail) {
-        // 设置返回状态，让二级 sheet 左上角出现返回按钮 → 回到一级 sheet
         setSheetBackState('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
-        openSheet(null, '执行命令', {
-          customRenderer: (body) => {
-            body.classList.add('detail-mode');
-            body.innerHTML = renderStaticDetail(detail);
-            const sheet = body.closest('.bottom-sheet');
-            if (sheet) sheet.classList.add('detail-mode');
-          }
-        });
+        const body = document.querySelector('#sheetBody');
+        if (body) {
+          renderDetailContent(detail, body);
+        }
       }
     } else if (action === 'ask-user') {
       const aqFeature = getFeature('ask-question');
@@ -185,52 +276,115 @@ function bindEvents() {
       const anchor = apFeature && apFeature.anchors && apFeature.anchors['show-card'];
       if (anchor) await jumpToAnchor(anchor);
     } else if (action === 'infoarch-l1') {
-      // L1: 对话流完成态
+      // L1 结果层: 完成态 + 强制滚动到底
       await goToStep(Number.MAX_SAFE_INTEGER);
+      const conv1 = document.querySelector('#conv');
+      if (conv1) conv1.scrollTop = conv1.scrollHeight;
     } else if (action === 'infoarch-l2') {
-      // L2: 完成态 + 展开执行过程 + 定位到"执行命令"状态行
+      // L2 执行过程层: 完成态 → 用户消息置顶 → 点击指示动画 → 展开执行过程
       await goToStep(Number.MAX_SAFE_INTEGER);
-      toggleExec();
-      await sleep(100);
-      const execLines = document.querySelectorAll('#stepsList .step-detail-link');
-      for (const line of execLines) {
-        const labels = line.dataset.labels;
-        if (labels && labels.includes('执行命令')) {
-          line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          break;
-        }
+      const conv2 = document.querySelector('#conv');
+      const userMsg2 = document.querySelector('#userMsgWrap');
+      if (conv2 && userMsg2) {
+        const navBar = conv2.querySelector('.nav-bar');
+        const navHeight = navBar ? navBar.offsetHeight : 0;
+        const scrollTarget = (userMsg2.offsetTop - conv2.offsetTop) - navHeight - 12;
+        if (scrollTarget > 0) conv2.scrollTop = scrollTarget;
       }
+      await sleep(200);
+      await showClickIndicator(
+        document.querySelector('#timingMount .timing-bar'),
+        { from: 'right', endOffsetX: -80 }
+      );
+      toggleExec();
     } else if (action === 'infoarch-l3') {
-      // L3: 完成态 + 展开执行过程 + 拉起"执行命令"Sheet
+      // L3 浮层详情层:
+      // 完成态 → 瞬间展开执行过程 + "执行命令"滚动到视口中央 → 指示点 → 拉起 Sheet
       await goToStep(Number.MAX_SAFE_INTEGER);
-      toggleExec();
-      await sleep(100);
-      openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
+      const execArea3 = document.querySelector('#execArea');
+      const timingArrow3 = document.querySelector('#timingArrow');
+      if (execArea3) {
+        execArea3.style.display = 'flex';
+        execArea3.style.maxHeight = '';
+        execArea3.style.transition = 'none';
+      }
+      if (timingArrow3) timingArrow3.className = 'timing-arrow';
+      state.execOpen = true;
+      const conv3 = document.querySelector('#conv');
+      const execBtn3 = Array.from(document.querySelectorAll('#stepsList .step-detail-link'))
+        .find(btn => btn.textContent.includes('执行命令'));
+      if (conv3 && execBtn3) {
+        const targetRect = execBtn3.getBoundingClientRect();
+        const convRect = conv3.getBoundingClientRect();
+        conv3.scrollTop += (
+          targetRect.top + targetRect.height / 2 -
+          convRect.top - convRect.height / 2
+        );
+      }
+      await showClickIndicator(execBtn3, { from: 'right', endOffsetX: -100, endOffsetY: -20 });
+      openSheet('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令', { replay: false });
     } else if (action === 'infoarch-l4') {
-      // L4: 完成态 + 展开执行过程 + 直接进入二级细节 sheet，跳过一级 sheet 过渡
+      // L4 原始细节层:
+      // 完成态 → 瞬间展开 + 滚动"执行命令"到视口中央 → 一级 Sheet 常显 → 指示点引导 → 二级 Sheet
       await goToStep(Number.MAX_SAFE_INTEGER);
-      toggleExec();
-      await sleep(100);
-      const l3frames = getFrames('F3.4b,F3.4c,F3.4d');
-      let l3detail = null;
-      for (const f of l3frames) {
+      const execArea4 = document.querySelector('#execArea');
+      const timingArrow4 = document.querySelector('#timingArrow');
+      if (execArea4) {
+        execArea4.style.display = 'flex';
+        execArea4.style.maxHeight = '';
+        execArea4.style.transition = 'none';
+      }
+      if (timingArrow4) timingArrow4.className = 'timing-arrow';
+      state.execOpen = true;
+      const conv4 = document.querySelector('#conv');
+      const execBtn4 = Array.from(document.querySelectorAll('#stepsList .step-detail-link'))
+        .find(btn => btn.textContent.includes('执行命令'));
+      if (conv4 && execBtn4) {
+        const targetRect = execBtn4.getBoundingClientRect();
+        const convRect = conv4.getBoundingClientRect();
+        conv4.scrollTop += (
+          targetRect.top + targetRect.height / 2 -
+          convRect.top - convRect.height / 2
+        );
+      }
+      const frames4 = getFrames('F3.4a,F3.4b,F3.4c,F3.4d');
+      const allEvents = frames4.flatMap(f => f.events || []);
+      const body4 = document.querySelector('#sheetBody');
+      if (body4) {
+        body4.innerHTML = renderStaticSheet(allEvents);
+        body4.classList.remove('detail-mode');
+        body4.scrollTop = 0;
+      }
+      const sheet4 = document.querySelector('#sheet');
+      if (sheet4) {
+        sheet4.classList.remove('expanded', 'detail-mode');
+        sheet4.style.height = '';
+      }
+      const ov4 = document.querySelector('#overlay');
+      if (ov4) {
+        ov4.style.pointerEvents = 'auto';
+        ov4.className = 'sheet-overlay vis show';
+      }
+      await sleep(50);
+      const chevron = document.querySelector('#sheetBody .s-row-chevron');
+      if (chevron) {
+        await showClickIndicator(chevron, { from: 'right', endOffsetX: -40, container: document.querySelector('#overlay') });
+      }
+      let detail = null;
+      for (const f of frames4) {
         if (f.events) {
           for (const ev of f.events) {
-            if (ev.detail) { l3detail = ev.detail; break; }
+            if (ev.detail) { detail = ev.detail; break; }
           }
         }
-        if (l3detail) break;
+        if (detail) break;
       }
-      if (l3detail) {
+      if (detail) {
         setSheetBackState('F3.4a,F3.4b,F3.4c,F3.4d', '执行命令');
-        openSheet(null, '执行命令', {
-          customRenderer: (body) => {
-            body.classList.add('detail-mode');
-            body.innerHTML = renderStaticDetail(l3detail);
-            const sheet = body.closest('.bottom-sheet');
-            if (sheet) sheet.classList.add('detail-mode');
-          }
-        });
+        const body = document.querySelector('#sheetBody');
+        if (body) {
+          renderDetailContent(detail, body);
+        }
       }
     }
   });

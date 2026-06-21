@@ -76,6 +76,25 @@ body{
   --composer-fade-height:var(--spacing-40);
 
   --status-icon-color:#000;
+
+  /* ── LAYOUT TOKENS (phone shell / left area / layout) ── */
+  --layout-shell-w:393px;
+  --layout-shell-h:852px;
+  --layout-left-area-w:524px;
+  --layout-min-w:1440px;
+  --layout-notes-min-w:840px;
+  --fp-feature-header-w:718px;
+  --scroll-nav-overlap-extra:40px;
+}
+/* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */
+:root.device-pad {
+  --layout-shell-w:840px;
+  --layout-shell-h:1190px;
+  --layout-left-area-w:976px;
+  --layout-min-w:1860px;
+  --layout-notes-min-w:840px;
+  --fp-feature-header-w:718px;
+  --scroll-nav-overlap-extra:40px;
 }
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
@@ -164,23 +183,23 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     flex-direction:row;
     align-items:flex-start;
     /* 总宽至少 1364：左 524 + 右 840 */
-    min-width:1440px;
+    min-width:var(--layout-min-w);
     width:100%;
     height:100dvh;
     padding:0;
     gap:0;
   }
   .left-area{
-    width:524px;
-    flex:0 0 524px;
+    width:var(--layout-left-area-w);
+    flex:0 0 var(--layout-left-area-w);
     height:100dvh;
     display:flex;
     flex-direction:column;
     align-items:center;
   }
   .design-notes{
-    flex:1 1 840px;
-    min-width:840px;
+    flex:1 1 var(--layout-notes-min-w);
+    min-width:var(--layout-notes-min-w);
     height:100dvh;
     padding:0;
     background-image:
@@ -194,7 +213,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */
 .phone-shell{
-  width:393px;height:852px;background:#fafafa;border-radius:0;
+  width:var(--layout-shell-w);height:var(--layout-shell-h);background:#fafafa;border-radius:0;
   box-shadow:none;
   border:1px solid rgba(0,0,0,0.08);
   display:flex;flex-direction:column;overflow:hidden;position:relative;

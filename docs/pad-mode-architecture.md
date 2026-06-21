@@ -1,8 +1,90 @@
 # Pad 模式架构方案
 
-> 记录时间：2026-06-19
-> 状态：方案已定，待实施
-> 本文档系统性记录了从需求讨论 → 架构盘查 → Knot 审查 → 方案精炼的全过程
+> 记录时间：2026-06-19 · 最后更新：2026-06-20
+> 状态：Phase 0/1 ✅ · ①②③④⑤ ✅ · ⑥ 待做
+> 本文档系统性记录了从需求讨论 → 架构盘查 → Knot 审查 → 方案精炼 → Phase 0/1 实施的全过程
+
+---
+
+## 实施进度
+
+### 总览
+
+| Phase / 扩展 | 内容 | 提交 | 状态 |
+|-------------|------|------|------|
+| Phase 0 | CSS 变量化（5 变量，14+1 处替换） | `e69d22fd` | ✅ |
+| Phase 1 | Pad 切换 + 网格动态 COLS/ROWS | `d16fae7c` | ✅ |
+| 扩展 ①② | scroll-nav 变量化 + 表格全屏抽离 | `d584bfd0` | ✅ |
+| 扩展 ④⑤ | todoOverrides 防御 + normalizeActions DRY | `710e9d9b` | ✅ |
+| 扩展 ③ | player.js 拆分为 5 文件（player-state/player-dom/player-final/player-ui + 瘦身） | `b9b4945b` | ✅ |
+| 扩展 ⑥ | feature-panel.js ANCHOR_MAP 提取 | — | ⏳ P3 |
+
+### Phase 0：CSS 变量化 ✅ 已完成（2026-06-20）
+
+**提交**：`e69d22fd`（tag: `phase0-complete`）
+**改动范围**：5 个 CSS 文件，26 增 19 删
+
+**完成内容**：
+- 在 `:root` 定义 5 个 `--layout-*` CSS 变量（shell-w/h, left-area-w, min-w, notes-min-w）
+- `base.css`：手机壳尺寸、左侧区域宽度、布局最小宽度、说明栏宽度 → 变量
+- `conversation.css`：`.conversation` 高度 718px → `flex:1`（对话区自动撑满）
+- `markdown.css`：表格横屏 852×393 → 变量（shell-h/shell-w 互换）；居中计算变量化
+- `demo-controls.css`：paper-bg left 524px → 复用 `--layout-left-area-w`
+- `feature-panel.css`：快照宽度 393px → 复用 `--layout-shell-w`；标题宽度 718px → 独立变量 `--fp-feature-header-w`
+
+**未包含在 Phase 0 中的内容**（留给后续 Phase）：
+- `.device-pad` CSS 覆盖块（Pad 模式变量覆盖）
+- `togglePadMode()` 按钮和切换函数
+- `buildGrid()` 动态化（COLS/ROWS 根据壳子尺寸计算）
+- 网格抽离为独立模块
+- 表格全屏抽离
+- player.js 拆分
+- DRY 修复
+
+### Phase 1：Pad 切换 + 网格动态化 ✅ 已完成（2026-06-20）
+
+**提交**：`d16fae7c`
+**改动范围**：2 个文件，43 增 1 删
+
+**完成内容**：
+1. **`styles/base.css`** — 新增 `:root.device-pad` CSS 变量覆盖块（5 个 `--layout-*` 变量）
+2. **`index.html` buildGrid()** — COLS/ROWS 从硬编码改为动态计算：`Math.round(壳宽/TARGET_CELL)` / `Math.round(壳高/TARGET_CELL)`，其中 `TARGET_CELL=68px`
+3. **`index.html` demo-controls** — 新增"设备" segment 按钮（📱 Phone / 📱 Pad）+ `setDeviceMode()` 切换函数
+
+**方案演进说明**：
+
+| 原方案 | 实际实现 | 原因 |
+|--------|----------|------|
+| 抽离 `engine/grid.js` | 保留在 `index.html` 内联脚本 | 网格逻辑仅依赖 DOM 读取，与 HTML 上下文紧耦合，抽为独立模块反而增加 import 开销，收益甚微 |
+| 预计算 3 种 Pad 网格参数 | `TARGET_CELL=68` 自适应 | 用户决策：**基于手机切格子**的原则。无论 Phone 还是 Pad，始终用壳子实际尺寸除以目标格子尺寸来切分，确保所有设备下格子都接近正方形，无需手动维护设备参数表 |
+| `togglePadMode()` 单一按钮 | Phone/Pad segment 双按钮 | 更符合 demo-controls 现有 UI 模式（工具样式段按钮、进度控制 Pills），用户无需记忆当前状态 |
+
+**动态网格验证**：
+
+| 场景 | 壳尺寸 | COLS | ROWS | 格子 | 宽高比 |
+|------|--------|------|------|------|--------|
+| Phone 竖屏 | 393×852 | 6 | 12 | 65.5×71.0 | 0.92 |
+| Phone 横屏（表格全屏） | 852×393 | 13 | 6 | 65.5×65.5 | 1.00 |
+| Pad 竖屏 | 840×1190 | 12 | 17 | 70.0×70.0 | 1.00 |
+| Pad 横屏（表格全屏） | 1190×840 | 17 | 12 | 70.0×70.0 | 1.00 |
+
+> 表格全屏横竖切换时，`tbl-landscape` class 使壳子物理宽高互换，ResizeObserver 自动触发 `buildGrid()`，动态 COLS/ROWS 自动适配——**零额外代码**。
+
+**Phase 1 扩展 — 技术债清理**：
+
+| # | 项目 | 提交 | 状态 |
+|---|------|------|------|
+| ① | `scroll-nav.js` `+40` → `--scroll-nav-overlap-extra` CSS 变量 | `d584bfd0` | ✅ |
+| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` ES module | `d584bfd0` | ✅ |
+| ③ | `player.js` 1188 行拆分 → 5 文件（player-state / player-dom / player-final / player-ui + 瘦身） | `b9b4945b` | ✅ |
+| ④ | `todoOverrides` 防御性校验（越界 `console.warn`） | `710e9d9b` | ✅ |
+| ⑤ | `feature-jump.js` 消除 normalizeActions DRY 违反 → import player.js | `710e9d9b` | ✅ |
+
+**仍待完成**：
+
+| # | 项目 | 优先级 | 说明 |
+|---|------|--------|------|
+| ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型——改剧本时顺手做 |
 
 ---
 
@@ -60,7 +142,7 @@
 | `engine/markdown.js` | 渲染逻辑无尺寸依赖 |
 | `engine/typewriter.js` | 流式输出无尺寸依赖 |
 | `engine/core.js` | 滚动等核心函数无尺寸依赖 |
-| `engine/scroll-nav.js` | ⚠️ 有一个 `+40` 硬编码偏移，需变量化 |
+| `engine/scroll-nav.js` | ✅ `+40` 偏移已变量化为 `--scroll-nav-overlap-extra`（Phase 1） |
 | `engine/ask-question.js` | 问答卡片布局基于 CSS 流式布局 |
 | `engine/feature-router.js` | URL 路由无尺寸依赖 |
 | `engine/feature-jump.js` | 跳转锚点无尺寸依赖 |
@@ -422,44 +504,87 @@ DeviceManager 单例虽然更规范，但对于只有 2 种模式的 Demo 来说
 
 ---
 
-## 十、实施计划
+## 十、实施记录
 
-### 10.1 改动清单
+### 10.1 Phase 0（✅ 已完成 — commit `e69d22fd`）
 
-| 步骤 | 文件 | 改动内容 | 预估行数 |
-|------|------|---------|---------|
-| 1 | `styles/base.css` | `:root` 添加设备变量 + `.device-pad` 覆盖块 | ~15 行 |
-| 2 | `styles/base.css` | 硬编码替换为 CSS 变量引用 | ~10 行 |
-| 3 | `styles/conversation.css` | `718px` → `flex:1` | ~2 行 |
-| 4 | `styles/markdown.css` | 横屏尺寸 + 居中计算变量化 | ~5 行 |
-| 5 | `styles/markdown.css` | 右侧快照宽度变量化 | ~3 行 |
-| 6 | `styles/feature-panel.css` | 快照宽度变量化 | ~3 行 |
-| 7 | `styles/demo-controls.css` | 控制面板宽度变量化 | ~2 行 |
-| 8 | `index.html` | 添加切换按钮 + `togglePadMode()` | ~15 行 |
-| 9 | `index.html` | `buildGrid()` 动态化 | ~10 行 |
-| 10 | `engine/scroll-nav.js` | `+40` 偏移变量化 | ~3 行 |
+| 步骤 | 文件 | 改动内容 | 状态 |
+|------|------|---------|------|
+| 1 | `styles/base.css` | `:root` 定义 5 个 `--layout-*` 变量 | ✅ |
+| 2 | `styles/base.css` | `.phone-shell` / `.left-area` / `.layout-main` / `.design-notes` → 变量 | ✅ |
+| 3 | `styles/conversation.css` | `718px` → `flex:1` | ✅ |
+| 4 | `styles/markdown.css` | 表格横屏 852×393 → 变量（shell-h/shell-w 互换）；居中计算变量化 | ✅ |
+| 5 | `styles/markdown.css` | 右侧快照宽度 → `--layout-shell-w` | ✅ |
+| 6 | `styles/feature-panel.css` | 快照宽度 → `--layout-shell-w`；标题宽度 → `--fp-feature-header-w` | ✅ |
+| 7 | `styles/demo-controls.css` | paper-bg left 524px → `--layout-left-area-w` | ✅ |
 
-**总预估**：~65 行改动
+### 10.2 Phase 1（✅ 已完成 — commit `d16fae7c`）
 
-### 10.2 工作量评估
+| 步骤 | 文件 | 改动内容 | 状态 |
+|------|------|---------|------|
+| 8 | `styles/base.css` | `:root.device-pad` 覆盖 5 个 `--layout-*` 变量 | ✅ |
+| 9 | `index.html` | `buildGrid()` 动态 COLS/ROWS（`TARGET_CELL=68`） | ✅ |
+| 10 | `index.html` | demo-controls 新增"设备" segment 按钮 + `setDeviceMode()` | ✅ |
 
-| 维度 | 评估 |
-|------|------|
-| 架构改动 | 小 — 只加 CSS 变量 + 切换逻辑 |
-| 工作量 | 低 — ~65 行代码 |
-| 复杂度 | 低 — 纯 CSS class toggle + CSS 变量 |
-| 风险 | 低 — 不影响 engine 核心逻辑 |
-| 维护成本 | 低 — 后续加其他尺寸同理加变量覆盖 |
+**方案变更**：
+- 原计划 `engine/grid.js` 抽离 → 保留内联（DOM 紧耦合，抽离收益低）
+- 原计划预计算 3 种 Pad 网格参数 → `TARGET_CELL` 自适应（用户决策：基于手机切格子原则）
+- 原计划 `togglePadMode()` 单按钮 → Phone/Pad segment 双按钮
 
-### 10.3 推进顺序
+### 10.3 待完成（Phase 1 收尾 + 后续）
 
-1. **先做 CSS 变量化** — 基础，所有后续依赖
-2. **再做 Device mode 切换** — 按钮和 toggle 函数
-3. **最后做网格动态化** — `buildGrid()` 改造
+| # | 项目 | 优先级 | 预估 | 依赖 |
+|---|------|--------|------|------|
+| ① | `scroll-nav.js` `+40` 偏移变量化 | P0 | 5 行 | ✅ `d584bfd0` |
+| ② | 表格全屏 ~150 行 → `engine/table-fullscreen.js` | P1 | 搬迁为主 | ✅ `d584bfd0` |
+| ③ | `player.js` 1188 行 → 5 文件拆分 | P2 | 需仔细梳理 | ✅ `b9b4945b` |
+| ④ | `todoOverrides` 加防御性校验 | P2 | 3 行 | ✅ `710e9d9b` |
+| ⑤ | `feature-jump.js` 消除 normalizeActions 复现 | P2 | 直接 import | ✅ `710e9d9b` |
+| ⑥ | `feature-panel.js` 场景引用提取 ANCHOR_MAP | P3 | 触发型 | 改剧本时顺手做 |
 
 ---
 
-## 十一、参考信息
+## 十一、下一步建议
+
+### 当前状态
+
+Pad 切换核心通路已打通：点击"设备"按钮 → CSS 变量切换 → 网格自动重算 → 所有内容自适应。Phone/Pad 两种模式均可在桌面浏览器中正常工作。
+
+### 全部完成（③ 也已完成）
+
+Phase 0 + Phase 1 + ①②③④⑤ 扩展清理已全部完成。当前状态：
+
+| 已完成 | 提交 |
+|--------|------|
+| Phase 0: CSS 变量化（14 处硬编码 → 变量） | `e69d22fd` |
+| Phase 1: Pad 切换 + 网格动态化 | `d16fae7c` |
+| 扩展: scroll-nav +40 变量化 | `d584bfd0` |
+| 扩展: 表格全屏抽离为 engine/table-fullscreen.js | `d584bfd0` |
+| 扩展: todoOverrides 越界防御 | `710e9d9b` |
+| 扩展: normalizeActions DRY 消除 | `710e9d9b` |
+| 扩展: player.js 1188 行 → 5 文件拆分 | `b9b4945b` |
+
+**index.html 内联脚本已从 ~250 行降至 ~100 行**（降幅 60%）。**player.js 从 1188 行拆为 5 文件**：player-state（状态）、player-dom（DOM 渲染）、player-final（Final 渲染）、player-ui（UI 控件）、player.js（Director 主控 ~400 行）。
+
+### 唯一待做
+
+| 优先级 | 做什么 | 为什么 |
+|--------|--------|--------|
+| P3 | ⑥ ANCHOR_MAP 提取 | 触发型——不改剧本就不做 |
+
+### 如果要继续推进 Pad 完整支持
+
+当前已实现的"设备切换"满足桌面预览需求（在桌面浏览器中切换到 Pad 壳子）。如果需要在 iPad 真机上以"Pad 浏览模式"全屏展示，还需要：
+
+| 需求 | 改动 |
+|------|------|
+| iPad 竖屏视口（~834px）不显示横向滚动条 | `styles/base.css` standalone/media query 断点适配 |
+| iPad 上 Feature Panel 过窄问题 | 可能需要 600-1024px 中间断点（抽屉式侧滑或 tab 切换） |
+| `apple-mobile-web-app-capable` meta | 可选，提升 PWA 体验 |
+
+---
+
+## 十二、参考信息
 
 ### 业界成熟实践
 
@@ -483,14 +608,17 @@ DeviceManager 单例虽然更规范，但对于只有 2 种模式的 Demo 来说
 
 - 网格线不是 DOM div，是 **SVG background-image**
 - 在 `index.html` 底部内联 `<script>` 中的 `buildGrid()` 函数生成
-- 当前参数：`COLS=6, ROWS=12`
-- 手机模式格子尺寸：65.5×71.0px（宽高比 0.923）
+- 当前参数：`TARGET_CELL=68`，`COLS` 和 `ROWS` 由 `buildGrid()` 根据壳子实际尺寸动态计算（`Math.round(壳宽/TARGET_CELL)` / `Math.round(壳高/TARGET_CELL)`）
+- Phone 竖屏（393×852）：COLS=6, ROWS=12, 格子 65.5×71.0px（宽高比 0.92）
+- Pad 竖屏（840×1190）：COLS=12, ROWS=17, 格子 70.0×70.0px（宽高比 1.00）
 
 ## 附录 B：横屏模式已有先例
 
 `.tbl-landscape` 通过 CSS class 切换壳尺寸（`width:852px; height:393px`），Pad 模式可复用同一机制。这证明 class 切换方案在当前项目中已被验证过。
 
 ## 附录 C：不同 Pad 尺寸适配参数表
+
+> 注：Phase 1 后这些参数由 `buildGrid()` 中的 `TARGET_CELL=68` 动态计算自动产出，下表为计算结果参考，不再需要手动维护。
 
 | 设备 | --shell-w | --shell-h | --left-area-w | --layout-min-w | COLS | ROWS | cell |
 |------|-----------|-----------|---------------|----------------|------|------|------|

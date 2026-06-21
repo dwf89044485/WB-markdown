@@ -104,7 +104,8 @@ function navBarOverlap() {
   if (!bar || !conv) return 0;
   const barRect = bar.getBoundingClientRect();
   const convRect = conv.getBoundingClientRect();
-  return Math.max(0, barRect.bottom - convRect.top) + 40;
+  const extra = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--scroll-nav-overlap-extra')) || 40;
+  return Math.max(0, barRect.bottom - convRect.top) + extra;
 }
 
 function smoothScrollTo(y) {

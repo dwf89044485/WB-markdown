@@ -662,21 +662,13 @@
   margin-bottom: 0;
 }
 
-/* Chat vs Agent 对比：纯文本排版 */
+/* Chat vs Agent 对比：表格式行对齐 */
 .fp-compare-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  column-gap: 48px;
+  row-gap: 0;
   margin: 12px 0 48px;
-}
-.fp-compare-col {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: #1a1a1c;
-}
-.fp-compare-col--agent {
-  color: #1a1a1c;
 }
 .fp-compare-side {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
@@ -684,21 +676,22 @@
   line-height: 1.1;
   font-weight: 400;
   letter-spacing: -0.015em;
-  margin-bottom: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1c;
 }
 .fp-compare-key {
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   color: #8a8a8f;
-  margin-top: 12px;
+  padding-top: 20px;
 }
 .fp-compare-val {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
   font-size: 18px;
   line-height: 1.4;
   font-weight: 400;
-  color: inherit;
+  color: #1a1a1c;
 }
 
 /* 总原则高亮块 */

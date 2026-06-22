@@ -38,10 +38,13 @@
 /* 卡片容器 — 替换 composer 显示在相同位置 */
 .approve-permission {
   display: none;
-  flex-shrink: 0;
   padding: 0 var(--composer-padding-x) var(--composer-padding-bottom);
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: transparent;
+  z-index: 11;
 }
 .approve-permission.is-active {
   display: flex;
@@ -169,10 +172,25 @@
 .ap-static {
   pointer-events: none;
   user-select: none;
-  animation: none;
+}
+
+/* ── 入场 / 出场动效 ── */
+@keyframes ap-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ap-slide-down {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+.ap-card.ap-entering {
+  animation: ap-slide-up 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+.ap-card.ap-leaving {
+  animation: ap-slide-down 0.25s ease-in-out forwards;
 }
 
 /* ── 重渲染静默 ── */
-.approve-permission.ap-settled .ap-card {
+.approve-permission.ap-settled .ap-card.ap-entering {
   animation: none;
 }

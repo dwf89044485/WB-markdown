@@ -53,34 +53,77 @@ function showApprovePermission(data) {
   return new Promise((resolve) => {
     apState = { data, resolve };
 
-    // 隐藏 composer，显示权限卡片
-    const composer = document.querySelector('.composer');
     const apEl = document.getElementById('approvePermission');
-    if (composer) composer.style.display = 'none';
     if (apEl) {
       apEl.classList.remove('ap-settled');
-      apEl.classList.add('is-active');
     }
 
     renderApprovePermission();
 
-    if (apEl) apEl.classList.add('ap-settled');
+    if (apEl) {
+      apEl.classList.add('is-active');
+
+      // 将上下按钮顶到卡片上方
+      const apH = apEl.offsetHeight;
+      const composerEl = document.querySelector('.composer');
+      const composerH = composerEl ? composerEl.offsetHeight : 78;
+      const offset = apH - composerH + 10;
+      const scrollDown = document.getElementById('scrollDown');
+      const scrollUp = document.getElementById('scrollUp');
+      if (scrollDown) scrollDown.style.bottom = offset + 'px';
+      if (scrollUp) scrollUp.style.bottom = (offset + 36 + 8) + 'px';
+
+      // 两次 rAF 触发入场动画
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const card = apEl.querySelector('.ap-card');
+          if (card) card.classList.add('ap-entering');
+
+          setTimeout(() => {
+            if (apEl) apEl.classList.add('ap-settled');
+          }, 330);
+        });
+      });
+    }
   });
 }
 
-function hideApprovePermission() {
-  const composer = document.querySelector('.composer');
+function hideApprovePermission(immediate) {
   const apEl = document.getElementById('approvePermission');
-  if (composer) composer.style.display = '';
-  if (apEl) {
-    apEl.classList.remove('is-active', 'ap-settled');
+  if (!apEl) {
+    if (apState && apState.resolve) apState.resolve(apState.data.selectedIndex);
+    apState = null;
+    return;
   }
 
-  // 如果还有 pending 的 resolve，自动 resolve
-  if (apState && apState.resolve) {
-    apState.resolve(apState.data.selectedIndex);
+  const card = apEl.querySelector('.ap-card');
+  if (!card || immediate) {
+    // 立即隐藏：跳过出场动画
+    if (card) card.classList.remove('ap-entering', 'ap-leaving');
+    apEl.classList.remove('is-active', 'ap-settled');
+    const scrollDown = document.getElementById('scrollDown');
+    const scrollUp = document.getElementById('scrollUp');
+    if (scrollDown) scrollDown.style.bottom = '';
+    if (scrollUp) scrollUp.style.bottom = '';
+    if (apState && apState.resolve) apState.resolve(apState.data.selectedIndex);
+    apState = null;
+    return;
   }
-  apState = null;
+
+  // 播出场动画再隐藏
+  card.classList.remove('ap-entering');
+  card.classList.add('ap-leaving');
+  const scrollDown = document.getElementById('scrollDown');
+  const scrollUp = document.getElementById('scrollUp');
+  if (scrollDown) scrollDown.style.bottom = '';
+  if (scrollUp) scrollUp.style.bottom = '';
+
+  setTimeout(() => {
+    apEl.classList.remove('is-active', 'ap-settled');
+    card.classList.remove('ap-leaving');
+    if (apState && apState.resolve) apState.resolve(apState.data.selectedIndex);
+    apState = null;
+  }, 260);
 }
 
 // ── 事件绑定 ─────────────────────────────────

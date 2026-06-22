@@ -9,8 +9,6 @@ EXPLICIT_FILES = [
     "index.html",
     "scenario.js",
     "icons-inline.js",
-    "commit-hash.js",
-    "design-notes.js",
     "vercel.json",
 ]
 

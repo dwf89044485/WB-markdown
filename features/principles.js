@@ -18,8 +18,35 @@ export default {
       </header>
 
       <blockquote class="fp-lead-quote">
-        Agent 对话流不是普通聊天界面。普通 Chatbot 的核心是"用户提问，AI 回答"；Agent 产品的核心是"用户委托目标，Agent 理解、拆解、执行、交付"。对话流设计的本质不是如何展示一段回复，而是如何让用户在复杂、异步、可能失败的执行过程中，始终知道结果是什么、过程是否可信、风险是否可控。
+        <p>Chat 是"一问一答"的序列，Agent 是"目标导向的协作进程"。</p>
+        <p>Agent 对话流的设计重心需要从<strong>回复质量</strong>转向<strong>进程的可理解性与可控性</strong>。</p>
       </blockquote>
+
+      <div class="fp-compare-row">
+        <div class="fp-compare-card">
+          <span class="fp-compare-label">Chat 对话</span>
+          <div class="fp-compare-item">
+            <span class="fp-compare-key">目标</span>
+            <span class="fp-compare-val">获取答案</span>
+          </div>
+          <div class="fp-compare-item">
+            <span class="fp-compare-key">用户关注</span>
+            <span class="fp-compare-val">最新回复</span>
+          </div>
+        </div>
+        <div class="fp-compare-vs">VS</div>
+        <div class="fp-compare-card fp-compare-card--agent">
+          <span class="fp-compare-label">Agent</span>
+          <div class="fp-compare-item">
+            <span class="fp-compare-key">目标</span>
+            <span class="fp-compare-val">完成任务</span>
+          </div>
+          <div class="fp-compare-item">
+            <span class="fp-compare-key">用户关注</span>
+            <span class="fp-compare-val">过程可信可控</span>
+          </div>
+        </div>
+      </div>
 
       <section>
         <h2>总原则</h2>

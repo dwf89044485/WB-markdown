@@ -274,7 +274,7 @@ export function resetPlaybackDom() {
   if (main) main.innerHTML = '';
   if (mainBiz) mainBiz.innerHTML = '';
   if (mainActions) mainActions.innerHTML = '';
-  if (execArea) execArea.className = 'exec-area open is-hidden';
+  if (execArea) { execArea.className = 'exec-area open is-hidden'; execArea.removeAttribute('style'); }
   setComposerGenerating(false);
   // 清理覆层面板（#askQuestion / #approvePermission 等）。
   // 所有跳转（goToStep / directorPrevStep / directorNextStep / restartPlayback）

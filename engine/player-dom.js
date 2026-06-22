@@ -7,7 +7,7 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleepDelay, playback, CANCELLED,
-  scrollToBottom, scrollIfFull, scrollUserToTop, initScrollGuard
+  scrollToBottom, scrollIfFull, scrollUserToTop, initScrollGuard, clearUserTopSpacer
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { setStatusLineLabels, statusStackHTML } from './icons.js';
@@ -199,18 +199,14 @@ export function renderStaticPreChat(skipScroll) {
     conv.insertBefore(userWrap, ref);
   }
 
-  // 初始显示第四轮用户消息，滚动到 navbar 下方
+  // 填入第四轮用户消息文本，但保持隐藏，由 showUserMessage() 动画展示
   const lastChat = preChat[preChat.length - 1];
   if (lastChat) {
     $('#userBubble').textContent = lastChat.user;
-    $('#userMsgWrap').classList.remove('is-hidden');
   }
   if (skipScroll) return;
-  // scrollTop = ref 相对 conv 的位置 - navbar 高度 - 间距
-  const navBar = conv.querySelector('.nav-bar');
-  const navHeight = navBar ? navBar.offsetHeight : 0;
-  const scrollTarget = (ref.offsetTop - conv.offsetTop) - navHeight - 12;
-  if (scrollTarget > 0) conv.scrollTop = scrollTarget;
+  // 滚动到第三轮 AI 回复底部
+  scrollToBottom();
 }
 
 // ── User / agent appearance ───────────────────────────────
@@ -222,7 +218,8 @@ export async function showUserMessage() {
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
-  // 用户消息上屏后，滚动到视口顶端（navbar 下方），为 AI 回复腾空间
+  // 等一帧让布局稳定，再把用户消息贴到 navbar 下方
+  await new Promise(resolve => requestAnimationFrame(resolve));
   scrollUserToTop();
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
@@ -279,10 +276,9 @@ export function resetPlaybackDom() {
   if (execArea) { execArea.className = 'exec-area open is-hidden'; execArea.removeAttribute('style'); }
   setComposerGenerating(false);
   // 清理覆层面板（#askQuestion / #approvePermission 等）。
-  // 所有跳转（goToStep / directorPrevStep / directorNextStep / restartPlayback）
-  // 都经过 resetPlaybackDom，因此内置清理可覆盖所有路径。
-  // 新增面板类型 → 在面板模块中 registerOverlayCleanup(hideXxx)，无需改此文件。
-  hideAllOverlays();
+  // 所有跳转都经过 resetPlaybackDom，内置清理可覆盖所有路径。
+  hideAllOverlays(true);
+  clearUserTopSpacer();
   initScrollGuard();
   scrollToBottom();
 }

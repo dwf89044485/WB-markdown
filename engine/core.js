@@ -57,6 +57,46 @@ export function currentTokensPerSecond() {
 let _sbUserAway = false;
 let _sgInited = false;
 
+const USER_TOP_OFFSET = 12;
+const USER_TOP_SPACER_ID = 'userTopSpacer';
+
+function userTopTarget(c, wrap) {
+  const navBar = c.querySelector('.nav-bar');
+  const navHeight = navBar ? navBar.offsetHeight : 0;
+  return Math.max(0, (wrap.offsetTop - c.offsetTop) - navHeight - USER_TOP_OFFSET);
+}
+
+function ensureUserTopSpacer(c, target) {
+  const maxScrollTop = Math.max(0, c.scrollHeight - c.clientHeight);
+  const deficit = target - maxScrollTop;
+  let spacer = document.getElementById(USER_TOP_SPACER_ID);
+  if (deficit <= 0) {
+    if (spacer) spacer.remove();
+    return;
+  }
+  if (!spacer) {
+    spacer = document.createElement('div');
+    spacer.id = USER_TOP_SPACER_ID;
+    spacer.setAttribute('aria-hidden', 'true');
+    spacer.style.pointerEvents = 'none';
+    c.appendChild(spacer);
+  }
+  spacer.style.height = `${Math.ceil(deficit)}px`;
+}
+
+function trimUserTopSpacer(c, target) {
+  const spacer = document.getElementById(USER_TOP_SPACER_ID);
+  if (!spacer) return;
+  const spacerHeight = spacer.offsetHeight;
+  const maxWithoutSpacer = Math.max(0, c.scrollHeight - spacerHeight - c.clientHeight);
+  if (maxWithoutSpacer >= target) spacer.remove();
+}
+
+export function clearUserTopSpacer() {
+  const spacer = document.getElementById(USER_TOP_SPACER_ID);
+  if (spacer) spacer.remove();
+}
+
 export function initScrollGuard() {
   if (_sgInited) return;
   const c = document.querySelector('#conv');
@@ -76,16 +116,20 @@ export function scrollToBottom() {
 }
 
 /**
- * 内容填满一屏时才滚动到底部，否则保持当前视口位置。
- * 用于 showAgentShell / status line / step 完成等场景：
- * 用户消息滚到顶端后，AI 内容逐步填充下方空间，
- * 在填满屏幕之前不动视口，填满后自动跟随底部。
+ * 用户消息钉在视口顶端（navbar 下方），AI 内容填到接近底部时跟随滚动。
+ *
+ * 逻辑：
+ * - 如果当前视口底部距内容底部 < 60px（内容已经接近填满屏幕），跟随底部
+ * - 否则保持原状（用户消息维持在顶端，AI 内容在下方自然填充）
  */
 export function scrollIfFull() {
   const c = document.querySelector('#conv');
   if (!c) return;
   if (_sbUserAway) return;
-  // 视口底部是否已被内容填满（距内容底部 < 60px 视为已填满）
+  const wrap = document.getElementById('userMsgWrap');
+  if (wrap) {
+    trimUserTopSpacer(c, userTopTarget(c, wrap));
+  }
   if (c.scrollTop + c.clientHeight >= c.scrollHeight - 60) {
     c.scrollTop = c.scrollHeight;
   }
@@ -93,15 +137,17 @@ export function scrollIfFull() {
 
 /**
  * 将用户消息气泡滚动到视口顶端（navbar 下方）。
- * 用于第四轮用户消息上屏后，为下方 AI 回复腾出完整空间。
+ *
+ * 若当前内容不足一屏，先在底部插入临时 spacer，确保“消息出现即贴顶”可达。
  */
 export function scrollUserToTop() {
   const c = document.querySelector('#conv');
   if (!c) return;
   const wrap = document.getElementById('userMsgWrap');
   if (!wrap) return;
-  const navBar = c.querySelector('.nav-bar');
-  const navHeight = navBar ? navBar.offsetHeight : 0;
-  const scrollTarget = (wrap.offsetTop - c.offsetTop) - navHeight - 12;
-  c.scrollTop = Math.max(0, scrollTarget);
+  const target = userTopTarget(c, wrap);
+  ensureUserTopSpacer(c, target);
+  c.scrollTop = target;
+  // 这是系统滚动，不是用户手动离开底部
+  _sbUserAway = false;
 }

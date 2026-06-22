@@ -557,26 +557,46 @@ function showAskQuestion(questions, silent) {
     askState = resetAskState(questions);
     askState.resolve = resolve;
 
-    // 隐藏 composer，显示问答卡片
-    const composer = document.querySelector('.composer');
     const askEl = document.getElementById('askQuestion');
-    if (composer) composer.style.display = 'none';
     if (askEl) {
-      askEl.classList.remove('aq-settled'); // 清除旧标记，让入场动画可播
-      askEl.classList.add('is-active');
+      askEl.classList.remove('aq-settled');
     }
 
-    renderAskQuestion(); // 内部会处理 sortable 初始化
+    // 先把卡片内容 mount 到 DOM
+    renderAskQuestion();
 
-    // 首次渲染后标记 settled，后续重渲染不再播入场动画
-    if (askEl) askEl.classList.add('aq-settled');
+    if (askEl) {
+      // 让容器变为可见
+      askEl.classList.add('is-active');
 
-    // silent 模式：立即 resolve，不阻塞调用者（供 feature-jump 锚点跳转使用）
+      // 计算按钮偏移
+      const askH = askEl.offsetHeight;
+      const composerEl = document.querySelector('.composer');
+      const composerH = composerEl ? composerEl.offsetHeight : 78;
+      const offset = askH - composerH + 10;
+      const scrollDown = document.getElementById('scrollDown');
+      const scrollUp = document.getElementById('scrollUp');
+      if (scrollDown) scrollDown.style.bottom = offset + 'px';
+      if (scrollUp) scrollUp.style.bottom = (offset + 36 + 8) + 'px';
+
+      // 两次 requestAnimationFrame 确保入场动画可播
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const card = askEl.querySelector('.ask-question-card');
+          if (card) card.classList.add('aq-entering');
+
+          setTimeout(() => {
+            if (askEl) askEl.classList.add('aq-settled');
+          }, 330);
+        });
+      });
+    }
+
     if (silent) resolve();
   });
 }
 
-function hideAskQuestion() {
+function hideAskQuestion(immediate) {
   // 销毁 SortableJS 实例
   if (sortableInstance) {
     sortableInstance.destroy();
@@ -584,14 +604,35 @@ function hideAskQuestion() {
   }
   clearSortHint();
 
-  const composer = document.querySelector('.composer');
   const askEl = document.getElementById('askQuestion');
-  if (composer) composer.style.display = '';
-  if (askEl) {
+  if (!askEl) { askState = null; return; }
+
+  const card = askEl.querySelector('.ask-question-card');
+  if (!card || immediate) {
+    // 立即隐藏（无卡片或 immediate=true）：跳过出场动画
+    if (card) card.classList.remove('aq-entering', 'aq-leaving');
     askEl.classList.remove('is-active', 'aq-settled');
+    const scrollDown = document.getElementById('scrollDown');
+    const scrollUp = document.getElementById('scrollUp');
+    if (scrollDown) scrollDown.style.bottom = '';
+    if (scrollUp) scrollUp.style.bottom = '';
+    askState = null;
+    return;
   }
 
-  askState = null;
+  // 播出场动画再隐藏
+  card.classList.remove('aq-entering');
+  card.classList.add('aq-leaving');
+  const scrollDown = document.getElementById('scrollDown');
+  const scrollUp = document.getElementById('scrollUp');
+  if (scrollDown) scrollDown.style.bottom = '';
+  if (scrollUp) scrollUp.style.bottom = '';
+
+  setTimeout(() => {
+    askEl.classList.remove('is-active', 'aq-settled');
+    card.classList.remove('aq-leaving');
+    askState = null;
+  }, 260);
 }
 
 // 绑定事件（使用事件委托，绑定在容器上，不因 innerHTML 替换而丢失）

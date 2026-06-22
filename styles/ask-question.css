@@ -50,10 +50,13 @@
 /* 卡片整体 — 替换 composer 显示在相同位置 */
 .ask-question {
   display: none;
-  flex-shrink: 0;
   padding: 0 var(--composer-padding-x) var(--composer-padding-bottom);
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: transparent;
+  z-index: 11;
 }
 .ask-question.is-active {
   display: flex;
@@ -68,13 +71,24 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  animation: aq-slide-up 0.3s ease-out;
   overflow: hidden; /* 滑切时裁剪 aq-body 溢出 */
+  /* 入场动效由 JS 动态添加的 aq-entering 类触发，通过 animation 驱动 */
 }
 
+/* 入场 / 出场动效 keyframes */
 @keyframes aq-slide-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes aq-slide-down {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+.ask-question-card.aq-entering {
+  animation: aq-slide-up 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+.ask-question-card.aq-leaving {
+  animation: aq-slide-down 0.25s ease-in-out forwards;
 }
 
 /* 顶栏：左箭头 + 步骤 + 右箭头 + 关闭 */
@@ -457,15 +471,14 @@
 .aq-static {
   pointer-events: none;
   user-select: none;
-  animation: none; /* 禁止入场动效 */
 }
 /* 静态快照中允许选项区域滚动交互 */
 .aq-static .aq-options.many-options {
   pointer-events: auto;
 }
 
-/* ── 重渲染静默：防止每次 innerHTML 替换重播 slide-up ── */
-.ask-question.aq-settled .ask-question-card {
+/* ── 重渲染静默：防止每次 innerHTML 替换重播入场动效 ── */
+.ask-question.aq-settled .ask-question-card.aq-entering {
   animation: none;
 }
 

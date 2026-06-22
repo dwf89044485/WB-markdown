@@ -31,8 +31,8 @@ export default {
               <div class="fp-compare-val">获取答案</div>
             </div>
             <div class="fp-compare-field">
-              <div class="fp-compare-key">形式</div>
-              <div class="fp-compare-val">一问一答</div>
+              <div class="fp-compare-key">核心能力</div>
+              <div class="fp-compare-val">理解并回复</div>
             </div>
             <div class="fp-compare-field">
               <div class="fp-compare-key">用户关注</div>
@@ -49,8 +49,8 @@ export default {
               <div class="fp-compare-val">完成任务</div>
             </div>
             <div class="fp-compare-field">
-              <div class="fp-compare-key">形式</div>
-              <div class="fp-compare-val">交付结果为主<br>追溯过程为辅</div>
+              <div class="fp-compare-key">核心能力</div>
+              <div class="fp-compare-val">拆解并交付</div>
             </div>
             <div class="fp-compare-field">
               <div class="fp-compare-key">用户关注</div>

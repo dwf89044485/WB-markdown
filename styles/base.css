@@ -162,6 +162,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .nav-bar{top:0;padding-top:10px;}
   html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
   html:not(.force-desktop) .design-notes,
+  html:not(.force-desktop) .dc-toggle,
   html:not(.force-desktop) .demo-controls,
   html:not(.force-desktop) .paper-bg,
   html:not(.force-desktop) .grid-overlay{display:none;}
@@ -514,7 +515,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, bottom 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 #scrollUp {
   bottom: calc(10px + 36px + 8px);

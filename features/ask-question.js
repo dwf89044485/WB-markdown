@@ -208,44 +208,37 @@ export default {
       </header>
 
       <section data-section="overview">
-        <h2>1. 定义</h2>
+        <h2>1. 为什么需要 AskQuestion</h2>
         <blockquote class="fp-lead-quote">
-          <p>AskQuestion 是 Agent 在继续执行前需要用户补充判断时，插入对话流中的结构化提问卡片。</p>
-          <p>它不是普通表单，也不是闲聊追问。它的作用是把 Agent 的不确定点变成用户可以快速回答的选择、补充或排序。</p>
+          <p>Agent 遇到关键信息缺口时，如果继续猜，结果可能偏离用户真实意图；如果直接开放式追问，又会把用户重新拉回一轮聊天。</p>
+          <p>AskQuestion 把这个断点收敛成结构化卡片：用户只需要选择、补充或排序，Agent 就能带着更明确的约束继续执行。</p>
         </blockquote>
         <table>
           <thead>
-            <tr><th>触发原因</th><th>用户看到什么</th><th>体验目标</th></tr>
+            <tr><th>协作断点</th><th>不用 AskQuestion 的问题</th><th>AskQuestion 的作用</th></tr>
           </thead>
           <tbody>
-            <tr><td>关键信息缺失</td><td>Agent 暂停并提出明确问题</td><td>避免继续猜测</td></tr>
-            <tr><td>存在多个合理路径</td><td>用户在可比较选项中做选择</td><td>把决策权交还给用户</td></tr>
-            <tr><td>用户意图有歧义</td><td>问题被拆成可回答的结构</td><td>减少开放追问带来的往返成本</td></tr>
+            <tr><td>信息不完整</td><td>Agent 只能猜用户偏好</td><td>把缺口变成明确问题</td></tr>
+            <tr><td>路径分岔</td><td>Agent 替用户做高代价选择</td><td>让用户在可比较选项中决定</td></tr>
+            <tr><td>意图有歧义</td><td>开放追问容易继续发散</td><td>把追问收敛成可回答结构</td></tr>
           </tbody>
         </table>
       </section>
 
       <section data-section="principle">
-        <h2>2. 体验原则</h2>
-        <div class="fp-principle-summary">不确定时先对齐，而不是假装确定；提问要结构化，而不是把用户拉回开放聊天。</div>
-        <div class="fp-do-dont">
-          <div class="fp-do">
-            <span class="fp-do-dont-label">AskQuestion 要做到</span>
-            <ul>
-              <li>问题能说明 Agent 为什么停下来。</li>
-              <li>回答方式清晰，用户不需要猜下一步怎么做。</li>
-              <li>用户回答后，任务可以继续推进。</li>
-            </ul>
-          </div>
-          <div class="fp-dont">
-            <span class="fp-do-dont-label">AskQuestion 不应该</span>
-            <ul>
-              <li>把简单确认包装成正式问卷。</li>
-              <li>让用户在卡片里完成复杂录入任务。</li>
-              <li>用过多题目打断 Agent 执行节奏。</li>
-            </ul>
-          </div>
-        </div>
+        <h2>2. 面板体验原则</h2>
+        <div class="fp-principle-summary">问题要可快速回答，输入要说明关系，操作要让用户知道下一步会发生什么。</div>
+        <table>
+          <thead>
+            <tr><th>原则</th><th>说明</th><th>对应表现</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>题型先行</td><td>用户看到题目之前，先知道该单选、多选还是排序</td><td>题型标签固定出现在题干上方</td></tr>
+            <tr><td>输入关系必须明示</td><td>单选输入是替代答案，多选/排序输入是补充说明</td><td>placeholder 分别写“以上都不是”和“额外补充”</td></tr>
+            <tr><td>完成信号跟随题型</td><td>单选可以自动前进，多选需要手动确认，排序默认已有答案</td><td>按钮文案和底色随状态变化</td></tr>
+            <tr><td>切题不丢状态</td><td>用户可以来回核对，不因切换题目丢失选择</td><td>选择、输入、排序顺序都保留</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <section data-section="anatomy">
@@ -260,10 +253,8 @@ export default {
           <div class="fp-snapshot-side-desc">
             <h4>① 顶栏 · 题间导航</h4>
             <blockquote>
-              <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>，让用户知道这一组提问的长度。</p>
-              <p><strong>左 / 右箭头</strong>：用于在多题之间来回检查；不可用时视觉降饱和。</p>
-              <p><strong>关闭 ✕</strong>：结束整组提问，和“跳过当前题”区分语义。</p>
-              <p><strong>状态保留</strong>：切题后再回来，选择、输入和排序顺序都应保留。</p>
+              <p><strong>步骤与切题</strong>：显示 <code>当前 / 总数</code>，左右箭头支持直接切题；切走时已选内容保留，未选题保持留空。</p>
+              <p><strong>关闭 ✕</strong>：结束整组提问，不等同于“跳过当前题”。关闭后 Agent 继续执行，但不会收到这组问题的有效答案。</p>
             </blockquote>
 
             <h4>② 题型与题干</h4>
@@ -291,15 +282,15 @@ export default {
 
       <section data-section="variants">
         <h2>4. 题型</h2>
-        <p>AskQuestion 支持单选、多选、排序三种题型。三者不是视觉样式差异，而是回答结构差异。</p>
+        <p>AskQuestion 支持三种题型。这里不需要复杂分类，关键是让用户知道每种题型怎么完成。</p>
         <table>
           <thead>
-            <tr><th>题型</th><th>适合的问题</th><th>完成方式</th><th>关键差异</th></tr>
+            <tr><th>题型</th><th>交互差异</th><th>输入栏关系</th></tr>
           </thead>
           <tbody>
-            <tr><td>单选</td><td>多个方案只能选一个</td><td>点选后自动进入下一题</td><td>选择本身就是完成信号</td></tr>
-            <tr><td>多选</td><td>多个方向可以同时成立</td><td>选择后手动点击下一步</td><td>系统不能替用户判断是否选完</td></tr>
-            <tr><td>排序</td><td>需要表达优先级</td><td>调整顺序后点击下一步</td><td>默认顺序本身也是一种答案</td></tr>
+            <tr><td>单选</td><td>点选后自动进入下一题</td><td>输入是替代答案，会清空已选项</td></tr>
+            <tr><td>多选</td><td>点选只负责勾选，需要手动点“下一步”</td><td>输入是补充说明，可以和选项共存</td></tr>
+            <tr><td>排序</td><td>默认已有顺序，可拖动调整，也可以不改</td><td>输入是补充说明，不影响排序结果</td></tr>
           </tbody>
         </table>
         <div class="fp-snapshot-row">
@@ -311,19 +302,6 @@ export default {
 
       <section data-section="interaction" id="sec-interaction">
         <h2>5. 状态与交互</h2>
-        <p>AskQuestion 的状态设计围绕两个问题：用户是否已经给出有效答案，以及这类题型能否自动判断“已完成”。</p>
-        <table>
-          <thead>
-            <tr><th>状态</th><th>触发条件</th><th>界面反馈</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>未选</td><td>用户尚未选择或输入</td><td>按钮保持“跳过”语义</td></tr>
-            <tr><td>已选</td><td>用户选择选项</td><td>选项高亮，按钮进入可继续状态</td></tr>
-            <tr><td>用户输入</td><td>用户输入自由文本</td><td>根据题型表现为替代或补充答案</td></tr>
-            <tr><td>拖拽时</td><td>排序题被拖动</td><td>选项跟随移动，强调正在调整优先级</td></tr>
-            <tr><td>新手指引</td><td>首次进入排序题</td><td>用轻提示说明可以拖拽排序</td></tr>
-          </tbody>
-        </table>
 
         <h3 id="sec-single">5.1 单选题</h3>
         <div class="fp-snapshot-row">
@@ -362,7 +340,17 @@ export default {
 
       <section data-section="edge-cases">
         <h2>6. 边界与异常</h2>
-        <p>边界样例用于验证卡片在极端内容下仍然可读、可操作。</p>
+        <p>边界状态的重点不是“能不能装下”，而是极端内容下仍然不能影响判断。</p>
+        <table>
+          <thead>
+            <tr><th>边界</th><th>体验要求</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>问题文字过长</td><td>题干自然换行，不能压缩选项或遮挡操作按钮</td></tr>
+            <tr><td>选项过多</td><td>选项区纵向滚动，卡片主操作仍固定可见</td></tr>
+            <tr><td>选项文字过长</td><td>选项保留完整语义，避免截断造成误选</td></tr>
+          </tbody>
+        </table>
         <div class="fp-snapshot-row edge-scroll">
           ${labeled('问题文字过长：自然换行', s.edgeLongQ)}
           ${labeled('选项过多：纵向滚动', s.edgeMany)}
@@ -370,8 +358,45 @@ export default {
         </div>
       </section>
 
+      <section data-section="motion">
+        <h2>7. 动效设计</h2>
+        <p>卡片内的动效服务于三个目的：让面板的出现有来源感，让切题有连续感，让拖拽有操作确认感。</p>
+
+        <h3>7.1 入场：从下方升起的卡片</h3>
+        <blockquote>
+          <p><strong>效果</strong>：卡片从屏幕下方整体滑入（完全在可见区外 → 到位），同时淡入。</p>
+          <p><strong>时机</strong>：Agent 发出 AskQuestion 消息时，卡片替换 composer 的位置出现。</p>
+          <p><strong>时长</strong>：300ms ease-out。</p>
+        </blockquote>
+        <p>卡片从 composer 所在的位置自下而上滑入，让用户建立“原来的输入框被一张卡片替换了”的感知。这个方向也暗示了用完还会降回去的可逆性。</p>
+        <p>后续切题、选选项、输入等操作不会重播入场动效——只有关闭后再打开时才会再次播放。</p>
+
+        <h3>7.2 切题过渡：横向翻页</h3>
+        <blockquote>
+          <p><strong>效果</strong>：旧题内容横向滑出，新题内容横向滑入，两者之间保持 40px 间距。</p>
+          <p><strong>时机</strong>：点击“下一步” / “上一步” / 单选自动前进 / 外部锚点跳转。</p>
+          <p><strong>时长</strong>：300ms ease-out。</p>
+        </blockquote>
+        <p>前后题之间用横向滑切，帮助用户建立“这些题目是一个集合里的连续页”的心智模型。方向与操作一致：点“下一步”向左滑出（符合推进的心理预期），点“上一步”向右滑回。</p>
+        <p>步骤指示器（1/4）固定在原位不动，只更新数字，保证导航锚点不丢失。动效期间忽略所有导航操作，避免快速连点导致跳题错乱。</p>
+
+        <h3>7.3 排序拖拽：物理感的操作反馈</h3>
+        <blockquote>
+          <p><strong>效果</strong>：按下时选项浮起（白底 + 投影），跟随手指移动，松手后 200ms 弹性落位。</p>
+          <p><strong>时机</strong>：拖拽手柄或长按选项，移动 3px 触发。</p>
+          <p><strong>引导</strong>：进入排序题 1.5s 后，第二个选项上方弹出“拖动可调整顺序”气泡，3s 后自动消失，完成一次实际拖拽后永久不再出现。</p>
+        </blockquote>
+        <p>拖拽的物理感（浮起、跟随、落位）让用户明确知道“我拿起来了”“我放到这里了”。拖拽只允许纵向移动，不会横向偏移。</p>
+
+        <h3>7.4 单选自动前进的 300ms 节奏</h3>
+        <blockquote>
+          <p><strong>效果</strong>：单选选中后等待 300ms 再触发切题过渡。</p>
+        </blockquote>
+        <p>这 300ms 让用户先看到选项变高亮了（确认选中），再翻页。如果没有这个间隔，用户会感觉“我刚碰了一下就跳走了”，怀疑自己是否误触。</p>
+      </section>
+
       <section data-section="rationale">
-        <h2>7. 设计原理</h2>
+        <h2>8. 设计原理</h2>
         <h3>为什么单选自动前进，多选不自动前进</h3>
         <p>单选有明确的作答完成信号，选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明“我选完了”。强行让多选自动前进会变成系统替用户做决定。</p>
         <h3>为什么排序题没有“跳过”按钮</h3>
@@ -381,7 +406,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>8. Do / Don't</h2>
+        <h2>9. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
             <span class="fp-do-dont-label">Do</span>

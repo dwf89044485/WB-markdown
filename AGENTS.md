@@ -133,6 +133,19 @@ python3 -m http.server 8080
 
 ### Feature Panel 说明系统（禁止散写）
 
+#### 两套 design.md 的边界（MUST）
+
+项目里存在两套不同对象的 `design.md`，后续 AI 执行时必须先判断当前任务属于哪一套，禁止混写：
+
+| 类型 | 规范对象 | 关注问题 | 不应包含 |
+|------|----------|----------|----------|
+| **Agent 产品 design.md** | 左侧 Demo 所代表的 Agent 产品体验本身 | Agent 对话流、结果/过程/详情层、Tool Call Node、Ask Question、Permission、用户如何理解与控制 Agent | 右侧说明文档的版式、阅读体验、文档组件规范 |
+| **右侧交互设计说明文档 design.md** | 右侧 Feature Panel 作为“设计说明文档系统”的表达方式 | 读者分层、内容层级、说明模板、图文规范、标题/引用/对比/表格/快照等文档组件如何组织 | Agent 产品本身应该如何工作、具体工程实现逻辑 |
+
+当用户说“design.md”“交互设计说明”“右侧说明区”“说明文档设计语言”时，默认指 **右侧交互设计说明文档 design.md**。只有用户明确说“Agent 产品本身”“左侧 Demo”“产品体验规范”时，才进入 **Agent 产品 design.md**。
+
+右侧交互设计说明文档的核心任务是：**定义如何把 Agent 产品设计讲清楚**，不是重新定义 Agent 产品本身。
+
 右侧说明栏所有内容的唯一合规路径：
 
 - **内容** → `features/<id>.js` 定义 `{ id, type, label, anchors, content }`

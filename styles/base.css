@@ -267,10 +267,10 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   gap:var(--nav-bar-gap);
   padding:var(--nav-bar-padding-top) var(--nav-bar-padding-x) var(--nav-bar-padding-bottom);
   pointer-events:none;
-  /* 背景白色从顶部不透明渐变到中间以下透明 */
-  background:linear-gradient(to bottom, #fafafa 0%, #fafafa 60%, rgba(250,250,250,0) 100%);
+  /* 全程不透明，防止底层纸纹透出 */
+  background:#fafafa;
 }
-/* 伪元素承载毛玻璃，同样渐变透明 */
+/* 伪元素承载毛玻璃，遮罩渐隐控制模糊范围 */
 .nav-bar::before{
   content:"";
   position:absolute;

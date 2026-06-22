@@ -23,24 +23,6 @@ export default {
       </blockquote>
 
       <div class="fp-compare-row">
-        <div class="fp-compare-card">
-          <div class="fp-compare-side">Chat 对话</div>
-          <div class="fp-compare-fields">
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">目标</div>
-              <div class="fp-compare-val">获取答案</div>
-            </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">核心能力</div>
-              <div class="fp-compare-val">理解并回复</div>
-            </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">用户关注</div>
-              <div class="fp-compare-val">回复质量</div>
-            </div>
-          </div>
-        </div>
-        <div class="fp-compare-vs">VS</div>
         <div class="fp-compare-card fp-compare-card--agent">
           <div class="fp-compare-side">Agent</div>
           <div class="fp-compare-fields">
@@ -55,6 +37,24 @@ export default {
             <div class="fp-compare-field">
               <div class="fp-compare-key">用户关注</div>
               <div class="fp-compare-val">过程可信可控</div>
+            </div>
+          </div>
+        </div>
+        <div class="fp-compare-vs">VS</div>
+        <div class="fp-compare-card">
+          <div class="fp-compare-side">Chat 对话</div>
+          <div class="fp-compare-fields">
+            <div class="fp-compare-field">
+              <div class="fp-compare-key">目标</div>
+              <div class="fp-compare-val">获取答案</div>
+            </div>
+            <div class="fp-compare-field">
+              <div class="fp-compare-key">核心能力</div>
+              <div class="fp-compare-val">理解并回复</div>
+            </div>
+            <div class="fp-compare-field">
+              <div class="fp-compare-key">用户关注</div>
+              <div class="fp-compare-val">回复质量</div>
             </div>
           </div>
         </div>

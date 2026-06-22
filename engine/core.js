@@ -58,8 +58,10 @@ let _sbUserAway = false;
 let _sgInited = false;
 let _sbTurnPinned = false;
 let _sbRafId = 0;
+let _sbAnimSeq = 0;
 
 function cancelScrollAnimation() {
+  _sbAnimSeq += 1;
   if (!_sbRafId) return;
   cancelAnimationFrame(_sbRafId);
   _sbRafId = 0;
@@ -71,6 +73,7 @@ function easeOutCubic(t) {
 
 function animateScrollTop(container, targetTop, duration) {
   cancelScrollAnimation();
+  const seq = _sbAnimSeq;
   const startTop = container.scrollTop;
   const delta = targetTop - startTop;
   if (Math.abs(delta) < 1 || duration <= 0 || fastRender) {
@@ -81,6 +84,11 @@ function animateScrollTop(container, targetTop, duration) {
   const startAt = performance.now();
   return new Promise((resolve) => {
     const tick = (now) => {
+      // 被其他滚动操作中断时直接结束，避免阻塞上层 await
+      if (seq !== _sbAnimSeq) {
+        resolve();
+        return;
+      }
       const p = Math.min(1, (now - startAt) / duration);
       container.scrollTop = startTop + delta * easeOutCubic(p);
       if (p >= 1) {
@@ -110,9 +118,14 @@ export function initScrollGuard() {
 export async function pinMessageToViewportTop(messageEl, { gap = 12, duration = 360 } = {}) {
   const c = document.querySelector('#conv');
   if (!c || !messageEl) return;
+
   const navBar = c.querySelector('.nav-bar');
   const navHeight = navBar ? navBar.offsetHeight : 0;
-  const target = Math.max(0, (messageEl.offsetTop - c.offsetTop) - navHeight - gap);
+  const convRect = c.getBoundingClientRect();
+  const msgRect = messageEl.getBoundingClientRect();
+  const offsetInViewport = msgRect.top - convRect.top;
+  const target = Math.max(0, c.scrollTop + offsetInViewport - navHeight - gap);
+
   _sbTurnPinned = true;
   _sbUserAway = true;
   await animateScrollTop(c, target, duration);

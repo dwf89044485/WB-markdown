@@ -225,13 +225,15 @@ export async function showUserMessage() {
   wrap.classList.add('message-enter');
 
   const pinDuration = Math.max(0, playback('userPinDuration', 360));
-  const pinPromise = pinMessageToViewportTop(wrap, {
-    duration: fastRender ? 0 : pinDuration,
-    gap: 12,
-  });
+  if (fastRender) {
+    pinMessageToViewportTop(wrap, { duration: 0, gap: 12 }).catch(() => {});
+  } else {
+    requestAnimationFrame(() => {
+      pinMessageToViewportTop(wrap, { duration: pinDuration, gap: 12 }).catch(() => {});
+    });
+  }
 
   await sleepDelay('userMessageDelay', 720);
-  await pinPromise;
   rebuildScrollNav();
 }
 

@@ -74,3 +74,18 @@ export function scrollToBottom() {
   if (_sbUserAway) return;
   c.scrollTop = c.scrollHeight;
 }
+
+/**
+ * 将用户消息气泡滚动到视口顶端（navbar 下方）。
+ * 用于第四轮用户消息上屏后，为下方 AI 回复腾出完整空间。
+ */
+export function scrollUserToTop() {
+  const c = document.querySelector('#conv');
+  if (!c) return;
+  const wrap = document.getElementById('userMsgWrap');
+  if (!wrap) return;
+  const navBar = c.querySelector('.nav-bar');
+  const navHeight = navBar ? navBar.offsetHeight : 0;
+  const scrollTarget = wrap.offsetTop - navHeight - 12;
+  c.scrollTop = Math.max(0, scrollTarget);
+}

@@ -7,7 +7,7 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleepDelay, playback, CANCELLED,
-  scrollToBottom, initScrollGuard
+  scrollToBottom, scrollUserToTop, initScrollGuard
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { setStatusLineLabels, statusStackHTML } from './icons.js';
@@ -222,7 +222,8 @@ export async function showUserMessage() {
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
-  scrollToBottom();
+  // 用户消息上屏后，滚动到视口顶端（navbar 下方），为 AI 回复腾空间
+  if (!fastRender) scrollUserToTop();
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
 }

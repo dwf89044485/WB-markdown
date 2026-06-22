@@ -223,42 +223,41 @@ export default {
 
       <section data-section="anatomy">
         <h2>2. 卡片构成（结构）</h2>
+        <p>AskQuestion 由题间导航、题型提示、题干、选项、自由输入和底部动作组成。卡片需要同时表达“当前问什么”和“回答后怎么继续”。</p>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
             <span class="tag">完整卡片结构</span>
             <div class="fp-snapshot">${s.anatomy}</div>
-            <button class="fp-anchor-btn" data-anchor="single-appear" style="margin-top:12px">在左侧Demo查看示例</button>
+            <button class="fp-anchor-btn" data-anchor="single-appear" style="margin-top:12px">看左侧单选题示例</button>
           </div>
           <div class="fp-snapshot-side-desc">
             <h4>① 顶栏 · 题间导航</h4>
             <blockquote>
-            <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>。</p>
-            <p><strong>左 / 右箭头</strong>：上下题切换；第 1 题时左箭头不可点，最后题时右箭头不可点（视觉降饱和度）。</p>
-            <p><strong>关闭 ✕</strong>：无文案仅图标——避免与"跳过"按钮语义混淆。点击即所有题视为跳过，agent 收到空答案继续。</p>
-            <p><strong>切题保留状态</strong>：用箭头切走再切回来，之前的选择 / 输入 / 排序顺序全部保留——来回核对答案不丢数据。</p>
+              <p><strong>步骤与切题</strong>：显示 <code>当前 / 总数</code>，左右箭头支持直接切题；切走时已选内容保留，未选题保持留空。</p>
+              <p><strong>关闭 ✕</strong>：结束整组提问，不等同于“跳过当前题”。关闭后 Agent 继续执行，但不会收到这组问题的有效答案。</p>
+            </blockquote>
+
+            <h4>② 题型与题干</h4>
+            <blockquote>
+              <p>题型标签让用户先知道回答方式；题干必须自闭合，尽量不依赖上下文也能读懂。</p>
+            </blockquote>
+
+            <h4>③ 选项区</h4>
+            <blockquote>
+              <p>选项区承载主要回答动作。单选、多选、排序对应三种不同的决策结构。</p>
             </blockquote>
 
             <h4>④ 输入栏</h4>
             <blockquote>
-            <p>卡片四部件，自由文本输入。placeholder 文案按题型变化，输入栏与选项的两种关系模式（互斥 / 补充）详见 <a href="#sec-interaction">第 4 节</a>。</p>
+              <p>自由输入提供非预设答案出口。单选时通常是替代答案，多选和排序时通常是补充说明。</p>
             </blockquote>
 
             <h4>⑤ 操作按钮</h4>
             <blockquote>
-            <p>卡片底部单按钮，随状态切换三态：</p>
-            <ul>
-              <li><strong>跳过</strong>：浅灰底 → 用户未作答</li>
-              <li><strong>下一步</strong>：深色底 → 用户已作答，非最后题</li>
-              <li><strong>提交</strong>：深色底 → 用户已作答，最后一题</li>
-            </ul>
-            <p><strong>已答判定</strong>（排序除外）：选项已选中 <strong>或</strong> 输入框非空。</p>
-            <p><strong>底色变化是主信号，文案变化是辅助</strong>——用户快速作答时先用余光感知底色，真要按之前才会读文案确认。</p>
-            <p><strong>排序题无"跳过"按钮</strong>：默认顺序即为答案，没有"未答"概念。具体行为见 <a href="#sec-sort">第 4.3 节</a>。</p>
+              <p>底部按钮随作答状态切换：未答时是“跳过”，已答后是“下一步”，最后一题是“提交”。按钮颜色变化是主信号，文案变化是辅助信号。</p>
             </blockquote>
           </div>
         </div>
-
-
       </section>
 
       <section data-section="variants">
@@ -309,40 +308,55 @@ export default {
 
       <section data-section="edge-cases">
         <h2>5. 边界与异常</h2>
-        <p>演示组件在极端数据下的表现——可滚动的选项区域支持鼠标交互。</p>
+        <p>边界状态的重点不是“能不能装下”，而是极端内容下仍然不能影响判断。</p>
+        <table>
+          <thead>
+            <tr><th>边界</th><th>体验要求</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>问题文字过长</td><td>题干自然换行，不能压缩选项或遮挡操作按钮</td></tr>
+            <tr><td>选项过多</td><td>选项区纵向滚动，卡片主操作仍固定可见</td></tr>
+            <tr><td>选项文字过长</td><td>选项保留完整语义，避免截断造成误选</td></tr>
+          </tbody>
+        </table>
         <div class="fp-snapshot-row edge-scroll">
-          ${labeled('问题文字过长——自然换行', s.edgeLongQ)}
-          ${labeled('选项过多（≥8 项）——纵向滚动', s.edgeMany)}
-          ${labeled('选项文字过长——自然折行', s.edgeLongOpt)}
+          ${labeled('问题文字过长：自然换行', s.edgeLongQ)}
+          ${labeled('选项过多：纵向滚动', s.edgeMany)}
+          ${labeled('选项文字过长：自然折行', s.edgeLongOpt)}
         </div>
       </section>
 
       <section data-section="rationale">
         <h2>6. 设计原理</h2>
-        <h3>为什么单选自动前进、多选不自动前进</h3>
-        <p>单选有明确的"作答完成"信号——选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明"我选完了"。强行让多选自动前进会"系统替用户做决定"，违反用户主导原则。</p>
-        <h3>为什么排序题没有"跳过"按钮</h3>
-        <p>排序题的初始状态本身就是一种顺序。没有"未答"概念——用户不动等于接受默认顺序。设"跳过"会造成认知错配："我没拖动过，那我是答了还是没答？"</p>
-        <h3>为什么按钮变色 + 改文案两个信号同时给</h3>
-        <p>用户在快速作答时先用余光感知按钮颜色（"可跳" vs "可前进"），真要按之前才会读文案确认。两个信号叠加，认知负担最低。</p>
-        <p class="fp-meta">完整设计原理见 <code>docs/plans/2026-06-15-AskQuestion-交互设计文档.md</code> 第 13 章（共 7 个决策的"为什么"）。</p>
+        <h3>为什么单选自动前进，多选不自动前进</h3>
+        <p>单选有明确的作答完成信号，选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明“我选完了”。强行让多选自动前进会变成系统替用户做决定。</p>
+        <h3>为什么排序题没有“跳过”按钮</h3>
+        <p>排序题的初始状态本身就是一种顺序。用户不动等于接受默认顺序。再给“跳过”会造成认知错配：我没拖动过，那我是答了还是没答？</p>
+        <h3>为什么按钮变色和文案变化同时出现</h3>
+        <p>用户快速作答时先用余光感知按钮颜色，真正点击前再读文案确认。两个信号叠加，可以降低确认成本。</p>
       </section>
 
       <section data-section="related">
-        <h2>7. Do's / Don'ts</h2>
-        <h3>Do's</h3>
-        <ul>
-          <li>agent 应在<strong>真正不确定时</strong>使用——避免"问以确认"的礼貌性提问</li>
-          <li>题目数量 1-5 题，选项数 4-6 个</li>
-          <li>题干清晰自闭合，能脱离上下文独立读懂</li>
-        </ul>
-        <h3>Don'ts</h3>
-        <ul>
-          <li>不要用来确认 agent 的判断（如"我打算用 React，可以吗？"）</li>
-          <li>不要嵌套 AskQuestion</li>
-          <li>不要用单选模拟二元确认（"继续 / 取消"）</li>
-          <li>不要让用户在 AskQuestion 中执行复杂任务（它是"问询"工具，不是"录入"工具）</li>
-        </ul>
+        <h2>7. Do / Don't</h2>
+        <div class="fp-do-dont">
+          <div class="fp-do">
+            <span class="fp-do-dont-label">Do</span>
+            <ul>
+              <li>在真正不确定时使用，让用户补齐关键信息。</li>
+              <li>题目数量保持克制，题干清晰自闭合。</li>
+              <li>单选、多选、排序只用于各自适合的决策结构。</li>
+            </ul>
+          </div>
+          <div class="fp-dont">
+            <span class="fp-do-dont-label">Don't</span>
+            <ul>
+              <li>不要用来做礼貌性确认。</li>
+              <li>不要嵌套 AskQuestion。</li>
+              <li>不要用单选模拟二元确认，继续 / 取消这类决策应进入确认类组件。</li>
+              <li>不要让用户在 AskQuestion 中执行复杂录入任务。</li>
+            </ul>
+          </div>
+        </div>
       </section>
     </article>`;
   },

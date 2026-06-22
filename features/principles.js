@@ -50,7 +50,7 @@ export default {
             </div>
             <div class="fp-compare-field">
               <div class="fp-compare-key">形式</div>
-              <div class="fp-compare-val">持续推进</div>
+              <div class="fp-compare-val">交付结果为主<br>追溯过程为辅</div>
             </div>
             <div class="fp-compare-field">
               <div class="fp-compare-key">用户关注</div>

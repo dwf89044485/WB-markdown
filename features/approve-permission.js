@@ -31,7 +31,7 @@ function getSnapshots() {
 
 // 实际 node 索引
 const STEP_APPROVE = 2;   // n3
-const APPROVE_ACTION_OFFSET = 9;  // approvePermission action 在 n3 中的 normalized 索引
+const APPROVE_ACTION_OFFSET = 5;  // approvePermission action 在 n3 中的 normalized 索引
 
 export default {
   id: 'approve-permission',

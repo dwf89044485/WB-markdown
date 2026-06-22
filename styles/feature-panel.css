@@ -633,7 +633,13 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: stretch;
-  margin: 12px 0 48px;
+  margin: 12px 0 24px;
+}
+.fp-compare-group {
+  margin: 0 0 48px;
+}
+.fp-compare-group .fp-lead-quote {
+  margin-top: 0;
 }
 .fp-compare-card {
   padding: 28px 32px;

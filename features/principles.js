@@ -16,48 +16,50 @@ export default {
         <h1>原则指南</h1>
       </header>
 
-      <div class="fp-compare-row">
-        <div class="fp-compare-card fp-compare-card--agent">
-          <div class="fp-compare-side">Agent</div>
-          <div class="fp-compare-fields">
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">目标</div>
-              <div class="fp-compare-val">完成任务</div>
+      <div class="fp-compare-group">
+        <div class="fp-compare-row">
+          <div class="fp-compare-card fp-compare-card--agent">
+            <div class="fp-compare-side">Agent</div>
+            <div class="fp-compare-fields">
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">目标</div>
+                <div class="fp-compare-val">完成任务</div>
+              </div>
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">核心能力</div>
+                <div class="fp-compare-val">拆解并交付</div>
+              </div>
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">用户关注</div>
+                <div class="fp-compare-val">结果可信可控</div>
+              </div>
             </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">核心能力</div>
-              <div class="fp-compare-val">拆解并交付</div>
-            </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">用户关注</div>
-              <div class="fp-compare-val">结果可信可控</div>
+          </div>
+          <div class="fp-compare-vs">VS</div>
+          <div class="fp-compare-card">
+            <div class="fp-compare-side">Chat 对话</div>
+            <div class="fp-compare-fields">
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">目标</div>
+                <div class="fp-compare-val">获取答案</div>
+              </div>
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">核心能力</div>
+                <div class="fp-compare-val">理解并回复</div>
+              </div>
+              <div class="fp-compare-field">
+                <div class="fp-compare-key">用户关注</div>
+                <div class="fp-compare-val">回复质量</div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="fp-compare-vs">VS</div>
-        <div class="fp-compare-card">
-          <div class="fp-compare-side">Chat 对话</div>
-          <div class="fp-compare-fields">
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">目标</div>
-              <div class="fp-compare-val">获取答案</div>
-            </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">核心能力</div>
-              <div class="fp-compare-val">理解并回复</div>
-            </div>
-            <div class="fp-compare-field">
-              <div class="fp-compare-key">用户关注</div>
-              <div class="fp-compare-val">回复质量</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <blockquote class="fp-lead-quote">
-        <p>Chat 是"一问一答"的序列，Agent 是"目标导向的协作进程"。</p>
-        <p>Agent 对话流的设计重心需要从<strong>回复质量</strong>转向<strong>进程的可理解性与可控性</strong>。</p>
-      </blockquote>
+        <blockquote class="fp-lead-quote">
+          <p>Chat 是"一问一答"的序列，Agent 是"目标导向的协作进程"。</p>
+          <p>Agent 对话流的设计重心需要从<strong>回复质量</strong>转向<strong>进程的可理解性与可控性</strong>。</p>
+        </blockquote>
+      </div>
 
       <section>
         <h2>总原则</h2>

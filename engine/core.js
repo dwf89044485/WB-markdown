@@ -56,21 +56,79 @@ export function currentTokensPerSecond() {
 // 用户主动往上翻的标记（通过 scroll 事件追踪）
 let _sbUserAway = false;
 let _sgInited = false;
+let _sbTurnPinned = false;
+let _sbRafId = 0;
+
+function cancelScrollAnimation() {
+  if (!_sbRafId) return;
+  cancelAnimationFrame(_sbRafId);
+  _sbRafId = 0;
+}
+
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function animateScrollTop(container, targetTop, duration) {
+  cancelScrollAnimation();
+  const startTop = container.scrollTop;
+  const delta = targetTop - startTop;
+  if (Math.abs(delta) < 1 || duration <= 0 || fastRender) {
+    container.scrollTop = targetTop;
+    return Promise.resolve();
+  }
+
+  const startAt = performance.now();
+  return new Promise((resolve) => {
+    const tick = (now) => {
+      const p = Math.min(1, (now - startAt) / duration);
+      container.scrollTop = startTop + delta * easeOutCubic(p);
+      if (p >= 1) {
+        _sbRafId = 0;
+        resolve();
+        return;
+      }
+      _sbRafId = requestAnimationFrame(tick);
+    };
+    _sbRafId = requestAnimationFrame(tick);
+  });
+}
 
 export function initScrollGuard() {
   if (_sgInited) return;
   const c = document.querySelector('#conv');
   if (!c) return;
   c.addEventListener('scroll', () => {
-    _sbUserAway = c.scrollTop + c.clientHeight < c.scrollHeight - 80;
+    const nearBottom = c.scrollTop + c.clientHeight >= c.scrollHeight - 80;
+    _sbUserAway = !nearBottom;
+    // 用户主动回到底部后，允许恢复自动跟随
+    if (_sbTurnPinned && nearBottom) _sbTurnPinned = false;
   }, { passive: true });
   _sgInited = true;
+}
+
+export async function pinMessageToViewportTop(messageEl, { gap = 12, duration = 360 } = {}) {
+  const c = document.querySelector('#conv');
+  if (!c || !messageEl) return;
+  const navBar = c.querySelector('.nav-bar');
+  const navHeight = navBar ? navBar.offsetHeight : 0;
+  const target = Math.max(0, (messageEl.offsetTop - c.offsetTop) - navHeight - gap);
+  _sbTurnPinned = true;
+  _sbUserAway = true;
+  await animateScrollTop(c, target, duration);
+}
+
+export function resetScrollBehaviorState() {
+  cancelScrollAnimation();
+  _sbUserAway = false;
+  _sbTurnPinned = false;
 }
 
 export function scrollToBottom() {
   const c = document.querySelector('#conv');
   if (!c) return;
-  // 用户主动往上翻过才拦截，否则一直跟随底部
-  if (_sbUserAway) return;
+  // 用户主动往上翻过或当前回合已锁定消息贴顶时，不跟随到底部
+  if (_sbUserAway || _sbTurnPinned) return;
+  cancelScrollAnimation();
   c.scrollTop = c.scrollHeight;
 }

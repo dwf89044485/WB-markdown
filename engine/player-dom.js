@@ -7,7 +7,8 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleepDelay, playback, CANCELLED,
-  scrollToBottom, initScrollGuard
+  scrollToBottom, initScrollGuard,
+  pinMessageToViewportTop, resetScrollBehaviorState
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { setStatusLineLabels, statusStackHTML } from './icons.js';
@@ -222,9 +223,16 @@ export async function showUserMessage() {
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
-  scrollToBottom();
-  rebuildScrollNav();
+
+  const pinDuration = Math.max(0, playback('userPinDuration', 360));
+  const pinPromise = pinMessageToViewportTop(wrap, {
+    duration: fastRender ? 0 : pinDuration,
+    gap: 12,
+  });
+
   await sleepDelay('userMessageDelay', 720);
+  await pinPromise;
+  rebuildScrollNav();
 }
 
 export async function showAgentShell() {
@@ -282,6 +290,7 @@ export function resetPlaybackDom() {
   // 都经过 resetPlaybackDom，因此内置清理可覆盖所有路径。
   // 新增面板类型 → 在面板模块中 registerOverlayCleanup(hideXxx)，无需改此文件。
   hideAllOverlays();
+  resetScrollBehaviorState();
   initScrollGuard();
   scrollToBottom();
 }

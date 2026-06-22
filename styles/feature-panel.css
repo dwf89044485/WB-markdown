@@ -662,122 +662,74 @@
   margin-bottom: 0;
 }
 
-/* Chat vs Agent 杂志式对比 */
+/* Chat vs Agent 对比：纯字号层级 */
 .fp-compare-row {
-  display: grid;
-  grid-template-columns: 1fr 56px 1fr;
+  display: flex;
   align-items: stretch;
   margin: 8px 0 48px;
   border-top: 1px solid #1a1a1c;
   border-bottom: 1px solid #1a1a1c;
 }
 .fp-compare-card {
-  position: relative;
-  padding: 28px 32px 24px;
+  flex: 1;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   color: #1a1a1c;
-  background: transparent;
 }
 .fp-compare-card--agent {
   color: #f0f0f0;
   background: #0e0e10;
 }
-.fp-compare-eyebrow {
-  font-family: 'SF Mono', 'Menlo', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #8a8a8f;
-}
-.fp-compare-card--agent .fp-compare-eyebrow {
-  color: #a0a0a5;
-}
-.fp-compare-label {
+.fp-compare-side {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
-  font-size: 34px;
+  font-size: 32px;
   line-height: 1;
   font-weight: 400;
   letter-spacing: -0.02em;
-  color: inherit;
-  margin: 0;
-  padding: 0;
-  border: none;
 }
-.fp-compare-flow {
-  display: block;
-  width: 100%;
-  height: 64px;
-  margin: 4px 0 2px;
-  color: #1a1a1c;
-}
-.fp-compare-flow--agent {
-  color: #f0f0f0;
-}
-.fp-compare-meta {
+.fp-compare-item {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 14px;
-  padding-top: 12px;
-  border-top: 1px dashed rgba(0, 0, 0, 0.14);
+  flex-direction: column;
+  gap: 4px;
 }
-.fp-compare-card--agent .fp-compare-meta {
-  border-top-color: rgba(255, 255, 255, 0.16);
-}
-.fp-compare-meta .fp-compare-key {
+.fp-compare-key {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #8a8a8f;
-  flex-shrink: 0;
-  min-width: 64px;
 }
-.fp-compare-card--agent .fp-compare-meta .fp-compare-key {
+.fp-compare-card--agent .fp-compare-key {
   color: #a0a0a5;
 }
-.fp-compare-meta .fp-compare-val {
-  font-size: 17px;
-  font-weight: 500;
+.fp-compare-val {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 400;
   letter-spacing: -0.005em;
   color: inherit;
 }
-
-/* 中间分隔柱：竖排 VS + 顶/底刻度 */
-.fp-compare-divider {
-  position: relative;
-  background: #fff;
+.fp-compare-vs {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #1a1a1c;
-  border-right: 1px solid #1a1a1c;
-}
-.fp-compare-divider::before,
-.fp-compare-divider::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  width: 1px;
-  height: 10px;
-  background: #1a1a1c;
-  transform: translateX(-0.5px);
-}
-.fp-compare-divider::before { top: -1px; }
-.fp-compare-divider::after  { bottom: -1px; }
-.fp-compare-vs {
+  width: 56px;
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: #1a1a1c;
+  background: #fff;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   user-select: none;
+  border-left: 1px solid #1a1a1c;
+  border-right: 1px solid #1a1a1c;
 }
 
 /* 总原则高亮块 */

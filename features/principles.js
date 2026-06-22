@@ -24,21 +24,52 @@ export default {
 
       <div class="fp-compare-row">
         <div class="fp-compare-card">
+          <span class="fp-compare-eyebrow">线性 / Q&amp;A</span>
           <span class="fp-compare-label">Chat 对话</span>
-          <div class="fp-compare-grid">
+          <svg class="fp-compare-flow fp-compare-flow--chat" viewBox="0 0 240 80" aria-hidden="true">
+            <line x1="10" y1="40" x2="230" y2="40" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.4"/>
+            <circle cx="20" cy="40" r="5" fill="currentColor" opacity="0.25"/>
+            <rect x="50" y="32" width="38" height="16" rx="8" fill="currentColor" opacity="0.12"/>
+            <rect x="110" y="32" width="38" height="16" rx="8" fill="currentColor" opacity="0.18"/>
+            <rect x="170" y="32" width="38" height="16" rx="8" fill="currentColor" opacity="0.25"/>
+            <circle cx="220" cy="40" r="5" fill="currentColor"/>
+          </svg>
+          <div class="fp-compare-meta">
             <span class="fp-compare-key">目标</span>
-            <span class="fp-compare-key">用户关注</span>
             <span class="fp-compare-val">获取答案</span>
+          </div>
+          <div class="fp-compare-meta">
+            <span class="fp-compare-key">用户关注</span>
             <span class="fp-compare-val">最新回复</span>
           </div>
         </div>
-        <div class="fp-compare-vs">VS</div>
+        <div class="fp-compare-divider">
+          <span class="fp-compare-vs">VS</span>
+        </div>
         <div class="fp-compare-card fp-compare-card--agent">
+          <span class="fp-compare-eyebrow">网状 / Multi-step</span>
           <span class="fp-compare-label">Agent</span>
-          <div class="fp-compare-grid">
+          <svg class="fp-compare-flow fp-compare-flow--agent" viewBox="0 0 240 80" aria-hidden="true">
+            <line x1="20" y1="40" x2="80" y2="40" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="80" y1="40" x2="80" y2="18" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="80" y1="40" x2="80" y2="62" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="80" y1="18" x2="150" y2="18" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="80" y1="62" x2="150" y2="62" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="150" y1="18" x2="220" y2="40" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <line x1="150" y1="62" x2="220" y2="40" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <rect x="6" y="30" width="28" height="20" rx="4" fill="currentColor" opacity="0.2"/>
+            <rect x="68" y="6" width="24" height="20" rx="4" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="50" width="24" height="20" rx="4" fill="currentColor" opacity="0.3"/>
+            <rect x="138" y="6" width="24" height="20" rx="4" fill="currentColor" opacity="0.45"/>
+            <rect x="138" y="50" width="24" height="20" rx="4" fill="currentColor" opacity="0.45"/>
+            <circle cx="220" cy="40" r="8" fill="currentColor" opacity="0.9"/>
+          </svg>
+          <div class="fp-compare-meta">
             <span class="fp-compare-key">目标</span>
-            <span class="fp-compare-key">用户关注</span>
             <span class="fp-compare-val">完成任务</span>
+          </div>
+          <div class="fp-compare-meta">
+            <span class="fp-compare-key">用户关注</span>
             <span class="fp-compare-val">过程可信可控</span>
           </div>
         </div>

@@ -14,13 +14,7 @@ export default {
     <article class="fp-feature">
       <header class="fp-feature-header">
         <h1>原则指南</h1>
-        <p class="fp-subtitle">Agent 对话流不是普通聊天界面——设计原则决定了产品的体验基线</p>
       </header>
-
-      <blockquote class="fp-lead-quote">
-        <p>Chat 是"一问一答"的序列，Agent 是"目标导向的协作进程"。</p>
-        <p>Agent 对话流的设计重心需要从<strong>回复质量</strong>转向<strong>进程的可理解性与可控性</strong>。</p>
-      </blockquote>
 
       <div class="fp-compare-row">
         <div class="fp-compare-card fp-compare-card--agent">
@@ -36,7 +30,7 @@ export default {
             </div>
             <div class="fp-compare-field">
               <div class="fp-compare-key">用户关注</div>
-              <div class="fp-compare-val">过程可信可控</div>
+              <div class="fp-compare-val">结果可信可控</div>
             </div>
           </div>
         </div>
@@ -59,6 +53,11 @@ export default {
           </div>
         </div>
       </div>
+
+      <blockquote class="fp-lead-quote">
+        <p>Chat 是"一问一答"的序列，Agent 是"目标导向的协作进程"。</p>
+        <p>Agent 对话流的设计重心需要从<strong>回复质量</strong>转向<strong>进程的可理解性与可控性</strong>。</p>
+      </blockquote>
 
       <section>
         <h2>总原则</h2>

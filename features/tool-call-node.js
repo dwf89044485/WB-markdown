@@ -70,11 +70,11 @@ export default {
             <p class="fp-states-note">进行中行灰 <code>#999</code>，扫光 1.15s 左→右循环；完成后行浅灰 <code>rgba(0,0,0,0.30)</code>，扫光消失，<code>›</code> 保留。</p>
             <div class="fp-states-inner-row">
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">进行中</span>
+                <span class="tag">进行中</span>
                 <div class="fp-tcn-inline">${sl([L.run], { state: 'running' })}</div>
               </div>
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">已完成</span>
+                <span class="tag">已完成</span>
                 <div class="fp-tcn-inline">${sl([L.done])}</div>
               </div>
             </div>
@@ -85,11 +85,11 @@ export default {
             <p class="fp-states-note">连续工具调用合并为同一条节点。已完成条目留在前面，进行中放在最末——<strong>只有最末那条带扫光</strong>。</p>
             <div class="fp-states-inner-row">
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">进行中</span>
+                <span class="tag">进行中</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '正在读取文件'], { state: 'running' })}</div>
               </div>
               <div class="fp-snapshot-wrap">
-                <span class="fp-label">已完成</span>
+                <span class="tag">已完成</span>
                 <div class="fp-tcn-inline">${sl(['搜索网页', '创建文件', '读取文件'])}</div>
               </div>
             </div>
@@ -122,7 +122,7 @@ export default {
 
         <div class="fp-sheet-pair">
           <div class="fp-sheet-pair-item">
-            <span class="tag-fp">一级 sheet-概览</span>
+            <span class="tag">一级 sheet-概览</span>
             <div class="fp-sheet-mock">
               <div class="bottom-sheet fp-bottom-sheet-static">
                 <div class="sheet-top">
@@ -136,7 +136,7 @@ export default {
           </div>
           <div class="fp-sheet-pair-arrow"><span>›</span></div>
           <div class="fp-sheet-pair-item">
-            <span class="tag-fp">二级 sheet-详情</span>
+            <span class="tag">二级 sheet-详情</span>
             <div class="fp-sheet-mock fp-sheet-mock-detail">
               <div class="bottom-sheet detail-mode fp-bottom-sheet-static">
                 <div class="sheet-top">

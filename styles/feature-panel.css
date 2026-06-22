@@ -444,24 +444,7 @@
   margin: 0 0 10px;
   line-height: 1.55;
 }
-/* 状态节标签 */
-.fp-label {
-  display: inline-flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  padding: 5px 10px;
-  border-radius: 0;
-  background: transparent;
-  color: #6e6e73;
-  border: 1px solid rgba(0,0,0,0.1);
-  margin-bottom: 10px;
-  white-space: nowrap;
-  align-self: flex-start;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+/* 状态节标签已合并到全局 .tag（见 base.css .tag） */
 
 /* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */
 .fp-states-row {
@@ -492,11 +475,13 @@
   align-items: center;
   gap: 12px;
 }
-.fp-states-inner-row > .fp-snapshot-wrap > .fp-label {
+.fp-states-inner-row > .fp-snapshot-wrap > .tag {
   padding: 7px 10px;
   flex-shrink: 0;
   align-self: center;
   margin-bottom: 0;
+  border-color: rgba(0, 0, 0, 0.15);
+}
 }
 .fp-states-inner-row > .fp-snapshot-wrap > .fp-tcn-inline {
   margin: 0;
@@ -540,24 +525,7 @@
   color: #c7c7cc;
   font-weight: 200;
 }
-/* Sheet 节标签（跟随文本宽度） */
-.tag-fp {
-  display: inline-flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  padding: 5px 10px;
-  border-radius: 0;
-  background: transparent;
-  color: #6e6e73;
-  border: 1px solid rgba(0,0,0,0.1);
-  margin-bottom: 18px;
-  white-space: nowrap;
-  align-self: flex-start;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+/* Sheet 节标签已合并到全局 .tag（间距由外层 .fp-sheet-pair-item 控制） */
 
 /* 多个快照单元横向平铺（数量不限），宽度不足时自动折行 */
 .fp-snapshot-row {

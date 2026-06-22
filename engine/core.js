@@ -76,6 +76,22 @@ export function scrollToBottom() {
 }
 
 /**
+ * 内容填满一屏时才滚动到底部，否则保持当前视口位置。
+ * 用于 showAgentShell / status line / step 完成等场景：
+ * 用户消息滚到顶端后，AI 内容逐步填充下方空间，
+ * 在填满屏幕之前不动视口，填满后自动跟随底部。
+ */
+export function scrollIfFull() {
+  const c = document.querySelector('#conv');
+  if (!c) return;
+  if (_sbUserAway) return;
+  // 视口底部是否已被内容填满（距内容底部 < 60px 视为已填满）
+  if (c.scrollTop + c.clientHeight >= c.scrollHeight - 60) {
+    c.scrollTop = c.scrollHeight;
+  }
+}
+
+/**
  * 将用户消息气泡滚动到视口顶端（navbar 下方）。
  * 用于第四轮用户消息上屏后，为下方 AI 回复腾出完整空间。
  */

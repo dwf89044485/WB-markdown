@@ -7,7 +7,7 @@ import {
   activePlayId, fastRender,
   incrementPlayId, setFastRender,
   sleepDelay, playback, CANCELLED,
-  scrollToBottom, scrollUserToTop, initScrollGuard
+  scrollToBottom, scrollIfFull, scrollUserToTop, initScrollGuard
 } from './core.js';
 import { escapeHtml, markdownToHtml } from './markdown.js';
 import { setStatusLineLabels, statusStackHTML } from './icons.js';
@@ -35,7 +35,7 @@ function createStatusLineIn(container, text, frameIds, title) {
   setStatusLineLabels(btn, splitStatusLabels(text));
   btn.onclick = () => openSheet(btn.dataset.frames, btn.dataset.sheetTitle, { replay: btn.classList.contains('is-running') });
   container.appendChild(btn);
-  scrollToBottom();
+  scrollIfFull();
   return btn;
 }
 
@@ -131,7 +131,7 @@ async function runThinkingStatus() {
   line.dataset.sheetTitle = toDoneLabel(action);
   line.classList.remove('is-running');
   stepsList.classList.remove('is-hidden');
-  scrollToBottom();
+  scrollIfFull();
   await sleepDelay('stepDelay', 470);
 }
 
@@ -233,7 +233,7 @@ export async function showAgentShell() {
   const agent = $('#agentMsg');
   agent.classList.remove('is-hidden');
   agent.classList.add('agent-enter');
-  scrollToBottom();
+  scrollIfFull();
   rebuildScrollNav();
   await sleepDelay('agentDelay', 520);
 }

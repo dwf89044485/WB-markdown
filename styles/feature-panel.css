@@ -715,6 +715,7 @@
 
 /* 总原则高亮块 */
 .fp-principle-summary {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
   background: #1a1a1c;
   color: #f0f0f0;
   padding: 20px 24px;

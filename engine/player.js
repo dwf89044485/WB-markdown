@@ -293,7 +293,7 @@ function applyUrlPlaybackOverrides() {
 }
 
 // ── Playback lifecycle ────────────────────────────────────
-function initializePlayback() {
+function initializePlayback(skipScroll) {
   state.autoPlaying = false;
   state.pauseRequested = false;
   state.directorBusy = false;
@@ -302,7 +302,7 @@ function initializePlayback() {
   state.directorRuntime = { rows: [] };
   setupNavMeta();
   resetPlaybackDom();
-  renderStaticPreChat();
+  renderStaticPreChat(skipScroll);
   scrollToBottom();
   state.directorTimeline = buildDirectorTimeline(restartPlayback);
   updateDirectorControls();
@@ -313,13 +313,13 @@ function initializePlayback() {
 
 function restartPlayback() {
   incrementPlayId();
-  initializePlayback();
+  initializePlayback(true);
   startDirectorAuto();
 }
 
 function startPlayback() {
   incrementPlayId();
-  initializePlayback();
+  initializePlayback(false);
   startDirectorAuto();
 }
 

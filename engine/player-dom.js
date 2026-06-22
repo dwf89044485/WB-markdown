@@ -161,7 +161,7 @@ function makeResponseActionsHtml() {
     + '</div>';
 }
 
-export function renderStaticPreChat() {
+export function renderStaticPreChat(skipScroll) {
   const preChat = scenario.preChat;
   if (!preChat || !preChat.length) return;
 
@@ -205,6 +205,7 @@ export function renderStaticPreChat() {
     $('#userBubble').textContent = lastChat.user;
     $('#userMsgWrap').classList.remove('is-hidden');
   }
+  if (skipScroll) return;
   // scrollTop = ref 相对 conv 的位置 - navbar 高度 - 间距
   const navBar = conv.querySelector('.nav-bar');
   const navHeight = navBar ? navBar.offsetHeight : 0;

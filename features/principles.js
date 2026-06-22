@@ -25,24 +25,20 @@ export default {
       <div class="fp-compare-row">
         <div class="fp-compare-card">
           <span class="fp-compare-label">Chat 对话</span>
-          <div class="fp-compare-item">
+          <div class="fp-compare-grid">
             <span class="fp-compare-key">目标</span>
-            <span class="fp-compare-val">获取答案</span>
-          </div>
-          <div class="fp-compare-item">
             <span class="fp-compare-key">用户关注</span>
+            <span class="fp-compare-val">获取答案</span>
             <span class="fp-compare-val">最新回复</span>
           </div>
         </div>
         <div class="fp-compare-vs">VS</div>
         <div class="fp-compare-card fp-compare-card--agent">
           <span class="fp-compare-label">Agent</span>
-          <div class="fp-compare-item">
+          <div class="fp-compare-grid">
             <span class="fp-compare-key">目标</span>
-            <span class="fp-compare-val">完成任务</span>
-          </div>
-          <div class="fp-compare-item">
             <span class="fp-compare-key">用户关注</span>
+            <span class="fp-compare-val">完成任务</span>
             <span class="fp-compare-val">过程可信可控</span>
           </div>
         </div>

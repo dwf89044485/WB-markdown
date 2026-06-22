@@ -277,6 +277,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   position:absolute;
   inset:0;
   z-index:-1;
+  background:#fafafa;
   -webkit-backdrop-filter:blur(20px);
   backdrop-filter:blur(20px);
   -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);

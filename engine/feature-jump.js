@@ -82,18 +82,15 @@ export async function jumpToAnchor(anchor) {
       console.warn('[feature-jump] goToStep(to prev) failed silently', err);
     }
 
-    // 手动显示卡片，silent/sync 确保不阻塞
-    // 显示前统一清理所有覆层面板，避免同类型或异类面板同时残留
+    // 手动显示卡片，显示前统一清理所有覆层面板
     if (isAskUser && actionData) {
-      hideAllOverlays();
+      hideAllOverlays(true);
       showAskQuestion(actionData, true);
     } else if (isApprovePermission && actionData) {
-      hideAllOverlays();
+      hideAllOverlays(true);
       showApprovePermission(actionData);
     }
   } else {
-    // 非手动渲染的锚点：goToStep→jumpDirectorTo 的 resetPlaybackDom 已内置
-    // hideAllOverlays()，此处无需额外清理（但保留备调用以对非 reset 路径安全）
     try {
       await goToStep(targetStep);
     } catch (err) {

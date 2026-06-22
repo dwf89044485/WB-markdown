@@ -16,7 +16,8 @@ export function registerOverlayCleanup(fn) {
   }
 }
 
-export function hideAllOverlays() {
-  // 所有注册的函数都是幂等的（已隐藏时调用无副作用）
-  cleanupFns.forEach(fn => fn());
+export function hideAllOverlays(immediate) {
+  // immediate=true（默认）: 跳过出场动画，瞬间隐藏
+  // immediate=false: 播出场动画再隐藏（用户主动关闭时使用）
+  cleanupFns.forEach(fn => fn(immediate));
 }

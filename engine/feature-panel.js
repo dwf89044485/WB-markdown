@@ -30,7 +30,7 @@ import { sleep } from './core.js';
 // 在面板模块中 registerOverlayCleanup(hideXxx)，此处无需修改。
 // ════════════════════════════════════════════════════════════════
 function hideOverlays() {
-  hideAllOverlays();
+  hideAllOverlays(true);
 }
 
 const ROOT_SELECTOR = '.design-notes-inner';

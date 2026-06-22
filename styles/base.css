@@ -125,7 +125,7 @@ html.is-standalone .conversation{padding-top:var(--standalone-conversation-paddi
 html.force-standalone .design-notes,
 html.is-standalone .design-notes{display:none;}
 html.force-standalone .left-area,
-html.is-standalone .left-area{width:100%;}
+html.is-standalone .left-area{width:100%;background:#fafafa;}
 html.force-standalone .layout-main,
 html.is-standalone .layout-main{position:relative;z-index:1;}
 html.is-standalone .demo-controls{display:none;}
@@ -160,7 +160,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .design-notes,
   html:not(.force-desktop) .demo-controls,
   html:not(.force-desktop) .grid-overlay{display:none;}
-  html:not(.force-desktop) .left-area{width:100%;}
+  html:not(.force-desktop) .left-area{width:100%;background:#fafafa;}
   html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
@@ -196,6 +196,7 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:column;
     align-items:center;
+    background:#fafafa;
   }
   .design-notes{
     flex:1 1 var(--layout-notes-min-w);

@@ -125,7 +125,7 @@ html.is-standalone .conversation{padding-top:var(--standalone-conversation-paddi
 html.force-standalone .design-notes,
 html.is-standalone .design-notes{display:none;}
 html.force-standalone .left-area,
-html.is-standalone .left-area{width:100%;background:#fafafa;}
+html.is-standalone .left-area{width:100%;}
 html.force-standalone .layout-main,
 html.is-standalone .layout-main{position:relative;z-index:1;}
 html.is-standalone .demo-controls{display:none;}
@@ -196,7 +196,6 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:column;
     align-items:center;
-    background:#fafafa;
   }
   .design-notes{
     flex:1 1 var(--layout-notes-min-w);

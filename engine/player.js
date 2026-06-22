@@ -314,6 +314,7 @@ function initializePlayback() {
 function restartPlayback() {
   incrementPlayId();
   initializePlayback();
+  setFastRender(true);
   startDirectorAuto();
 }
 

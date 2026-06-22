@@ -125,9 +125,9 @@ const STEP_ASK_QUESTION = 2;
 const ASKUSER_ACTION_OFFSET = 10;
 
 export default {
-  id: 'ask-question-original',
+  id: 'ask-question',
   type: 'feature',
-  label: 'AskQuestion 原稿',
+  label: 'AskQuestion',
   anchors: {
     'single-appear': {
       nodeIndex: STEP_ASK_QUESTION,

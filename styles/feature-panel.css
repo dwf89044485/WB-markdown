@@ -476,12 +476,10 @@
   gap: 12px;
 }
 .fp-states-inner-row > .fp-snapshot-wrap > .tag {
-  padding: 7px 10px;
   flex-shrink: 0;
   align-self: center;
   margin-bottom: 0;
   border-color: rgba(0, 0, 0, 0.15);
-}
 }
 .fp-states-inner-row > .fp-snapshot-wrap > .fp-tcn-inline {
   margin: 0;

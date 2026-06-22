@@ -282,17 +282,7 @@ export default {
 
       <section data-section="variants">
         <h2>4. 题型</h2>
-        <p>AskQuestion 支持三种题型。这里不需要复杂分类，关键是让用户知道每种题型怎么完成。</p>
-        <table>
-          <thead>
-            <tr><th>题型</th><th>交互差异</th><th>输入栏关系</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>单选</td><td>点选后自动进入下一题</td><td>输入是替代答案，会清空已选项</td></tr>
-            <tr><td>多选</td><td>点选只负责勾选，需要手动点“下一步”</td><td>输入是补充说明，可以和选项共存</td></tr>
-            <tr><td>排序</td><td>默认已有顺序，可拖动调整，也可以不改</td><td>输入是补充说明，不影响排序结果</td></tr>
-          </tbody>
-        </table>
+        <p>AskQuestion 支持单选、多选、排序三种题型。这里先建立外观识别，具体差异放到下一节按题型展开。</p>
         <div class="fp-snapshot-row">
           ${labeledWithAnchor('单选', s.typeSingle, 'single-appear', '看单选题示例')}
           ${labeledWithAnchor('多选', s.typeMulti, 'multi-appear', '看多选题示例')}
@@ -366,21 +356,28 @@ export default {
         <blockquote>
           <p><strong>效果</strong>：卡片从屏幕下方整体滑入（完全在可见区外 → 到位），同时淡入。</p>
           <p><strong>时机</strong>：Agent 发出 AskQuestion 消息时，卡片替换 composer 的位置出现。</p>
-          <p><strong>时长</strong>：300ms ease-out。</p>
+          <p><strong>时长 / 曲线</strong>：300ms ease-in-out。</p>
         </blockquote>
         <p>卡片从 composer 所在的位置自下而上滑入，让用户建立“原来的输入框被一张卡片替换了”的感知。这个方向也暗示了用完还会降回去的可逆性。</p>
         <p>后续切题、选选项、输入等操作不会重播入场动效——只有关闭后再打开时才会再次播放。</p>
 
-        <h3>7.2 切题过渡：横向翻页</h3>
+        <h3>7.2 出场：向下滑出消失</h3>
+        <blockquote>
+          <p><strong>效果</strong>：卡片向下滑出到可见区外，同时淡出。与入场方向一致——从哪来回哪去。</p>
+          <p><strong>时机</strong>：用户点关闭 ✕、提交答案后卡片自动关闭、外部程序调用关闭。</p>
+          <p><strong>时长 / 曲线</strong>：250ms ease-in-out。动画播完才恢复 composer 显示。</p>
+        </blockquote>
+
+        <h3>7.3 切题过渡：横向翻页</h3>
         <blockquote>
           <p><strong>效果</strong>：旧题内容横向滑出，新题内容横向滑入，两者之间保持 40px 间距。</p>
           <p><strong>时机</strong>：点击“下一步” / “上一步” / 单选自动前进 / 外部锚点跳转。</p>
-          <p><strong>时长</strong>：300ms ease-out。</p>
+          <p><strong>时长 / 曲线</strong>：300ms ease-in-out。</p>
         </blockquote>
         <p>前后题之间用横向滑切，帮助用户建立“这些题目是一个集合里的连续页”的心智模型。方向与操作一致：点“下一步”向左滑出（符合推进的心理预期），点“上一步”向右滑回。</p>
         <p>步骤指示器（1/4）固定在原位不动，只更新数字，保证导航锚点不丢失。动效期间忽略所有导航操作，避免快速连点导致跳题错乱。</p>
 
-        <h3>7.3 排序拖拽：物理感的操作反馈</h3>
+        <h3>7.4 排序拖拽：物理感的操作反馈</h3>
         <blockquote>
           <p><strong>效果</strong>：按下时选项浮起（白底 + 投影），跟随手指移动，松手后 200ms 弹性落位。</p>
           <p><strong>时机</strong>：拖拽手柄或长按选项，移动 3px 触发。</p>
@@ -388,7 +385,7 @@ export default {
         </blockquote>
         <p>拖拽的物理感（浮起、跟随、落位）让用户明确知道“我拿起来了”“我放到这里了”。拖拽只允许纵向移动，不会横向偏移。</p>
 
-        <h3>7.4 单选自动前进的 300ms 节奏</h3>
+        <h3>7.5 单选自动前进的 300ms 节奏</h3>
         <blockquote>
           <p><strong>效果</strong>：单选选中后等待 300ms 再触发切题过渡。</p>
         </blockquote>

@@ -204,43 +204,45 @@ export default {
     <article class="fp-feature">
       <header class="fp-feature-header">
         <h1>AskQuestion</h1>
-        <p class="fp-subtitle">执行层功能说明页 · 解释 Agent 如何在不确定时暂停、提问并恢复协作</p>
+        <p class="fp-subtitle">询问用户 · Agent 在不确定时暂停执行并主动对齐</p>
       </header>
 
       <section data-section="overview">
-        <h2>1. 这页在说明什么</h2>
-        <p>这页帮助读者理解 AskQuestion 这个设计点：当 Agent 遇到关键信息缺口或高代价分岔时，如何把“不确定”转化成可回答、可恢复的结构化提问。</p>
+        <h2>1. 定义</h2>
+        <blockquote class="fp-lead-quote">
+          <p>AskQuestion 是 Agent 在继续执行前需要用户补充判断时，插入对话流中的结构化提问卡片。</p>
+          <p>它不是普通表单，也不是闲聊追问。它的作用是把 Agent 的不确定点变成用户可以快速回答的选择、补充或排序。</p>
+        </blockquote>
         <table>
           <thead>
-            <tr><th>读者</th><th>读这页要获得什么</th><th>建议阅读路径</th></tr>
+            <tr><th>触发原因</th><th>用户看到什么</th><th>体验目标</th></tr>
           </thead>
           <tbody>
-            <tr><td>设计评审者</td><td>判断“暂停询问”是否比继续猜测更可信</td><td>读第 2 节设计判断，再看第 7 节原理</td></tr>
-            <tr><td>规范维护者</td><td>理解提问卡片如何组织题型、状态和边界</td><td>读第 3 至 6 节</td></tr>
-            <tr><td>功能说明撰写者</td><td>复用这页的结构来说明其他执行层组件</td><td>对照第 8 节 Do / Don't</td></tr>
+            <tr><td>关键信息缺失</td><td>Agent 暂停并提出明确问题</td><td>避免继续猜测</td></tr>
+            <tr><td>存在多个合理路径</td><td>用户在可比较选项中做选择</td><td>把决策权交还给用户</td></tr>
+            <tr><td>用户意图有歧义</td><td>问题被拆成可回答的结构</td><td>减少开放追问带来的往返成本</td></tr>
           </tbody>
         </table>
-        <div class="fp-note">边界：这里不是重新定义 Agent 产品本身，而是说明右侧文档如何把“Agent 主动对齐用户”这个设计点讲清楚。</div>
       </section>
 
-      <section data-section="decision">
-        <h2>2. 设计判断</h2>
+      <section data-section="principle">
+        <h2>2. 体验原则</h2>
         <div class="fp-principle-summary">不确定时先对齐，而不是假装确定；提问要结构化，而不是把用户拉回开放聊天。</div>
         <div class="fp-do-dont">
           <div class="fp-do">
-            <span class="fp-do-dont-label">应该让读者看到</span>
+            <span class="fp-do-dont-label">AskQuestion 要做到</span>
             <ul>
-              <li>Agent 为什么在这里停下来。</li>
-              <li>用户有哪些清晰可选的回答方式。</li>
-              <li>回答之后任务如何继续推进。</li>
+              <li>问题能说明 Agent 为什么停下来。</li>
+              <li>回答方式清晰，用户不需要猜下一步怎么做。</li>
+              <li>用户回答后，任务可以继续推进。</li>
             </ul>
           </div>
           <div class="fp-dont">
-            <span class="fp-do-dont-label">不应该变成</span>
+            <span class="fp-do-dont-label">AskQuestion 不应该</span>
             <ul>
-              <li>把 AskQuestion 写成普通表单组件说明。</li>
-              <li>只列交互细节，不解释为什么要问。</li>
-              <li>把产品使用规范和说明文档规范混在一起。</li>
+              <li>把简单确认包装成正式问卷。</li>
+              <li>让用户在卡片里完成复杂录入任务。</li>
+              <li>用过多题目打断 Agent 执行节奏。</li>
             </ul>
           </div>
         </div>
@@ -248,7 +250,7 @@ export default {
 
       <section data-section="anatomy">
         <h2>3. 卡片构成</h2>
-        <p>先用完整快照建立整体认识，再拆解关键区域。读者需要知道这不是一个孤立表单，而是嵌入对话流的协作暂停点。</p>
+        <p>AskQuestion 由题间导航、题型提示、题干、选项、自由输入和底部动作组成。卡片需要同时表达“当前问什么”和“回答后怎么继续”。</p>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
             <span class="tag">完整卡片结构</span>
@@ -258,25 +260,25 @@ export default {
           <div class="fp-snapshot-side-desc">
             <h4>① 顶栏 · 题间导航</h4>
             <blockquote>
-              <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>，让读者理解这次提问的范围。</p>
-              <p><strong>左 / 右箭头</strong>：支持题间切换；不可用状态用降饱和度表达。</p>
-              <p><strong>关闭 ✕</strong>：和“跳过”区分语义。关闭代表结束整组提问，跳过代表跳过当前题。</p>
-              <p><strong>切题保留状态</strong>：选择、输入、排序顺序在来回核对时不丢失。</p>
+              <p><strong>步骤指示器</strong>：显示 <code>当前 / 总数</code>，让用户知道这一组提问的长度。</p>
+              <p><strong>左 / 右箭头</strong>：用于在多题之间来回检查；不可用时视觉降饱和。</p>
+              <p><strong>关闭 ✕</strong>：结束整组提问，和“跳过当前题”区分语义。</p>
+              <p><strong>状态保留</strong>：切题后再回来，选择、输入和排序顺序都应保留。</p>
             </blockquote>
 
             <h4>② 题型与题干</h4>
             <blockquote>
-              <p>题型标签帮助读者快速识别回答方式；题干必须自闭合，尽量脱离上下文也能理解。</p>
+              <p>题型标签让用户先知道回答方式；题干必须自闭合，尽量不依赖上下文也能读懂。</p>
             </blockquote>
 
             <h4>③ 选项区</h4>
             <blockquote>
-              <p>选项区承载主要回答动作。单选、多选、排序三类题型的完成信号不同，因此需要不同的状态表达。</p>
+              <p>选项区承载主要回答动作。单选、多选、排序对应三种不同的决策结构。</p>
             </blockquote>
 
             <h4>④ 输入栏</h4>
             <blockquote>
-              <p>自由文本输入作为“以上都不准确”或“额外补充”的出口。输入栏与选项的互斥 / 补充关系详见 <a href="#sec-interaction">第 5 节</a>。</p>
+              <p>自由输入提供非预设答案出口。单选时通常是替代答案，多选和排序时通常是补充说明。</p>
             </blockquote>
 
             <h4>⑤ 操作按钮</h4>
@@ -288,16 +290,16 @@ export default {
       </section>
 
       <section data-section="variants">
-        <h2>4. 题型与适用差异</h2>
-        <p>三种题型不是视觉变体，而是三种不同的决策结构。说明文档需要让读者先理解差异，再看具体样式。</p>
+        <h2>4. 题型</h2>
+        <p>AskQuestion 支持单选、多选、排序三种题型。三者不是视觉样式差异，而是回答结构差异。</p>
         <table>
           <thead>
-            <tr><th>题型</th><th>回答结构</th><th>完成信号</th><th>说明重点</th></tr>
+            <tr><th>题型</th><th>适合的问题</th><th>完成方式</th><th>关键差异</th></tr>
           </thead>
           <tbody>
-            <tr><td>单选</td><td>从多个互斥选项里选一个</td><td>点选后即可完成</td><td>为什么可以自动前进</td></tr>
-            <tr><td>多选</td><td>从多个选项里选多个</td><td>用户主动点击下一步</td><td>为什么不能替用户判断“选完了”</td></tr>
-            <tr><td>排序</td><td>调整选项优先级</td><td>默认顺序也是答案</td><td>为什么没有未答状态</td></tr>
+            <tr><td>单选</td><td>多个方案只能选一个</td><td>点选后自动进入下一题</td><td>选择本身就是完成信号</td></tr>
+            <tr><td>多选</td><td>多个方向可以同时成立</td><td>选择后手动点击下一步</td><td>系统不能替用户判断是否选完</td></tr>
+            <tr><td>排序</td><td>需要表达优先级</td><td>调整顺序后点击下一步</td><td>默认顺序本身也是一种答案</td></tr>
           </tbody>
         </table>
         <div class="fp-snapshot-row">
@@ -309,17 +311,17 @@ export default {
 
       <section data-section="interaction" id="sec-interaction">
         <h2>5. 状态与交互</h2>
-        <p>这一节解释读者在左侧 Demo 中会看到的状态变化。重点不是展示所有 UI 细节，而是说明每种题型的“完成信号”如何被用户理解。</p>
+        <p>AskQuestion 的状态设计围绕两个问题：用户是否已经给出有效答案，以及这类题型能否自动判断“已完成”。</p>
         <table>
           <thead>
-            <tr><th>状态</th><th>触发条件</th><th>读者应理解的设计含义</th></tr>
+            <tr><th>状态</th><th>触发条件</th><th>界面反馈</th></tr>
           </thead>
           <tbody>
-            <tr><td>未选</td><td>用户尚未选择或输入</td><td>系统等待回答，允许跳过</td></tr>
-            <tr><td>已选</td><td>用户选择选项</td><td>系统获得结构化答案</td></tr>
-            <tr><td>用户输入</td><td>用户输入自由文本</td><td>系统为非预设答案保留出口</td></tr>
-            <tr><td>拖拽时</td><td>排序题被拖动</td><td>优先级正在被用户重新组织</td></tr>
-            <tr><td>新手指引</td><td>首次进入排序题</td><td>用轻提示降低隐藏手势成本</td></tr>
+            <tr><td>未选</td><td>用户尚未选择或输入</td><td>按钮保持“跳过”语义</td></tr>
+            <tr><td>已选</td><td>用户选择选项</td><td>选项高亮，按钮进入可继续状态</td></tr>
+            <tr><td>用户输入</td><td>用户输入自由文本</td><td>根据题型表现为替代或补充答案</td></tr>
+            <tr><td>拖拽时</td><td>排序题被拖动</td><td>选项跟随移动，强调正在调整优先级</td></tr>
+            <tr><td>新手指引</td><td>首次进入排序题</td><td>用轻提示说明可以拖拽排序</td></tr>
           </tbody>
         </table>
 
@@ -360,7 +362,7 @@ export default {
 
       <section data-section="edge-cases">
         <h2>6. 边界与异常</h2>
-        <p>边界样例用于验证卡片在极端内容下仍然可读、可操作。这里不讲工程兜底，只讲读者需要看到的设计表现。</p>
+        <p>边界样例用于验证卡片在极端内容下仍然可读、可操作。</p>
         <div class="fp-snapshot-row edge-scroll">
           ${labeled('问题文字过长：自然换行', s.edgeLongQ)}
           ${labeled('选项过多：纵向滚动', s.edgeMany)}
@@ -376,7 +378,6 @@ export default {
         <p>排序题的初始状态本身就是一种顺序。用户不动等于接受默认顺序。再给“跳过”会造成认知错配：我没拖动过，那我是答了还是没答？</p>
         <h3>为什么按钮变色和文案变化同时出现</h3>
         <p>用户快速作答时先用余光感知按钮颜色，真正点击前再读文案确认。两个信号叠加，可以降低确认成本。</p>
-        <p class="fp-meta">产品本体的完整决策记录应归入 Agent 产品 design.md；本页只保留理解 AskQuestion 所需的设计原理。</p>
       </section>
 
       <section data-section="related">
@@ -385,26 +386,21 @@ export default {
           <div class="fp-do">
             <span class="fp-do-dont-label">Do</span>
             <ul>
-              <li>先解释“为什么要暂停询问”，再进入题型和状态。</li>
-              <li>用快照展示单选、多选、排序的差异。</li>
-              <li>说明每个示例按钮会让读者在左侧 Demo 看到什么。</li>
+              <li>在真正不确定时使用，让用户补齐关键信息。</li>
+              <li>题目数量保持克制，题干清晰自闭合。</li>
+              <li>单选、多选、排序只用于各自适合的决策结构。</li>
             </ul>
           </div>
           <div class="fp-dont">
             <span class="fp-do-dont-label">Don't</span>
             <ul>
-              <li>不要把这页写成普通表单组件说明。</li>
-              <li>不要只写 Agent 应该何时使用 AskQuestion，而不说明读者如何理解它。</li>
-              <li>不要用工程实现细节解释状态变化。</li>
+              <li>不要用来做礼貌性确认。</li>
+              <li>不要嵌套 AskQuestion。</li>
+              <li>不要用单选模拟二元确认，继续 / 取消这类决策应进入确认类组件。</li>
+              <li>不要让用户在 AskQuestion 中执行复杂录入任务。</li>
             </ul>
           </div>
         </div>
-        <h3>Agent 产品使用边界</h3>
-        <ul>
-          <li>真正不确定时使用，避免礼貌性提问。</li>
-          <li>题目数量保持克制，题干需要清晰自闭合。</li>
-          <li>不要用单选模拟二元确认，继续 / 取消这类决策应进入确认类组件。</li>
-        </ul>
       </section>
     </article>`;
   },

@@ -23,26 +23,38 @@ export default {
       </blockquote>
 
       <div class="fp-compare-row">
-        <div class="fp-compare-card">
+        <div class="fp-compare-col">
           <div class="fp-compare-side">Chat 对话</div>
-          <div class="fp-compare-item">
+          <div class="fp-compare-stream fp-compare-stream--chat">
+            <span class="fp-compare-bullet"></span>
+            <span class="fp-compare-line"></span>
+            <span class="fp-compare-bullet"></span>
+            <span class="fp-compare-line"></span>
+            <span class="fp-compare-bullet"></span>
+          </div>
+          <div class="fp-compare-text">
             <div class="fp-compare-key">目标</div>
             <div class="fp-compare-val">获取答案</div>
-          </div>
-          <div class="fp-compare-item">
-            <div class="fp-compare-key">用户关注</div>
+            <div class="fp-compare-key fp-compare-key--offset">用户关注</div>
             <div class="fp-compare-val">最新回复</div>
           </div>
         </div>
-        <div class="fp-compare-vs">VS</div>
-        <div class="fp-compare-card fp-compare-card--agent">
+
+        <div class="fp-compare-col fp-compare-col--agent">
           <div class="fp-compare-side">Agent</div>
-          <div class="fp-compare-item">
+          <div class="fp-compare-stream fp-compare-stream--agent">
+            <span class="fp-compare-bullet fp-compare-bullet--start"></span>
+            <span class="fp-compare-branches" aria-hidden="true">
+              <span class="fp-compare-branch"></span>
+              <span class="fp-compare-branch"></span>
+              <span class="fp-compare-branch"></span>
+            </span>
+            <span class="fp-compare-bullet fp-compare-bullet--end"></span>
+          </div>
+          <div class="fp-compare-text">
             <div class="fp-compare-key">目标</div>
             <div class="fp-compare-val">完成任务</div>
-          </div>
-          <div class="fp-compare-item">
-            <div class="fp-compare-key">用户关注</div>
+            <div class="fp-compare-key fp-compare-key--offset">用户关注</div>
             <div class="fp-compare-val">过程可信可控</div>
           </div>
         </div>

@@ -102,6 +102,6 @@ export function scrollUserToTop() {
   if (!wrap) return;
   const navBar = c.querySelector('.nav-bar');
   const navHeight = navBar ? navBar.offsetHeight : 0;
-  const scrollTarget = wrap.offsetTop - navHeight - 12;
+  const scrollTarget = (wrap.offsetTop - c.offsetTop) - navHeight - 12;
   c.scrollTop = Math.max(0, scrollTarget);
 }

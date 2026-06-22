@@ -223,7 +223,7 @@ export async function showUserMessage() {
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
   // 用户消息上屏后，滚动到视口顶端（navbar 下方），为 AI 回复腾空间
-  if (!fastRender) scrollUserToTop();
+  scrollUserToTop();
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
 }

@@ -26,7 +26,7 @@ chatboxgreen.tsx
 ├── motion/react (AnimatePresence, motion.div)
 ├── VoiceHoldOverlay / VoiceModeToolbar
 ├── BackdropContext (composer-backdrop)
-├── VirtualKeyboardPanel
+├── VirtualKeyboardPanel（不移植，本项目使用系统键盘）
 ├── AddPanel / ModelSelector / SlashSkillsPanel
 └── lucide-react (图标)
 ```
@@ -199,7 +199,7 @@ export function initComposer() { bindEvents(); }
 | `GreenSendButton` 动画 | `.has-content .cp-btn-send { width:26px; }` |
 | VoiceModeToolbar | 延期（2.8-2.15） |
 | VoiceHoldOverlay | 延期（2.8-2.15） |
-| VirtualKeyboardPanel | 先用原生键盘 |
+| VirtualKeyboardPanel | 本项目使用系统键盘，不实现虚拟键盘 |
 | ModelSelector / AddPanel / SlashSkills | 先用占位 |
 
 ---
@@ -266,13 +266,14 @@ export { initComposer, composeState, setComposerChip, setComposerText };
 |------|------|
 | 语音模式（VoiceModeToolbar） | 2.8~2.15 延期 |
 | 语音覆盖层（VoiceHoldOverlay） | 同上 |
-| 虚拟键盘面板（VirtualKeyboardPanel） | 复杂度过高，先用原生 |
+| 虚拟键盘面板（VirtualKeyboardPanel） | **本项目使用系统键盘，React 版的自建虚拟键盘逻辑不移植。** 所有 `inputMode="none"`、`keyboardPointerLockRef`、键盘面板高度测量等虚拟键盘相关逻辑均不引入 |
 | 添加面板（AddPanel） | 保留 [+] 按钮入口，面板内容暂用占位 |
 | 模型选择器（ModelSelector） | 同上 |
 | Slash Skills 面板 | 同上 |
 | ComposerAttachments（附件列表） | 暂无附件上传功能 |
 | Backdrop 背景遮罩 | 全屏态本身已覆盖全屏，暂不需要 |
 | 图片建议（image suggestions） | 暂无图片上传 |
+| 输入法组合输入保护（isComposingRef） | 系统键盘自动处理，无需 JS 干预 |
 
 ---
 
@@ -298,7 +299,7 @@ export { initComposer, composeState, setComposerChip, setComposerText };
 | 3 | 不引入 ResizeObserver polyfill | 目标浏览器（iOS Safari 13.4+）原生支持 |
 | 4 | 折叠态右侧按钮先点击展开，不直接进语音 | 简化交互，语音模式后续补 |
 | 5 | 全屏蒙层用独立 div + fixed 定位 | 与 React 版一致，不受容器 overflow:hidden 影响 |
-| 6 | textarea 用 `inputMode="none"` 阻止原生键盘 | 后续可选择性开启，当前聚焦于输入体验 |
+| 6 | textarea 使用原生键盘，不实现虚拟键盘面板 | 本项目使用系统键盘，React 版的自建虚拟键盘逻辑不移植 |
 
 ---
 
@@ -306,10 +307,132 @@ export { initComposer, composeState, setComposerChip, setComposerText };
 
 | 风险 | 应对 |
 |------|------|
-| iOS 软键盘弹起导致布局抖动 | textarea `inputMode="none"` + 虚拟键盘面板（后续补） |
+| iOS 软键盘弹起导致布局抖动 | textarea 使用原生键盘，通过 `scrollIntoView` 和 `visualViewport` API 管理布局 |
 | 全屏态安全区域（刘海屏） | `env(safe-area-inset-top)` + `env(safe-area-inset-bottom)` |
 | ResizeObserver 回调频率过高 | 只更新 CSS 变量，由浏览器合批渲染 |
 | 现有 `.composer` 样式冲突 | 新 CSS 文件在 `base.css` 之后加载，用更高特异性覆盖 |
+
+---
+
+## 13. 审查发现与补充
+
+> 以下内容来自 knot-cli 多个 agent 的并行审查结果，已按严重程度分级。
+
+### 13.1 架构审查（阻塞/警告/建议）
+
+#### 🔴 阻塞
+
+| # | 问题 | 说明 | 改进建议 |
+|---|------|------|---------|
+| 1 | **方案未覆盖 `motion.div` 的 opacity 动画** | React 版整个主容器在 `voice.holding \|\| voice.voiceOverlayOpen` 时 opacity 变为 0（`animate={{ opacity: ... ? 0 : 1 }}`，duration 250ms，ease `[0.32, 0.72, 0, 1]`）。这是用户按住语音时输入框消失的关键过渡。虽然 2.8-2.15 语音功能延期，但这个动画逻辑应该在 container 层面预留。 | 在 composer.css 加 `.composer-shell.is-fading-out { opacity: 0; transition: opacity 250ms cubic-bezier(0.32,0.72,0,1); }` |
+| 2 | **全屏蒙层逻辑需明确** | React 版 fullScreen 时有一个 500px 高的黑色半透明蒙层（`bg-black`，`opacity: 0.3`），覆盖在 phone-shell 上方作为视觉压暗。方案 A.7 提到了蒙层，但未明确其 z-index 和 DOM 位置——它应该在 phone-shell 内部、composer 同级，z-index 低于 composer。 | 在方案中明确蒙层 DOM 位置和层级关系 |
+| 3 | **当前 composer 与 player.js 的集成点需明确** | 现有 `setComposerGenerating()` 通过 `.is-generating` class 切换停止按钮。新 composer 的 `.is-generating` class 如何与新 DOM 结构对位？停止按钮的 CSS 是否需要调整？ | 方案增加"与播放引擎接口"小节，列出所有对外的 class/API |
+
+#### 🟡 警告
+
+| # | 问题 | 改进建议 |
+|---|------|---------|
+| 4 | **方案未明确 `composer.js` 的导出接口** | 必须定义：哪些函数对外暴露（如 `initComposer`、`setState`、`getState`），哪些仅内部使用 |
+| 5 | **未讨论 ResizeObserver 的 cleanup** | `compactContentRef` 的 ResizeObserver 必须在 `destroy()` 或页面离开时 `disconnect()` |
+| 6 | **batch 2（CSS 变量）和 batch 3（DOM 骨架）顺序可优化** | 建议先写 DOM 骨架再写 CSS，否则 CSS 选择器无法验证 |
+
+#### 🔵 建议
+
+| # | 建议 |
+|---|------|
+| 7 | `engine/composer.js` 参考现有 `engine/sheet.js` 的代码风格：顶部注释标明行号范围、导出函数清单 |
+| 8 | 方案增加"测试检查清单"：每个 batch 完成后要验证哪几个视觉点 |
+
+### 13.2 交互遗漏审查
+
+> 以下遗漏来自对 `chatboxgreen.tsx` 和 `use-composer-core.ts` 的逐行审查。
+
+#### 遗漏的状态
+
+| # | 遗漏状态 | React 源码依据 | 严重程度 |
+|---|---------|---------------|---------|
+| 1 | **expanded + 无 keyboard** | `activateComposerInput` 中先 `setExpanded(true)` 但 `setHasKeyboard` 延后一帧（`requestAnimationFrame`）。这之间存在一个"已展开但键盘面板未弹出"的中间态 | 🟡 |
+| 2 | **expanded + 有附件无文字** | `hasComposerContent = composerText.trim().length > 0 \|\| attachmentCount > 0`。有附件但无文字时，发送按钮也应显示 | 🔴 |
+| 3 | **chip 存在但无 suggestions** | `hasRecommendations = !!chip && chipSuggestions.length > 0`。chip 有、但 suggestions 为空数组时不显示建议列表 | 🟡 |
+| 4 | **recording 子状态** | expanded compact 态下还有一个 `{recording ? <VoiceRecorder /> : <toolbar />}` 的条件分支，方案未提及 | 🟡 |
+| 5 | **展开手柄可见性** | `showExpandHandle = lineCount >= 4`。lineCount < 4 时展开手柄不可见（opacity: 0） | 🟡 |
+
+#### 遗漏的交互行为
+
+| # | 遗漏交互 | React 源码（use-composer-core.ts） | 严重程度 |
+|---|---------|----------------------------------|---------|
+| 6 | **blur 时自动 collapsed** | `handleTextareaBlur` 中：如果 textarea 为空且无附件，`setExpanded(false)` | 🔴 |
+| 7 | **附件添加 → 自动 expand** | `attachmentCount > prevAttachmentCountRef` 时自动 `setExpanded(true)` + `setHasKeyboard(true)` | 🔴 |
+| 8 | **composing 期间不触发展开** | `isComposingRef` 用于防止输入法组合输入时误触发 slash skills 面板 | 🔵 |
+| 9 | **展开手柄点击 → fullScreen** | `enterFullScreen` 的触发条件是 `expanded && lineCount >= 4 && !voiceMode` | 🟡 |
+| 10 | **建议项点击用 onPointerDown 非 onClick** | 防止 blur 事件先触发导致 collapsed | 🟡 |
+| 11 | **键盘锁定机制** | `keyboardPointerLockRef` 120ms 锁定，防止虚拟键盘键位点击导致误 blur-collapse | 🔵 |
+
+> **关于键盘锁定机制**：React 版使用 `keyboardPointerLockRef` 锁定 120ms 是因为它自建了虚拟键盘，点击虚拟键盘键位时可能触发 textarea blur。本项目使用原生系统键盘，**不存在此问题**，因此 `keyboardPointerLockRef` 无需移植。
+
+#### 遗漏的 CSS keyframe
+
+| # | keyframe | React 源码 |
+|---|---------|-----------|
+| 12 | `suggestionSlideUp` | 建议项入场动画：`0.25s ease both`，stagger delay：`(length - 1 - i) * 35ms` |
+
+#### 遗漏的边界情况
+
+| # | 边界情况 | 严重程度 |
+|---|---------|---------|
+| 13 | fullScreen 下旋转屏幕（横竖屏切换）→ 高度 `calc(100dvh - ...)` 需要重新计算 | 🟡 |
+| 14 | 建议列表超过 4 条时，最大高度和无滚动条的约束 | 🟡 |
+| 15 | textarea 输入内容超出 `max-h-[200px]` compact 态时的滚动行为 | 🟡 |
+| 16 | quick double-click expand/collapse 动画冲突 | 🟡 |
+
+### 13.3 视觉参数校验
+
+> React 版 `motion.div` 上写了两处 transition 声明（chatboxgreen.tsx:252 / :264），但**实际只有一套生效**：
+> - **className**（:252）: `transition-[height,min-height,border-radius] duration-300 ease-out`
+> - **inline style**（:264）: `transition: "height 320ms cubic-bezier(0.22, 1, 0.36, 1), width 320ms ..., margin 320ms ..., border-radius 320ms ..."`
+>
+> **CSS 规则：inline style 的 `transition` 是单一简写属性，会整条覆盖 className 的 `transition`，不是逐属性合并。** 因此 className 那条整条失效，包括它独有的 `min-height`。
+>
+> **结论（修正前版本的错误论断）**：
+> - 早期版本写"min-height 使用 300ms ease-out"是**错的**——min-height 拿不到 className 那条 transition，实际**没有任何过渡，是瞬间变化**。
+> - 但这个错误**对视觉零影响**：`min-height` 恒等于 46px，从不改变，有无过渡用户都看不出来。
+> - 真正生效的过渡只有：`height` / `width` / `margin` / `border-radius` → `320ms cubic-bezier(0.22,1,0.36,1)`。
+> - 额外还有一条 opacity 过渡（:250-251）：`250ms cubic-bezier(0.32,0.72,0,1)`，由 framer-motion 的 animate 驱动，用于语音态整体淡出（语音功能延期，但 container 层应预留 `.is-fading-out` class）。
+
+#### 🔴 视觉参数不一致
+
+| 参数 | 方案值 | React 源码值 | 行号 | 严重 |
+|------|--------|-------------|------|------|
+| 主容器 transition | 未明确区分 | 实际生效：height/width/margin/border-radius → `320ms cubic-bezier(0.22,1,0.36,1)`；**min-height 无过渡（瞬间变化，但恒为 46px 不影响视觉）** | 252/264 | 🔴 |
+| motion.div opacity 动画 | 方案未提及 | `duration: 0.25, ease: [0.32, 0.72, 0, 1]` ≈ `250ms cubic-bezier(0.32,0.72,0,1)` | 225 | 🔴 |
+| 全屏蒙层 transition | 方案未提及 | `transition-opacity duration-300 ease-out` | 178 | 🟡 |
+| Expanded compact 态 padding | 方案需确认 | `p-[10px]` = `padding: 10px`（四边） | 295 | 🟡 |
+| textarea compact 态 line-height | 方案需确认 | `lineHeight: "20px"`（compact 态），fullScreen 态是 `lineHeight: "24px"` | 302, 280 | 🟡 |
+| 建议列表 bottom-full pb-2 | 方案需确认 | `bottom-full` = `bottom: 100%`，即相对于父容器顶部向上偏移 100% | 185 | 🟡 |
+| 建议项 px-2 py-1.5 | 方案需确认 | `padding: 4px 8px, padding-block: 6px` | 188 | 🟡 |
+| GreenSendButton 右侧容器 | 方案需确认 | `width: hasContent ? "68px" : "26px"`，transition: `width 220ms ease` | 340 | 🟡 |
+| 语音按钮位置 | 方案需确认 | `right: hasContent ? "42px" : "0px"`，transition: `right 220ms ease` | 342 | 🟡 |
+| compactContentRef 内层 px-[4px] py-px | 方案需确认 | 展开态内部还有一个 `padding-left/right: 4px, padding-top/bottom: 1px` 的包裹层 | 296 | 🟡 |
+
+#### 🟡 需要精确验证的参数
+
+| 参数 | React 源码值 | 验证方法 |
+|------|-------------|---------|
+| suggestionSlideUp keyframe 定义 | 在全局 CSS（非 inline），需在 voice-hold-input.tsx 或全局样式文件中查找 | grep suggestionSlideUp |
+| VoiceModeToolbar "按住说话" 按钮 padding | `padding: "6px 10px"` | 已验证 ✅ |
+| VoiceModeToolbar 键盘按钮尺寸 | 48×48 | 已验证 ✅ |
+
+---
+
+## 14. 综合评分
+
+| 维度 | 评分 | 核心问题 |
+|------|------|---------|
+| 架构 | 7.5/10 | 方向正确，缺少引擎接口定义和蒙层逻辑 |
+| 交互完整性 | 6/10 | 遗漏 blur-collapse、attachment-expand 等关键交互 |
+| 视觉参数 | 5/10 | transition 两套值未分析、多个参数待确认 |
+
+**一句话总结**：方案架构方向正确但细节缺失较多，需要在上手写代码前补充：① 完整的 transition 参数表（包含两套值分析）、② blur/attachment 等交互的状态机图、③ 每个状态的精确 CSS 规则（含动画 keyframe）。
 
 ---
 
@@ -494,7 +617,6 @@ core.fullScreen = false
         style="fontSize:14px; lineHeight:20px; transform:none;"
         max-h: "200px"  # compact 态限制
         placeholder="安排任务，WorkBuddy 帮你完成"  # 或有 chipPlaceholder
-        inputMode="none"
         rows=1 />
 
       <!-- 展开手柄（lineCount >= 4 时可见） -->
@@ -658,7 +780,7 @@ core.fullScreen = true
 
 ```yaml
 # 相比 Expanded Compact 态的变化
-高度: "calc(100dvh - var(--virtual-keyboard-panel-height, 0px) - env(safe-area-inset-top))"
+高度: "calc(100dvh - env(safe-area-inset-top))"
 宽度: "calc(100% + 52px)"
 外边距: marginInline: "-26px"
 圆角: "24px 24px 0 0"  # 顶部保持圆角，底部拉直
@@ -696,7 +818,6 @@ core.fullScreen = true
              placeholder:text-black/30 overflow-y-auto"
       style="fontSize:14px; lineHeight:24px; transform:none; paddingInline:0;"
       placeholder="安排任务，WorkBuddy 帮你完成"
-      inputMode="none"
       rows=1 />
   </div>
 
@@ -1012,7 +1133,6 @@ ComposerPrimitive.Root（relative w-full px-[26px] z-50）
 │   └── [expanded=false, voiceMode=false]
 │       └── Collapsed 内部结构
 ├── 隐藏 ComposerPrimitive.Input（1px, 条件渲染）
-├── VirtualKeyboardPanel
 ├── SlashSkillsPanel
 └── AddPanel
 ```
@@ -1033,3 +1153,92 @@ ComposerPrimitive.Root（relative w-full px-[26px] z-50）
 | `/icons/voice-hold-send-icon.svg` | 70×70 | 光晕发送按钮 | ❌ (2.8-2.15) |
 | `/icons/voice-hold-edit-icon.svg` | — | 光晕编辑按钮 | ❌ (2.8-2.15) |
 | `/voice-glow.png` | — | 语音光晕纹理 | ❌ (2.8-2.15) |
+
+---
+
+## 附录 D：工程审查修正记录与最终执行决策（2026-06-23）
+
+> 本节为 `/plan-eng-review` 走查后的最终结论，是后续写代码的**唯一真相源**。
+> 与前文冲突处，**以本节为准**。
+
+### D.1 已核对：附录 A 视觉参数准确性
+
+逐行核对 `_ref-chatbox/chatboxgreen.tsx` + `use-composer-core.ts`，抽查十余项（p-[10px] / px-[4px] py-px / gap-[16px] / 右侧按钮组 68px↔26px / 语音按钮 right 42px↔0px / 220ms ease / textarea 14px·行高20px / fullScreen textarea min-h-[120px]），**全部与源码一致**。附录 A 的像素级规格可直接作为实现基准。
+
+### D.2 已修正：主容器 transition 错误论断
+
+详见 13.3 节修正。要点：**min-height 无过渡（瞬间变化），实际生效过渡仅 height/width/margin/border-radius → 320ms cubic-bezier(0.22,1,0.36,1)**，外加 opacity 250ms cubic-bezier(0.32,0.72,0,1)（语音淡出，container 层预留 `.is-fading-out`）。
+
+### D.3 决策：图标全部内联 SVG（不引用 /icons/*.svg 文件）
+
+**本项目现有 composer 使用内联 SVG（index.html:123-138），无 `/icons/` 目录。** 因此：
+
+- 前文及附录 A/C 中所有 `<img src="/icons/xxx.svg">` 写法**作废**，一律改为内联 `<svg>`。
+- `plus-button` / `mic-button`：**复用现有 index.html:123-138 的内联 SVG**。
+- `send-button` / `composer-expand-v2` / `composer-collapse-v2`：由用户提供原始 SVG 源码，内联进 DOM。
+- 附录 C 的"是否引入"列含义改为"是否本次内联"，路径列仅作来源标识，不代表实际文件。
+
+### D.4 决策：新建 styles/composer.css，并迁移 base.css 旧样式
+
+- 新建 `styles/composer.css`，在 `index.html` 的 `base.css` 之后加载（第 8 行后）。
+- **将 base.css:421-474 的旧 composer 样式整段迁移至 composer.css**（含 `.composer-shell` / `.composer-side-btn` / `.composer-stop-btn` / `.is-generating` / `composer-stop-spin` keyframe），base.css 不留残留。
+- 目的：composer 样式唯一出处，AI 后续调样式只看一个文件，避免跨文件覆盖的"弯弯绕绕"。
+
+### D.5 决策：执行批次顺序修正（先 DOM 后 CSS）
+
+原 Batch 1-6 顺序中 CSS 先于 DOM 骨架不合理（选择器无法验证）。修正后顺序：
+
+| 批次 | 内容 |
+|------|------|
+| Batch 1 | base.css 旧 composer 样式迁移至新建 composer.css（行为不变，仅搬迁） |
+| Batch 2 | index.html — composer DOM 骨架（内联 SVG，保留 `#composerStopBtn` 等集成 class） |
+| Batch 3 | composer.css — 折叠态 + 展开 compact 态样式 |
+| Batch 4 | composer.css — 全屏态 + 动画 keyframe |
+| Batch 5 | composer.css — Chip 标签 + 建议列表 + 工具栏 |
+| Batch 6 | engine/composer.js — 状态机 + 事件绑定 |
+| Batch 7 | 集成联调 + 播放引擎兼容验证 |
+
+### D.6 产品体验决策（用户拍板）
+
+| 项 | 决策 | 说明 |
+|----|------|------|
+| 失焦自动收起（blur-collapse） | **做** | textarea 为空且无附件时点击别处自动 collapse（一比一还原 use-composer-core.ts:308） |
+| 全屏输入（fullScreen） | **做** | lineCount≥4 显示展开手柄，点击进全屏（核心交互） |
+| 建议项入场动画 | **用标准预设** | `suggestionSlideUp` 用 from{opacity:0;translateY(8px)} to{opacity:1;translateY(0)}，0.25s ease，stagger 35ms。用户已授权对通用 UI 动效用常见预设，不必死等 React 全局 CSS 真值 |
+
+### D.7 决策：延期功能必须预留扩展位（不是永久砍掉）
+
+**用户明确：语音模式 / 语音浮层 / 附件 / 模型选择器 / 技能面板后续都要继续做，本次只做基础。** 因此架构必须为它们预留位置，避免返工：
+
+- **composer.js 状态机**：保留 `voiceMode` / `recording` / `chip` / `attachmentCount` 等字段于 state 对象（即使本次不接交互），后续加回时只补事件绑定，不动结构。
+- **DOM 骨架**：工具栏区域保留按钮槽位（[+] 附件、模型选择器占位、⚡ 技能占位），先渲染占位/隐藏，不写死成"只有基础按钮"。
+- **CSS**：预留 `.is-fading-out`（语音淡出）、语音态/录音态的 class 钩子，本次可空实现。
+- 这些预留**不增加本次实现复杂度**，只是命名和结构上不堵死后续扩展。
+
+### D.8 已确认的技术处理（无需用户参与）
+
+| 项 | 处理 |
+|----|------|
+| 播放引擎集成 | 新 DOM 保留 `.composer-shell` / `.composer-stop-btn` / `#composerStopBtn` / `.is-generating` / `.composer-placeholder`，`setComposerGenerating()` 零改动 |
+| ResizeObserver 清理 | composer.js 导出 `destroy()`，内部 `observer.disconnect()` |
+| compactHeightPx | `Math.max(72, Math.ceil(getBoundingClientRect().height))`，写入 `--cp-height` CSS 变量 |
+| 导出接口 | 参考 engine/sheet.js 风格，顶部注释列函数清单。导出：`initComposer` / `destroy` / `setComposerChip` / `setComposerText`（内部函数不导出） |
+| lineCount | 用 textarea `scrollHeight`（非 ResizeObserver），与源码一致 |
+| 建议项点击 | 用 `onPointerDown`（非 click），preventDefault 防 blur 先触发导致误收起 |
+
+### D.9 最终评分（修正后）
+
+| 维度 | 修正前 | 修正后 | 说明 |
+|------|--------|--------|------|
+| 架构 | 7.5/10 | **9/10** | 文件归属、集成接口、扩展位预留已明确 |
+| 交互完整性 | 6/10 | **8.5/10** | blur-collapse / attachment-expand / fullScreen 触发条件已对齐源码 |
+| 视觉参数 | 5/10 | **9/10** | transition 错误已修正，附录 A 已核对准确 |
+
+### D.10 待用户提供的素材（开工前唯一阻塞项）
+
+- [ ] `send-button` SVG 源码
+- [ ] `composer-expand-v2` SVG 源码
+- [ ] `composer-collapse-v2` SVG 源码
+
+> 收到这 3 个 SVG 即可开始 Batch 1。
+

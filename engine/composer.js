@@ -90,9 +90,10 @@ function expand() {
   state.expanded = true;
   els.shell.classList.add('is-expanded');
   observeHeight();
+  // 同步 focus textarea，确保 iOS 能正确拉起键盘
+  if (els.textarea) els.textarea.focus();
   requestAnimationFrame(() => {
     measureHeight();
-    if (els.textarea) els.textarea.focus();
   });
 }
 
@@ -146,11 +147,14 @@ function unobserveHeight() {
 
 // ── 事件绑定 ──────────────────────────────────────────────
 function bindEvents() {
-  // 单行态点击 bar（占位文字/空白区）→ 展开。点按钮（+/麦克风/停止/发送）不触发展开。
-  if (els.bar) {
-    els.bar.addEventListener('pointerdown', (e) => {
+  // 单行态点击 shell（占位文字/空白区）→ 展开。点按钮（+/麦克风/停止/发送）不触发展开。
+  if (els.shell) {
+    els.shell.addEventListener('pointerdown', (e) => {
       if (state.expanded) return;
-      if (e.target.closest('button')) return; // 按钮各自处理
+      // 点击按钮不触发展开（按钮各自处理）
+      if (e.target.closest('button')) return;
+      // 点击已激活的 textarea 不重复展开
+      if (e.target.closest('.cp-body')) return;
       expand();
     });
   }

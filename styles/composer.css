@@ -116,11 +116,14 @@
 .composer-stop-btn{display:none;cursor:pointer;}
 .composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .composer-stop-btn{display:flex;}
 .composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .cp-collapsed .composer-placeholder{visibility:hidden;}
+/* 停止按钮圆点：全局统一 40×40（与发送圆、设计稿一致）。
+ * 单行态、激活态共用此尺寸，不再各自定义。flex-shrink:0 防压扁。 */
 .composer-stop-circle{
-  width:32px;height:32px;border-radius:50%;
+  width:40px;height:40px;border-radius:50%;
   background:rgba(0,0,0,0.7);
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;
+  flex-shrink:0;
 }
 .composer-stop-icon{display:block;}
 .composer-stop-icon{
@@ -269,10 +272,7 @@
   padding:0;
 }
 .cp-send-btn svg{ width:40px; height:40px; display:block; }
-.cp-active-stop-btn .composer-stop-circle{
-  width:40px;height:40px;
-  flex-shrink:0;
-}
+/* 停止圆点尺寸由全局 .composer-stop-circle（40）统一，此处不再覆盖。 */
 
 /* 显隐逻辑（设计稿：mic 常驻，发送/停止按状态额外出现）：
  *   激活无内容       → [+] ... [mic]
@@ -371,18 +371,15 @@
   padding:0;
 }
 .cp-fs-textarea::placeholder{ color:rgba(0,0,0,0.3); }
-/* 发送按钮：绝对定位右下角 */
+/* 发送按钮：绝对定位右下角（容器 46×46，与激活态发送一致） */
 .cp-fs-send-wrap{
   position:absolute;
   right:20px;
   bottom:20px;
-  width:26px;
-  height:26px;
+  width:46px;
+  height:46px;
 }
-/* 全屏态发送按钮常显（覆盖 compact 态的 0→26 动画规则） */
+/* 全屏态发送常显（覆盖 compact 态的 display:none）；尺寸继承 .cp-send-btn（46 容器 + 40 圆）。 */
 .cp-fs-send{
-  position:static;
-  width:26px;
-  opacity:1;
-  transform:none;
+  display:flex;
 }

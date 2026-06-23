@@ -44,14 +44,15 @@ let resizeObserver = null;
 
 // ── 计算与同步 ────────────────────────────────────────────
 
-// textarea 自适应高度 + 行数计算：height:auto 撑到 scrollHeight（compact 态 CSS max 200），
-// 返回行数 = scrollHeight / 行高(20)。让 textarea 真正撑高，.cp-expanded 才能被测到正确高度。
+// textarea 自适应高度 + 行数计算：height:auto 撑到 scrollHeight，但夹在 compact 态上限 200 内
+// （超过 200 后 textarea 内部滚动）。返回行数 = scrollHeight / 行高(20)。
+const COMPACT_TEXTAREA_MAX = 200;
 function autoGrowAndCount(textarea) {
   if (!textarea) return 1;
   const lh = 20;
   textarea.style.height = 'auto';
   const sh = textarea.scrollHeight;
-  textarea.style.height = sh + 'px';
+  textarea.style.height = Math.min(sh, COMPACT_TEXTAREA_MAX) + 'px';
   return Math.max(1, Math.round(sh / lh));
 }
 
@@ -72,13 +73,16 @@ function syncLineCount() {
 }
 
 // 测量 compact 态内容高度 → --cp-height（min 72）
-// 用 scrollHeight：.cp-expanded 被 shell 的固定高度框住，getBoundingClientRect 会恒等于
-// shell 高度形成死循环；scrollHeight 反映不受限的真实内容高度。
+// shell 的固定高度（var(--cp-height)）会框住 .cp-expanded，导致测量受残留高度影响
+// （尤其退全屏后）。测量前先把 shell 高度临时设 auto 让容器按内容塌缩，量准后再写回变量。
 function measureHeight() {
   if (!state.expanded || state.fullScreen) return;
   const content = els.expanded;
   if (!content) return;
-  const h = Math.max(72, Math.ceil(content.scrollHeight));
+  const prevHeight = els.shell.style.height;
+  els.shell.style.height = 'auto';
+  const h = Math.max(72, Math.ceil(content.getBoundingClientRect().height));
+  els.shell.style.height = prevHeight;
   els.shell.style.setProperty('--cp-height', h + 'px');
 }
 
@@ -101,6 +105,7 @@ function collapse() {
   state.expanded = false;
   state.fullScreen = false;
   els.shell.classList.remove('is-expanded', 'is-fullscreen');
+  if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
   unobserveHeight();
 }
 
@@ -108,6 +113,7 @@ function enterFullScreen() {
   if (!state.expanded || state.lineCount < 4 || state.voiceMode) return;
   state.fullScreen = true;
   els.shell.classList.add('is-fullscreen');
+  if (els.composer) els.composer.classList.add('cp-is-fullscreen');
   // 同步文字到全屏 textarea
   if (els.fsTextarea && els.expandedTextarea) {
     els.fsTextarea.value = els.expandedTextarea.value;
@@ -119,6 +125,7 @@ function exitFullScreen() {
   if (!state.fullScreen) return;
   state.fullScreen = false;
   els.shell.classList.remove('is-fullscreen');
+  if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
   // 全屏文字同步回 compact
   if (els.fsTextarea && els.expandedTextarea) {
     els.expandedTextarea.value = els.fsTextarea.value;
@@ -201,6 +208,13 @@ function bindEvents() {
       syncHasContent();
     });
   }
+
+  // 激活态停止按钮 → 转发到单行态停止按钮（复用 player-ui.js 已绑定的停止逻辑）
+  const activeStop = $('.cp-active-stop-btn', els.shell);
+  const mainStop = $('#composerStopBtn', els.shell);
+  if (activeStop && mainStop) {
+    activeStop.addEventListener('click', () => mainStop.click());
+  }
 }
 
 // ── 公共 API ──────────────────────────────────────────────
@@ -210,6 +224,7 @@ export function initComposer() {
   if (!shell) return;
   els = {
     shell,
+    composer: shell.closest('.composer'),
     collapsed: $('.cp-collapsed', shell),
     expanded: $('.cp-expanded', shell),
     expandedTextarea: $('.cp-textarea', shell),

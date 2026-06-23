@@ -128,6 +128,8 @@
     本批（Batch2+3）只实现折叠态视觉，.cp-expanded / .cp-fullscreen 骨架就位但默认隐藏，样式待后续批次。
   -->
   <div class="composer">
+    <!-- 全屏蒙层：全屏态压暗下方 navbar/对话区（核对附录 A.7）。始终在 DOM，opacity 控制显隐。 -->
+    <div class="cp-fs-backdrop" id="cpFsBackdrop"></div>
     <div class="composer-shell" id="composerShell">
 
       <!-- ── 折叠态 ─────────────────────────────────── -->

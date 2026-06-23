@@ -109,11 +109,12 @@
   background:transparent;transition:background .1s;
 }
 .composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
-/* 停止按钮：独立于三态，排在折叠态 .cp-collapsed 之后（shell flex 流末尾），
- * 与迁移前行为一致——生成态显示，仅隐藏 placeholder，mic 保留。 */
+/* 单行态停止按钮：排在折叠态 .cp-collapsed 之后（shell flex 流末尾）。
+ * 仅在单行态（非激活、非全屏）+ 生成中显示；激活/全屏态用 .cp-active-stop-btn，
+ * 否则会与激活态停止按钮同时出现（双停止按钮 bug）。 */
 .composer-stop-btn{display:none;cursor:pointer;}
-.composer-shell.is-generating .composer-stop-btn{display:flex;}
-.composer-shell.is-generating .cp-collapsed .composer-placeholder{visibility:hidden;}
+.composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .composer-stop-btn{display:flex;}
+.composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .cp-collapsed .composer-placeholder{visibility:hidden;}
 .composer-stop-circle{
   width:32px;height:32px;border-radius:50%;
   background:rgba(0,0,0,0.7);
@@ -312,12 +313,34 @@
  * 全屏态（Batch 5）— 参数核对自附录 A.6.4 / chatboxgreen.tsx:267-300
  * shell 撑满视口高、左右各溢出 26px（贴齐手机壳边缘），顶部留圆角、底部拉直。
  * ============================================================ */
+
+/* 全屏蒙层：默认透明无交互；全屏态时压暗下方 navbar/对话区。
+ * z-index 高于 navbar(50)、低于全屏 composer。 */
+.cp-fs-backdrop{
+  position:fixed;
+  inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  z-index:60;
+  transition:opacity 300ms ease-out;
+}
+/* 全屏态 class 由 composer.js toggle 到 .composer 上（不用 :has()，兼容 iOS 13.4+）。 */
+.composer.cp-is-fullscreen .cp-fs-backdrop{
+  opacity:0.3;
+}
+/* 全屏态把整个 composer 提到 navbar 之上，确保 shell 盖住 navbar */
+.composer.cp-is-fullscreen{
+  z-index:70;
+}
+
 .composer-shell.is-fullscreen{
   height:calc(100dvh - env(safe-area-inset-top));
   width:calc(100% + 52px);
   margin-inline:-26px;
   border-radius:24px 24px 0 0;
   align-items:stretch;
+  z-index:65;  /* 高于全屏蒙层(60)，确保白色卡片盖在蒙层之上 */
 }
 .composer-shell.is-fullscreen .cp-fullscreen{
   flex-direction:column;

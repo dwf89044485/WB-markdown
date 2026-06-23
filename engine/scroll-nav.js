@@ -17,6 +17,7 @@ const SN = {
   downState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 },
   scrollTicking: false,
   isTblFullscreen: false,
+  isComposerActive: false,
 };
 
 // ── Turn index ────────────────────────────────────────────
@@ -88,7 +89,8 @@ function syncVisibility(scrollTop, skipEntrance) {
 }
 
 function updateScrollNav() {
-  if (SN.isTblFullscreen) {
+  // 表格全屏 或 输入框激活/全屏态 时禁用滚动按钮
+  if (SN.isTblFullscreen || SN.isComposerActive) {
     SN.nav.classList.add('is-hidden');
     return;
   }
@@ -328,6 +330,19 @@ function watchTableFullscreen() {
   obs.observe(overlay, { attributes: true, attributeFilter: ['class'] });
 }
 
+// 输入框激活/全屏态时禁用滚动按钮（与表格全屏同机制）
+function watchComposerActive() {
+  const shell = document.getElementById('composerShell');
+  if (!shell) return;
+  const sync = () => {
+    SN.isComposerActive = shell.classList.contains('is-expanded') || shell.classList.contains('is-fullscreen');
+    updateScrollNav();
+  };
+  const obs = new MutationObserver(sync);
+  obs.observe(shell, { attributes: true, attributeFilter: ['class'] });
+  sync();
+}
+
 // ── Public init ───────────────────────────────────────────
 
 export function rebuildScrollNav() {
@@ -378,6 +393,8 @@ export function initScrollNav() {
 
   // Watch table fullscreen
   watchTableFullscreen();
+  // Watch composer 激活/全屏态
+  watchComposerActive();
 
   // Initial sync
   updateScrollNav();

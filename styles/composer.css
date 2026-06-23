@@ -70,15 +70,23 @@
   transition:opacity 250ms cubic-bezier(0.32,0.72,0,1);
 }
 
-/* ── 内容区 .cp-body ────────────────────────────────────────
- * 单行态：display:none（占位文字改用 bar 里的 .cp-bar-placeholder）。
- * 激活态：显示 textarea，padding 13/15、17px 左对齐（设计稿 134804:2818）。 */
+/* ── 内容区 .cp-body（设计稿 134804:2932）────────────────────
+ * 单行态隐藏；激活态 column：[chip(可选)] + [文字行 .cp-text-row]。
+ * 外层 padding 13/15/0。 */
 .cp-body{ display:none; }
 .composer-shell.is-expanded .cp-body{
   display:flex;
   flex-direction:column;
   width:100%;
   padding:13px 15px 0;
+}
+/* 文字行（设计稿 #2932 row）：[textarea flex:1] gap4 [展开手柄 26]，顶对齐 */
+.cp-text-row{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  width:100%;
+  gap:4px;
 }
 /* 单行态占位文字（bar 内，居中，flex:1 占满 + 与 mic 之间空隙） */
 .cp-bar-placeholder{
@@ -184,11 +192,13 @@
 .cp-chip-text{ font-size:12px; line-height:16px; color:#030303; }
 .cp-chip-close{ width:10px; height:10px; opacity:.4; flex-shrink:0; }
 
-/* ── 激活态 textarea + 展开手柄 ─────────────────────────────── */
+/* ── 激活态 textarea + 展开手柄 ───────────────────────────────
+ * textarea：flex:1 占满文字行剩余宽度，内层 padding 1px 4px（设计稿 #2933 text）。
+ * 顶对齐由 .cp-text-row 的 align-items:flex-start 实现。 */
 .cp-textarea{
   display:none;             /* 单行态隐藏，激活态显示 */
   min-width:0;
-  width:100%;
+  flex:1;
   resize:none;
   border:none;
   outline:none;
@@ -199,23 +209,25 @@
   overflow-y:auto;
   font-family:inherit;
   color:#000;
+  padding:1px 4px;          /* 设计稿内层 text frame padding */
 }
 .composer-shell.is-expanded .cp-textarea{ display:block; }
 .cp-textarea::placeholder{ color:rgba(0,0,0,0.3); }
+/* 展开手柄：行内 26×26（设计稿 #2935），lineCount<4 时用 visibility 隐藏但保留占位，
+ * 避免出现/消失时 textarea 宽度跳变。 */
 .cp-expand-handle{
-  display:none;             /* 单行态隐藏 */
-  position:absolute;
-  top:13px;right:15px;
-  width:26px;height:26px;
+  display:flex;
   align-items:center;
   justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
   border:none;background:none;cursor:pointer;
-  opacity:0;
+  position:relative;
+  visibility:hidden;
   pointer-events:none;
 }
 .composer-shell.is-expanded.has-expand-handle .cp-expand-handle{
-  display:flex;
-  opacity:1;
+  visibility:visible;
   pointer-events:auto;
 }
 .cp-expand-handle::after{ content:""; position:absolute; inset:-9px; }

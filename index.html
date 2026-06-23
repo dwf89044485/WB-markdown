@@ -133,17 +133,19 @@
     <div class="cp-fs-backdrop" id="cpFsBackdrop"></div>
     <div class="composer-shell" id="composerShell">
 
-      <!-- ── 内容区（仅激活态显示 textarea；单行态占位用 cp-bar-placeholder） ── -->
+      <!-- ── 内容区（激活态，设计稿 134804:2932）：chip(可选) + [textarea + 展开手柄] ── -->
       <div class="cp-body">
         <div class="cp-chip-mount"></div>
-        <textarea class="cp-textarea" rows="1" placeholder="继续说出你的需求"></textarea>
-        <!-- 展开手柄（激活态 lineCount>=4 可见，点进全屏） -->
-        <button class="cp-expand-handle" type="button" tabindex="-1" aria-label="展开更多">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000" transform="matrix(1 0 0 1 8.16998 2.33)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8829 4.8582 1.4904L1.2543 5.0943L0.4058 4.2458L4.0098 0.6418Q3.6174 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
-            <path fill="#000" transform="matrix(1 0 0 1 2.33002 8.17)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6171 0.6418 4.0096L4.2457 0.4057L5.0942 1.2542L1.4902 4.8582Q1.8826 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
-          </svg>
-        </button>
+        <!-- 文字行：textarea(flex:1，内层 padding 1/4) + 展开手柄(26，lineCount>=4 可见) -->
+        <div class="cp-text-row">
+          <textarea class="cp-textarea" rows="1" placeholder="继续说出你的需求"></textarea>
+          <button class="cp-expand-handle" type="button" tabindex="-1" aria-label="展开更多">
+            <svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#000" transform="matrix(1 0 0 1 8.16998 2.33)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8829 4.8582 1.4904L1.2543 5.0943L0.4058 4.2458L4.0098 0.6418Q3.6174 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
+              <path fill="#000" transform="matrix(1 0 0 1 2.33002 8.17)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6171 0.6418 4.0096L4.2457 0.4057L5.0942 1.2542L1.4902 4.8582Q1.8826 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- ── 常驻按钮栏（单行/激活共用，不重建）：[+] ...flex... [麦克风][发送/停止] ── -->

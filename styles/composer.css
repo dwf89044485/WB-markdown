@@ -42,9 +42,9 @@
   position:relative;
   z-index:10;
   width:100%;
-  min-height:46px;
-  height:46px;
-  border-radius:24px;
+  min-height:56px;          /* 设计稿：46 按钮 + 上下各 5 padding */
+  height:56px;
+  border-radius:30px;        /* 设计稿 borderRadius=30 */
   overflow:hidden;
   background:#fff;
   box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
@@ -73,14 +73,15 @@
 /* ── 三态显隐（class 驱动）─────────────────────────────────
  * 折叠态：默认显示 .cp-collapsed；展开/全屏态容器隐藏。
  * 展开/全屏态样式在后续批次补；本批它们恒隐藏。 */
-/* 折叠态容器 flex:1 占据剩余宽度，与停止按钮同处 shell 的 flex 流。
- * 内部布局 [+][placeholder flex-1][mic]，与迁移前一致。 */
+/* 折叠态容器（设计稿 134804:2533 输入框 frame）：padding 5px、space-between、
+ * 内部 [+ 46×46][placeholder][mic 46×46]。 */
 .cp-collapsed{
   display:flex;
   align-items:center;
   flex:1;
   min-width:0;
   height:100%;
+  padding:5px;
 }
 
 /* 展开 / 全屏态：本批仅就位，样式待后续批次，默认隐藏 */
@@ -139,7 +140,7 @@
 .composer-placeholder{
   flex:1;
   text-align:center;
-  font-size:14px;
+  font-size:17px;            /* 设计稿 PingFang SC 17px */
   line-height:24px;
   padding:8px 12px;
   color:rgba(0,0,0,0.3);
@@ -150,20 +151,22 @@
 }
 
 /* ============================================================
- * 展开 compact 态（Batch 4）— 参数核对自附录 A.5.4 / chatboxgreen.tsx:302-388
- * 结构：.cp-expanded > [.cp-content(chip+input-row)] + [.cp-toolbar]
+ * 激活态（设计稿 134804:2817）
+ * 结构：.cp-expanded(列) > [.cp-content 文字区] + [.cp-toolbar 工具栏]
+ *   文字区 134804:2818：padding 13/15，17px 左对齐
+ *   工具栏 134804:2824：padding 5，space-between，[+46] ...flex... [mic46 send46]
+ * 所有按钮点击容器统一 46×46（设计稿值）；图标各自尺寸（+/mic 20、send/stop 40 圆）。
  * ============================================================ */
 .composer-shell.is-expanded .cp-expanded{
   flex-direction:column;
-  align-items:flex-start;
+  align-items:stretch;
   width:100%;
-  padding:10px;            /* p-[10px] 外层四边 */
 }
 .cp-content{
   display:flex;
   flex-direction:column;
   width:100%;
-  padding:1px 4px;         /* px-[4px] py-px 内容包裹层 */
+  padding:13px 15px;       /* 设计稿文字区 padding */
 }
 
 /* ── Chip 标签（有 chip 时由 JS 注入 .cp-chip）────────────── */
@@ -172,19 +175,15 @@
   display:inline-flex;
   align-items:center;
   align-self:flex-start;
-  margin-bottom:4px;        /* mb-[4px] */
+  margin-bottom:4px;
   gap:6px;
-  padding:6px 10px 6px 8px; /* 上右下左 */
+  padding:6px 10px 6px 8px;
   background:#E7EFF4;
   border-radius:100px;
   border:none;
   cursor:pointer;
 }
-.cp-chip-label{
-  display:flex;
-  align-items:center;
-  gap:3px;
-}
+.cp-chip-label{ display:flex; align-items:center; gap:3px; }
 .cp-chip-label svg{ width:15px; height:15px; color:#030303; }
 .cp-chip-text{ font-size:12px; line-height:16px; color:#030303; }
 .cp-chip-close{ width:10px; height:10px; opacity:.4; flex-shrink:0; }
@@ -194,7 +193,7 @@
   display:flex;
   align-items:flex-start;
   width:100%;
-  gap:4px;                  /* gap-[4px] */
+  gap:4px;
 }
 .cp-textarea{
   min-width:0;
@@ -203,12 +202,12 @@
   border:none;
   outline:none;
   background:transparent;
-  font-size:14px;
-  line-height:20px;         /* compact 态行高 20px */
-  max-height:200px;         /* max-h-[200px] */
+  font-size:17px;           /* 设计稿 17px */
+  line-height:24px;         /* 设计稿行高 24 */
+  max-height:200px;
   overflow-y:auto;
   font-family:inherit;
-  color:#1c1c1e;
+  color:#000;
 }
 .cp-textarea::placeholder{ color:rgba(0,0,0,0.3); }
 .cp-expand-handle{
@@ -219,7 +218,6 @@
   width:26px;height:26px;
   flex-shrink:0;
   border:none;background:none;cursor:pointer;
-  /* 展开手柄默认隐藏，lineCount>=4 时由 JS 加 .has-expand-handle 显示 */
   opacity:0;
   pointer-events:none;
 }
@@ -229,91 +227,62 @@
 }
 .cp-expand-handle::after{ content:""; position:absolute; inset:-9px; }
 
-/* ── 工具栏 ──────────────────────────────────────────────── */
+/* ── 工具栏（设计稿 134804:2824）────────────────────────────
+ * padding 5，[+] 在左、右侧按钮组靠右（margin-left:auto），space-between。 */
 .cp-toolbar{
   display:flex;
   align-items:center;
-  gap:16px;                 /* gap-[16px] */
   width:100%;
+  padding:5px;
 }
+/* 所有工具栏按钮点击容器统一 46×46（设计稿），图标在内居中。 */
 .cp-tool-btn{
   position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:26px;height:26px;
+  width:46px;height:46px;
   flex-shrink:0;
   border:none;background:none;cursor:pointer;
+  padding:0;
 }
-.cp-tool-plus::after{ content:""; position:absolute; inset:-12px; }
-/* 模型选择器 / 技能按钮槽位：后续阶段接入，本批不占视觉空间 */
-.cp-tool-slot{ display:none; }
-
-/* 右侧按钮组：有内容 68px、无内容 26px（width 220ms ease） */
+/* 右侧按钮组：麦克风 + 发送/停止，gap 10（设计稿） */
 .cp-btn-group{
   margin-left:auto;
-  position:relative;
-  height:26px;
-  width:26px;
+  display:flex;
+  align-items:center;
+  gap:10px;
   flex-shrink:0;
-  transition:width 220ms ease;
 }
-.composer-shell.has-content .cp-btn-group{ width:68px; }
-/* mic 按钮：无内容 right:0、有内容 right:42px（right 220ms ease） */
-.cp-mic-btn-2{
-  position:absolute;
-  top:50%;
-  right:0;
-  transform:translateY(-50%);
-  transition:right 220ms ease;
-}
-.composer-shell.has-content .cp-mic-btn-2{ right:42px; }
-.cp-mic-btn-2::after{ content:""; position:absolute; inset:-9px; }
-/* 发送按钮：无内容 0px、有内容 26px（width+opacity 220ms ease） */
-.cp-send-btn{
-  position:absolute;
-  top:50%;
-  right:0;
-  transform:translateY(-50%);
-  width:0;
-  height:26px;
-  opacity:0;
-  overflow:hidden;
-  border:none;background:none;cursor:pointer;
+.cp-mic-btn-2{ /* 46 容器，mic 图标 20，见 .cp-tool-btn */ }
+
+/* 发送 / 停止：46×46 点击容器，内部 40 圆图标。 */
+.cp-send-btn,
+.cp-active-stop-btn{
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:width 220ms ease, opacity 220ms ease;
-}
-.composer-shell.has-content .cp-send-btn{ width:26px; opacity:1; }
-.cp-send-btn::after{ content:""; position:absolute; inset:-9px; }
-
-/* 激活态停止按钮（本项目扩展，非 React 定稿）：
- * 三态优先级 —— 有内容→发送；生成中且无内容→停止；都不是→麦克风。
- * 停止按钮绝对定位在 mic 位置（right:0），仅 .is-generating 且无内容时显示，
- * 同时隐藏 mic；有内容时发送优先，停止与 mic 都让位。 */
-.cp-active-stop-btn{
-  position:absolute;
-  top:50%;
-  right:0;
-  transform:translateY(-50%);
-  display:none;
-  width:26px;
-  height:26px;
+  width:46px;height:46px;
+  flex-shrink:0;
   border:none;background:none;cursor:pointer;
-  align-items:center;
-  justify-content:center;
+  padding:0;
 }
-.cp-active-stop-btn::after{ content:""; position:absolute; inset:-9px; }
-/* 激活态停止按钮是 26×26 小按钮，内部圆点改为 26×26（单行态那个是 32×32 给 46 按钮用的），
- * flex-shrink:0 防止被父级 flex 拉伸成椭圆。 */
+.cp-send-btn svg{ width:40px; height:40px; display:block; }
 .cp-active-stop-btn .composer-stop-circle{
-  width:26px;height:26px;
+  width:40px;height:40px;
   flex-shrink:0;
 }
-/* 生成中且无内容：显示停止，隐藏 mic */
+
+/* 显隐逻辑（设计稿：mic 常驻，发送/停止按状态额外出现）：
+ *   激活无内容       → [+] ... [mic]
+ *   激活有内容       → [+] ... [mic] [发送]
+ *   激活生成中无内容  → [+] ... [mic] [停止]
+ * mic 始终显示；发送仅有内容时；停止仅生成中且无内容时。 */
+.cp-send-btn{ display:none; }
+.cp-active-stop-btn{ display:none; }
+.composer-shell.has-content .cp-send-btn{ display:flex; }
 .composer-shell.is-generating:not(.has-content) .cp-active-stop-btn{ display:flex; }
-.composer-shell.is-generating:not(.has-content) .cp-mic-btn-2{ visibility:hidden; }
 
 /* ============================================================
  * 全屏态（Batch 5）— 参数核对自附录 A.6.4 / chatboxgreen.tsx:267-300

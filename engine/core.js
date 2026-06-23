@@ -66,10 +66,24 @@ function userTopTarget(c, wrap) {
   return Math.max(0, (wrap.offsetTop - c.offsetTop) - navHeight - USER_TOP_OFFSET);
 }
 
+function getUserTopSpacer() {
+  return document.getElementById(USER_TOP_SPACER_ID);
+}
+
+function getEffectiveScrollHeight(c) {
+  const spacer = getUserTopSpacer();
+  const spacerHeight = spacer ? spacer.offsetHeight : 0;
+  return Math.max(0, c.scrollHeight - spacerHeight);
+}
+
+function scrollTopForEffectiveBottom(c, effectiveHeight) {
+  return Math.max(0, effectiveHeight - c.clientHeight);
+}
+
 function ensureUserTopSpacer(c, target) {
   const maxScrollTop = Math.max(0, c.scrollHeight - c.clientHeight);
   const deficit = target - maxScrollTop;
-  let spacer = document.getElementById(USER_TOP_SPACER_ID);
+  let spacer = getUserTopSpacer();
   if (deficit <= 0) {
     if (spacer) spacer.remove();
     return;
@@ -84,17 +98,28 @@ function ensureUserTopSpacer(c, target) {
   spacer.style.height = `${Math.ceil(deficit)}px`;
 }
 
-function trimUserTopSpacer(c, target) {
-  const spacer = document.getElementById(USER_TOP_SPACER_ID);
-  if (!spacer) return;
+function reconcileUserTopSpacer(c, wrap) {
+  const spacer = getUserTopSpacer();
+  if (!spacer || !wrap) return false;
+  const target = userTopTarget(c, wrap);
   const spacerHeight = spacer.offsetHeight;
-  const maxWithoutSpacer = Math.max(0, c.scrollHeight - spacerHeight - c.clientHeight);
-  if (maxWithoutSpacer >= target) spacer.remove();
+  const noSpacerHeight = Math.max(0, c.scrollHeight - spacerHeight);
+  const needed = target - (noSpacerHeight - c.clientHeight);
+  if (needed <= 0) {
+    spacer.remove();
+    return false;
+  }
+  spacer.style.height = `${Math.ceil(needed)}px`;
+  return true;
 }
 
 export function clearUserTopSpacer() {
-  const spacer = document.getElementById(USER_TOP_SPACER_ID);
+  const spacer = getUserTopSpacer();
   if (spacer) spacer.remove();
+}
+
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
 }
 
 export function initScrollGuard() {
@@ -112,7 +137,9 @@ export function scrollToBottom() {
   if (!c) return;
   // 用户主动往上翻过才拦截，否则一直跟随底部
   if (_sbUserAway) return;
-  c.scrollTop = c.scrollHeight;
+  const effectiveHeight = getEffectiveScrollHeight(c);
+  const bottom = scrollTopForEffectiveBottom(c, effectiveHeight);
+  if (bottom > c.scrollTop) c.scrollTop = bottom;
 }
 
 /**
@@ -126,28 +153,50 @@ export function scrollIfFull() {
   const c = document.querySelector('#conv');
   if (!c) return;
   if (_sbUserAway) return;
+
   const wrap = document.getElementById('userMsgWrap');
-  if (wrap) {
-    trimUserTopSpacer(c, userTopTarget(c, wrap));
-  }
-  if (c.scrollTop + c.clientHeight >= c.scrollHeight - 60) {
-    c.scrollTop = c.scrollHeight;
-  }
+  const spacerActive = reconcileUserTopSpacer(c, wrap);
+  if (spacerActive) return;
+
+  const effectiveHeight = getEffectiveScrollHeight(c);
+  const nearBottom = c.scrollTop + c.clientHeight >= effectiveHeight - 60;
+  if (!nearBottom) return;
+
+  const bottom = scrollTopForEffectiveBottom(c, effectiveHeight);
+  if (bottom > c.scrollTop) c.scrollTop = bottom;
 }
 
 /**
- * 将用户消息气泡滚动到视口顶端（navbar 下方）。
- *
- * 若当前内容不足一屏，先在底部插入临时 spacer，确保“消息出现即贴顶”可达。
+ * 将用户消息气泡滚动到视口顶端（navbar 下方），带上移动效。
  */
-export function scrollUserToTop() {
+export async function scrollUserToTop(duration = 320) {
   const c = document.querySelector('#conv');
   if (!c) return;
   const wrap = document.getElementById('userMsgWrap');
   if (!wrap) return;
+
   const target = userTopTarget(c, wrap);
   ensureUserTopSpacer(c, target);
-  c.scrollTop = target;
+  const start = c.scrollTop;
+  const delta = target - start;
+
+  if (fastRender || duration <= 0 || Math.abs(delta) < 1) {
+    c.scrollTop = target;
+    _sbUserAway = false;
+    return;
+  }
+
+  const startedAt = performance.now();
+  await new Promise(resolve => {
+    const tick = (now) => {
+      const t = Math.min(1, (now - startedAt) / duration);
+      c.scrollTop = start + delta * easeOutCubic(t);
+      if (t >= 1) { resolve(); return; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+
   // 这是系统滚动，不是用户手动离开底部
   _sbUserAway = false;
 }

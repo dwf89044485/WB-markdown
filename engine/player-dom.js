@@ -218,9 +218,9 @@ export async function showUserMessage() {
   const wrap = $('#userMsgWrap');
   wrap.classList.remove('is-hidden');
   wrap.classList.add('message-enter');
-  // 等一帧让布局稳定，再把用户消息贴到 navbar 下方
+  // 等一帧让布局稳定，再执行“上移到 navbar 下方”的过渡动画
   await new Promise(resolve => requestAnimationFrame(resolve));
-  scrollUserToTop();
+  await scrollUserToTop(playback('userMessageMoveDuration', 340));
   rebuildScrollNav();
   await sleepDelay('userMessageDelay', 720);
 }

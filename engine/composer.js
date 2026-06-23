@@ -73,16 +73,18 @@ function syncLineCount() {
 }
 
 // 测量 compact 态内容高度 → --cp-height（min 72）
-// shell 的固定高度（var(--cp-height)）会框住 .cp-expanded，导致测量受残留高度影响
-// （尤其退全屏后）。测量前先把 shell 高度临时设 auto 让容器按内容塌缩，量准后再写回变量。
+// .cp-expanded 是 flex-column，子元素高度不受 shell 约束影响。
+// 累加子元素 getBoundingClientRect().height 即可获得内容自然高度，
+// 无需设 shell height:auto（设 auto 会打断 CSS transition）。
 function measureHeight() {
   if (!state.expanded || state.fullScreen) return;
   const content = els.expanded;
   if (!content) return;
-  const prevHeight = els.shell.style.height;
-  els.shell.style.height = 'auto';
-  const h = Math.max(72, Math.ceil(content.getBoundingClientRect().height));
-  els.shell.style.height = prevHeight;
+  let h = 0;
+  for (const child of content.children) {
+    h += child.getBoundingClientRect().height;
+  }
+  h = Math.max(72, Math.ceil(h));
   els.shell.style.setProperty('--cp-height', h + 'px');
 }
 

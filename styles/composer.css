@@ -51,6 +51,29 @@
   display:flex;
   align-items:center;
 }
+
+/* ── 三态显隐（class 驱动）─────────────────────────────────
+ * 折叠态：默认显示 .cp-collapsed；展开/全屏态容器隐藏。
+ * 展开/全屏态样式在后续批次补；本批它们恒隐藏。 */
+/* 折叠态容器 flex:1 占据剩余宽度，与停止按钮同处 shell 的 flex 流。
+ * 内部布局 [+][placeholder flex-1][mic]，与迁移前一致。 */
+.cp-collapsed{
+  display:flex;
+  align-items:center;
+  flex:1;
+  min-width:0;
+  height:100%;
+}
+
+/* 展开 / 全屏态：本批仅就位，样式待后续批次，默认隐藏 */
+.cp-expanded,
+.cp-fullscreen{ display:none; }
+.composer-shell.is-expanded .cp-collapsed{ display:none; }
+.composer-shell.is-expanded .cp-expanded{ display:flex; }
+.composer-shell.is-fullscreen .cp-collapsed,
+.composer-shell.is-fullscreen .cp-expanded{ display:none; }
+.composer-shell.is-fullscreen .cp-fullscreen{ display:flex; }
+
 .composer-side-btn{
   width:46px;
   height:46px;
@@ -68,9 +91,11 @@
   background:transparent;transition:background .1s;
 }
 .composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
+/* 停止按钮：独立于三态，排在折叠态 .cp-collapsed 之后（shell flex 流末尾），
+ * 与迁移前行为一致——生成态显示，仅隐藏 placeholder，mic 保留。 */
 .composer-stop-btn{display:none;cursor:pointer;}
 .composer-shell.is-generating .composer-stop-btn{display:flex;}
-.composer-shell.is-generating .composer-placeholder{visibility:hidden;}
+.composer-shell.is-generating .cp-collapsed .composer-placeholder{visibility:hidden;}
 .composer-stop-circle{
   width:32px;height:32px;border-radius:50%;
   background:rgba(0,0,0,0.7);

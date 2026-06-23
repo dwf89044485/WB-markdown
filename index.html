@@ -118,20 +118,99 @@
     </button>
   </div>
   <!-- Composer -->
+  <!--
+    三态骨架（class 驱动，见 styles/composer.css）：
+      默认（无 class）        → 折叠态，显示 .cp-collapsed
+      .composer-shell.is-expanded   → 展开 compact 态，显示 .cp-expanded
+      .composer-shell.is-fullscreen → 全屏态，显示 .cp-fullscreen
+    停止按钮 #composerStopBtn 独立于三态之外，由播放引擎 .is-generating 控制。
+    图标说明：plus/mic 沿用内联 SVG；send=Frame2119902593 / expand=wb-maximize / collapse=wb-minimize（均内联）。
+    本批（Batch2+3）只实现折叠态视觉，.cp-expanded / .cp-fullscreen 骨架就位但默认隐藏，样式待后续批次。
+  -->
   <div class="composer">
-    <div class="composer-shell">
-      <button class="composer-side-btn" type="button" tabindex="-1" aria-label="添加">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 2.5C10.4602 2.5 10.8333 2.8731 10.8333 3.33333V9.16504H16.6667C17.1268 9.16514 17.5 9.5382 17.5 9.99837C17.4999 10.4585 17.1267 10.8316 16.6667 10.8317H10.8333V16.6667C10.8333 17.1269 10.4602 17.5 10 17.5C9.53977 17.5 9.16667 17.1269 9.16667 16.6667V10.8317H3.33333C2.87316 10.8317 2.50011 10.4585 2.5 9.99837C2.5 9.53814 2.8731 9.16504 3.33333 9.16504H9.16667V3.33333C9.16667 2.8731 9.53976 2.5 10 2.5Z" fill="black"/>
-        </svg>
-      </button>
-      <span class="composer-placeholder">继续说出你的需求</span>
-      <button class="composer-side-btn" type="button" tabindex="-1" aria-label="语音输入">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.355 11.0551C16.8865 11.0552 17.2905 11.5386 17.1257 12.0439C16.2278 14.7938 13.7848 16.8429 10.8211 17.166V18.8294C10.8207 19.2892 10.4477 19.6634 9.98781 19.6635C9.52798 19.6635 9.15514 19.2899 9.15448 18.8302V17.1635C6.20224 16.8316 3.77055 14.786 2.87518 12.0439C2.71035 11.5386 3.11433 11.0552 3.64585 11.0551C4.0415 11.0551 4.37932 11.3302 4.51418 11.7021C5.32726 13.9462 7.47627 15.5506 10.0008 15.5506C12.5251 15.5502 14.6737 13.946 15.4867 11.7021C15.6215 11.3302 15.9594 11.0551 16.355 11.0551Z" fill="black" fill-opacity="0.86"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1001 0.644165C12.6298 0.644595 14.6809 2.69526 14.681 5.22506V9.11503C14.6806 11.6445 12.6296 13.6955 10.1001 13.6959C7.57024 13.6959 5.51967 11.6448 5.51923 9.11503V5.22506C5.51934 2.695 7.57003 0.644165 10.1001 0.644165ZM10.1001 2.30595C8.48821 2.30595 7.18112 3.61317 7.18101 5.22506V9.11503C7.18145 10.7266 8.48841 12.0333 10.1001 12.0333C11.7115 12.0329 13.0188 10.7264 13.0192 9.11503V5.22506C13.0191 3.61344 11.7117 2.30638 10.1001 2.30595Z" fill="black" fill-opacity="0.86"/>
-        </svg>
-      </button>
+    <div class="composer-shell" id="composerShell">
+
+      <!-- ── 折叠态 ─────────────────────────────────── -->
+      <div class="cp-collapsed">
+        <button class="composer-side-btn cp-plus-btn" type="button" tabindex="-1" aria-label="添加">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2.5C10.4602 2.5 10.8333 2.8731 10.8333 3.33333V9.16504H16.6667C17.1268 9.16514 17.5 9.5382 17.5 9.99837C17.4999 10.4585 17.1267 10.8316 16.6667 10.8317H10.8333V16.6667C10.8333 17.1269 10.4602 17.5 10 17.5C9.53977 17.5 9.16667 17.1269 9.16667 16.6667V10.8317H3.33333C2.87316 10.8317 2.50011 10.4585 2.5 9.99837C2.5 9.53814 2.8731 9.16504 3.33333 9.16504H9.16667V3.33333C9.16667 2.8731 9.53976 2.5 10 2.5Z" fill="black"/>
+          </svg>
+        </button>
+        <span class="composer-placeholder">继续说出你的需求</span>
+        <button class="composer-side-btn cp-mic-btn" type="button" tabindex="-1" aria-label="语音输入">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.355 11.0551C16.8865 11.0552 17.2905 11.5386 17.1257 12.0439C16.2278 14.7938 13.7848 16.8429 10.8211 17.166V18.8294C10.8207 19.2892 10.4477 19.6634 9.98781 19.6635C9.52798 19.6635 9.15514 19.2899 9.15448 18.8302V17.1635C6.20224 16.8316 3.77055 14.786 2.87518 12.0439C2.71035 11.5386 3.11433 11.0552 3.64585 11.0551C4.0415 11.0551 4.37932 11.3302 4.51418 11.7021C5.32726 13.9462 7.47627 15.5506 10.0008 15.5506C12.5251 15.5502 14.6737 13.946 15.4867 11.7021C15.6215 11.3302 15.9594 11.0551 16.355 11.0551Z" fill="black" fill-opacity="0.86"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1001 0.644165C12.6298 0.644595 14.6809 2.69526 14.681 5.22506V9.11503C14.6806 11.6445 12.6296 13.6955 10.1001 13.6959C7.57024 13.6959 5.51967 11.6448 5.51923 9.11503V5.22506C5.51934 2.695 7.57003 0.644165 10.1001 0.644165ZM10.1001 2.30595C8.48821 2.30595 7.18112 3.61317 7.18101 5.22506V9.11503C7.18145 10.7266 8.48841 12.0333 10.1001 12.0333C11.7115 12.0329 13.0188 10.7264 13.0192 9.11503V5.22506C13.0191 3.61344 11.7117 2.30638 10.1001 2.30595Z" fill="black" fill-opacity="0.86"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- ── 展开 compact 态（骨架就位，样式待 Batch4） ── -->
+      <div class="cp-expanded" hidden>
+        <div class="cp-content">
+          <!-- Chip 标签（有 chip 才渲染，由 JS 注入） -->
+          <div class="cp-chip-mount"></div>
+          <div class="cp-input-row">
+            <textarea class="cp-textarea" rows="1" placeholder="安排任务，WorkBuddy 帮你完成"></textarea>
+            <button class="cp-expand-handle" type="button" tabindex="-1" aria-label="展开更多">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#000" transform="matrix(1 0 0 1 8.16998 2.33)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8829 4.8582 1.4904L1.2543 5.0943L0.4058 4.2458L4.0098 0.6418Q3.6174 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
+                <path fill="#000" transform="matrix(1 0 0 1 2.33002 8.17)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6171 0.6418 4.0096L4.2457 0.4057L5.0942 1.2542L1.4902 4.8582Q1.8826 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <!-- 工具栏：左侧 [+]/模型/技能（占位），右侧 mic+send 按钮组 -->
+        <div class="cp-toolbar">
+          <button class="cp-tool-btn cp-tool-plus" type="button" tabindex="-1" aria-label="添加附件">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 2.5C10.4602 2.5 10.8333 2.8731 10.8333 3.33333V9.16504H16.6667C17.1268 9.16514 17.5 9.5382 17.5 9.99837C17.4999 10.4585 17.1267 10.8316 16.6667 10.8317H10.8333V16.6667C10.8333 17.1269 10.4602 17.5 10 17.5C9.53977 17.5 9.16667 17.1269 9.16667 16.6667V10.8317H3.33333C2.87316 10.8317 2.50011 10.4585 2.5 9.99837C2.5 9.53814 2.8731 9.16504 3.33333 9.16504H9.16667V3.33333C9.16667 2.8731 9.53976 2.5 10 2.5Z" fill="black"/>
+            </svg>
+          </button>
+          <!-- 模型选择器 / 技能按钮：后续阶段接入，先留槽位 -->
+          <div class="cp-tool-slot cp-tool-model" aria-hidden="true"></div>
+          <div class="cp-tool-slot cp-tool-skill" aria-hidden="true"></div>
+          <div class="cp-btn-group">
+            <button class="cp-tool-btn cp-mic-btn-2" type="button" tabindex="-1" aria-label="语音输入">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.355 11.0551C16.8865 11.0552 17.2905 11.5386 17.1257 12.0439C16.2278 14.7938 13.7848 16.8429 10.8211 17.166V18.8294C10.8207 19.2892 10.4477 19.6634 9.98781 19.6635C9.52798 19.6635 9.15514 19.2899 9.15448 18.8302V17.1635C6.20224 16.8316 3.77055 14.786 2.87518 12.0439C2.71035 11.5386 3.11433 11.0552 3.64585 11.0551C4.0415 11.0551 4.37932 11.3302 4.51418 11.7021C5.32726 13.9462 7.47627 15.5506 10.0008 15.5506C12.5251 15.5502 14.6737 13.946 15.4867 11.7021C15.6215 11.3302 15.9594 11.0551 16.355 11.0551Z" fill="black" fill-opacity="0.86"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1001 0.644165C12.6298 0.644595 14.6809 2.69526 14.681 5.22506V9.11503C14.6806 11.6445 12.6296 13.6955 10.1001 13.6959C7.57024 13.6959 5.51967 11.6448 5.51923 9.11503V5.22506C5.51934 2.695 7.57003 0.644165 10.1001 0.644165ZM10.1001 2.30595C8.48821 2.30595 7.18112 3.61317 7.18101 5.22506V9.11503C7.18145 10.7266 8.48841 12.0333 10.1001 12.0333C11.7115 12.0329 13.0188 10.7264 13.0192 9.11503V5.22506C13.0191 3.61344 11.7117 2.30638 10.1001 2.30595Z" fill="black" fill-opacity="0.86"/>
+              </svg>
+            </button>
+            <button class="cp-send-btn" type="button" tabindex="-1" aria-label="发送">
+              <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C8.2465e-07 7.16344 7.16344 8.24703e-07 16 0ZM16.7297 8.0375C16.4466 7.40878 15.5534 7.4088 15.2703 8.0375L9.66719 20.4891C9.3653 21.1609 10.0552 21.8495 10.7266 21.5461L15.6703 19.3117C15.8797 19.2171 16.1203 19.2171 16.3297 19.3117L21.2734 21.5461C21.9448 21.8495 22.6342 21.1609 22.332 20.4891L16.7297 8.0375Z" fill="black" fill-opacity="0.86"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 全屏态（骨架就位，样式待 Batch4） ───────── -->
+      <div class="cp-fullscreen" hidden>
+        <div class="cp-fs-topbar">
+          <button class="cp-fs-clear" type="button" tabindex="-1">清空</button>
+          <button class="cp-fs-collapse" type="button" tabindex="-1" aria-label="缩小输入框">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#000" transform="matrix(-1 0 0 -1 14 7.5)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8828 4.8582 1.4903L1.1743 5.1743L0.3257 4.3257L4.0097 0.6418Q3.6173 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
+              <path fill="#000" transform="matrix(-1 0 0 -1 7.5 14)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6172 0.6418 4.0097L4.3257 0.3257L5.1743 1.1743L1.4903 4.8582Q1.8827 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+        <div class="cp-fs-body">
+          <textarea class="cp-fs-textarea" rows="1" placeholder="安排任务，WorkBuddy 帮你完成"></textarea>
+        </div>
+        <div class="cp-fs-send-wrap">
+          <button class="cp-send-btn cp-fs-send" type="button" tabindex="-1" aria-label="发送">
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C8.2465e-07 7.16344 7.16344 8.24703e-07 16 0ZM16.7297 8.0375C16.4466 7.40878 15.5534 7.4088 15.2703 8.0375L9.66719 20.4891C9.3653 21.1609 10.0552 21.8495 10.7266 21.5461L15.6703 19.3117C15.8797 19.2171 16.1203 19.2171 16.3297 19.3117L21.2734 21.5461C21.9448 21.8495 22.6342 21.1609 22.332 20.4891L16.7297 8.0375Z" fill="black" fill-opacity="0.86"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 停止按钮（独立于三态，is-generating 时显示） ── -->
       <button class="composer-side-btn composer-stop-btn" type="button" tabindex="-1" aria-label="停止生成" id="composerStopBtn">
         <span class="composer-stop-circle">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="composer-stop-icon">
@@ -139,6 +218,7 @@
           </svg>
         </span>
       </button>
+
     </div>
   </div>
   <!-- Ask User Question (replaces composer when active) -->

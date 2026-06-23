@@ -113,7 +113,9 @@
 /* 单行态停止按钮：排在折叠态 .cp-collapsed 之后（shell flex 流末尾）。
  * 仅在单行态（非激活、非全屏）+ 生成中显示；激活/全屏态用 .cp-active-stop-btn，
  * 否则会与激活态停止按钮同时出现（双停止按钮 bug）。 */
-.composer-stop-btn{display:none;cursor:pointer;}
+/* 单行态停止按钮在 .cp-collapsed 之外（shell 直接子元素），自身无 padding 会贴右边缘；
+ * 加 5px 右边距，与激活态工具栏 padding:5 的发送/停止对齐。 */
+.composer-stop-btn{display:none;cursor:pointer;margin-right:5px;}
 .composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .composer-stop-btn{display:flex;}
 .composer-shell.is-generating:not(.is-expanded):not(.is-fullscreen) .cp-collapsed .composer-placeholder{visibility:hidden;}
 /* 停止按钮圆点：全局统一 40×40（与发送圆、设计稿一致）。

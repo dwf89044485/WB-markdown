@@ -910,17 +910,14 @@
 .fp-do,
 .fp-dont {
   flex: 1;
-  padding: 16px 18px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #1a1a1c;
   border-radius: 0;
   font-size: 15px;
-}
-.fp-do {
-  background: #f7fcf9;
-  border: 1px solid rgba(40,167,69,0.12);
-}
-.fp-dont {
-  background: #fdf7f7;
-  border: 1px solid rgba(220,53,69,0.12);
+  background: transparent;
 }
 .fp-do-dont-label {
   display: block;

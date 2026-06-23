@@ -305,6 +305,12 @@
   justify-content:center;
 }
 .cp-active-stop-btn::after{ content:""; position:absolute; inset:-9px; }
+/* 激活态停止按钮是 26×26 小按钮，内部圆点改为 26×26（单行态那个是 32×32 给 46 按钮用的），
+ * flex-shrink:0 防止被父级 flex 拉伸成椭圆。 */
+.cp-active-stop-btn .composer-stop-circle{
+  width:26px;height:26px;
+  flex-shrink:0;
+}
 /* 生成中且无内容：显示停止，隐藏 mic */
 .composer-shell.is-generating:not(.has-content) .cp-active-stop-btn{ display:flex; }
 .composer-shell.is-generating:not(.has-content) .cp-mic-btn-2{ visibility:hidden; }

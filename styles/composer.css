@@ -50,6 +50,24 @@
   box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
   display:flex;
   align-items:center;
+  /* 主容器过渡（核对 chatboxgreen.tsx:264）：height/width/margin/border-radius
+   * → 320ms cubic-bezier(0.22,1,0.36,1)。min-height 无过渡（恒 46px，不影响视觉）。 */
+  transition:
+    height 320ms cubic-bezier(0.22,1,0.36,1),
+    width 320ms cubic-bezier(0.22,1,0.36,1),
+    margin 320ms cubic-bezier(0.22,1,0.36,1),
+    border-radius 320ms cubic-bezier(0.22,1,0.36,1);
+}
+/* 展开 compact 态：高度由 JS 测量写入 --cp-height（min 72px），见 engine/composer.js。
+ * 顶部对齐（折叠态是 center，展开态内容从顶部排）。 */
+.composer-shell.is-expanded{
+  height:var(--cp-height, 72px);
+  align-items:stretch;
+}
+/* 语音整体淡出预留钩子（语音功能后续阶段接入，核对 :250-251）。 */
+.composer-shell.is-fading-out{
+  opacity:0;
+  transition:opacity 250ms cubic-bezier(0.32,0.72,0,1);
 }
 
 /* ── 三态显隐（class 驱动）─────────────────────────────────
@@ -128,4 +146,245 @@
   overflow:hidden;
   text-overflow:ellipsis;
   user-select:none;
+}
+
+/* ============================================================
+ * 展开 compact 态（Batch 4）— 参数核对自附录 A.5.4 / chatboxgreen.tsx:302-388
+ * 结构：.cp-expanded > [.cp-content(chip+input-row)] + [.cp-toolbar]
+ * ============================================================ */
+.composer-shell.is-expanded .cp-expanded{
+  flex-direction:column;
+  align-items:flex-start;
+  width:100%;
+  padding:10px;            /* p-[10px] 外层四边 */
+}
+.cp-content{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  padding:1px 4px;         /* px-[4px] py-px 内容包裹层 */
+}
+
+/* ── Chip 标签（有 chip 时由 JS 注入 .cp-chip）────────────── */
+.cp-chip-mount:empty{ display:none; }
+.cp-chip{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  margin-bottom:4px;        /* mb-[4px] */
+  gap:6px;
+  padding:6px 10px 6px 8px; /* 上右下左 */
+  background:#E7EFF4;
+  border-radius:100px;
+  border:none;
+  cursor:pointer;
+}
+.cp-chip-label{
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+.cp-chip-label svg{ width:15px; height:15px; color:#030303; }
+.cp-chip-text{ font-size:12px; line-height:16px; color:#030303; }
+.cp-chip-close{ width:10px; height:10px; opacity:.4; flex-shrink:0; }
+
+/* ── Textarea + 展开手柄行 ───────────────────────────────── */
+.cp-input-row{
+  display:flex;
+  align-items:flex-start;
+  width:100%;
+  gap:4px;                  /* gap-[4px] */
+}
+.cp-textarea{
+  min-width:0;
+  flex:1;
+  resize:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:14px;
+  line-height:20px;         /* compact 态行高 20px */
+  max-height:200px;         /* max-h-[200px] */
+  overflow-y:auto;
+  font-family:inherit;
+  color:#1c1c1e;
+}
+.cp-textarea::placeholder{ color:rgba(0,0,0,0.3); }
+.cp-expand-handle{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+  /* 展开手柄默认隐藏，lineCount>=4 时由 JS 加 .has-expand-handle 显示 */
+  opacity:0;
+  pointer-events:none;
+}
+.composer-shell.has-expand-handle .cp-expand-handle{
+  opacity:1;
+  pointer-events:auto;
+}
+.cp-expand-handle::after{ content:""; position:absolute; inset:-9px; }
+
+/* ── 工具栏 ──────────────────────────────────────────────── */
+.cp-toolbar{
+  display:flex;
+  align-items:center;
+  gap:16px;                 /* gap-[16px] */
+  width:100%;
+}
+.cp-tool-btn{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+}
+.cp-tool-plus::after{ content:""; position:absolute; inset:-12px; }
+/* 模型选择器 / 技能按钮槽位：后续阶段接入，本批不占视觉空间 */
+.cp-tool-slot{ display:none; }
+
+/* 右侧按钮组：有内容 68px、无内容 26px（width 220ms ease） */
+.cp-btn-group{
+  margin-left:auto;
+  position:relative;
+  height:26px;
+  width:26px;
+  flex-shrink:0;
+  transition:width 220ms ease;
+}
+.composer-shell.has-content .cp-btn-group{ width:68px; }
+/* mic 按钮：无内容 right:0、有内容 right:42px（right 220ms ease） */
+.cp-mic-btn-2{
+  position:absolute;
+  top:50%;
+  right:0;
+  transform:translateY(-50%);
+  transition:right 220ms ease;
+}
+.composer-shell.has-content .cp-mic-btn-2{ right:42px; }
+.cp-mic-btn-2::after{ content:""; position:absolute; inset:-9px; }
+/* 发送按钮：无内容 0px、有内容 26px（width+opacity 220ms ease） */
+.cp-send-btn{
+  position:absolute;
+  top:50%;
+  right:0;
+  transform:translateY(-50%);
+  width:0;
+  height:26px;
+  opacity:0;
+  overflow:hidden;
+  border:none;background:none;cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:width 220ms ease, opacity 220ms ease;
+}
+.composer-shell.has-content .cp-send-btn{ width:26px; opacity:1; }
+.cp-send-btn::after{ content:""; position:absolute; inset:-9px; }
+
+/* 激活态停止按钮（本项目扩展，非 React 定稿）：
+ * 三态优先级 —— 有内容→发送；生成中且无内容→停止；都不是→麦克风。
+ * 停止按钮绝对定位在 mic 位置（right:0），仅 .is-generating 且无内容时显示，
+ * 同时隐藏 mic；有内容时发送优先，停止与 mic 都让位。 */
+.cp-active-stop-btn{
+  position:absolute;
+  top:50%;
+  right:0;
+  transform:translateY(-50%);
+  display:none;
+  width:26px;
+  height:26px;
+  border:none;background:none;cursor:pointer;
+  align-items:center;
+  justify-content:center;
+}
+.cp-active-stop-btn::after{ content:""; position:absolute; inset:-9px; }
+/* 生成中且无内容：显示停止，隐藏 mic */
+.composer-shell.is-generating:not(.has-content) .cp-active-stop-btn{ display:flex; }
+.composer-shell.is-generating:not(.has-content) .cp-mic-btn-2{ visibility:hidden; }
+
+/* ============================================================
+ * 全屏态（Batch 5）— 参数核对自附录 A.6.4 / chatboxgreen.tsx:267-300
+ * shell 撑满视口高、左右各溢出 26px（贴齐手机壳边缘），顶部留圆角、底部拉直。
+ * ============================================================ */
+.composer-shell.is-fullscreen{
+  height:calc(100dvh - env(safe-area-inset-top));
+  width:calc(100% + 52px);
+  margin-inline:-26px;
+  border-radius:24px 24px 0 0;
+  align-items:stretch;
+}
+.composer-shell.is-fullscreen .cp-fullscreen{
+  flex-direction:column;
+  width:100%;
+  height:100%;
+  padding:10px 20px 20px;   /* 上10 左右20 下20 */
+}
+/* 顶部工具栏：清空 + 缩小按钮 */
+.cp-fs-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  padding-bottom:4px;       /* pb-[4px] */
+}
+.cp-fs-clear{
+  font-size:14px;
+  line-height:24px;
+  color:rgba(0,0,0,0.4);
+  border:none;background:none;cursor:pointer;
+  padding:0;
+}
+.cp-fs-collapse{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+}
+.cp-fs-collapse::after{ content:""; position:absolute; inset:-9px; }
+/* 正文区：撑满剩余高度 */
+.cp-fs-body{
+  flex:1;
+  overflow:hidden;
+  padding-top:4px;          /* pt-[4px] */
+  width:100%;
+}
+.cp-fs-textarea{
+  width:100%;
+  height:100%;
+  resize:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:14px;
+  line-height:24px;         /* 全屏态行高 24px */
+  min-height:120px;         /* min-h-[120px] */
+  overflow-y:auto;
+  font-family:inherit;
+  color:#1c1c1e;
+  padding:0;
+}
+.cp-fs-textarea::placeholder{ color:rgba(0,0,0,0.3); }
+/* 发送按钮：绝对定位右下角 */
+.cp-fs-send-wrap{
+  position:absolute;
+  right:20px;
+  bottom:20px;
+  width:26px;
+  height:26px;
+}
+/* 全屏态发送按钮常显（覆盖 compact 态的 0→26 动画规则） */
+.cp-fs-send{
+  position:static;
+  width:26px;
+  opacity:1;
+  transform:none;
 }

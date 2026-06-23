@@ -183,6 +183,14 @@
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C8.2465e-07 7.16344 7.16344 8.24703e-07 16 0ZM16.7297 8.0375C16.4466 7.40878 15.5534 7.4088 15.2703 8.0375L9.66719 20.4891C9.3653 21.1609 10.0552 21.8495 10.7266 21.5461L15.6703 19.3117C15.8797 19.2171 16.1203 19.2171 16.3297 19.3117L21.2734 21.5461C21.9448 21.8495 22.6342 21.1609 22.332 20.4891L16.7297 8.0375Z" fill="black" fill-opacity="0.86"/>
               </svg>
             </button>
+            <!-- 激活态停止按钮（生成中且无输入时显示）— 本项目扩展，非 React 定稿，勿删 -->
+            <button class="cp-active-stop-btn" type="button" tabindex="-1" aria-label="停止生成">
+              <span class="composer-stop-circle">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="composer-stop-icon">
+                  <rect width="12" height="12" rx="2.6" fill="white"/>
+                </svg>
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -359,6 +367,10 @@
 <script type="module">
   import { initFeaturePanel } from './engine/feature-panel.js';
   import { glassCloseBtn } from './engine/ask-question.js';
+  import { initComposer } from './engine/composer.js';
+
+  // 初始化输入框状态机
+  initComposer();
 
   // 注入 sheet 关闭按钮（共享组件）
   const sheetTopEnd = document.getElementById('sheetTopEnd');

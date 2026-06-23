@@ -58,7 +58,7 @@ function autoGrowAndCount(textarea) {
 
 // 同步 has-content：文字非空
 function syncHasContent() {
-  const ta = els.expandedTextarea;
+  const ta = els.textarea;
   const has = !!(ta && ta.value.trim().length > 0);
   state.hasContent = has;
   els.shell.classList.toggle('has-content', has);
@@ -66,25 +66,19 @@ function syncHasContent() {
 
 // 同步 lineCount → has-expand-handle（>=4 可见，可进全屏）；同时让 textarea 自适应高度
 function syncLineCount() {
-  const ta = els.expandedTextarea;
+  const ta = els.textarea;
   if (!ta) return;
   state.lineCount = autoGrowAndCount(ta);
   els.shell.classList.toggle('has-expand-handle', state.lineCount >= 4);
 }
 
-// 测量 compact 态内容高度 → --cp-height（min 72）
-// .cp-expanded 是 flex-column，子元素高度不受 shell 约束影响。
-// 累加子元素 getBoundingClientRect().height 即可获得内容自然高度，
-// 无需设 shell height:auto（设 auto 会打断 CSS transition）。
+// 测量激活态高度 → --cp-height。激活态 shell = .cp-body(含 textarea) + .cp-bar。
+// 累加两者自然高度（不设 shell height:auto，避免打断 CSS transition）。
 function measureHeight() {
   if (!state.expanded || state.fullScreen) return;
-  const content = els.expanded;
-  if (!content) return;
-  let h = 0;
-  for (const child of content.children) {
-    h += child.getBoundingClientRect().height;
-  }
-  h = Math.max(72, Math.ceil(h));
+  const bodyH = els.body ? els.body.getBoundingClientRect().height : 0;
+  const barH = els.bar ? els.bar.getBoundingClientRect().height : 0;
+  const h = Math.max(110, Math.ceil(bodyH + barH));
   els.shell.style.setProperty('--cp-height', h + 'px');
 }
 
@@ -98,7 +92,7 @@ function expand() {
   observeHeight();
   requestAnimationFrame(() => {
     measureHeight();
-    if (els.expandedTextarea) els.expandedTextarea.focus();
+    if (els.textarea) els.textarea.focus();
   });
 }
 
@@ -117,8 +111,8 @@ function enterFullScreen() {
   els.shell.classList.add('is-fullscreen');
   if (els.composer) els.composer.classList.add('cp-is-fullscreen');
   // 同步文字到全屏 textarea
-  if (els.fsTextarea && els.expandedTextarea) {
-    els.fsTextarea.value = els.expandedTextarea.value;
+  if (els.fsTextarea && els.textarea) {
+    els.fsTextarea.value = els.textarea.value;
   }
   requestAnimationFrame(() => { if (els.fsTextarea) els.fsTextarea.focus(); });
 }
@@ -129,22 +123,22 @@ function exitFullScreen() {
   els.shell.classList.remove('is-fullscreen');
   if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
   // 全屏文字同步回 compact
-  if (els.fsTextarea && els.expandedTextarea) {
-    els.expandedTextarea.value = els.fsTextarea.value;
+  if (els.fsTextarea && els.textarea) {
+    els.textarea.value = els.fsTextarea.value;
     syncHasContent();
     syncLineCount();
   }
   requestAnimationFrame(() => {
     measureHeight();
-    if (els.expandedTextarea) els.expandedTextarea.focus();
+    if (els.textarea) els.textarea.focus();
   });
 }
 
 // ── ResizeObserver 生命周期 ──────────────────────────────
 function observeHeight() {
-  if (resizeObserver || !els.expanded) return;
+  if (resizeObserver || !els.textarea) return;
   resizeObserver = new ResizeObserver(measureHeight);
-  resizeObserver.observe(els.expanded);
+  resizeObserver.observe(els.textarea);
 }
 function unobserveHeight() {
   if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null; }
@@ -152,27 +146,26 @@ function unobserveHeight() {
 
 // ── 事件绑定 ──────────────────────────────────────────────
 function bindEvents() {
-  // 折叠态点击左侧区域 → 展开
-  const collapsedArea = $('.cp-collapsed', els.shell);
-  if (collapsedArea) {
-    collapsedArea.addEventListener('pointerdown', (e) => {
-      // mic 按钮单独处理（后续接语音），本期点 mic 也先展开
-      if (e.target.closest('.composer-stop-btn')) return; // 生成态停止按钮不展开
+  // 单行态点击 bar（占位文字/空白区）→ 展开。点按钮（+/麦克风/停止/发送）不触发展开。
+  if (els.bar) {
+    els.bar.addEventListener('pointerdown', (e) => {
+      if (state.expanded) return;
+      if (e.target.closest('button')) return; // 按钮各自处理
       expand();
     });
   }
+  // 单行态点占位文字也展开（占位文字 pointer-events:none，事件落在 bar 上，已覆盖）
 
-  // compact textarea：输入时同步 content + lineCount + 高度
-  const ta = els.expandedTextarea;
+  // textarea：输入时同步 content + lineCount + 高度
+  const ta = els.textarea;
   if (ta) {
     ta.addEventListener('input', () => {
       syncHasContent();
       syncLineCount();
       measureHeight();
     });
-    // 失焦自动收起（空且无附件）—— 用户已确认保留此交互
+    // 失焦自动收起（空且无内容）—— 用户已确认保留
     ta.addEventListener('blur', () => {
-      // 延一帧，避免点击工具栏按钮时先触发 blur 收起
       setTimeout(() => {
         if (state.fullScreen) return;
         if (!ta.value.trim()) collapse();
@@ -180,13 +173,13 @@ function bindEvents() {
     });
   }
 
-  // 展开手柄 → 进全屏（pointerdown 防 blur 先收起）
+  // 展开手柄 → 进全屏
   const handle = $('.cp-expand-handle', els.shell);
   if (handle) {
     handle.addEventListener('pointerdown', (e) => { e.preventDefault(); enterFullScreen(); });
   }
 
-  // 全屏：缩小按钮 → 退出全屏
+  // 全屏：缩小 → 退出全屏
   const fsCollapse = $('.cp-fs-collapse', els.shell);
   if (fsCollapse) {
     fsCollapse.addEventListener('pointerdown', (e) => { e.preventDefault(); exitFullScreen(); });
@@ -198,24 +191,17 @@ function bindEvents() {
     fsClear.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       if (els.fsTextarea) els.fsTextarea.value = '';
-      if (els.expandedTextarea) els.expandedTextarea.value = '';
+      if (els.textarea) els.textarea.value = '';
       syncHasContent();
     });
   }
 
-  // 全屏 textarea 输入 → 同步 content
+  // 全屏 textarea 输入 → 同步回主 textarea
   if (els.fsTextarea) {
     els.fsTextarea.addEventListener('input', () => {
-      if (els.expandedTextarea) els.expandedTextarea.value = els.fsTextarea.value;
+      if (els.textarea) els.textarea.value = els.fsTextarea.value;
       syncHasContent();
     });
-  }
-
-  // 激活态停止按钮 → 转发到单行态停止按钮（复用 player-ui.js 已绑定的停止逻辑）
-  const activeStop = $('.cp-active-stop-btn', els.shell);
-  const mainStop = $('#composerStopBtn', els.shell);
-  if (activeStop && mainStop) {
-    activeStop.addEventListener('click', () => mainStop.click());
   }
 }
 
@@ -227,9 +213,9 @@ export function initComposer() {
   els = {
     shell,
     composer: shell.closest('.composer'),
-    collapsed: $('.cp-collapsed', shell),
-    expanded: $('.cp-expanded', shell),
-    expandedTextarea: $('.cp-textarea', shell),
+    body: $('.cp-body', shell),
+    bar: $('.cp-bar', shell),
+    textarea: $('.cp-textarea', shell),
     fullscreen: $('.cp-fullscreen', shell),
     fsTextarea: $('.cp-fs-textarea', shell),
     chipMount: $('.cp-chip-mount', shell),
@@ -254,15 +240,15 @@ export function setComposerChip(chip) {
     </button>`;
   const btn = $('.cp-chip', els.chipMount);
   if (btn) btn.addEventListener('pointerdown', (e) => { e.preventDefault(); setComposerChip(null); });
-  if (chip.placeholder && els.expandedTextarea) {
-    els.expandedTextarea.placeholder = chip.placeholder;
+  if (chip.placeholder && els.textarea) {
+    els.textarea.placeholder = chip.placeholder;
   }
   measureHeight();
 }
 
 // 设置 textarea 文字
 export function setComposerText(text) {
-  if (els.expandedTextarea) els.expandedTextarea.value = text || '';
+  if (els.textarea) els.textarea.value = text || '';
   if (els.fsTextarea) els.fsTextarea.value = text || '';
   syncHasContent();
   syncLineCount();

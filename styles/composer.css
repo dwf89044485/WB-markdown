@@ -1,0 +1,106 @@
+/* ============================================================
+ * COMPOSER — 输入框（唯一样式出处）
+ * ============================================================
+ * 职责：输入框容器、外壳、侧边按钮、停止按钮、占位文字及其动画。
+ * 状态用 class 驱动（.is-generating / 后续 .is-expanded / .is-fullscreen ...），
+ * JS 只 toggle class + 写 CSS 变量，不写 inline style。
+ *
+ * 加载顺序：index.html 中在 base.css 之后引入（确保覆盖正确）。
+ * 依赖的 CSS 变量（--composer-padding-x / --composer-padding-bottom /
+ * --composer-fade-height / --standalone-composer-padding-* ）仍定义在
+ * base.css 的 :root，本文件直接引用（CSS 变量全局可见）。
+ *
+ * 行号速查：
+ *   .composer 容器 + fade           → 见下方第一段
+ *   .composer-shell 外壳            → is-generating 等状态 class 挂在这里
+ *   .composer-side-btn 侧边按钮      → [+] / 麦克风 / 停止
+ *   .composer-stop-*  停止按钮        → 播放引擎 setComposerGenerating 控制
+ *   .composer-placeholder 占位文字
+ *
+ * 集成约定（勿改 class 名）：播放引擎 engine/player-state.js 的
+ * setComposerGenerating() 依赖 .composer-shell.is-generating 切换停止按钮，
+ * 并隐藏 .composer-placeholder。新 DOM 必须保留这些 class 与 #composerStopBtn。
+ * ============================================================ */
+
+.composer{
+  padding:0 var(--composer-padding-x) var(--composer-padding-bottom);
+  flex-shrink:0;
+  position:relative;
+  background:#fafafa;
+}
+.composer::before{
+  content:"";
+  position:absolute;
+  top:calc(var(--composer-fade-height) * -1);
+  left:0;right:0;
+  height:var(--composer-fade-height);
+  background:linear-gradient(to bottom,rgba(250,250,250,0) 0%,rgba(250,250,250,1) 100%);
+  pointer-events:none;
+  z-index:1;
+}
+.composer-shell{
+  position:relative;
+  z-index:10;
+  width:100%;
+  min-height:46px;
+  height:46px;
+  border-radius:24px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
+  display:flex;
+  align-items:center;
+}
+.composer-side-btn{
+  width:46px;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  border:none;
+  background:none;
+  cursor:pointer;
+  position:relative;
+}
+.composer-side-btn::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.composer-side-btn:active::after{background:rgba(0,0,0,0.04);}
+.composer-stop-btn{display:none;cursor:pointer;}
+.composer-shell.is-generating .composer-stop-btn{display:flex;}
+.composer-shell.is-generating .composer-placeholder{visibility:hidden;}
+.composer-stop-circle{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.composer-stop-icon{display:block;}
+.composer-stop-icon{
+  animation:composer-stop-spin 4s linear infinite;
+}
+@keyframes composer-stop-spin{
+  0%{transform:rotate(0deg);}
+  7.5%{transform:rotate(90deg);}
+  25%{transform:rotate(90deg);}
+  32.5%{transform:rotate(180deg);}
+  50%{transform:rotate(180deg);}
+  57.5%{transform:rotate(270deg);}
+  75%{transform:rotate(270deg);}
+  82.5%{transform:rotate(360deg);}
+  100%{transform:rotate(360deg);}
+}
+.composer-placeholder{
+  flex:1;
+  text-align:center;
+  font-size:14px;
+  line-height:24px;
+  padding:8px 12px;
+  color:rgba(0,0,0,0.3);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  user-select:none;
+}

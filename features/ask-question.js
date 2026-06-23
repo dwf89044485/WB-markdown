@@ -340,7 +340,7 @@ export default {
         <h2>7. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
-            <span class="fp-do-dont-label">Do</span>
+            <h3>Do</h3>
             <ul>
               <li>在真正不确定时使用，让用户补齐关键信息。</li>
               <li>题目数量保持克制，题干清晰自闭合。</li>
@@ -348,7 +348,7 @@ export default {
             </ul>
           </div>
           <div class="fp-dont">
-            <span class="fp-do-dont-label">Don't</span>
+            <h3>Don't</h3>
             <ul>
               <li>不要用来做礼貌性确认。</li>
               <li>不要嵌套 AskQuestion。</li>

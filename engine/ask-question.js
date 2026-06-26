@@ -636,7 +636,10 @@ function hideAskQuestion(immediate) {
 }
 
 // 绑定事件（使用事件委托，绑定在容器上，不因 innerHTML 替换而丢失）
+let _eventsAlreadyBound = false;
 function bindAskQuestionEvents() {
+  if (_eventsAlreadyBound) return;
+  _eventsAlreadyBound = true;
   const container = document.getElementById('askQuestion');
   if (!container) return;
 

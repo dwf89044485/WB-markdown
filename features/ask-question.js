@@ -306,8 +306,66 @@ export default {
         </blockquote>
       </section>
 
+      <section data-section="motion">
+        <h2>5. 动效</h2>
+        <p>AskQuestion 有两个核心动效：面板的出现与消失，以及题目之间的切换过渡。两者各自承担不同的表意职责。</p>
+
+        <h3>5.1 面板升降</h3>
+        <p>卡片从屏幕下缘向上滑入，透明度同步从 0 升到 1；关闭时原路滑回。升起和降下使用不同的时长与缓动，分别对应"到来"与"离开"的心理预期。</p>
+        <table>
+          <thead>
+            <tr><th>方向</th><th>时长</th><th>缓动</th><th>意图</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>升起（入场）</td>
+              <td>300ms</td>
+              <td>cubic-bezier(0, 0, 0.2, 1)<br><span style="color:#86868b;font-size:12px">快进慢收，末尾有落点感</span></td>
+              <td>卡片"弹出"到位，末尾的减速感让内容稳定落座</td>
+            </tr>
+            <tr>
+              <td>降下（出场）</td>
+              <td>250ms</td>
+              <td>ease-in-out</td>
+              <td>比入场略快，避免关闭后的等待感</td>
+            </tr>
+          </tbody>
+        </table>
+        <blockquote>
+          <p>入场比出场慢——这是刻意的。用户点击关闭时注意力已经转移，出场越快越好；而内容"到来"需要一点时间建立存在感。</p>
+        </blockquote>
+
+        <h3>5.2 切题滑切</h3>
+        <p>点击方向箭头或单选题自动前进时，旧题与新题以<strong>横向滑动</strong>切换。方向与导航按钮一致：向前翻，内容向左移出；向后翻，内容向右移出。两张题面之间保留 40px 的视觉间距，让"换一张"的感觉更清晰，不像是同一内容在原地更新。</p>
+        <table>
+          <thead>
+            <tr><th>参数</th><th>值</th><th>意图</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>时长</td>
+              <td>300ms</td>
+              <td>与面板升降入场同步，保持整体节奏一致</td>
+            </tr>
+            <tr>
+              <td>缓动</td>
+              <td>ease-out</td>
+              <td>新题进入时末尾减速，让内容"落座"而不是骤停</td>
+            </tr>
+            <tr>
+              <td>题面间距</td>
+              <td>40px</td>
+              <td>过渡期两张卡面之间的空隙，强化"翻页"的物理感</td>
+            </tr>
+          </tbody>
+        </table>
+        <blockquote>
+          <p>切题动效还承担防误操作的职责：动画播放期间（300ms）屏蔽二次点击，避免快速连点后题目状态错乱。</p>
+        </blockquote>
+      </section>
+
       <section data-section="edge-cases">
-        <h2>5. 边界与异常</h2>
+        <h2>6. 边界与异常</h2>
         <p>边界状态的重点不是“能不能装下”，而是极端内容下仍然不能影响判断。</p>
         <table>
           <thead>
@@ -327,7 +385,7 @@ export default {
       </section>
 
       <section data-section="rationale">
-        <h2>6. 设计原理</h2>
+        <h2>7. 设计原理</h2>
         <h3>为什么单选自动前进，多选不自动前进</h3>
         <p>单选有明确的作答完成信号，选了一个就是答完。多选没有，系统不知道用户是想选 1 个还是 5 个，必须由用户主动声明“我选完了”。强行让多选自动前进会变成系统替用户做决定。</p>
         <h3>为什么排序题没有“跳过”按钮</h3>
@@ -337,7 +395,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>7. Do / Don't</h2>
+        <h2>8. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
             <h3>Do</h3>

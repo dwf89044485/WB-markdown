@@ -674,7 +674,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       }
     }
     buildGrid();
-    fitShellScale();
+    fitShellScale(true);
   }
 
   function clearPadResolutionOverrides() {
@@ -718,7 +718,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     if (btnPhone) { btnPhone.classList.toggle('is-active', !isPad); }
     if (btnPad)   { btnPad.classList.toggle('is-active', isPad); }
     buildGrid();
-    fitShellScale();
+    fitShellScale(true);
   }
 
   document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
@@ -747,7 +747,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   }
 
   /* ── Shell 等比缩放适配可用区域 ────────────────── */
-  function fitShellScale() {
+  var panelAutoCollapsed = false;
+
+  function fitShellScale(allowCollapse) {
     var shell = document.querySelector('.phone-shell');
     if (!shell) return;
     var viewport = document.querySelector('.shell-viewport');
@@ -762,7 +764,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     var shellH = shell.offsetHeight;
     var scale = Math.min(1, availW / shellW, availH / shellH);
 
-    if (scale < 0.85 && controls && controls.classList.contains('is-expanded')) {
+    if (allowCollapse && scale < 0.85 && controls && controls.classList.contains('is-expanded')) {
       controls.classList.remove('is-expanded');
       var toggle = document.getElementById('dcToggle');
       if (toggle) {
@@ -770,6 +772,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
         toggle.setAttribute('aria-label', '展开控制面板');
         toggle.setAttribute('title', '展开控制面板');
       }
+      panelAutoCollapsed = true;
       availH = viewport.clientHeight - 24;
       scale = Math.min(1, availW / shellW, availH / shellH);
     }
@@ -801,7 +804,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       this.classList.toggle('is-collapsed', !isExpanded);
       this.setAttribute('aria-label', isExpanded ? '收起控制面板' : '展开控制面板');
       this.setAttribute('title', isExpanded ? '收起控制面板' : '展开控制面板');
-      setTimeout(function() { buildGrid(); }, 400);
+      panelAutoCollapsed = false;
+      setTimeout(function() { buildGrid(); fitShellScale(); }, 400);
     });
   }
 })();

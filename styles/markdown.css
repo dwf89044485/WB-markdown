@@ -864,10 +864,9 @@ html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
 .phone-shell.tbl-landscape > .phone-controls{
   display:none;
 }
-/* 横屏时左侧容器跟着手机壳一起变宽 */
-.left-area:has(> .phone-shell.tbl-landscape){
-  width:var(--layout-shell-h);
-  flex:0 0 var(--layout-shell-h);
+/* 横屏时覆盖宽度变量，让左侧容器、分界线、白色遮罩同步扩宽 */
+body:has(.phone-shell.tbl-landscape){
+  --layout-left-area-w:var(--layout-shell-h);
 }
 /* 横屏时控制面板用弹性空间推到底部，不随手机壳高矮移动 */
 .phone-shell.tbl-landscape ~ .dc-toggle{

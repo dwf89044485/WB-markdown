@@ -867,7 +867,14 @@ html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
 body:has(.phone-shell.tbl-landscape){
   --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
 }
-/* 横屏时控制面板用弹性空间推到底部，不随手机壳高矮移动 */
-.phone-shell.tbl-landscape ~ .dc-toggle{
+/* 横屏时：手机顶部加弹性空间，让手机+控制面板整体垂直居中 */
+.phone-shell.tbl-landscape{
   margin-top:auto;
+}
+/* 控制面板底部也吃一份弹性空间 */
+.phone-shell.tbl-landscape ~ .dc-toggle{
+  margin-top:0;
+}
+.phone-shell.tbl-landscape ~ .dc-toggle ~ .demo-controls{
+  margin-bottom:auto;
 }

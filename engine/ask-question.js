@@ -306,25 +306,43 @@ function goToStep(index) {
     return;
   }
 
-  isTransitioning = true;
-
-  // 1) Capture old body content
-  const oldBodyHTML = oldBody.innerHTML;
-
-  // 2) Generate new body HTML (without changing stepIndex yet)
+  // Generate new body HTML (without changing stepIndex yet)
   const fullHTML = renderAskQuestionHTML(askState.questions, index, askState.answers, { mode: 'live' });
   const temp = document.createElement('div');
   temp.innerHTML = fullHTML;
   const newBodyHTML = temp.querySelector('.aq-body').innerHTML;
 
-  // 3) Update step indicator immediately
+  // Update step indicator immediately
   const stepText = `${index + 1} / ${askState.questions.length}`;
   const stepEl = card.querySelector('.aq-step-indicator');
   if (stepEl) stepEl.textContent = stepText;
 
-  // 4) Build slide track with absolute positioning
-  //    Track width = card width (100%), panes positioned via left, track translated
-  const GAP = 40; // visual gap between panes
+  isTransitioning = true;
+  runSlideTransition(card, newBodyHTML, direction, () => {
+    askState.stepIndex = index;
+    renderAskQuestion();
+    isTransitioning = false;
+  });
+}
+
+/**
+ * 切题滑切动画 —— 全项目唯一实现，左侧 demo 与右侧文档共用。
+ *
+ * 在给定 card 内，将当前 .aq-body 替换为 .aq-slide-track（旧/新两个 pane），
+ * 用 transform 推动 track 完成 300ms ease-out 滑切，结束后调用 onDone()。
+ * onDone 通常负责把卡片恢复为单 body 结构。
+ *
+ * @param {HTMLElement} card        .ask-question-card 容器
+ * @param {string}      newBodyHTML 新题 .aq-body 的 innerHTML
+ * @param {'forward'|'backward'} direction
+ * @param {Function}    onDone      动画结束回调（~320ms 后触发）
+ */
+function runSlideTransition(card, newBodyHTML, direction, onDone) {
+  const oldBody = card.querySelector('.aq-body');
+  if (!oldBody) { onDone && onDone(); return; }
+
+  const oldBodyHTML = oldBody.innerHTML;
+  const GAP = 40; // pane 间视觉间距，与样式文档保持一致
   const track = document.createElement('div');
   track.className = 'aq-slide-track';
 
@@ -335,49 +353,32 @@ function goToStep(index) {
   };
 
   if (direction === 'forward') {
-    // [oldPane, newPane]
-    // oldPane: left:0 (visible), newPane: left:calc(100% + 40px) (right outside)
-    // track: translateX(0) → translateX(calc(-100% - 40px))
     const oldPane = makePane(oldBodyHTML);
     const newPane = makePane(newBodyHTML);
     oldPane.style.left = '0';
     newPane.style.left = 'calc(100% + ' + GAP + 'px)';
     track.appendChild(oldPane);
     track.appendChild(newPane);
-
-    // Set track height to oldBody's offsetHeight to prevent collapse
     track.style.height = oldBody.offsetHeight + 'px';
-
     oldBody.replaceWith(track);
-    void track.offsetHeight; // force reflow so initial position (0) is painted
+    void track.offsetHeight; // force reflow
     track.style.transition = 'transform 0.3s ease-out';
     track.style.transform = 'translateX(calc(-100% - ' + GAP + 'px))';
   } else {
-    // [newPane, oldPane]
-    // newPane: left:calc(-100% - 40px) (left outside), oldPane: left:0 (visible)
-    // track: translateX(0) → translateX(calc(100% + 40px))
     const newPane = makePane(newBodyHTML);
     const oldPane = makePane(oldBodyHTML);
     newPane.style.left = 'calc(-100% - ' + GAP + 'px)';
     oldPane.style.left = '0';
     track.appendChild(newPane);
     track.appendChild(oldPane);
-
-    // Set track height to oldBody's offsetHeight to prevent collapse
     track.style.height = oldBody.offsetHeight + 'px';
-
     oldBody.replaceWith(track);
-    void track.offsetHeight; // force reflow so initial position is painted
+    void track.offsetHeight;
     track.style.transition = 'transform 0.3s ease-out';
     track.style.transform = 'translateX(calc(100% + ' + GAP + 'px))';
   }
 
-  // 5) After animation completes, rebuild as clean single-body content
-  setTimeout(() => {
-    askState.stepIndex = index;
-    renderAskQuestion();
-    isTransitioning = false;
-  }, 320);
+  setTimeout(() => { onDone && onDone(); }, 320);
 }
 
 function onActionClick() {
@@ -704,4 +705,4 @@ import { registerOverlayCleanup } from './overlay-registry.js';
 // 注册清理函数，新增面板类型只需在本模块注册自己的 hideXxx
 registerOverlayCleanup(hideAskQuestion);
 
-export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, navigateToQuestion, glassCloseBtn, glassNavBtn, GLYPH_PREV };
+export { showAskQuestion, hideAskQuestion, bindAskQuestionEvents, renderStaticAskQuestion, renderAskQuestionHTML, runSlideTransition, navigateToQuestion, glassCloseBtn, glassNavBtn, GLYPH_PREV };

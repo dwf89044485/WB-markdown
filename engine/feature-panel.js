@@ -19,6 +19,8 @@ import { openSheet, getFrames, renderStaticDetail, renderStaticSheet, setSheetBa
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAllOverlays } from './overlay-registry.js';
 import { sleep } from './core.js';
+import { runSlideTransition, renderAskQuestionHTML } from './ask-question.js';
+import { SAMPLE_Q, defaultSampleAnswers } from '../features/ask-question.js';
 
 // ════════════════════════════════════════════════════════════════
 // 覆层面板清理（hideOverlays）
@@ -569,62 +571,69 @@ function stopTcnModeLoop() {
 }
 
 // ── AskQuestion §5.2 切题滑切循环演示 ──────────
-// 4 张 pane 横向铺开（pane 间隔 40px），track 通过 transform 周期切换：
-//   step 0: translateX(0)                            停 1000ms
-//   step 1: translateX(calc(-100% - 40px))           停 1000ms
-//   step 2: translateX(calc(-200% - 80px))           停 1000ms
-//   step 3: translateX(calc(-300% - 120px))          停 1000ms
-//   回到 step 0：transition:none 瞬移 → 下一轮恢复 transition
+// 不重写动画 —— 调用 engine/ask-question.js 的 runSlideTransition()，
+// 与左侧 Demo 真实切题共用同一份滑切实现。
+// 循环：q1 停 1s → 滑到 q2 → … → q4 停 1s → 倒滑回 q1 → 继续。
 let aqSlideCycleTimer = null;
-const AQ_SLIDE_PANE_GAP = 40;          // 与真实切题保持一致
-const AQ_SLIDE_HOLD_MS = 1000;         // 每题停留时长
-const AQ_SLIDE_TRANSITION = 'transform 0.3s ease-out'; // 真实切题动画
+const AQ_SLIDE_HOLD_MS = 1000;
+const AQ_SLIDE_ANIM_MS = 320;
 
 function startAqSlideCycleLoop() {
   stopAqSlideCycleLoop();
-  const tracks = contentEl ? contentEl.querySelectorAll('[data-motion-loop="slide-cycle"] [data-slide-track]') : [];
-  if (!tracks.length) return;
+  if (!contentEl) return;
+  const stages = contentEl.querySelectorAll('[data-motion-loop="slide-cycle"]');
+  if (!stages.length) return;
 
-  const totalSteps = 4;
-  let stepIdx = 0;
-
-  const offsetForStep = (i) => `translateX(calc(${-i * 100}% - ${i * AQ_SLIDE_PANE_GAP}px))`;
-
-  function applyStep(i, animate) {
-    tracks.forEach(track => {
-      if (animate) {
-        track.style.transition = AQ_SLIDE_TRANSITION;
-      } else {
-        track.style.transition = 'none';
-        // force reflow，确保下一帧 transition 生效
-        void track.offsetHeight;
-      }
-      track.style.transform = offsetForStep(i);
-    });
-  }
-
-  // 初始化：所有 track 复位到 step 0
-  applyStep(0, false);
+  // 每个 stage 维护自己的 stepIndex
+  const states = Array.from(stages).map(stage => ({
+    stage,
+    stepIndex: 0,
+    answers: defaultSampleAnswers(),
+  }));
 
   function tick() {
-    const nextIdx = stepIdx + 1;
-    if (nextIdx >= totalSteps) {
-      // 4/4 → 1/4：先停留 1s 再瞬移回起点，下一轮重新启动
-      aqSlideCycleTimer = setTimeout(() => {
-        applyStep(0, false);
-        stepIdx = 0;
-        aqSlideCycleTimer = setTimeout(tick, AQ_SLIDE_HOLD_MS);
-      }, AQ_SLIDE_HOLD_MS);
-      return;
-    }
-    aqSlideCycleTimer = setTimeout(() => {
-      stepIdx = nextIdx;
-      applyStep(stepIdx, true);
-      tick();
-    }, AQ_SLIDE_HOLD_MS);
+    states.forEach(st => {
+      const card = st.stage.querySelector('.ask-question-card');
+      if (!card) return;
+
+      // 计算下一题 + 方向：4→1 走 backward 一气滑回，避免视觉跳跃
+      const total = SAMPLE_Q.length;
+      const wasLast = st.stepIndex === total - 1;
+      const nextIdx = wasLast ? 0 : st.stepIndex + 1;
+      const direction = wasLast ? 'backward' : 'forward';
+
+      // 生成新题 body HTML（与 goToStep 同源）
+      const fullHTML = renderAskQuestionHTML(SAMPLE_Q, nextIdx, st.answers, { mode: 'static' });
+      const tmp = document.createElement('div');
+      tmp.innerHTML = fullHTML;
+      const newBody = tmp.querySelector('.aq-body');
+      if (!newBody) return;
+      const newBodyHTML = newBody.innerHTML;
+
+      // 同步顶栏 step 数字
+      const stepEl = card.querySelector('.aq-step-indicator');
+      if (stepEl) stepEl.textContent = `${nextIdx + 1} / ${total}`;
+
+      // 调用真组件的滑切函数 —— 全项目唯一动画实现
+      runSlideTransition(card, newBodyHTML, direction, () => {
+        // 动画结束后，把 track 还原为单 body 结构，让下一轮可继续
+        const track = card.querySelector('.aq-slide-track');
+        if (track) {
+          const body = document.createElement('div');
+          body.className = 'aq-body';
+          body.innerHTML = newBodyHTML;
+          track.replaceWith(body);
+        }
+      });
+
+      st.stepIndex = nextIdx;
+    });
+
+    aqSlideCycleTimer = setTimeout(tick, AQ_SLIDE_HOLD_MS + AQ_SLIDE_ANIM_MS);
   }
 
-  tick();
+  // 首次：稳定后等 1 秒再开始切
+  aqSlideCycleTimer = setTimeout(tick, AQ_SLIDE_HOLD_MS);
 }
 
 function stopAqSlideCycleLoop() {

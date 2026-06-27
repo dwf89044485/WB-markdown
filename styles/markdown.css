@@ -456,6 +456,21 @@
 }
 .md .wb-card-expand:hover{ color:#000; }
 
+/* Mermaid 渲染区：把 SVG 居中显示，限制最大宽度 */
+.md .wb-mermaid-svg{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px 14px;
+  background:#fff;
+  overflow:auto;
+}
+.md .wb-mermaid-svg svg{
+  max-width:100%;
+  height:auto;
+  display:block;
+}
+
 .md .tbl-wrap{
   overflow-x:auto;
   max-width:100%;
@@ -910,9 +925,8 @@ body:has(.phone-shell.tbl-landscape){
 .left-area:has(> .phone-shell.tbl-landscape){
   display:grid;
   grid-template-rows:1fr auto auto;
-  align-items:stretch;
+  align-items:center;
 }
 .phone-shell.tbl-landscape{
-  align-self:center;
   margin-top:0;
 }

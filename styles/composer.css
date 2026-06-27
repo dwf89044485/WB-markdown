@@ -137,9 +137,25 @@
   flex-shrink:0;
   border:none;background:none;cursor:pointer;
   padding:0;
+  border-radius:23px;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
 }
-.cp-tool-btn::after{ content:""; position:absolute; inset:8px; border-radius:50%; background:transparent; transition:background .1s; }
-.cp-tool-btn:active::after{ background:rgba(0,0,0,0.04); }
+/* 通用 press 态：浅灰圆 */
+.cp-tool-btn::after,
+.cp-send-btn::after,
+.cp-stop-btn::after{
+  content:""; position:absolute; inset:8px;
+  border-radius:50%;
+  background:transparent;
+  transition:background .1s;
+  pointer-events:none;
+}
+.cp-tool-btn:active::after,
+.cp-send-btn:active::after,
+.cp-stop-btn:active::after{
+  background:rgba(60,60,67,0.12);
+}
 .cp-send-btn svg{ width:40px; height:40px; display:block; }
 
 /* 停止圆点：全局统一 40×40（与发送圆、设计稿一致）。 */

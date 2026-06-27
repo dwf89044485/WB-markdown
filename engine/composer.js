@@ -84,8 +84,11 @@ function measureHeight() {
 
 // ── 状态切换 ──────────────────────────────────────────────
 
+let _expandAt = 0;  // 展开时间戳，blur 保护用
+
 function expand() {
   if (state.expanded) return;
+  _expandAt = Date.now();
   // 生成态（播放中）也允许展开：用户可在生成中输入内容，不打断后台生成。
   state.expanded = true;
   els.shell.classList.add('is-expanded');
@@ -94,6 +97,8 @@ function expand() {
   if (els.textarea) els.textarea.focus();
   requestAnimationFrame(() => {
     measureHeight();
+    // 等 click 序列完成后重申 focus（防 pointer 默认行为"纠正" focus）
+    if (els.textarea) els.textarea.focus();
   });
 }
 
@@ -155,6 +160,8 @@ function bindEvents() {
       if (e.target.closest('button')) return;
       // 点击已激活的 textarea 不重复展开
       if (e.target.closest('.cp-body')) return;
+      // 阻止默认行为，避免后续 click 序列干扰人工 focus
+      e.preventDefault();
       expand();
     });
   }
@@ -172,6 +179,8 @@ function bindEvents() {
     ta.addEventListener('blur', () => {
       setTimeout(() => {
         if (state.fullScreen) return;
+        // 展开后 300ms 内不自动收起：防 pointer 事件序列导致的瞬时 blur
+        if (Date.now() - _expandAt < 300) return;
         if (!ta.value.trim()) collapse();
       }, 120);
     });

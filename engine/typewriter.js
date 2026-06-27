@@ -60,6 +60,8 @@ function cloneEmptyNode(node) {
 export async function appendHTMLTypedTo(container, html) {
   const temp = document.createElement('div');
   temp.innerHTML = html;
+  const startMark = document.createComment('typed-start');
+  container.appendChild(startMark);
   for (const child of Array.from(temp.childNodes)) {
     if (child.nodeType === Node.TEXT_NODE) {
       const t = document.createTextNode('');
@@ -74,7 +76,31 @@ export async function appendHTMLTypedTo(container, html) {
       c.classList.remove('typing-block-enter');
     }
   }
+  // 敲完后对本批新增内容里的代码块统一做语法高亮
+  highlightCodeBlocksAfter(startMark);
+  startMark.remove();
   await sleepDelay('stepDelay', 470);
+}
+
+function highlightCodeBlocksAfter(marker) {
+  if (!window.hljs) return;
+  let node = marker.nextSibling;
+  while (node) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const blocks = node.matches && node.matches('pre code')
+        ? [node]
+        : (node.querySelectorAll ? node.querySelectorAll('pre code') : []);
+      blocks.forEach(el => {
+        if (el.dataset.highlighted) return;
+        // mermaid 不交给 highlight.js，留给 mermaid-render.js 渲染成 SVG
+        if (el.classList.contains('lang-mermaid')) return;
+        try {
+          window.hljs.highlightElement(el);
+        } catch (e) { /* ignore */ }
+      });
+    }
+    node = node.nextSibling;
+  }
 }
 
 export async function appendHTML(row, html, container) {

@@ -306,4 +306,189 @@
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .s-sub-txt.active{color:#111114;font-weight:600;}
+
+/* ============================================================
+   CODE FULLSCREEN SHEET — 代码块全屏展示（非表格）
+   规范来源：Figma node 134911:33988（HTML），134911:34027（其他）
+   - 容器：顶部圆角 30、底色 #fafafa、padding 20、gap 20
+   - 顶栏左：标题（HTML 类型替换为 segmented 控件）
+   - 顶栏右：玻璃胶囊（圆角 120、白底 30%、阴影、内嵌 0.8px 白描边）
+   - 内容区：白底 + #e9ecf1 边框 + 圆角 16，撑满剩余空间
+   - 进出动画：从 phone-shell 底部上滑（与 sheet-overlay 同款）
+   ============================================================ */
+.code-sheet-overlay{
+  position:absolute;
+  inset:0;
+  z-index:80;
+  pointer-events:none;
+  visibility:hidden;
+  opacity:0;
+  transition:opacity .28s ease, visibility .28s ease;
+}
+.code-sheet-overlay.is-open{
+  pointer-events:auto;
+  visibility:visible;
+  opacity:1;
+}
+.code-sheet-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.18);
+}
+.code-sheet-panel{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  top:54px;        /* 让出状态栏位置；navbar 仍透过去 */
+  background:#fafafa;
+  border-radius:30px 30px 0 0;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  transform:translateY(102%);
+  transition:transform .28s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow:0 -8px 28px rgba(0,0,0,0.10);
+}
+.code-sheet-overlay.is-open .code-sheet-panel{ transform:translateY(0); }
+
+/* 顶栏 */
+.code-sheet-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+}
+.code-sheet-left{
+  display:flex;
+  align-items:center;
+  font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
+  font-size:13px;
+  color:#000;
+  white-space:nowrap;
+}
+.code-sheet-title{
+  /* 普通卡片标题（与卡片头一致） */
+  font-size:13px;
+  color:#000;
+}
+
+/* HTML 类型 segmented 控件「预览 / 代码」 */
+.code-sheet-tabs{
+  display:flex;
+  gap:4px;
+  align-items:flex-start;
+  background:#f2f2f2;
+  border-radius:8px;
+  padding:4px;
+  width:141px;
+}
+.code-sheet-tab{
+  flex:1 0 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 6px;
+  border-radius:6px;
+  background:transparent;
+  border:none;
+  font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
+  font-size:15px;
+  line-height:22px;
+  color:#000;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .14s ease;
+}
+.code-sheet-tab.is-active{ background:#fff; }
+
+/* 玻璃胶囊按钮组 */
+.code-sheet-actions.glass-capsule{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:2px;
+  border-radius:120px;
+  position:relative;
+  background:rgba(255,255,255,0.3);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.05),
+    inset 0.8px 0.8px 0 0 #fff;
+}
+.code-sheet-btn,
+.code-sheet-btn-primary{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:9px;
+  border:none;
+  border-radius:50px;
+  background:transparent;
+  color:#000;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  outline:none;
+  transition:background .12s ease;
+}
+.code-sheet-btn-primary{
+  gap:4px;
+  font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
+  font-size:13px;
+  line-height:16px;
+}
+.code-sheet-btn svg,
+.code-sheet-btn-primary svg{ display:block; width:16px; height:16px; }
+@media (hover: hover){
+  .code-sheet-btn:hover,
+  .code-sheet-btn-primary:hover{ background:rgba(0,0,0,0.05); }
+}
+.code-sheet-btn:active,
+.code-sheet-btn-primary:active{ background:rgba(0,0,0,0.08); }
+
+/* 关闭按钮前的竖分割线 */
+.code-sheet-divider{
+  width:1px;
+  height:12px;
+  background:rgba(0,0,0,0.10);
+  margin:0 0 0 0;
+  flex-shrink:0;
+}
+
+/* 内容区 */
+.code-sheet-body{
+  flex:1 1 0;
+  background:#fff;
+  border:1px solid #e9ecf1;
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  min-height:0;
+}
+.code-sheet-body pre{
+  margin:0;
+  padding:16px 18px;
+  height:100%;
+  overflow:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:13px;
+  line-height:1.55;
+  color:#1c1c1e;
+  background:transparent;
+  white-space:pre;
+}
+.code-sheet-body pre code{
+  display:block;
+  padding:0;
+  background:transparent;
+  font-family:inherit;
+  font-size:inherit;
+  line-height:inherit;
+}
+.code-sheet-body iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
 .s-sub .spin{animation:spin 1.1s linear infinite;}

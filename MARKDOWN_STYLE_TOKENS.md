@@ -41,7 +41,9 @@
 | `--md-heading` | `#111114` | 标题 / strong |
 | `--md-accent` | `#007AFF` | 链接 / CTA |
 | `--md-purple` | `#5e5ce6` | 列表 bullet / 代码强调 |
-| `--md-warning` | `#ff9f0a` | 能力说明 blockquote |
+| `--md-warning` | `#ff9f0a` | 能力说明 blockquote（已弃用，改用独立 token） |
+| `--md-blockquote-bg` | `#F4F4F4` | blockquote 背景色 |
+| `--md-blockquote-border` | `rgba(0,0,0,0.10)` | blockquote 左边线（10% 黑色） |
 | `--md-border` | `#e5e5ea` | 分割线 / 表格边框 |
 
 ### Space / Shape / Elevation
@@ -68,7 +70,7 @@
 - `pre/code (代码块)`：围栏代码块 ` ``` `，外侧 `.code-outer` 负责圆角边框，顶部工具栏显示语言标签 + 复制按钮，内容区 `pre` 白色背景，字号 14px。
 - `table`：外层 `.tbl-wrap` 负责圆角、边框、阴影和横向滚动；移动端不压缩列宽。
 - `a.doc-link-card`：最终成果链接自动渲染为卡片 CTA，而不是普通蓝色链接。
-- `blockquote`：用于能力说明，黄色左边线 + 柔和底色，上下间距 16px。
+- `blockquote`：纯信息容器，左边竖线（3px / 10% 黑色）+ #F4F4F4 背景，无圆角。上下间距 16px。
 - `code`：用于命令/异常字符，紫色浅底强调。
 - Typewriter：所有 Markdown 经 `markdownToHtml()` 转换后进入 `appendHTMLTypedTo()`，结构先成型，文本逐 token 填充。
 

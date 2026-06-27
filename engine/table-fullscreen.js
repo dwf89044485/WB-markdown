@@ -26,6 +26,7 @@ function fsIcon(file) {
 
 const FS_COPY = fsIcon('wb-copy.svg');
 const FS_IMAGE = fsIcon('image.svg');
+const FS_SHARE = fsIcon('wb-share.svg');
 
 /* ── 初始化按钮图标 ──────────────────────────────────── */
 (function initBtns() {
@@ -34,6 +35,7 @@ const FS_IMAGE = fsIcon('image.svg');
     const a = b.getAttribute('data-action');
     if (a === 'copy') b.innerHTML = FS_COPY || COPY_SVG;
     if (a === 'save-image') b.innerHTML = FS_IMAGE;
+    if (a === 'share') b.innerHTML = FS_SHARE;
   });
 })();
 
@@ -68,15 +70,73 @@ function syncFullscreenOrientation() {
   }
 }
 
+/* ── Mermaid 渲染缓存 ─────────────────────────────────── */
+const mermaidCache = new Map(); // src → svg HTML
+
+async function renderMermaidSvg(src) {
+  if (mermaidCache.has(src)) return mermaidCache.get(src);
+  if (!window.mermaid) return '<pre>' + src.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) + '</pre>';
+  try {
+    if (!window.__mermaidInit) {
+      window.mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      window.__mermaidInit = true;
+    }
+    const id = 'wbMermaid_' + Math.floor(performance.now() * 1000);
+    const result = await window.mermaid.render(id, src);
+    const svg = (result && result.svg) || '';
+    mermaidCache.set(src, svg);
+    return svg;
+  } catch (err) {
+    console.warn('[mermaid] 渲染失败:', err);
+    return '<div style="padding:24px;color:#c62828">Mermaid 渲染失败：' + (err.message || err) + '</div>';
+  }
+}
+
 /* ── 全屏入口 ────────────────────────────────────────── */
-document.addEventListener('click', function(e) {
+document.addEventListener('click', async function(e) {
   const btn = e.target.closest('.tbl-btn.tbl-maximize');
   if (!btn) return;
   const outer = btn.closest('.tbl-outer');
   if (!outer) return;
+
   const table = outer.querySelector('table');
-  if (!table) return;
-  content.innerHTML = '<div class="tbl-outer"><div class="tbl-wrap">' + table.outerHTML + '</div></div>';
+  const isMermaid = outer.classList.contains('wb-card-visual');
+
+  if (table) {
+    // 表格 → 直接复用 outerHTML
+    currentMermaidSrc = null;
+    content.innerHTML = '<div class="tbl-outer"><div class="tbl-wrap">' + table.outerHTML + '</div></div>';
+  } else if (isMermaid) {
+    // Mermaid → 真渲染 SVG
+    // 卡片里的 <pre><code> 已经被 mermaid-render.js 替换成 .wb-mermaid-svg，
+    // 原始源码在 <script type="text/x-mermaid-source"> 或 codeEl.dataset.mermaidSource 里
+    let src = '';
+    const srcScript = outer.querySelector('script[type="text/x-mermaid-source"]');
+    if (srcScript) {
+      src = srcScript.textContent;
+    } else {
+      const codeEl = outer.querySelector('pre code');
+      if (codeEl) src = codeEl.dataset.mermaidSource || codeEl.textContent;
+    }
+    src = (src || '').trim();
+    if (!src) {
+      console.warn('[mermaid-fs] 取不到 Mermaid 源码');
+      return;
+    }
+    currentMermaidSrc = src;
+    content.innerHTML = '<div class="tbl-mermaid-fs"><div class="tbl-mermaid-loading">渲染中…</div></div>';
+    overlay.classList.add('is-active');
+    syncFullscreenOrientation();
+    const svg = await renderMermaidSvg(src);
+    // 用户可能在等待中关闭了，做个保护
+    if (overlay.classList.contains('is-active')) {
+      content.innerHTML = '<div class="tbl-mermaid-fs">' + svg + '</div>';
+    }
+    return;
+  } else {
+    return;
+  }
+
   overlay.classList.add('is-active');
   syncFullscreenOrientation();
 });
@@ -92,6 +152,7 @@ function closeFullscreen() {
   overlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
   shell.classList.remove('tbl-landscape');
   content.innerHTML = '';
+  currentMermaidSrc = null;
 }
 fsBack.addEventListener('click', closeFullscreen);
 
@@ -118,16 +179,25 @@ function copyText(text) {
   }
 }
 
+/* ── 当前全屏内容文本（表格 → 制表符；Mermaid → 原始源码）─── */
+let currentMermaidSrc = null;
+function getCurrentText() {
+  const tbl = content.querySelector('table');
+  if (tbl) return tableToText(tbl);
+  if (currentMermaidSrc) return currentMermaidSrc;
+  return '';
+}
+
 /* ── 全屏内复制 ──────────────────────────────────────── */
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.tbl-fs-btn[data-action="copy"]');
   if (!btn) return;
-  const tbl = content.querySelector('table');
-  if (!tbl) return;
-  copyText(tableToText(tbl));
+  const text = getCurrentText();
+  if (!text) return;
+  copyText(text);
   /* 反馈 */
   const orig = btn.innerHTML;
-  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="22" height="22" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
   btn.style.color = '#34C759';
   btn.classList.add('is-checked');
   setTimeout(function() {
@@ -141,7 +211,7 @@ document.addEventListener('click', function(e) {
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.tbl-fs-btn[data-action="save-image"]');
   if (!btn) return;
-  // TODO: 实现表格保存为图片功能（html2canvas）
+  // TODO: 实现保存为图片功能（html2canvas）
   console.log('保存图片：待实现');
 });
 
@@ -149,9 +219,8 @@ document.addEventListener('click', function(e) {
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.tbl-fs-btn[data-action="share"]');
   if (!btn) return;
-  const tbl = content.querySelector('table');
-  if (!tbl) return;
-  const text = tableToText(tbl);
+  const text = getCurrentText();
+  if (!text) return;
   if (navigator.share) {
     navigator.share({ text: text }).catch(function() {});
   } else {

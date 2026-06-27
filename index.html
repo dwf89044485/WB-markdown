@@ -661,6 +661,18 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     root.style.setProperty('--layout-shell-h', res.h + 'px');
     root.style.setProperty('--layout-left-area-w', leftW + 'px');
     root.style.setProperty('--layout-min-w', (leftW + 884) + 'px');
+    var shell = document.querySelector('.phone-shell');
+    var oBtn = document.getElementById('ctrlOrientation');
+    if (shell) {
+      var needLandscape = res.h > res.w;
+      if (needLandscape && !shell.classList.contains('phone-landscape')) {
+        shell.classList.add('phone-landscape');
+        if (oBtn) { oBtn.querySelector('span').textContent = '竖屏'; oBtn.setAttribute('aria-label', '切换为竖屏'); }
+      } else if (!needLandscape && shell.classList.contains('phone-landscape')) {
+        shell.classList.remove('phone-landscape');
+        if (oBtn) { oBtn.querySelector('span').textContent = '横屏'; oBtn.setAttribute('aria-label', '切换为横屏'); }
+      }
+    }
     buildGrid();
   }
 

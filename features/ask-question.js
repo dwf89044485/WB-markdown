@@ -99,6 +99,15 @@ function getSnapshots() {
     edgeLongQ: snap('edgeLongQ', LONG_Q, 0, singleAnswer(LONG_Q), { hideInput: false }),
     edgeMany: snap('edgeMany', MANY_OPTS, 0, singleAnswer(MANY_OPTS), { hideInput: false }),
     edgeLongOpt: snap('edgeLongOpt', LONG_OPT, 0, singleAnswer(LONG_OPT), { hideInput: false }),
+
+    // §5 动效演示
+    // 5.1 升降循环：单题未答态，外层 JS 不参与；CSS 无限循环 keyframe 直接驱动
+    motionRiseFall: snap('motionRiseFall', SAMPLE_Q, 0, A.unanswered, { hideInput: false }),
+    // 5.2 切题循环：4 题全部未答态，4 个 pane 由 feature-panel.js 周期切换 transform
+    motionSlide0: snap('motionSlide0', SAMPLE_Q, 0, A.unanswered, { hideInput: false }),
+    motionSlide1: snap('motionSlide1', SAMPLE_Q, 1, A.unanswered, { hideInput: false }),
+    motionSlide2: snap('motionSlide2', SAMPLE_Q, 2, A.unanswered, { hideInput: false }),
+    motionSlide3: snap('motionSlide3', SAMPLE_Q, 3, A.unanswered, { hideInput: false }),
   };
 }
 
@@ -311,57 +320,82 @@ export default {
         <p>AskQuestion 有两个核心动效：面板的出现与消失，以及题目之间的切换过渡。两者各自承担不同的表意职责。</p>
 
         <h3>5.1 面板升降</h3>
-        <p>卡片从屏幕下缘向上滑入，透明度同步从 0 升到 1；关闭时原路滑回。升起和降下使用不同的时长与缓动，分别对应"到来"与"离开"的心理预期。</p>
-        <table>
-          <thead>
-            <tr><th>方向</th><th>时长</th><th>缓动</th><th>意图</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>升起（入场）</td>
-              <td>300ms</td>
-              <td>cubic-bezier(0, 0, 0.2, 1)<br><span style="color:#86868b;font-size:12px">快进慢收，末尾有落点感</span></td>
-              <td>卡片"弹出"到位，末尾的减速感让内容稳定落座</td>
-            </tr>
-            <tr>
-              <td>降下（出场）</td>
-              <td>250ms</td>
-              <td>ease-in-out</td>
-              <td>比入场略快，避免关闭后的等待感</td>
-            </tr>
-          </tbody>
-        </table>
-        <blockquote>
-          <p>入场比出场慢——这是刻意的。用户点击关闭时注意力已经转移，出场越快越好；而内容"到来"需要一点时间建立存在感。</p>
-        </blockquote>
+        <div class="fp-snapshot-side">
+          <div class="fp-snapshot-wrap">
+            <div class="fp-motion-stage fp-motion-stage--fixed" data-motion-loop="rise-fall">
+              ${s.motionRiseFall}
+            </div>
+          </div>
+          <div class="fp-snapshot-side-desc">
+            <p>卡片从屏幕下缘向上滑入，透明度同步从 0 升到 1；关闭时原路滑回。升起和降下使用不同的时长与缓动，分别对应"到来"与"离开"的心理预期。</p>
+            <table>
+              <thead>
+                <tr><th>方向</th><th>时长</th><th>缓动</th><th>意图</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>升起（入场）</td>
+                  <td>300ms</td>
+                  <td>cubic-bezier(0, 0, 0.2, 1)<br><span style="color:#86868b;font-size:12px">快进慢收，末尾有落点感</span></td>
+                  <td>卡片"弹出"到位，末尾的减速感让内容稳定落座</td>
+                </tr>
+                <tr>
+                  <td>降下（出场）</td>
+                  <td>250ms</td>
+                  <td>ease-in-out</td>
+                  <td>比入场略快，避免关闭后的等待感</td>
+                </tr>
+              </tbody>
+            </table>
+            <blockquote>
+              <p>入场比出场慢——这是刻意的。用户点击关闭时注意力已经转移，出场越快越好；而内容"到来"需要一点时间建立存在感。</p>
+              <p style="color:#86868b;font-size:12px;margin-top:6px">左侧演示按真实参数循环：升起 0.3s → 停留 2s → 落下 0.25s → 间隔 1s。</p>
+            </blockquote>
+          </div>
+        </div>
 
         <h3>5.2 切题滑切</h3>
-        <p>点击方向箭头或单选题自动前进时，旧题与新题以<strong>横向滑动</strong>切换。方向与导航按钮一致：向前翻，内容向左移出；向后翻，内容向右移出。两张题面之间保留 40px 的视觉间距，让"换一张"的感觉更清晰，不像是同一内容在原地更新。</p>
-        <table>
-          <thead>
-            <tr><th>参数</th><th>值</th><th>意图</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>时长</td>
-              <td>300ms</td>
-              <td>与面板升降入场同步，保持整体节奏一致</td>
-            </tr>
-            <tr>
-              <td>缓动</td>
-              <td>ease-out</td>
-              <td>新题进入时末尾减速，让内容"落座"而不是骤停</td>
-            </tr>
-            <tr>
-              <td>题面间距</td>
-              <td>40px</td>
-              <td>过渡期两张卡面之间的空隙，强化"翻页"的物理感</td>
-            </tr>
-          </tbody>
-        </table>
-        <blockquote>
-          <p>切题动效还承担防误操作的职责：动画播放期间（300ms）屏蔽二次点击，避免快速连点后题目状态错乱。</p>
-        </blockquote>
+        <div class="fp-snapshot-side">
+          <div class="fp-snapshot-wrap">
+            <div class="fp-motion-stage fp-motion-stage--fixed" data-motion-loop="slide-cycle">
+              <div class="aq-slide-track" data-slide-track>
+                <div class="aq-slide-pane" style="left:0">${s.motionSlide0}</div>
+                <div class="aq-slide-pane" style="left:calc(100% + 40px)">${s.motionSlide1}</div>
+                <div class="aq-slide-pane" style="left:calc(200% + 80px)">${s.motionSlide2}</div>
+                <div class="aq-slide-pane" style="left:calc(300% + 120px)">${s.motionSlide3}</div>
+              </div>
+            </div>
+          </div>
+          <div class="fp-snapshot-side-desc">
+            <p>点击方向箭头或单选题自动前进时，旧题与新题以<strong>横向滑动</strong>切换。方向与导航按钮一致：向前翻，内容向左移出；向后翻，内容向右移出。两张题面之间保留 40px 的视觉间距，让"换一张"的感觉更清晰，不像是同一内容在原地更新。</p>
+            <table>
+              <thead>
+                <tr><th>参数</th><th>值</th><th>意图</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>时长</td>
+                  <td>300ms</td>
+                  <td>与面板升降入场同步，保持整体节奏一致</td>
+                </tr>
+                <tr>
+                  <td>缓动</td>
+                  <td>ease-out</td>
+                  <td>新题进入时末尾减速，让内容"落座"而不是骤停</td>
+                </tr>
+                <tr>
+                  <td>题面间距</td>
+                  <td>40px</td>
+                  <td>过渡期两张卡面之间的空隙，强化"翻页"的物理感</td>
+                </tr>
+              </tbody>
+            </table>
+            <blockquote>
+              <p>切题动效还承担防误操作的职责：动画播放期间（300ms）屏蔽二次点击，避免快速连点后题目状态错乱。</p>
+              <p style="color:#86868b;font-size:12px;margin-top:6px">左侧演示按真实参数循环：每题停留 1s，切题 0.3s ease-out，从 1/4 走到 4/4 后回到起点。</p>
+            </blockquote>
+          </div>
+        </div>
       </section>
 
       <section data-section="edge-cases">

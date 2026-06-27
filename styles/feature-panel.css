@@ -608,6 +608,50 @@
   color: #1d1d1f;
 }
 
+/* ── 动效演示舞台（§5）─────────────────────────────────────
+ * 基础 stage 不写 overflow:hidden —— 遵循「布局容器不能裁阴影」
+ * 的总规则（见上文 §fp-snapshot-row 注释 第 279-281 行）。
+ * 5.1（rise-fall）：stage 完全不裁，靠 keyframe 内 opacity:0 让
+ *   卡片在 translateY(100%) 时同步消失，shadow 全程完整。
+ * 5.2（slide-cycle）：必须裁掉左右兄弟 pane，但通过 padding 把
+ *   shadow 挤进 content box 之外的 padding 区域 —— overflow:hidden
+ *   只裁 content box，padding 区域保留 shadow。
+ */
+.fp-motion-stage {
+  position: relative;
+  width: var(--aq-width, 350px);
+  border-radius: var(--aq-radius, 20px);
+  background: transparent;
+}
+/* 5.1 升降循环：min-height 让 stage 占位（卡片是 absolute，否则塌陷为 0），
+   不设 overflow，shadow 完整可见。卡片 translateY(100%) 时仍会落到 stage
+   下方，但 opacity 同步为 0，不会留下视觉残影。 */
+.fp-motion-stage[data-motion-loop="rise-fall"] {
+  min-height: 480px;
+}
+.fp-motion-stage[data-motion-loop="rise-fall"] > .ask-question-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+/* 5.2 切题循环：padding 给 shadow 留容纳区，box-sizing:content-box 保证
+   pane 宽度仍是 var(--aq-width)；overflow:hidden 只裁 content box 外的
+   兄弟 pane，padding 区域不被裁，居中 pane 的 shadow 完整保留。 */
+.fp-motion-stage--fixed {
+  box-sizing: content-box;
+  padding: 24px;
+  overflow: hidden;
+  height: 540px;
+}
+.fp-motion-stage--fixed .aq-slide-track {
+  height: 100%;
+}
+.fp-motion-stage--fixed .aq-slide-track > div {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* ── 原则指南专用组件 ────────────────────────────────────────── */
 
 /* 引言块 */

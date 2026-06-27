@@ -447,6 +447,7 @@ function renderRoute(route) {
 
   // 切换 feature 时清理上一 feature 的循环动画
   stopTcnModeLoop();
+  stopAqSlideCycleLoop();
 
   // 切换到特定 feature 时，左侧 Demo 自动跳转到对应状态
   loadToken++;
@@ -462,6 +463,8 @@ function renderRoute(route) {
         if (token !== loadToken) hideOverlays();
       });
     }
+    // 启动 §5 切题滑切循环（升降循环由 CSS 自驱）
+    startAqSlideCycleLoop();
   } else if (f.id === 'approve-permission') {
     const anchor = f.anchors && f.anchors['show-card'];
     if (anchor) {
@@ -562,6 +565,72 @@ function stopTcnModeLoop() {
   if (tcnModeLoopTimer) {
     clearTimeout(tcnModeLoopTimer);
     tcnModeLoopTimer = null;
+  }
+}
+
+// ── AskQuestion §5.2 切题滑切循环演示 ──────────
+// 4 张 pane 横向铺开（pane 间隔 40px），track 通过 transform 周期切换：
+//   step 0: translateX(0)                            停 1000ms
+//   step 1: translateX(calc(-100% - 40px))           停 1000ms
+//   step 2: translateX(calc(-200% - 80px))           停 1000ms
+//   step 3: translateX(calc(-300% - 120px))          停 1000ms
+//   回到 step 0：transition:none 瞬移 → 下一轮恢复 transition
+let aqSlideCycleTimer = null;
+const AQ_SLIDE_PANE_GAP = 40;          // 与真实切题保持一致
+const AQ_SLIDE_HOLD_MS = 1000;         // 每题停留时长
+const AQ_SLIDE_TRANSITION = 'transform 0.3s ease-out'; // 真实切题动画
+
+function startAqSlideCycleLoop() {
+  stopAqSlideCycleLoop();
+  const tracks = contentEl ? contentEl.querySelectorAll('[data-motion-loop="slide-cycle"] [data-slide-track]') : [];
+  if (!tracks.length) return;
+
+  const totalSteps = 4;
+  let stepIdx = 0;
+
+  const offsetForStep = (i) => `translateX(calc(${-i * 100}% - ${i * AQ_SLIDE_PANE_GAP}px))`;
+
+  function applyStep(i, animate) {
+    tracks.forEach(track => {
+      if (animate) {
+        track.style.transition = AQ_SLIDE_TRANSITION;
+      } else {
+        track.style.transition = 'none';
+        // force reflow，确保下一帧 transition 生效
+        void track.offsetHeight;
+      }
+      track.style.transform = offsetForStep(i);
+    });
+  }
+
+  // 初始化：所有 track 复位到 step 0
+  applyStep(0, false);
+
+  function tick() {
+    const nextIdx = stepIdx + 1;
+    if (nextIdx >= totalSteps) {
+      // 4/4 → 1/4：先停留 1s 再瞬移回起点，下一轮重新启动
+      aqSlideCycleTimer = setTimeout(() => {
+        applyStep(0, false);
+        stepIdx = 0;
+        aqSlideCycleTimer = setTimeout(tick, AQ_SLIDE_HOLD_MS);
+      }, AQ_SLIDE_HOLD_MS);
+      return;
+    }
+    aqSlideCycleTimer = setTimeout(() => {
+      stepIdx = nextIdx;
+      applyStep(stepIdx, true);
+      tick();
+    }, AQ_SLIDE_HOLD_MS);
+  }
+
+  tick();
+}
+
+function stopAqSlideCycleLoop() {
+  if (aqSlideCycleTimer) {
+    clearTimeout(aqSlideCycleTimer);
+    aqSlideCycleTimer = null;
   }
 }
 

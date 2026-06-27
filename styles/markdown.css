@@ -821,65 +821,72 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 .tbl-fs-nav{
   display:flex;
   align-items:center;
+  justify-content:space-between;
   height:52px;
   padding:0 16px;
   flex-shrink:0;
-  background:#fff;
+  background:transparent;
 }
+/* 左：返回按钮 — 玻璃胶囊 */
 .tbl-fs-back{
   display:flex;
   align-items:center;
-  padding:4px;
+  justify-content:center;
+  padding:9px;
   border:none;
-  background:transparent;
+  border-radius:120px;
+  background:rgba(255,255,255,0.3);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.05),
+    inset 0.8px 0.8px 0 0 #fff;
   cursor:pointer;
-  border-radius:8px;
-  font-size:15px;
-  font-weight:500;
   color:#000;
   -webkit-tap-highlight-color:transparent;
   transition:background .12s ease;
 }
-.tbl-fs-back:hover{background:rgba(0,0,0,.06);}
-.tbl-fs-back:active{background:rgba(0,0,0,.1);}
+.tbl-fs-back svg{ display:block; width:16px; height:16px; }
+.tbl-fs-back:hover{ background:rgba(255,255,255,0.5); }
+.tbl-fs-back:active{ background:rgba(255,255,255,0.65); }
 
+/* 居中标题保持原样（如有需要可隐藏） */
 .tbl-fs-title{
   flex:1;
   text-align:center;
   font-size:15px;
   font-weight:600;
   color:#000;
+  margin:0 12px;
 }
 
-/* ── ACTION BUTTONS ─────────────────────────────────────── */
+/* 右：按钮组 — 玻璃胶囊容器（无 × 无分割线）*/
 .tbl-fs-actions{
   display:flex;
   align-items:center;
-  gap:12px;
-  padding-right:4px;
+  gap:4px;
+  padding:2px;
+  border-radius:120px;
+  background:rgba(255,255,255,0.3);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.05),
+    inset 0.8px 0.8px 0 0 #fff;
 }
 .tbl-fs-btn{
-  width:36px;
-  height:40px;
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:9px;
   border:none;
+  border-radius:50px;
   background:transparent;
   cursor:pointer;
-  border-radius:8px;
   color:#000;
   -webkit-tap-highlight-color:transparent;
-  transition:background .12s ease,color .12s ease;
+  transition:background .12s ease, color .12s ease;
 }
-.tbl-fs-btn svg{
-  display:block;
-  width:22px;
-  height:22px;
-}
-.tbl-fs-btn:hover{background:rgba(0,122,255,.08);}
-.tbl-fs-btn:active{background:rgba(0,122,255,.12);}
-.tbl-fs-btn.is-checked{color:#34C759;}
+.tbl-fs-btn svg{ display:block; width:16px; height:16px; }
+.tbl-fs-btn:hover{ background:rgba(0,0,0,0.05); }
+.tbl-fs-btn:active{ background:rgba(0,0,0,0.08); }
+.tbl-fs-btn.is-checked{ color:#34C759; }
 
 /* ── CONTENT AREA ───────────────────────────────────────── */
 .tbl-fs-content{
@@ -926,7 +933,4 @@ body:has(.phone-shell.tbl-landscape){
   display:grid;
   grid-template-rows:1fr auto auto;
   align-items:center;
-}
-.phone-shell.tbl-landscape{
-  margin-top:0;
 }

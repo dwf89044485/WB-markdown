@@ -910,7 +910,7 @@
 .fp-do,
 .fp-dont {
   flex: 1;
-  padding: 28px 32px;
+  padding: 0 32px;
   display: flex;
   flex-direction: column;
   gap: 6px;

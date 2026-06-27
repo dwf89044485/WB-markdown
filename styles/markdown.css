@@ -836,7 +836,7 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
   height:var(--layout-shell-w);
   flex-shrink:0;
   align-self:flex-start;
-  margin-left:-14px;
+  margin-left:0;
   transition:width .35s cubic-bezier(.32,.72,0,1),
               height .35s cubic-bezier(.32,.72,0,1),
               margin-top .35s cubic-bezier(.32,.72,0,1),
@@ -864,9 +864,10 @@ html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
 .phone-shell.tbl-landscape > .phone-controls{
   display:none;
 }
-/* 横屏时覆盖宽度变量，让左侧容器、分界线、白色遮罩同步扩宽 */
+/* 横屏时覆盖宽度变量，让左侧容器、分界线、白色遮罩同步扩宽；
+   两侧各加一格（--tbl-grid-cell 由 JS buildGrid 写入，fallback 65px） */
 body:has(.phone-shell.tbl-landscape){
-  --layout-left-area-w:var(--layout-shell-h);
+  --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
 }
 /* 横屏时控制面板用弹性空间推到底部，不随手机壳高矮移动 */
 .phone-shell.tbl-landscape ~ .dc-toggle{

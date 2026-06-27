@@ -14,6 +14,9 @@
 <link rel="stylesheet" href="./styles/ask-question.css">
 <link rel="stylesheet" href="./styles/approve-permission.css">
 <link rel="stylesheet" href="./vendor/github-markdown.css">
+<!-- 代码块语法高亮：highlight.js + GitHub Light 主题 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
 <link rel="stylesheet" href="./styles/feature-panel.css?v=9">
 <script>
 (function(){
@@ -243,6 +246,18 @@
     </div>
     <div class="tbl-fs-content md" id="tblFsContent"></div>
   </div>
+
+  <!-- Code Fullscreen Sheet（非表格类卡片的全屏展示）-->
+  <div class="code-sheet-overlay" id="codeSheet" aria-hidden="true">
+    <div class="code-sheet-backdrop" data-code-sheet-close></div>
+    <div class="code-sheet-panel">
+      <header class="code-sheet-header">
+        <div class="code-sheet-left" id="codeSheetLeft"></div>
+        <div class="code-sheet-actions glass-capsule" id="codeSheetActions"></div>
+      </header>
+      <div class="code-sheet-body" id="codeSheetBody"></div>
+    </div>
+  </div>
 </div> <!-- /phone-shell -->
 
 <button class="dc-toggle" id="dcToggle" aria-label="收起控制面板" title="收起控制面板">
@@ -257,7 +272,7 @@
       <button class="dc-scene-btn" type="button" data-node-index="0" data-action-offset="0">工具调用</button>
       <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="5">权限审批</button>
       <button class="dc-scene-btn" type="button" data-node-index="2" data-action-offset="10">询问用户</button>
-      <button class="dc-scene-btn" type="button">场景4</button>
+      <button class="dc-scene-btn" type="button" data-scene="codeblock-showcase">代码块样式</button>
       <button class="dc-scene-btn" type="button">场景5</button>
       <button class="dc-scene-btn" type="button">场景6</button>
       <button class="dc-scene-btn" type="button">场景7</button>
@@ -462,6 +477,12 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 </script>
 <!-- Table Fullscreen — 已抽离到 engine/table-fullscreen.js -->
 <script type="module" src="./engine/table-fullscreen.js"></script>
+<!-- Table Sticky — 表格滚动吸顶 -->
+<script type="module" src="./engine/table-sticky.js"></script>
+<!-- Codeblock Showcase — 独立场景：展示 4 种容器样式，与剧本无关 -->
+<script type="module" src="./engine/showcase-codeblock.js"></script>
+<!-- Code Fullscreen Sheet — 非表格类卡片的全屏 sheet 展示 -->
+<script type="module" src="./engine/code-fullscreen-sheet.js"></script>
 <script>
 /* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
 (function(){
@@ -502,6 +523,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     // 网格步长由壳子尺寸动态计算（colStep = pw/COLS, rowStep = ph/ROWS）
     var colStep = pw / COLS;
     var rowStep = ph / ROWS;
+
+    // 把格子尺寸写入 CSS 变量，供横屏时 left-area 宽度计算使用
+    document.documentElement.style.setProperty('--tbl-grid-cell', r(colStep) + 'px');
 
     // 可视区域边界（视口坐标系）
     var leftEdge   = pR.left - colStep;

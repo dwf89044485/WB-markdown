@@ -904,14 +904,15 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 body:has(.phone-shell.tbl-landscape){
   --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
 }
-/* 横屏时：手机顶部加弹性空间，让手机+控制面板整体垂直居中 */
+/* 横屏时：left-area 改为 grid，
+   第一行撑满剩余高度（手机在其中居中），
+   toggle + 控制面板钉在最底部 */
+.left-area:has(> .phone-shell.tbl-landscape){
+  display:grid;
+  grid-template-rows:1fr auto auto;
+  align-items:stretch;
+}
 .phone-shell.tbl-landscape{
-  margin-top:auto;
-}
-/* 控制面板底部也吃一份弹性空间 */
-.phone-shell.tbl-landscape ~ .dc-toggle{
+  align-self:center;
   margin-top:0;
-}
-.phone-shell.tbl-landscape ~ .dc-toggle ~ .demo-controls{
-  margin-bottom:auto;
 }

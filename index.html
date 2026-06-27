@@ -234,14 +234,14 @@
   <!-- Table Fullscreen Overlay -->
   <div class="tbl-fullscreen-overlay" id="tblOverlay">
     <div class="tbl-fs-nav">
-      <button class="tbl-fs-back" id="tblFsBack">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 4L7 11l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <button class="tbl-fs-back" id="tblFsBack" aria-label="返回">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="tbl-fs-title">表格</div>
       <div class="tbl-fs-actions" id="tblFsActions">
         <button class="tbl-fs-btn" data-action="copy" aria-label="复制"></button>
         <button class="tbl-fs-btn" data-action="save-image" aria-label="保存图片"></button>
-        <button class="tbl-fs-btn" data-action="share" aria-label="分享"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"><path fill="currentColor" transform="matrix(1 0 0 1 1.31017 0.811401)" d="M14.3989 0L19.2129 4.814Q19.2266 4.8277 19.2643 4.865Q19.6545 5.254 19.725 5.567Q19.8944 6.3235 19.2393 6.7385C18.9695 6.9099 18.4185 6.9086 18.373 6.9084L17.252 6.9084Q14.4683 6.9084 13.774 7.0746Q12.1216 7.4708 10.9119 8.6805Q9.7022 9.8902 9.306 11.5426Q9.1398 12.2369 9.1398 15.0206L7.4898 15.0206Q7.4898 12.0427 7.7012 11.1583Q8.2055 9.0533 9.7448 7.514Q11.284 5.9748 13.389 5.4705Q14.2735 5.2591 17.252 5.2591L17.3229 5.2591L13.2312 1.1674L14.3989 0ZM10.0923 1.2055C10.4116 1.2046 10.7369 1.2036 11.0647 1.2079L11.0647 2.8621C10.6925 2.8562 10.3089 2.8565 9.9122 2.8566C9.8397 2.8566 9.7672 2.8567 9.6949 2.8567C9.6226 2.8567 9.5502 2.8566 9.4777 2.8566C6.9273 2.8552 4.9091 2.8541 3.3014 4.429C1.6473 6.0522 1.6479 8.1156 1.6488 10.7217C1.6488 10.7786 1.6488 10.8384 1.6488 10.8985C1.6488 10.9587 1.6488 11.0155 1.6488 11.0742C1.6479 13.6769 1.6473 15.7403 3.3014 17.3626C4.7511 18.7836 6.5324 18.9226 8.7243 18.935L10.6538 18.935C12.8457 18.9226 14.627 18.7832 16.0767 17.3626C17.7307 15.7404 17.7301 13.6773 17.7292 11.0751C17.7292 11.0155 17.7292 10.9559 17.7292 10.8985C17.7292 10.8382 17.7292 10.7783 17.7292 10.7188C17.7294 10.3062 17.7295 9.9062 17.723 9.5202L19.3762 9.5202C19.3808 9.8548 19.38 10.1889 19.3791 10.5183C19.3787 10.6492 19.3784 10.7772 19.3784 10.8985C19.3784 11.0197 19.3787 11.1476 19.3791 11.2784C19.3855 13.6944 19.3923 16.4232 17.2313 18.5402C15.1265 20.6032 12.4531 20.5955 10.0896 20.5883C9.9568 20.588 9.8269 20.5877 9.6949 20.5877C9.5628 20.5877 9.4327 20.588 9.2999 20.5883C6.9365 20.5955 4.2636 20.6032 2.1588 18.5402C0.1566 16.5891 0.0066 14.1198 0 11.8533L0 9.9398C0.0066 7.6734 0.1566 5.2039 2.1588 3.2528C4.2636 1.1907 6.9367 1.1984 9.3003 1.2055C9.4322 1.2058 9.562 1.2061 9.6949 1.2061C9.8279 1.2061 9.9602 1.2058 10.0923 1.2055Z"/></svg></button>
+        <button class="tbl-fs-btn" data-action="share" aria-label="分享"></button>
       </div>
     </div>
     <div class="tbl-fs-content md" id="tblFsContent"></div>
@@ -340,6 +340,10 @@
           <button id="ctrlDevicePhone" type="button" class="dc-seg-btn is-active">手机</button>
           <button id="ctrlDevicePad" type="button" class="dc-seg-btn">Pad</button>
         </div>
+        <button id="ctrlOrientation" type="button" class="dc-orientation-btn" aria-label="切换为横屏">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" transform="matrix(0.866025 -0.5 0.5 0.866025 -0.720651 5.52947)" d="M10.0107 1.8923Q11.6005 3.1657 12.0668 5.1349L13.2345 4.8585Q12.673 2.4873 10.7608 0.9557Q8.8186 -0.6 6.3253 -0.6Q4.3897 -0.6 2.73 0.3764Q1.1199 1.3236 0.1817 2.9389Q0.167 2.9643 0.1382 3.0138Q-0.131 3.4754 -0.1982 3.6964Q-0.3556 4.2136 -0.0584 4.6355Q0.1851 4.9812 0.6667 5.0622Q0.8694 5.0962 1.3705 5.0961Q1.4628 5.0961 1.5112 5.0963L2.8236 5.1L2.8271 3.9L1.5146 3.8962Q1.4644 3.8961 1.3702 3.8961Q1.1518 3.8962 1.0216 3.891Q1.0776 3.785 1.1748 3.6182Q1.2042 3.5678 1.2194 3.5416Q1.9995 2.1984 3.3385 1.4107Q4.7165 0.6 6.3253 0.6Q8.3973 0.6 10.0107 1.8923ZM0.5839 7.8649Q1.0501 9.8342 2.64 11.1077Q4.2534 12.4 6.3253 12.4Q7.9365 12.4 9.3161 11.587Q10.6565 10.7971 11.4358 9.4507Q11.4511 9.4241 11.4806 9.3734Q11.5777 9.2063 11.6336 9.1001Q11.5032 9.0956 11.2848 9.0967Q11.1899 9.0972 11.1393 9.0973L9.8275 9.1L9.8251 7.9L11.1368 7.8973Q11.1854 7.8972 11.2786 7.8967Q11.7803 7.8941 11.9835 7.9272Q12.4664 8.0061 12.7115 8.3515Q13.0108 8.7734 12.8541 9.2918Q12.787 9.5135 12.5182 9.9762Q12.489 10.0265 12.4743 10.0518Q11.5373 11.6709 9.9253 12.6208Q8.2638 13.6 6.3253 13.6Q3.832 13.6 1.8897 12.0443Q-0.0225 10.5126 -0.5839 8.1413L0.5839 7.8649Z" fill-rule="evenodd"/><path fill="currentColor" transform="matrix(0.707107 -0.707107 0.707107 0.707107 10.3419 3.80188)" d="M2 1.1515L0.4243 -0.4243L-0.4243 0.4243L1.5757 2.4243L2 2.8485L4.4243 0.4243L3.5757 -0.4243L2 1.1515Z" fill-rule="evenodd"/><path fill="currentColor" transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 2.81235 14.9986)" d="M2 1.1515L0.4243 -0.4243L-0.4243 0.4243L1.5757 2.4243L2 2.8485L4.4243 0.4243L3.5757 -0.4243L2 1.1515Z" fill-rule="evenodd"/></svg>
+          <span>横屏</span>
+        </button>
       </div>
     </div>
   </div>
@@ -483,6 +487,10 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 <script type="module" src="./engine/showcase-codeblock.js"></script>
 <!-- Code Fullscreen Sheet — 非表格类卡片的全屏 sheet 展示 -->
 <script type="module" src="./engine/code-fullscreen-sheet.js"></script>
+<!-- Code Collapse — 长代码块折叠/展开（限高 280px ≈ 屏幕 1/3）-->
+<script type="module" src="./engine/code-collapse.js"></script>
+<!-- Mermaid Render — 把 ```mermaid 源码渲染成 SVG -->
+<script type="module" src="./engine/mermaid-render.js"></script>
 <script>
 /* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
 (function(){
@@ -644,6 +652,18 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 
   document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
   document.getElementById('ctrlDevicePad').addEventListener('click', function(){ setDeviceMode('pad'); });
+
+  /* ── 横竖屏切换 ───────────────────────────────── */
+  var orientationBtn = document.getElementById('ctrlOrientation');
+  if (orientationBtn) {
+    orientationBtn.addEventListener('click', function() {
+      var shell = document.querySelector('.phone-shell');
+      var isLandscape = shell.classList.toggle('phone-landscape');
+      this.querySelector('span').textContent = isLandscape ? '竖屏' : '横屏';
+      this.setAttribute('aria-label', isLandscape ? '切换为竖屏' : '切换为横屏');
+      buildGrid();
+    });
+  }
 
   buildGrid();
   window.addEventListener('resize', buildGrid);

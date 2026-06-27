@@ -510,6 +510,35 @@
   display:block;
 }
 
+/* ── Orientation toggle ────────────────────────────────── */
+.dc-orientation-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  height:var(--dc-control-height);
+  padding:0 8px;
+  border:0;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
+  font-weight:500;
+  line-height:22px;
+  cursor:pointer;
+  outline:none;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:background .12s ease,color .12s ease;
+}
+.dc-orientation-btn:hover{ background:#E2E2E2; }
+.dc-orientation-btn:active{ background:#DADADA; }
+.dc-orientation-btn svg{
+  width:16px;
+  height:16px;
+  display:block;
+  flex-shrink:0;
+}
+
 /* ── Hash ──────────────────────────────────────────────────── */
 .dc-hash{
   width:100%;

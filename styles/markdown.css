@@ -835,8 +835,6 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
   width:var(--layout-shell-h);
   height:var(--layout-shell-w);
   flex-shrink:0;
-  align-self:flex-start;
-  margin-left:0;
   transition:width .35s cubic-bezier(.32,.72,0,1),
               height .35s cubic-bezier(.32,.72,0,1),
               margin-top .35s cubic-bezier(.32,.72,0,1),
@@ -844,13 +842,13 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 }
 @media (min-width:901px){
   .layout-main .left-area > .phone-shell.tbl-landscape{
-    margin-top:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
-    margin-bottom:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
+    margin-top:0;
+    margin-bottom:0;
   }
 }
 html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
-  margin-top:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
-  margin-bottom:calc((var(--layout-shell-h) - var(--layout-shell-w))/2);
+  margin-top:0;
+  margin-bottom:0;
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;

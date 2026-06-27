@@ -748,13 +748,27 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   function fitShellScale() {
     var shell = document.querySelector('.phone-shell');
     if (!shell) return;
-    var leftArea = shell.parentElement;
-    if (!leftArea) return;
+    var controls = document.querySelector('.demo-controls');
+    var controlsH = (controls && controls.classList.contains('is-expanded')) ? controls.offsetHeight : 0;
     var padding = 24;
-    var availH = window.innerHeight - padding * 2;
+    var availH = window.innerHeight - controlsH - padding * 2;
     var shellW = shell.offsetWidth;
     var shellH = shell.offsetHeight;
     var scale = Math.min(1, availH / shellH);
+
+    if (scale < 0.85 && controls && controls.classList.contains('is-expanded')) {
+      controls.classList.remove('is-expanded');
+      var toggle = document.getElementById('dcToggle');
+      if (toggle) {
+        toggle.classList.add('is-collapsed');
+        toggle.setAttribute('aria-label', '展开控制面板');
+        toggle.setAttribute('title', '展开控制面板');
+      }
+      controlsH = 0;
+      availH = window.innerHeight - padding * 2;
+      scale = Math.min(1, availH / shellH);
+    }
+
     if (scale < 1) {
       shell.style.transform = 'scale(' + scale + ')';
       var scaledW = Math.ceil(shellW * scale);

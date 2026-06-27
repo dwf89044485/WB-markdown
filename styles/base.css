@@ -225,6 +225,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   display:flex;flex-direction:column;overflow:hidden;position:relative;
   isolation:isolate;
   margin:auto;
+  transform-origin:center center;
+  will-change:transform;
 }
 /* 横屏模式：交换宽高 */
 .phone-shell.phone-landscape{

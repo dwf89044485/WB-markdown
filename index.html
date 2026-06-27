@@ -672,6 +672,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       }
     }
     buildGrid();
+    fitShellScale();
   }
 
   function clearPadResolutionOverrides() {
@@ -715,6 +716,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     if (btnPhone) { btnPhone.classList.toggle('is-active', !isPad); }
     if (btnPad)   { btnPad.classList.toggle('is-active', isPad); }
     buildGrid();
+    fitShellScale();
   }
 
   document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
@@ -738,12 +740,36 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
       this.querySelector('span').textContent = isLandscape ? '竖屏' : '横屏';
       this.setAttribute('aria-label', isLandscape ? '切换为竖屏' : '切换为横屏');
       buildGrid();
+      fitShellScale();
     });
   }
 
+  /* ── Shell 等比缩放适配可用区域 ────────────────── */
+  function fitShellScale() {
+    var shell = document.querySelector('.phone-shell');
+    if (!shell) return;
+    var leftArea = shell.parentElement;
+    if (!leftArea) return;
+    var padding = 24;
+    var availH = window.innerHeight - padding * 2;
+    var shellW = shell.offsetWidth;
+    var shellH = shell.offsetHeight;
+    var scale = Math.min(1, availH / shellH);
+    if (scale < 1) {
+      shell.style.transform = 'scale(' + scale + ')';
+      var scaledW = Math.ceil(shellW * scale);
+      var leftW = scaledW + PAD_MARGIN;
+      document.documentElement.style.setProperty('--layout-left-area-w', leftW + 'px');
+      document.documentElement.style.setProperty('--layout-min-w', (leftW + 884) + 'px');
+    } else {
+      shell.style.transform = '';
+    }
+  }
+
   buildGrid();
-  window.addEventListener('resize', buildGrid);
-  var ro = new ResizeObserver(buildGrid);
+  fitShellScale();
+  window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
+  var ro = new ResizeObserver(function() { buildGrid(); fitShellScale(); });
   var shell = document.querySelector('.phone-shell');
   if(shell) ro.observe(shell);
 

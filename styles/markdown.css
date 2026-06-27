@@ -405,9 +405,56 @@
   line-height:inherit;
   white-space:pre;
 }
-  color:var(--md-text-primary);
-  background:transparent;
+
+/* 代码块过长折叠：限高 280px ≈ 手机屏 1/3，超长加渐变遮罩 + 展开按钮 */
+.md .wb-card-body.is-collapsible{
+  position:relative;
 }
+.md .wb-card-body.is-collapsible.is-collapsed pre{
+  max-height:280px;
+  overflow:hidden;
+}
+.md .wb-card-body.is-collapsible.is-collapsed::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:80px;
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 75%);
+  pointer-events:none;
+  border-radius:0 0 10px 10px;
+}
+.md .wb-card-expand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  width:100%;
+  padding:10px 0 12px;
+  border:none;
+  background:transparent;
+  color:#1c1c1e;
+  font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+  z-index:1;
+}
+.md .wb-card-body.is-collapsible.is-collapsed .wb-card-expand{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:0 0 12px;
+}
+.md .wb-card-expand-icon{
+  display:inline-flex;
+  width:14px;
+  height:14px;
+  transition:transform .2s ease;
+}
+.md .wb-card-body.is-collapsible:not(.is-collapsed) .wb-card-expand-icon{
+  transform:rotate(180deg);
+}
+.md .wb-card-expand:hover{ color:#000; }
 
 .md .tbl-wrap{
   overflow-x:auto;
@@ -839,16 +886,6 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
               height .35s cubic-bezier(.32,.72,0,1),
               margin-top .35s cubic-bezier(.32,.72,0,1),
               margin-bottom .35s cubic-bezier(.32,.72,0,1);
-}
-@media (min-width:901px){
-  .layout-main .left-area > .phone-shell.tbl-landscape{
-    margin-top:0;
-    margin-bottom:0;
-  }
-}
-html.force-desktop .layout-main .left-area > .phone-shell.tbl-landscape{
-  margin-top:0;
-  margin-bottom:0;
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;

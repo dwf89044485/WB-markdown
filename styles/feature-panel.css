@@ -623,17 +623,11 @@
   border-radius: var(--aq-radius, 20px);
   background: transparent;
 }
-/* 5.1 升降循环：min-height 让 stage 占位（卡片是 absolute，否则塌陷为 0），
-   不设 overflow，shadow 完整可见。卡片 translateY(100%) 时仍会落到 stage
-   下方，但 opacity 同步为 0，不会留下视觉残影。 */
-.fp-motion-stage[data-motion-loop="rise-fall"] {
-  min-height: 480px;
-}
+/* 5.1 升降循环：卡片走普通流自然撑起 stage 高度，升降仅用 transform + opacity
+   驱动 —— transform 不影响布局占位，平移到 translateY(100%) 时 stage 不塌陷，
+   且不需要写死 min-height（避免顶部空白）。 */
 .fp-motion-stage[data-motion-loop="rise-fall"] > .ask-question-card {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  /* 占位走普通流；动画由 .ask-question-card 自身的 aq-loop-rise-fall 接管 */
 }
 /* 5.2 切题循环：padding 给 shadow 留容纳区，box-sizing:content-box 保证
    pane 宽度仍是 var(--aq-width)；overflow:hidden 只裁 content box 外的

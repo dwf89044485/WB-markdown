@@ -632,19 +632,15 @@
 /* 5.2 切题循环：padding 给 shadow 留容纳区，box-sizing:content-box 保证
    pane 宽度仍是 var(--aq-width)；overflow:hidden 只裁 content box 外的
    兄弟 pane，padding 区域不被裁，居中 pane 的 shadow 完整保留。 */
+/* 5.2 切题循环：高度由内部卡片自然撑起，不写死 height —— 与 5.1 保持一致。
+   padding 留给 box-shadow 容纳区（overflow:hidden 只裁 content box，padding
+   区域不被裁），box-sizing:content-box 保证卡片宽度仍是 var(--aq-width)。
+   滑切期间 runSlideTransition 内部会把 track height 同步为旧 body 高度，
+   stage 不需要参与。 */
 .fp-motion-stage--fixed {
   box-sizing: content-box;
   padding: 24px;
   overflow: hidden;
-  height: 540px;
-}
-.fp-motion-stage--fixed .aq-slide-track {
-  height: 100%;
-}
-.fp-motion-stage--fixed .aq-slide-track > div {
-  height: 100%;
-  /* 不写 overflow:hidden —— pane 内仅一张卡片，裁切只在外层 stage 完成；
-     裁 pane 会把卡片自己的 box-shadow 一并切掉（左右投影丢失）。 */
 }
 
 /* ── 原则指南专用组件 ────────────────────────────────────────── */

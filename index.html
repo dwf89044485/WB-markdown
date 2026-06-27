@@ -126,7 +126,7 @@
     一套按钮结构（class 驱动，见 styles/composer.css）：
       默认（无 class）              → 单行态：shell=row，.cp-body(占位文字) 与 .cp-bar(按钮栏) 同行
       .composer-shell.is-expanded   → 激活态：shell=column，.cp-body(textarea) 在上、.cp-bar 在下
-      .composer-shell.is-fullscreen → 全屏态（独立布局 .cp-fullscreen）
+      .composer-shell.is-fullscreen → 全屏态（CSS class 形变，同一套 DOM）
     关键：+/麦克风/发送/停止 全部在常驻的 .cp-bar 里，单行↔激活切换时按钮 DOM 不重建、不跳动。
       .cp-body 内容随状态切换（占位文字 ↔ textarea），按钮栏始终是同一组元素。
     右侧按钮三态：有内容→发送；生成中且无内容→停止；否则→（仅麦克风）。麦克风常驻。
@@ -136,6 +136,17 @@
     <!-- 全屏蒙层：全屏态压暗下方 navbar/对话区。始终在 DOM，opacity 控制显隐。 -->
     <div class="cp-fs-backdrop" id="cpFsBackdrop"></div>
     <div class="composer-shell" id="composerShell">
+
+      <!-- ── 全屏态顶部工具栏：默认隐藏，.is-fullscreen 时显示 ── -->
+      <div class="cp-fs-topbar">
+        <button class="cp-fs-clear" type="button" tabindex="-1">清空</button>
+        <button class="cp-fs-collapse" type="button" tabindex="-1" aria-label="缩小输入框">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#000" transform="matrix(-1 0 0 -1 14 7.5)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8828 4.8582 1.4903L1.1743 5.1743L0.3257 4.3257L4.0097 0.6418Q3.6173 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
+            <path fill="#000" transform="matrix(-1 0 0 -1 7.5 14)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6172 0.6418 4.0097L4.3257 0.3257L5.1743 1.1743L1.4903 4.8582Q1.8827 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- ── 内容区（激活态，设计稿 134804:2932）：chip(可选) + [textarea + 展开手柄] ── -->
       <div class="cp-body">
@@ -152,7 +163,7 @@
         </div>
       </div>
 
-      <!-- ── 常驻按钮栏（单行/激活共用，不重建）：[+] ...flex... [麦克风][发送/停止] ── -->
+      <!-- ── 常驻按钮栏（单行/激活/全屏共用，不重建）：[+] ...flex... [wb-more][麦克风][发送/停止] ── -->
       <div class="cp-bar">
         <button class="cp-tool-btn cp-plus-btn" type="button" tabindex="-1" aria-label="添加">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -162,6 +173,13 @@
         <!-- 单行态时占位文字在这里居中显示（激活态由 cp-body 接管，此处隐藏） -->
         <span class="cp-bar-placeholder">继续说出你的需求</span>
         <div class="cp-bar-right">
+          <!-- wb-more 胶囊：三态共用，始终在 cp-bar 里 -->
+          <button class="cp-wb-more-btn" type="button" tabindex="-1" aria-label="更多功能">
+            <img src="./icons/wb-more.svg" width="23" height="20" alt="">
+            <svg class="cp-wb-chevron" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L4 4L7 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
           <button class="cp-tool-btn cp-mic-btn" type="button" tabindex="-1" aria-label="语音输入">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M16.355 11.0551C16.8865 11.0552 17.2905 11.5386 17.1257 12.0439C16.2278 14.7938 13.7848 16.8429 10.8211 17.166V18.8294C10.8207 19.2892 10.4477 19.6634 9.98781 19.6635C9.52798 19.6635 9.15514 19.2899 9.15448 18.8302V17.1635C6.20224 16.8316 3.77055 14.786 2.87518 12.0439C2.71035 11.5386 3.11433 11.0552 3.64585 11.0551C4.0415 11.0551 4.37932 11.3302 4.51418 11.7021C5.32726 13.9462 7.47627 15.5506 10.0008 15.5506C12.5251 15.5502 14.6737 13.946 15.4867 11.7021C15.6215 11.3302 15.9594 11.0551 16.355 11.0551Z" fill="black" fill-opacity="0.86"/>
@@ -181,29 +199,6 @@
                 <rect width="14" height="14" rx="3" fill="white"/>
               </svg>
             </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ── 全屏态（独立布局） ───────── -->
-      <div class="cp-fullscreen" hidden>
-        <div class="cp-fs-topbar">
-          <button class="cp-fs-clear" type="button" tabindex="-1">清空</button>
-          <button class="cp-fs-collapse" type="button" tabindex="-1" aria-label="缩小输入框">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#000" transform="matrix(-1 0 0 -1 14 7.5)" d="M4.9 5.5L4.9 2.9794L4.9 2.959Q4.9 1.8828 4.8582 1.4903L1.1743 5.1743L0.3257 4.3257L4.0097 0.6418Q3.6173 0.6 2.541 0.6L2.5 0.6L0 0.6L0 -0.6L2.5 -0.6L2.541 -0.6Q3.7923 -0.6 4.235 -0.5396Q5.0399 -0.4297 5.4847 0.015Q5.9297 0.4598 6.0396 1.2649Q6.1 1.7076 6.1 2.959L6.1 2.9795L6.1 5.5L4.9 5.5Z" fill-rule="evenodd"/>
-              <path fill="#000" transform="matrix(-1 0 0 -1 7.5 14)" d="M0.6 0L0.6 2.5L0.6 2.541Q0.6 3.6172 0.6418 4.0097L4.3257 0.3257L5.1743 1.1743L1.4903 4.8582Q1.8827 4.9 2.959 4.9L3 4.9L5.5 4.9L5.5 6.1L3 6.1L2.959 6.1Q1.7077 6.1 1.265 6.0396Q0.4601 5.9297 0.0153 5.485Q-0.4297 5.0402 -0.5396 4.2351Q-0.6 3.7924 -0.6 2.541L-0.6 2.5L-0.6 0L0.6 0Z" fill-rule="evenodd"/>
-            </svg>
-          </button>
-        </div>
-        <div class="cp-fs-body">
-          <textarea class="cp-fs-textarea" rows="1" placeholder="安排任务，WorkBuddy 帮你完成"></textarea>
-        </div>
-        <div class="cp-fs-send-wrap">
-          <button class="cp-send-btn cp-fs-send" type="button" tabindex="-1" aria-label="发送">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M20 0C31.0457 0 40 8.9543 40 20C40 31.0457 31.0457 40 20 40C8.9543 40 0 31.0457 0 20C1.03081e-06 8.95431 8.95431 1.03088e-06 20 0ZM20.9121 10.0469C20.5583 9.26098 19.4418 9.261 19.0879 10.0469L12.084 25.6113C11.7066 26.4511 12.569 27.3118 13.4082 26.9326L19.5879 24.1396C19.8497 24.0213 20.1503 24.0213 20.4121 24.1396L26.5918 26.9326C27.431 27.3118 28.2928 26.4512 27.915 25.6113L20.9121 10.0469Z" fill="black" fill-opacity="0.86"/>
-            </svg>
           </button>
         </div>
       </div>

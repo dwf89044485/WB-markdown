@@ -281,20 +281,16 @@
   align-items:stretch;
   z-index:65;  /* 高于全屏蒙层(60)，确保白色卡片盖在蒙层之上 */
 }
-.composer-shell.is-fullscreen .cp-fullscreen{
-  flex-direction:column;
-  width:100%;
-  height:100%;
-  padding:10px 20px 20px;   /* 上10 左右20 下20 */
-}
-/* 顶部工具栏：清空 + 缩小按钮 */
+/* 全屏态顶部工具栏：默认隐藏，全屏时显示 */
 .cp-fs-topbar{
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:space-between;
   width:100%;
-  padding-bottom:4px;       /* pb-[4px] */
+  padding:10px 20px 4px;
+  flex-shrink:0;
 }
+.composer-shell.is-fullscreen .cp-fs-topbar{ display:flex; }
 .cp-fs-clear{
   font-size:14px;
   line-height:24px;
@@ -312,38 +308,63 @@
   border:none;background:none;cursor:pointer;
 }
 .cp-fs-collapse::after{ content:""; position:absolute; inset:-9px; }
-/* 正文区：撑满剩余高度 */
-.cp-fs-body{
+
+/* 全屏态：cp-body 撑满剩余高度，textarea 填满 cp-body */
+.composer-shell.is-fullscreen .cp-body{
+  display:flex;
   flex:1;
   overflow:hidden;
-  padding-top:4px;          /* pt-[4px] */
-  width:100%;
+  padding:4px 20px 0;
 }
-.cp-fs-textarea{
-  width:100%;
+.composer-shell.is-fullscreen .cp-text-row{
+  flex:1;
+  align-items:stretch;
+}
+.composer-shell.is-fullscreen .cp-textarea{
+  display:block;
+  flex:1;
   height:100%;
-  resize:none;
-  border:none;
-  outline:none;
-  background:transparent;
-  font-size:14px;
-  line-height:24px;         /* 全屏态行高 24px */
-  min-height:120px;         /* min-h-[120px] */
+  max-height:none;
   overflow-y:auto;
-  font-family:inherit;
+  font-size:14px;
+  line-height:24px;
+  min-height:120px;
   color:#1c1c1e;
-  padding:0;
 }
-.cp-fs-textarea::placeholder{ color:rgba(0,0,0,0.3); }
-/* 发送按钮：绝对定位右下角（容器 46×46，与激活态发送一致） */
-.cp-fs-send-wrap{
+/* 全屏态展开手柄不需要 */
+.composer-shell.is-fullscreen .cp-expand-handle{ display:none; }
+
+/* 全屏态：cp-bar 收到底部，发送按钮绝对定位右下角 */
+.composer-shell.is-fullscreen .cp-bar{
+  position:relative;
+  padding:5px 20px 20px;
+}
+/* 全屏态发送常显（覆盖默认 display:none）*/
+.composer-shell.is-fullscreen .cp-send-btn{ display:flex; }
+/* 全屏态发送绝对定位右下角 */
+.composer-shell.is-fullscreen .cp-bar-right{
   position:absolute;
   right:20px;
   bottom:20px;
-  width:46px;
-  height:46px;
 }
-/* 全屏态发送常显（覆盖 compact 态的 display:none）；尺寸继承 .cp-send-btn（46 容器 + 40 圆）。 */
-.cp-fs-send{
+
+/* ── wb-more 胶囊（三态共用）──────────────────────────────── */
+.cp-wb-more-btn{
   display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  background:#eff0f2;
+  border-radius:60px;
+  border:none;
+  cursor:pointer;
+  flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.cp-wb-more-btn:active{
+  opacity:0.7;
+}
+.cp-wb-chevron{
+  display:block;
+  flex-shrink:0;
 }

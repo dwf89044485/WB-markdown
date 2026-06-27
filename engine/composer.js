@@ -116,11 +116,7 @@ function enterFullScreen() {
   state.fullScreen = true;
   els.shell.classList.add('is-fullscreen');
   if (els.composer) els.composer.classList.add('cp-is-fullscreen');
-  // 同步文字到全屏 textarea
-  if (els.fsTextarea && els.textarea) {
-    els.fsTextarea.value = els.textarea.value;
-  }
-  requestAnimationFrame(() => { if (els.fsTextarea) els.fsTextarea.focus(); });
+  requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
 }
 
 function exitFullScreen() {
@@ -128,12 +124,6 @@ function exitFullScreen() {
   state.fullScreen = false;
   els.shell.classList.remove('is-fullscreen');
   if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
-  // 全屏文字同步回 compact
-  if (els.fsTextarea && els.textarea) {
-    els.textarea.value = els.fsTextarea.value;
-    syncHasContent();
-    syncLineCount();
-  }
   requestAnimationFrame(() => {
     measureHeight();
     if (els.textarea) els.textarea.focus();
@@ -203,16 +193,7 @@ function bindEvents() {
   if (fsClear) {
     fsClear.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      if (els.fsTextarea) els.fsTextarea.value = '';
       if (els.textarea) els.textarea.value = '';
-      syncHasContent();
-    });
-  }
-
-  // 全屏 textarea 输入 → 同步回主 textarea
-  if (els.fsTextarea) {
-    els.fsTextarea.addEventListener('input', () => {
-      if (els.textarea) els.textarea.value = els.fsTextarea.value;
       syncHasContent();
     });
   }
@@ -229,8 +210,6 @@ export function initComposer() {
     body: $('.cp-body', shell),
     bar: $('.cp-bar', shell),
     textarea: $('.cp-textarea', shell),
-    fullscreen: $('.cp-fullscreen', shell),
-    fsTextarea: $('.cp-fs-textarea', shell),
     chipMount: $('.cp-chip-mount', shell),
   };
   bindEvents();
@@ -262,7 +241,6 @@ export function setComposerChip(chip) {
 // 设置 textarea 文字
 export function setComposerText(text) {
   if (els.textarea) els.textarea.value = text || '';
-  if (els.fsTextarea) els.fsTextarea.value = text || '';
   syncHasContent();
   syncLineCount();
   measureHeight();

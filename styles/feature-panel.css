@@ -649,7 +649,8 @@
 }
 .fp-motion-stage--fixed .aq-slide-track > div {
   height: 100%;
-  overflow: hidden;
+  /* 不写 overflow:hidden —— pane 内仅一张卡片，裁切只在外层 stage 完成；
+     裁 pane 会把卡片自己的 box-shadow 一并切掉（左右投影丢失）。 */
 }
 
 /* ── 原则指南专用组件 ────────────────────────────────────────── */

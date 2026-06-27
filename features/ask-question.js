@@ -322,7 +322,7 @@ export default {
         <h3>5.1 面板升降</h3>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
-            <div class="fp-motion-stage fp-motion-stage--fixed" data-motion-loop="rise-fall">
+            <div class="fp-motion-stage" data-motion-loop="rise-fall">
               ${s.motionRiseFall}
             </div>
           </div>

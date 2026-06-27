@@ -34,6 +34,7 @@
 <div class="grid-overlay" aria-hidden="true"></div>
 <div class="layout-main">
 <div class="left-area">
+<div class="shell-viewport">
 <div class="phone-shell">
   <!-- Status Bar -->
   <div class="status-bar">
@@ -259,6 +260,7 @@
     </div>
   </div>
 </div> <!-- /phone-shell -->
+</div> <!-- /shell-viewport -->
 
 <button class="dc-toggle" id="dcToggle" aria-label="收起控制面板" title="收起控制面板">
   <img src="icons/open.svg" class="dc-toggle-open" alt="">
@@ -748,13 +750,17 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   function fitShellScale() {
     var shell = document.querySelector('.phone-shell');
     if (!shell) return;
+    var viewport = document.querySelector('.shell-viewport');
+    if (!viewport) return;
     var controls = document.querySelector('.demo-controls');
-    var controlsH = (controls && controls.classList.contains('is-expanded')) ? controls.offsetHeight : 0;
-    var padding = 24;
-    var availH = window.innerHeight - controlsH - padding * 2;
+
+    shell.style.transform = '';
+
+    var availW = viewport.clientWidth - 48;
+    var availH = viewport.clientHeight - 24;
     var shellW = shell.offsetWidth;
     var shellH = shell.offsetHeight;
-    var scale = Math.min(1, availH / shellH);
+    var scale = Math.min(1, availW / shellW, availH / shellH);
 
     if (scale < 0.85 && controls && controls.classList.contains('is-expanded')) {
       controls.classList.remove('is-expanded');
@@ -764,9 +770,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
         toggle.setAttribute('aria-label', '展开控制面板');
         toggle.setAttribute('title', '展开控制面板');
       }
-      controlsH = 0;
-      availH = window.innerHeight - padding * 2;
-      scale = Math.min(1, availH / shellH);
+      availH = viewport.clientHeight - 24;
+      scale = Math.min(1, availW / shellW, availH / shellH);
     }
 
     if (scale < 1) {
@@ -784,8 +789,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   fitShellScale();
   window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
   var ro = new ResizeObserver(function() { buildGrid(); fitShellScale(); });
-  var shell = document.querySelector('.phone-shell');
-  if(shell) ro.observe(shell);
+  var shellViewport = document.querySelector('.shell-viewport');
+  if(shellViewport) ro.observe(shellViewport);
 
   /* ── 控制面板展开/收起 ──────────────────────────── */
   var dcToggle = document.getElementById('dcToggle');

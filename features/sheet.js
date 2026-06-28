@@ -53,23 +53,33 @@ function getSnapshots() {
       frameCls: 'fp-show-overlay',
     }),
     // §2 构成：事件 Sheet 二级详情（从 scenario 真实帧数据获取）
-    anatomyDetail: renderStaticDetail(getDetailFromScenario()),
+    anatomyDetail: snap('anatomyDetail', {
+      state: 'collapsed',
+      body: renderStaticDetail(getDetailFromScenario()),
+      detailMode: true,
+      width: '393px',
+      height: '852px',
+      borderRadius: '0',
+      frameCls: 'fp-show-overlay',
+    }),
     // §2 构成：代码 Sheet（带遮罩）
     anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px', height: '852px', borderRadius: '0', frameCls: 'fp-show-overlay' }),
     // §3 状态对比：使用真实事件行数据展示折叠/展开效果
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',
       body: renderStaticEventSheet('F1.a,F1.b'),
-      width: '340px',
-      height: '850px',
+      width: '393px',
+      height: '852px',
       borderRadius: '0',
+      frameCls: 'fp-show-overlay',
     }),
     stateExpanded: snap('stateExpanded', {
       state: 'expanded',
       body: renderStaticEventSheet('F1.a,F1.b'),
-      width: '340px',
-      height: '850px',
+      width: '393px',
+      height: '852px',
       borderRadius: '0',
+      frameCls: 'fp-show-overlay',
     }),
     // §5 动效：进入循环（从底部升起）
     motionRiseFall: snap('motionRiseFall', {
@@ -77,9 +87,10 @@ function getSnapshots() {
       showClose: false,
       showOverlay: true,
       body: renderStaticEventSheet('F1.a,F1.b'),
-      width: '340px',
-      height: '850px',
+      width: '393px',
+      height: '852px',
       borderRadius: '0',
+      frameCls: 'fp-show-overlay',
     }),
     // §5 动效：展开循环（40% → 80%）
     motionExpand: snap('motionExpand', {
@@ -87,17 +98,18 @@ function getSnapshots() {
       showClose: false,
       showOverlay: false,
       body: renderStaticEventSheet('F1.a,F1.b'),
-      width: '340px',
-      height: '850px',
+      width: '393px',
+      height: '852px',
       borderRadius: '0',
     }),
     // §6 边界：空状态
     edgeEmpty: snap('edgeEmpty', {
       state: 'collapsed',
       body: renderStaticSheet([]),
-      width: '340px',
-      height: '850px',
+      width: '393px',
+      height: '852px',
       borderRadius: '0',
+      frameCls: 'fp-show-overlay',
     }),
   };
 }

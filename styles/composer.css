@@ -405,3 +405,8 @@
   display:block;
   flex-shrink:0;
 }
+
+/* 单行态隐藏 wb-more 胶囊；展开/全屏态显示（由 .is-expanded / .is-fullscreen 控制） */
+.composer-shell:not(.is-expanded) .cp-wb-more-btn {
+  display: none;
+}

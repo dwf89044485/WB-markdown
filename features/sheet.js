@@ -159,15 +159,15 @@ export default {
           <div class="fp-snapshot-side-desc">
             <h4>① 遮罩层（sheet-overlay）</h4>
             <blockquote>
-              <p>半透明黑色 0.30 + 高斯模糊 blur(3px)，z-index:200，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</p>
+              <p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</p>
             </blockquote>
             <h4>② 浮层主体（bottom-sheet）</h4>
             <blockquote>
-              <p>白底 #FAFAFA，顶部圆角 34px，高度按百分比切换：折叠 40% / 展开 80%。transform:translateY 驱动进出。</p>
+              <p>白底，顶部圆角，高度按百分比切换。transform 驱动进出。</p>
             </blockquote>
             <h4>③ 顶部栏（sheet-top）</h4>
             <blockquote>
-              <p>三段式布局：左侧 slot（sheet-top-start）、中央拖拽条（sheet-handle 72×6px）、右侧关闭按钮（sheet-top-end）。拖拽条是折叠/展开的核心操作入口。</p>
+              <p>三段式布局：左侧 slot（sheet-top-start）、中央拖拽条（sheet-handle）、右侧关闭按钮（sheet-top-end）。拖拽条是折叠/展开的核心操作入口。</p>
             </blockquote>
             <h4>④ 内容区（sheet-body）</h4>
             <blockquote>
@@ -185,11 +185,11 @@ export default {
           <div class="fp-snapshot-side-desc">
             <h4>① 遮罩层（code-sheet-overlay）</h4>
             <blockquote>
-              <p>半透明黑色 0.18，无高斯模糊，z-index:80。比事件 Sheet 更轻——代码查看是"专注阅读"场景，不需要强隔离感。</p>
+              <p>半透明遮罩，无高斯模糊。比事件 Sheet 更轻——代码查看是"专注阅读"场景，不需要强隔离感。</p>
             </blockquote>
             <h4>② 浮层主体（code-sheet-panel）</h4>
             <blockquote>
-              <p>白底 #fafafa，顶部圆角 30px，<strong>固定撑满到导航栏下方</strong>（top:54px），不按百分比切换高度。从底部 translateY(102%) 升起。</p>
+              <p>白底，顶部圆角，<strong>固定撑满到导航栏下方</strong>，不按百分比切换高度。从底部升起。</p>
             </blockquote>
             <h4>③ 顶部栏（code-sheet-header）</h4>
             <blockquote>
@@ -197,7 +197,7 @@ export default {
             </blockquote>
             <h4>④ 内容区（code-sheet-body）</h4>
             <blockquote>
-              <p>白底 + #e9ecf1 边框 + 圆角 16px，flex:1 撑满剩余空间。内部 pre 自带滚动，HTML 类型可用 iframe 预览。</p>
+              <p>白底 + 边框 + 圆角，撑满剩余空间。内部 pre 自带滚动，HTML 类型可用 iframe 预览。</p>
             </blockquote>
           </div>
         </div>
@@ -208,15 +208,14 @@ export default {
             <tr><th>对比项</th><th>事件 Sheet</th><th>代码 Sheet</th></tr>
           </thead>
           <tbody>
-            <tr><td>遮罩透明度</td><td>0.30 + blur(3px)</td><td>0.18，无模糊</td></tr>
-            <tr><td>z-index</td><td>200</td><td>80</td></tr>
-            <tr><td>高度策略</td><td>百分比切换（40% / 80%）</td><td>固定撑满（top:54px → bottom:0）</td></tr>
+            <tr><td>遮罩</td><td>半透明 + 高斯模糊</td><td>半透明，无模糊</td></tr>
+            <tr><td>高度策略</td><td>百分比切换（折叠 / 展开）</td><td>固定撑满到导航栏下方</td></tr>
             <tr><td>顶栏结构</td><td>三段式：slot + 拖拽条 + 关闭按钮</td><td>两端式：标题 + 玻璃胶囊按钮组</td></tr>
-            <tr><td>拖拽条</td><td>有（sheet-handle）</td><td>无</td></tr>
+            <tr><td>拖拽条</td><td>有</td><td>无</td></tr>
             <tr><td>拖拽折叠/展开</td><td>支持</td><td>不支持</td></tr>
             <tr><td>内容区容器</td><td>sheet-body（无独立边框）</td><td>code-sheet-body（白底 + 边框 + 圆角）</td></tr>
-            <tr><td>圆角</td><td>34px</td><td>30px</td></tr>
-            <tr><td>进出动画时长</td><td>0.36s</td><td>0.28s</td></tr>
+            <tr><td>圆角</td><td>有</td><td>有（略小）</td></tr>
+            <tr><td>进出动画</td><td>遮罩快、浮层慢（分层进场）</td><td>遮罩与面板同步（更轻快）</td></tr>
           </tbody>
         </table>
         <blockquote>

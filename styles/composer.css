@@ -151,7 +151,7 @@
   overflow:hidden;
   -webkit-tap-highlight-color:transparent;
 }
-/* 所有工具图标统一 20×20 */
+/* 所有工具图标统一 20×20，保持原始比例不拉伸 */
 .cp-tool-btn svg,
 .cp-tool-btn img,
 .cp-expand-handle img,
@@ -160,6 +160,7 @@
   height:20px;
   display:block;
   flex-shrink:0;
+  object-fit:contain;
 }
 /* 通用 press 态：撑满 46px 按钮 */
 .cp-tool-btn::after,

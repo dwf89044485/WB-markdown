@@ -77,21 +77,10 @@ function syncMoreButtonState() {
   if (!btn) return;
 
   const modelIcon = (btn.dataset.modelIcon || '').trim() || './icons/wb-more.svg';
-  const connectorIcon = (btn.dataset.connectorIcon || '').trim();
 
-  if (els.moreModelIcon) {
-    els.moreModelIcon.src = modelIcon;
+  if (els.moreIcon) {
+    els.moreIcon.src = modelIcon;
   }
-
-  if (els.moreConnectorIcon) {
-    if (connectorIcon) {
-      els.moreConnectorIcon.src = connectorIcon;
-    } else {
-      els.moreConnectorIcon.removeAttribute('src');
-    }
-  }
-
-  btn.classList.toggle('has-connector', !!connectorIcon);
 }
 
 // 测量激活态高度 → --cp-height。激活态 shell = .cp-body(含 textarea) + .cp-bar。
@@ -234,8 +223,7 @@ export function initComposer() {
     textarea: $('.cp-textarea', shell),
     chipMount: $('.cp-chip-mount', shell),
     moreBtn: $('.cp-wb-more-btn', shell),
-    moreModelIcon: $('.cp-wb-model-icon', shell),
-    moreConnectorIcon: $('.cp-wb-connector-icon', shell),
+    moreIcon: $('.cp-wb-icon', shell),
   };
   syncMoreButtonState();
   bindEvents();
@@ -264,15 +252,12 @@ export function setComposerChip(chip) {
   measureHeight();
 }
 
-// 设置 wb-more 按钮状态：默认显示模型图标；有 connectorIcon 时同时显示连接器图标
-export function setComposerMoreButtonState({ modelIcon, connectorIcon } = {}) {
+// 设置 wb-more 按钮主图标（Figma 10:4074 设计，静态指示器图标不再动态更换）
+export function setComposerMoreButtonState({ modelIcon } = {}) {
   if (!els.moreBtn) return;
 
   if (typeof modelIcon === 'string') {
     els.moreBtn.dataset.modelIcon = modelIcon;
-  }
-  if (typeof connectorIcon === 'string') {
-    els.moreBtn.dataset.connectorIcon = connectorIcon;
   }
 
   syncMoreButtonState();

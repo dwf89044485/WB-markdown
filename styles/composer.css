@@ -348,11 +348,11 @@
   bottom:20px;
 }
 
-/* ── wb-more 胶囊（三态共用）──────────────────────────────── */
+/* ── wb-more 胶囊（Figma 10:4074）────────────────────────── */
 .cp-wb-more-btn{
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:10px;
   padding:8px 14px;
   background:#eff0f2;
   border-radius:60px;
@@ -364,25 +364,21 @@
 .cp-wb-more-btn:active{
   opacity:0.7;
 }
-.cp-wb-icon-stack{
-  display:flex;
-  align-items:center;
-  gap:4px;
-}
-.cp-wb-model-icon,
-.cp-wb-connector-icon{
-  width:20px;
+.cp-wb-icon{
+  width:23px;
   height:20px;
   display:block;
-  border-radius:50%;
+  flex-shrink:0;
 }
-.cp-wb-connector-icon{
-  display:none;
+.cp-wb-separator{
+  width:0;
+  height:17px;
+  border-left:0.5px solid #868688;
+  flex-shrink:0;
 }
-.cp-wb-more-btn.has-connector .cp-wb-connector-icon{
-  display:block;
-}
-.cp-wb-chevron{
+.cp-wb-indicator{
+  width:18px;
+  height:18px;
   display:block;
   flex-shrink:0;
 }

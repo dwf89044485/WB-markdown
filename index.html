@@ -173,22 +173,17 @@
         <!-- 单行态时占位文字在这里居中显示（激活态由 cp-body 接管，此处隐藏） -->
         <span class="cp-bar-placeholder">继续说出你的需求</span>
         <div class="cp-bar-right">
-          <!-- wb-more 胶囊：三态共用，始终在 cp-bar 里 -->
+          <!-- wb-more 胶囊：Figma 设计稿 10:4074 -->
           <button
             class="cp-wb-more-btn"
             type="button"
             tabindex="-1"
             aria-label="更多功能"
             data-model-icon="./icons/wb-more.svg"
-            data-connector-icon=""
           >
-            <span class="cp-wb-icon-stack" aria-hidden="true">
-              <img class="cp-wb-model-icon" src="./icons/wb-more.svg" width="20" height="20" alt="">
-              <img class="cp-wb-connector-icon" width="20" height="20" alt="">
-            </span>
-            <svg class="cp-wb-chevron" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L4 4L7 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img class="cp-wb-icon" src="./icons/wb-more.svg" width="23" height="20" alt="" aria-hidden="true">
+            <span class="cp-wb-separator" aria-hidden="true"></span>
+            <img class="cp-wb-indicator" src="./icons/wb-more-indicator.svg" width="18" height="18" alt="" aria-hidden="true">
           </button>
           <button class="cp-tool-btn cp-add-btn" type="button" tabindex="-1" aria-label="添加">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -926,10 +926,6 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
   width:var(--layout-shell-h);
   height:var(--layout-shell-w);
   flex-shrink:0;
-  transition:width .35s cubic-bezier(.32,.72,0,1),
-              height .35s cubic-bezier(.32,.72,0,1),
-              margin-top .35s cubic-bezier(.32,.72,0,1),
-              margin-bottom .35s cubic-bezier(.32,.72,0,1);
 }
 .phone-shell.tbl-landscape .tbl-fullscreen-overlay{
   border-radius:0;

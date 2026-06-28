@@ -21,8 +21,8 @@ function snap(key, ...args) {
 }
 
 // ── 带 Sheet 外壳的快照 ────────────────────────
-const SHELL_W = '390px';
-const SHELL_H = '336px';
+const SHELL_W = '393px';
+const SHELL_H = '852px';
 function shellSnap(key, events, opts = {}) {
   const body = snap(key, events);
   return renderStaticSheetShell({
@@ -30,8 +30,9 @@ function shellSnap(key, events, opts = {}) {
     width: SHELL_W,
     height: SHELL_H,
     showClose: false,
-    showOverlay: false,
-    borderRadius: '12px',
+    showOverlay: true,
+    borderRadius: '0',
+    frameCls: 'fp-show-overlay',
     ...opts,
   });
 }
@@ -44,7 +45,17 @@ function sheetLabeled(label, events, opts = {}) {
 }
 
 function detailLabeled(label, detail) {
-  const html = renderStaticDetail(detail);
+  const body = renderStaticDetail(detail);
+  const html = renderStaticSheetShell({
+    body,
+    width: SHELL_W,
+    height: SHELL_H,
+    showClose: false,
+    showOverlay: true,
+    borderRadius: '0',
+    frameCls: 'fp-show-overlay',
+    detailMode: true,
+  });
   return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span></div><div class="fp-snapshot">${html}</div></div>`;
 }
 

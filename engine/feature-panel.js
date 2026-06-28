@@ -716,6 +716,27 @@ function constrainContentWidth(scrollEl, inner) {
     if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
   });
 
+  // 测量 fp-snapshot-trio（一二级 sheet + 说明区，三列并排）
+  const trios = inner.querySelectorAll('.fp-snapshot-trio');
+  trios.forEach((trio) => {
+    const children = trio.querySelectorAll(':scope > .fp-snapshot-wrap, :scope > .fp-snapshot-trio-desc');
+    if (children.length < 2) return;
+
+    const firstTop = children[0].offsetTop;
+    let sum = 0;
+    let visibleCount = 0;
+    children.forEach((c) => {
+      if (c.offsetTop === firstTop) {
+        sum += c.getBoundingClientRect().width;
+        visibleCount++;
+      }
+    });
+
+    const gap = parseInt(window.getComputedStyle(trio).columnGap) || 24;
+    const natural = sum + gap * (visibleCount - 1);
+    if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
+  });
+
   const targetWidth = Math.max(maxNatural, 840);
   inner.style.setProperty('--fp-max-content-width', targetWidth + 'px');
 }

@@ -449,10 +449,6 @@
   display:inline-flex;
   width:14px;
   height:14px;
-  transition:transform .2s ease;
-}
-.md .wb-card-body.is-collapsible:not(.is-collapsed) .wb-card-expand-icon{
-  transform:rotate(180deg);
 }
 .md .wb-card-expand:hover{ color:#000; }
 

@@ -39,8 +39,6 @@
 .sheet-overlay{
   position:absolute;inset:0;
   background:rgba(0,0,0,0.30);
-  backdrop-filter:blur(3px);
-  -webkit-backdrop-filter:blur(3px);
   z-index:200;
   display:none;opacity:0;
   transition:opacity 0.28s ease;
@@ -329,14 +327,14 @@
 .code-sheet-overlay.is-open{
   pointer-events:auto;
   display:flex;
+}
+.code-sheet-overlay.is-visible{
   opacity:1;
 }
 .code-sheet-backdrop{
   position:absolute;
   inset:0;
   background:rgba(0,0,0,0.30);
-  backdrop-filter:blur(3px);
-  -webkit-backdrop-filter:blur(3px);
 }
 .code-sheet-panel{
   position:relative;
@@ -352,7 +350,7 @@
   transition:transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
   box-shadow:0 4px 20px rgba(0,0,0,.1), 0 30px 64px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.08);
 }
-.code-sheet-overlay.is-open .code-sheet-panel{ transform:translateY(0); }
+.code-sheet-overlay.is-visible .code-sheet-panel{ transform:translateY(0); }
 
 /* 顶栏 */
 .code-sheet-header{

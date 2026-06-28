@@ -21,14 +21,14 @@ function snap(key, ...args) {
 }
 
 // ── 带 Sheet 外壳的快照 ────────────────────────
-const SHELL_W = '340px';
+const SHELL_W = '390px';
+const SHELL_H = '336px';
 function shellSnap(key, events, opts = {}) {
   const body = snap(key, events);
-  const isEmpty = !events || !events.length;
   return renderStaticSheetShell({
     body,
     width: SHELL_W,
-    height: isEmpty ? '120px' : 'auto',
+    height: SHELL_H,
     showClose: false,
     showOverlay: false,
     borderRadius: '12px',

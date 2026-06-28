@@ -194,3 +194,19 @@
 .approve-permission.ap-settled .ap-card.ap-entering {
   animation: none;
 }
+
+/* ── 文档面板 · 升降循环演示 ───────────────────────
+ * 总周期 3.55s = 升 0.3s + 停留 2s + 落 0.25s + 间隔 1s
+ * 时间百分比：升 8.45% / 停留至 64.79% / 落至 71.83% / 间隔至 100%
+ * 升起段沿用 cubic-bezier(0, 0, 0.2, 1)，落下段沿用 ease-in-out
+ */
+@keyframes ap-loop-rise-fall {
+  0%      { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+  8.45%   { opacity: 1; transform: translateY(0);    animation-timing-function: linear; }
+  64.79%  { opacity: 1; transform: translateY(0);    animation-timing-function: ease-in-out; }
+  71.83%  { opacity: 0; transform: translateY(100%); animation-timing-function: linear; }
+  100%    { opacity: 0; transform: translateY(100%); }
+}
+.fp-motion-stage[data-motion-loop="rise-fall-ap"] .ap-card {
+  animation: ap-loop-rise-fall 3.55s infinite;
+}

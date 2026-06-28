@@ -27,7 +27,6 @@
 // ============================================================
 
 const $ = (sel, root = document) => root.querySelector(sel);
-const { svgFromRegistry } = await import('./engine/icons.js');
 
 // ── 内部状态（DOM 是真相源，state 仅缓存计算值）────────────
 const state = {
@@ -77,10 +76,25 @@ function syncMoreButtonState() {
   const btn = els.moreBtn;
   if (!btn) return;
 
+  // data-model-icon 存路径如 "./icons/more.svg"，取文件名作为 icons-inline.js 的 key
   const raw = (btn.dataset.modelIcon || '').trim() || './icons/more.svg';
+  const key = raw.split('/').pop();
 
-  if (els.moreIcon) {
-    els.moreIcon.src = raw;
+  const ICONS = window.WORKBUDDY_INLINE_ICONS || {};
+  const svgStr = ICONS[key];
+  if (!svgStr) return;
+
+  // .cp-wb-icon 已被 initComposerIcons 替换为 inline SVG，每次重新查找
+  const current = btn.querySelector('.cp-wb-icon');
+  if (!current) return;
+
+  const t = document.createElement('div');
+  t.innerHTML = svgStr;
+  const svg = t.firstChild;
+  if (svg) {
+    svg.setAttribute('class', 'cp-wb-icon');
+    svg.setAttribute('aria-hidden', 'true');
+    current.replaceWith(svg);
   }
 }
 
@@ -224,7 +238,6 @@ export function initComposer() {
     textarea: $('.cp-textarea', shell),
     chipMount: $('.cp-chip-mount', shell),
     moreBtn: $('.cp-wb-more-btn', shell),
-    moreIcon: $('.cp-wb-icon', shell),
   };
   initComposerIcons(shell);
   syncMoreButtonState();
@@ -238,6 +251,7 @@ function initComposerIcons(shell) {
     ['.cp-fs-collapse', 'wb-minimize.svg'],
     ['.cp-expand-handle', 'wb-maximize.svg'],
     ['.cp-voice-btn', 'voice.svg'],
+    ['.cp-wb-icon', 'more.svg'],
     ['.cp-wb-indicator', 'wb-more-indicator.svg'],
   ];
   for (const [sel, key] of mapping) {
@@ -251,6 +265,7 @@ function initComposerIcons(shell) {
     t.innerHTML = svgStr;
     const svg = t.firstChild;
     if (svg) {
+      svg.setAttribute('class', img.getAttribute('class') || '');
       svg.setAttribute('aria-hidden', 'true');
       img.replaceWith(svg);
     }

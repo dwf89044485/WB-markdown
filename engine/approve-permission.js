@@ -21,11 +21,14 @@ function renderApCard(data, options = {}) {
       </div>`;
   }).join('');
 
+  const warningHtml = data.warning
+    ? `<div class="ap-warning-line">${escapeApHtml(data.warning)}</div>`
+    : '';
   return `
     <div class="ap-card${isStatic ? ' ap-static' : ''}">
       <div class="ap-head">
         <div class="ap-title">${escapeApHtml(data.title)}</div>
-        <div class="ap-warning-line">${escapeApHtml(data.warning)}</div>
+        ${warningHtml}
       </div>
       <div class="ap-desc-wrap">
         <div class="ap-desc-line">${escapeApHtml(data.description)}</div>

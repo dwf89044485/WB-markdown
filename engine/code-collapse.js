@@ -1,6 +1,6 @@
 // engine/code-collapse.js
 // 代码块过长折叠：渲染后探测 pre.scrollHeight > 280 → 保留折叠态；否则去掉折叠 class 显示完整内容
-// 点展开/收起按钮切换 .is-collapsed
+// 「查看全部」按钮的点击拉起二级 sheet，由 code-fullscreen-sheet.js 接管
 
 const COLLAPSE_THRESHOLD = 280; // px，约屏幕 1/3
 
@@ -22,14 +22,6 @@ function evaluateCollapse(body) {
   // 超长 → 恢复初始折叠态
   if (wasCollapsed) body.classList.add('is-collapsed');
   else body.classList.add('is-collapsed');
-  // 同步按钮文案
-  syncBtnLabel(body);
-}
-
-function syncBtnLabel(body) {
-  const btn = body.querySelector('.wb-card-expand .wb-card-expand-label');
-  if (!btn) return;
-  btn.textContent = body.classList.contains('is-collapsed') ? '展开' : '收起';
 }
 
 // 评估页面上所有未处理的代码块卡片
@@ -37,15 +29,7 @@ function evaluateAll() {
   document.querySelectorAll('.wb-card-body.is-collapsible').forEach(evaluateCollapse);
 }
 
-// 点击切换
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.wb-card-expand');
-  if (!btn) return;
-  const body = btn.closest('.wb-card-body');
-  if (!body) return;
-  body.classList.toggle('is-collapsed');
-  syncBtnLabel(body);
-});
+// 点击切换 — 已移除，由 code-fullscreen-sheet.js 的 capture 监听接管
 
 // 初始：DOM 就绪后扫一次
 if (document.readyState === 'loading') {

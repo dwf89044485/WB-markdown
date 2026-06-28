@@ -68,7 +68,7 @@ function getSnapshots() {
     anatomyEvent: snap('anatomyEvent', {
       state: 'collapsed',
       body: todoBody,
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
@@ -77,24 +77,24 @@ function getSnapshots() {
       state: 'collapsed',
       body: renderStaticDetail(SHEET_DETAIL),
       detailMode: true,
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
     // §2 构成：代码 Sheet（带遮罩）
-    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '390px', height: '850px', borderRadius: '0' }),
+    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '340px', height: '850px', borderRadius: '0' }),
     // §3 状态对比
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',
       body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">40% · 内容超限被裁剪</div>',
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
     stateExpanded: snap('stateExpanded', {
       state: 'expanded',
       body: '<div class="sheet-empty" style="padding:50px 20px;text-align:center;color:#86868b;font-size:13px">80% · 内容可滚动</div>',
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
@@ -104,7 +104,7 @@ function getSnapshots() {
       showClose: false,
       showOverlay: true,
       body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">底部浮层升起</div>',
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
@@ -114,7 +114,7 @@ function getSnapshots() {
       showClose: false,
       showOverlay: false,
       body: '<div class="sheet-empty" style="padding:40px 20px;text-align:center;color:#86868b;font-size:13px">上拖展开</div>',
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
@@ -122,7 +122,7 @@ function getSnapshots() {
     edgeEmpty: snap('edgeEmpty', {
       state: 'collapsed',
       body: '<div class="sheet-empty">当前状态暂无新增事件。</div>',
-      width: '390px',
+      width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
@@ -259,7 +259,7 @@ export default {
 
         <h3>3.2 拖拽状态机</h3>
         <p>拖拽是事件 Sheet 最核心的交互，用户通过拖拽在折叠/展开之间切换，或直接下拉关闭。代码 Sheet 无拖拽条，不参与此交互。拖拽逻辑采用<strong>双向滞后阈值</strong>，避免在临界点反复抖动。</p>
-        <div class="fp-snapshot-row">
+        <div class="fp-snapshot-row fp-snapshot-row--eq-height">
           <div class="fp-snapshot-wrap">
             <div class="fp-motion-diagram" style="border:1px solid #e9ecf1;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px">
               <div class="fp-motion-state" data-state="collapsed">
@@ -274,29 +274,15 @@ export default {
             </div>
           </div>
           <div class="fp-snapshot-wrap">
-            <table>
-              <thead>
-                <tr><th>当前状态</th><th>手势</th><th>结果</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>40%</td><td>上拖</td><td>面板跟随手指升高，松手后按吸附阈值决定 40% 或 80%</td></tr>
-                <tr><td>40%</td><td>下拖 > 40px</td><td>直接关闭 sheet</td></tr>
-                <tr><td>40%</td><td>轻点/短拖</td><td>松手吸附回 40%</td></tr>
-                <tr><td>80% + 内容在顶部</td><td>下拖</td><td>面板跟随手指降低，松手后按吸附阈值决定 40% 或 80%</td></tr>
-                <tr><td>80% + 内容在顶部</td><td>上拖</td><td>释放拖拽，内容向上滚动</td></tr>
-                <tr><td>80% + 内容不在顶部</td><td>任意方向</td><td>不拦截，走原生滚动</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="fp-snapshot-wrap">
-            <h4>吸附阈值（双向滞后）</h4>
+            <h4>拖拽逻辑</h4>
             <blockquote>
-              <p>松手后，面板根据当前拖拽到达的高度百分比决定最终落点：</p>
+              <p>拖拽实时跟手，松手后按<strong>双向滞后阈值</strong>决定落点：</p>
               <ul>
-                <li><strong>从 40% 拉起</strong>：松手时高度 ≥ 50% → 展开到 80%；否则吸附回 40%</li>
-                <li><strong>从 80% 拉下</strong>：松手时高度 < 75% → 折叠到 40%；否则吸附回 80%</li>
+                <li>40% 态上拖，松手 ≥ 50% → 展开到 80%；下拖 > 40px → 关闭</li>
+                <li>80% 态下拖（内容在顶），松手 < 75% → 折叠到 40%</li>
+                <li>80% 态内容不在顶部时，拖拽不拦截，走原生滚动</li>
               </ul>
-              <p>两个阈值不对称（50% vs 75%），制造<strong>滞后带</strong>：用户需要"明确地"拖过中点才会切换状态，避免在临界区域反复弹跳。</p>
+              <p>滞后带（50%~75%）防止临界区域反复弹跳。</p>
             </blockquote>
           </div>
         </div>

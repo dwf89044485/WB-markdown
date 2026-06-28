@@ -432,6 +432,12 @@ export function renderStaticDetail(detail) {
 //
 // opts.state:      'collapsed'(40%) | 'expanded'(80%)
 // opts.body:       sheet-body 内部 HTML（可选，默认空）
+// renderStaticSheetShell — 渲染静态 Sheet 外壳（用于 Feature Panel 快照）
+// ⚠️ 快照尺寸由各 feature 通过 opts.width / opts.height 自行控制
+// ⚠️ 禁止在 CSS 中用 !important 全局覆盖 .fp-sheet-shell-frame 的 width / height
+//
+// opts.state:      展开状态 'collapsed' | 'expanded'（默认 'collapsed'）
+// opts.body:       sheet-body 内部 HTML 内容
 // opts.showClose:  是否显示关闭按钮（默认 true）
 // opts.showOverlay:是否显示遮罩背景（默认 true）
 // opts.frameCls:   外层容器额外 class（用于动效场景注入 data-motion-loop）

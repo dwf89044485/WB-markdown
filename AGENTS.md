@@ -32,6 +32,7 @@
 | 7 | 剧本数据 → 只改 `scenario.js`，不写进 HTML | — |
 | 8 | commit → 每完成一件事立即提交，不等用户说 | — |
 | 9 | `git reset` → 只能用 `--keep`，禁止用 `--hard` | `git reset --hard HEAD~1` |
+| 10 | Feature Panel 快照尺寸 → 由各 `features/<id>.js` 通过 `opts.width/height` 自行控制，禁止在 CSS 中用 `!important` 全局覆盖 | `.fp-snapshot .fp-sheet-shell-frame { width: 390px !important; }` |
 
 ---
 

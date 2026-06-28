@@ -155,17 +155,22 @@ function openSheet(card, opts = {}) {
   renderActions(card, kind, currentState);
   renderBody(card, kind, currentState);
 
+  // 两步走：先 display:flex 进入 DOM 流，再触发 transition
   overlay.classList.add('is-open');
   overlay.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.classList.add('is-visible');
+  }));
 }
 
 function closeSheet() {
   if (!overlay) return;
-  overlay.classList.remove('is-open');
+  overlay.classList.remove('is-visible');
   overlay.setAttribute('aria-hidden', 'true');
-  // 释放内容（避免 iframe 占用）
+  // 等 transition 结束后再隐藏 DOM
   setTimeout(() => {
-    if (!overlay.classList.contains('is-open')) {
+    if (!overlay.classList.contains('is-visible')) {
+      overlay.classList.remove('is-open');
       bodySlot.innerHTML = '';
       currentState = null;
     }
@@ -277,7 +282,7 @@ export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code', pan
   }
 
   // ── 拼装与 index.html #codeSheet 完全一致的 DOM 结构 ──
-  return `<div class="code-sheet-overlay is-open fp-static">
+  return `<div class="code-sheet-overlay is-open is-visible fp-static">
   <div class="code-sheet-backdrop" data-code-sheet-close></div>
   <div class="code-sheet-panel">
     <header class="code-sheet-header">
@@ -364,7 +369,7 @@ export function renderStaticCodeSheetShell(opts = {}) {
   const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode, panelOnly: true });
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   return `<div class="fp-sheet-shell-frame" style="width:${width};height:${height};${radiusStyle}">
-    <div class="code-sheet-overlay is-open fp-static">
+    <div class="code-sheet-overlay is-open is-visible fp-static">
       <div class="code-sheet-backdrop" data-code-sheet-close></div>
       ${inner}
     </div>

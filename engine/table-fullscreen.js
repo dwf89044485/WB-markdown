@@ -233,3 +233,40 @@ document.addEventListener('click', function(e) {
     copyText(text);
   }
 });
+
+/* ─────────────────────────────────────────────────────────
+ * 静态渲染导出 — 供 Feature Panel 快照复用
+ * 原则：class 结构与 index.html #tblOverlay 完全一致，
+ * 按钮 disabled，不生成 id，不绑定事件。
+ * 复用上方 FS_COPY / FS_IMAGE / FS_SHARE 图标常量。
+ * ───────────────────────────────────────────────────────── */
+export function renderStaticTableFullscreen({ title, bodyHtml, type = 'table', contentOnly = false }) {
+  const resolvedTitle = title || (type === 'mermaid' ? 'Mermaid' : '表格');
+  const inner = `<div class="tbl-fs-nav">
+    <button class="tbl-fs-back" aria-label="返回" disabled>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="tbl-fs-title">${escapeHtmlFs(resolvedTitle)}</div>
+    <div class="tbl-fs-actions">
+      <button class="tbl-fs-btn" data-action="copy" aria-label="复制" disabled>${FS_COPY || COPY_SVG}</button>
+      <button class="tbl-fs-btn" data-action="save-image" aria-label="保存图片" disabled>${FS_IMAGE}</button>
+      <button class="tbl-fs-btn" data-action="share" aria-label="分享" disabled>${FS_SHARE}</button>
+    </div>
+  </div>
+  <div class="tbl-fs-content md">${bodyHtml}</div>`;
+
+  if (contentOnly) {
+    return `<div class="tbl-fs-inner fp-static">${inner}</div>`;
+  }
+
+  return `<div class="tbl-fullscreen-overlay is-active fp-static">${inner}</div>`;
+}
+
+function escapeHtmlFs(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}

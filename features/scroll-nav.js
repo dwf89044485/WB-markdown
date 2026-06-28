@@ -37,15 +37,16 @@ function getSnapshots() {
 }
 
 // 辅助：带标签的快照块
-function labeled(label, html, desc) {
+function labeled(label, html, desc, width) {
   const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml;
-  return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
+  const widthAttr = width ? ` style="width:${width}px"` : '';
+  return `<div class="fp-snapshot-wrap"${widthAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
 }
 
 // 辅助：并排快照
 function labeledRow(items) {
-  return `<div class="fp-snapshot-row">${items.map(i => labeled(i.label, i.html, i.desc)).join('')}</div>`;
+  return `<div class="fp-snapshot-row">${items.map(i => labeled(i.label, i.html, i.desc, i.width)).join('')}</div>`;
 }
 
 // 实际锚点目标：nodeIndex 2（含多轮对话，滚动按钮可见）
@@ -147,7 +148,7 @@ export default {
         <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转顶部"。</p>
 
         <div class="fp-snapshot-row">
-          ${labeled('首次双击 ↑<br>教学提示出现', s.tooltipUp, '提示 2.5s 后自动淡出')}
+          ${labeled('双击', s.tooltipUp, '出现教学提示，2.5s 后自动淡出', 260.114)}
         </div>
 
         <h3>3.2 ↓ 向下按钮</h3>
@@ -162,7 +163,7 @@ export default {
         <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转底部"。</p>
 
         <div class="fp-snapshot-row">
-          ${labeled('首次双击 ↓<br>教学提示出现', s.tooltipDown)}
+          ${labeled('双击', s.tooltipDown, '', 260.109)}
         </div>
 
         <h3>3.3 滚动保护</h3>

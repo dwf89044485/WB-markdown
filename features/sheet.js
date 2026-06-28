@@ -7,7 +7,7 @@
 //       改左边 sheet 样式 → 右边文档自动同步
 // ============================================================
 
-import { renderStaticSheetShell } from '../engine/sheet.js';
+import { renderStaticSheetShell, renderEvent, renderTodo } from '../engine/sheet.js';
 import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
@@ -17,16 +17,26 @@ function snap(key, opts) {
   return snapCache[key];
 }
 
-// ── 创建代办 sheet 样本内容 ──
-const TODO_BODY = [
-  '<div class="s-row tool-todo"><div class="s-ico"><div class="s-ico-img"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#E8F5E9"/><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke="#4CAF50"/><path d="M4.5 8L7 10.5L11.5 5.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="s-content"><div class="s-line"><span class="s-text">创建待办清单</span><span class="s-text dim">已完成</span></div></div></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width=".src"/><path d="M4 7L6.5 9.5L10.5 4.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="s-sub-txt">制定本周工作计划</span></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width=".src"/><path d="M4 7L6.5 9.5L10.5 4.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="s-sub-txt">整理项目文档</span></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#FFF9C4" stroke="#F9A825" stroke-width=".src"/><circle cx="7" cy="7" r="2" fill="#F9A825"/></svg></div><span class="s-sub-txt active">准备演示材料</span></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">安排团队周会</span></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">回复客户邮件</span></div>',
-  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">更新项目进度看板</span></div>',
-].join('');
+// ── 创建代办 sheet 样本（复用 Demo 真实渲染函数）──
+function renderTodoBody() {
+  const eventHtml = renderEvent({
+    text: '创建待办清单',
+    dim: '已完成',
+    icon: 'wb-todo.svg',
+  }).outerHTML;
+
+  const todos = [
+    { text: '制定本周工作计划', status: 'done' },
+    { text: '整理项目文档', status: 'done' },
+    { text: '准备演示材料', status: 'active' },
+    { text: '安排团队周会', status: 'todo' },
+    { text: '回复客户邮件', status: 'todo' },
+    { text: '更新项目进度看板', status: 'todo' },
+  ];
+  const todoHtml = todos.map(t => renderTodo(t).outerHTML).join('');
+
+  return eventHtml + todoHtml;
+}
 
 // ── Code sheet 样本 ──
 const CODE_SAMPLE = `// 计算当日营养摄入汇总
@@ -42,11 +52,12 @@ function calcDailyNutrition(data) {
 }`;
 
 function getSnapshots() {
+  const todoBody = renderTodoBody();
   return {
     // §2 构成：事件 Sheet（创建代办示例）
     anatomyEvent: snap('anatomyEvent', {
       state: 'collapsed',
-      body: TODO_BODY,
+      body: todoBody,
       width: '390px',
       height: '850px',
       borderRadius: '0',

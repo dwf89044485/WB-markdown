@@ -6,6 +6,45 @@
 // ============================================================
 // SCROLL NAV — Quick-scroll buttons (↑ ↓) for turn-by-turn navigation
 // ============================================================
+// ── 静态渲染（供 features/scroll-nav.js 的快照调用）────────
+// 选项：upVisible / downVisible / upAppearing / downAppearing / tooltip
+//   tooltip: null | { on: 'up'|'down', text: string }
+export function renderStaticScrollNav(opts = {}) {
+  const {
+    upVisible = true,
+    downVisible = true,
+    upAppearing = false,
+    downAppearing = false,
+    tooltip = null,
+  } = opts;
+
+  const upClass = [
+    'scroll-nav-btn',
+    !upVisible ? 'is-hidden' : '',
+    upAppearing ? 'is-appearing' : '',
+  ].filter(Boolean).join(' ');
+
+  const downClass = [
+    'scroll-nav-btn',
+    !downVisible ? 'is-hidden' : '',
+    downAppearing ? 'is-appearing' : '',
+  ].filter(Boolean).join(' ');
+
+  const upSVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9247 6.5757L9.83887 2.49L9.81957 2.4706C9.41991 2.07093 9.1374 1.80827 8.97207 1.6826C8.64881 1.437 8.32494 1.3142 8.00047 1.3142C7.67594 1.3142 7.35204 1.437 7.02877 1.6826C6.86344 1.80827 6.58094 2.07093 6.18127 2.4706L6.16197 2.49L2.07617 6.5757L2.92467 7.4243L7.01047 3.3385L7.02977 3.3192C7.1673 3.1816 7.29084 3.06167 7.40037 2.9594V14H8.60047V2.9594C8.71001 3.06167 8.83354 3.1816 8.97107 3.3192L8.98067 3.3288L8.99037 3.3385L13.0762 7.4243L13.9247 6.5757Z" fill="black"/></svg>';
+  const downSVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9247 9.42429L9.83887 13.51L9.81957 13.5294C9.41991 13.9291 9.1374 14.1917 8.97207 14.3174C8.64881 14.563 8.32494 14.6858 8.00047 14.6858C7.67594 14.6858 7.35204 14.563 7.02877 14.3174C6.86344 14.1917 6.58094 13.9291 6.18127 13.5294L6.16197 13.51L2.07617 9.42429L2.92467 8.57579L7.01047 12.6615L7.02977 12.6809C7.1673 12.8184 7.29084 12.9383 7.40037 13.0406L7.40037 1.99999L8.60047 1.99999L8.60047 13.0406C8.71001 12.9383 8.83354 12.8184 8.97107 12.6809L8.98067 12.6712L8.99037 12.6615L13.0762 8.57579L13.9247 9.42429Z" fill="black"/></svg>';
+
+  const tooltipHTML = tooltip
+    ? `<div class="sn-tooltip" style="opacity:1;animation:none">${tooltip.text}</div>`
+    : '';
+
+  const navClass = (!upVisible && !downVisible) ? 'scroll-nav is-hidden' : 'scroll-nav';
+
+  return `
+    <div class="${navClass}" style="position:relative;height:auto;padding:20px 0;overflow:visible;pointer-events:auto;z-index:auto">
+      <button class="${upClass}" type="button" aria-label="上一条用户消息" style="position:relative;display:${upVisible ? 'flex' : 'none'};margin-left:auto;margin-bottom:8px;opacity:${upAppearing ? 0 : 1}">${upSVG}${tooltip && tooltip.on === 'up' ? tooltipHTML : ''}</button>
+      <button class="${downClass}" type="button" aria-label="下一条用户消息" style="position:relative;display:${downVisible ? 'flex' : 'none'};margin-left:auto;opacity:${downAppearing ? 0 : 1}">${downSVG}${tooltip && tooltip.on === 'down' ? tooltipHTML : ''}</button>
+    </div>`;
+}
 
 const SN = {
   turns: [],           // [{ userMsg, agentMsg }]

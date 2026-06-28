@@ -68,6 +68,12 @@
 }
 .sheet-overlay.show .bottom-sheet{transform:translateY(0);}
 
+/* ── AUTO HEIGHT — 内容撑开高度（用于 Feature Panel 快照）── */
+.bottom-sheet.auto-height{
+  height:auto !important;
+  min-height:0 !important;
+}
+
 /* ── CODE VARIANT — 代码 Sheet 覆盖样式 ──────────────────── */
 .bottom-sheet.code-variant{
   height:80% !important;
@@ -340,6 +346,8 @@
   justify-content:space-between;
   width:100%;
   flex-shrink:0;
+  border-bottom:1px solid #E9ECF1;
+  padding-bottom:12px;
 }
 .bottom-sheet.code-variant .code-sheet-left{
   display:flex;
@@ -440,9 +448,6 @@
 /* 内容区 */
 .bottom-sheet.code-variant .code-sheet-body{
   flex:1 1 0;
-  background:#fff;
-  border:1px solid #e9ecf1;
-  border-radius:16px;
   overflow:hidden;
   position:relative;
   min-height:0;

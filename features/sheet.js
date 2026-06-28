@@ -65,24 +65,17 @@ function getSnapshots() {
   const todoBody = renderTodoBody();
   return {
     // §2 构成：事件 Sheet（创建代办示例）
+    // autoHeight 让 sheet 高度由内容自然撑开，像 ask-question 一样展示组件本身
     anatomyEvent: snap('anatomyEvent', {
-      state: 'collapsed',
+      autoHeight: true,
       body: todoBody,
-      width: '340px',
-      height: '850px',
+      width: '320px',
       borderRadius: '0',
     }),
-    // §2 构成：事件 Sheet 二级详情
-    anatomyDetail: snap('anatomyDetail', {
-      state: 'collapsed',
-      body: renderStaticDetail(SHEET_DETAIL),
-      detailMode: true,
-      width: '340px',
-      height: '850px',
-      borderRadius: '0',
-    }),
+    // §2 构成：事件 Sheet 二级详情（作为附件对照展示）
+    anatomyDetail: renderStaticDetail(SHEET_DETAIL),
     // §2 构成：代码 Sheet（带遮罩）
-    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '340px', height: '850px', borderRadius: '0' }),
+    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px' }),
     // §3 状态对比
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',
@@ -170,22 +163,23 @@ export default {
         <p>项目中有两种 Sheet，分别承载不同类型的内容，在结构上有明显差异。<strong>事件 Sheet</strong>用于展示 Agent 执行过程中的事件行、待办列表等过程信息；<strong>代码 Sheet</strong>用于展示代码块全屏查看时的完整代码。两者共享"从底部升起"的动效语言，但 DOM 结构、高度策略、顶栏布局完全不同。</p>
 
         <h3>2.1 事件 Sheet</h3>
-        <div class="fp-snapshot-trio">
+        <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
-            <span class="tag">一级 Sheet · 创建代办</span>
+            <span class="tag">事件 Sheet · 创建代办</span>
             <div class="fp-snapshot">${s.anatomyEvent}</div>
           </div>
-          <div class="fp-snapshot-wrap">
-            <span class="tag">二级 Sheet · 详情</span>
-            <div class="fp-snapshot">${s.anatomyDetail}</div>
-          </div>
-          <div class="fp-snapshot-trio-desc">
-            <h4>遮罩区</h4>
-            <blockquote><p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。一二级 Sheet 共用同一遮罩层，切换时不闪动。</p></blockquote>
-            <h4>浮层顶部栏</h4>
+          <div class="fp-snapshot-side-desc">
+            <h4>① 遮罩区</h4>
+            <blockquote><p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</p></blockquote>
+            <h4>② 浮层顶部栏</h4>
             <blockquote><p>三段式布局：左侧 slot、中央拖拽条、右侧关闭按钮。一级 Sheet 左侧空置，二级 Sheet 左侧有返回按钮。</p></blockquote>
-            <h4>内容区</h4>
+            <h4>③ 内容区</h4>
             <blockquote><p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p></blockquote>
+            <p style="margin-top:16px;font-size:13px;color:#86868b">← 左图含遮罩层。二级 Sheet 的详情卡片见下图对照：</p>
+            <div class="fp-snapshot-detail-ref">
+              <span class="tag" style="margin:8px 0">二级 Sheet · 详情卡片</span>
+              <div class="fp-snapshot">${s.anatomyDetail}</div>
+            </div>
           </div>
         </div>
 

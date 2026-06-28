@@ -1546,10 +1546,10 @@
 }
 
 /* 快照内 bottom-sheet 的高度由 state class 控制，不受父级百分比影响 */
-.fp-sheet-shell-frame .bottom-sheet:not(.auto-height) {
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height):not(.code-variant) {
   height: 40% !important;
 }
-.fp-sheet-shell-frame .bottom-sheet:not(.auto-height).expanded {
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height).expanded:not(.code-variant) {
   height: 80% !important;
 }
 

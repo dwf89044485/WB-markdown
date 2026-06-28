@@ -200,6 +200,17 @@ document.addEventListener('click', (e) => {
   openSheet(card, { htmlMode: 'preview' });
 }, true);
 
+// 「查看全部」按钮：超长代码块折叠区底部按钮 — 拉起二级 sheet
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.wb-card-expand');
+  if (!btn) return;
+  const card = btn.closest('.tbl-outer');
+  if (!card) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openSheet(card);
+}, true);
+
 // Sheet 内按钮
 overlay && overlay.addEventListener('click', (e) => {
   const closer = e.target.closest('[data-code-sheet-close]');
@@ -231,3 +242,128 @@ overlay && overlay.addEventListener('click', (e) => {
   }
   // run / save-image：占位（后续实现）
 });
+
+/* ─────────────────────────────────────────────────────────
+ * 静态渲染导出 — 供 Feature Panel 快照复用
+ * 原则：class 结构与 live 版本完全一致，按钮 disabled，
+ * 外层不生成 data-action / id 属性，不绑定事件。
+ * 复用上方已有的 renderLeft / renderActions / renderBody 逻辑，
+ * 只是把结果拼成 HTML 字符串返回（而非写入 DOM slot）。
+ * ───────────────────────────────────────────────────────── */
+export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
+  const resolvedKind = kind || resolveKindByLang(lang);
+  const langClass = lang || '';
+  const state = { code, langClass, htmlMode, kind: resolvedKind };
+
+  // ── 左侧标题 ──
+  const title = resolveTitleByLang(lang);
+  const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtmlStatic(title)}</span></div>`;
+
+  // ── 右侧按钮组（复用 renderActionsHtmlStatic）──
+  const actionsHtml = renderActionsHtmlStatic(resolvedKind, state);
+
+  // ── 内容区（复用 renderBodyHtmlStatic）──
+  const bodyHtml = renderBodyHtmlStatic(resolvedKind, state);
+
+  // ── 拼装与 index.html #codeSheet 完全一致的 DOM 结构 ──
+  return `<div class="code-sheet-overlay is-open fp-static">
+  <div class="code-sheet-backdrop" data-code-sheet-close></div>
+  <div class="code-sheet-panel">
+    <header class="code-sheet-header">
+      ${leftHtml}
+      <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
+    </header>
+    <div class="code-sheet-body">${bodyHtml}</div>
+  </div>
+</div>`;
+}
+
+// ── 静态渲染辅助：语言 → kind 推断（与 markdown.js resolveCardConfig 对齐）──
+const LANG_KIND_MAP = {
+  js: 'executable', javascript: 'executable', py: 'executable', python: 'executable',
+  sh: 'executable', bash: 'executable', shell: 'executable',
+  html: 'view', htm: 'view', xml: 'view', svg: 'view',
+  json: 'static', css: 'static', yaml: 'static', yml: 'static', sql: 'static',
+  mermaid: 'visual', table: 'visual',
+};
+function resolveKindByLang(lang) {
+  const key = (lang || '').toLowerCase().trim();
+  return LANG_KIND_MAP[key] || 'static';
+}
+function resolveTitleByLang(lang) {
+  const key = (lang || '').toLowerCase().trim();
+  const TITLES = {
+    js: 'JavaScript', javascript: 'JavaScript', py: 'Python', python: 'Python',
+    sh: 'Shell', bash: 'Shell', shell: 'Shell',
+    html: 'HTML', htm: 'HTML', xml: 'XML', svg: 'SVG',
+    json: 'JSON', css: 'CSS', yaml: 'YAML', yml: 'YAML', sql: 'SQL',
+    mermaid: 'Mermaid', table: '表格',
+  };
+  if (TITLES[key]) return TITLES[key];
+  return key ? key.charAt(0).toUpperCase() + key.slice(1) : '代码';
+}
+
+// ── 静态渲染辅助：按钮组 HTML（复用上方 ICON_* 常量，与 live 版完全一致）──
+function renderActionsHtmlStatic(kind, state) {
+  const parts = [];
+  if (kind === 'executable') {
+    parts.push(`<button class="code-sheet-btn-primary" data-act="run" aria-label="运行" disabled>${ICON_RUN}<span>运行</span></button>`);
+  } else if (kind === 'view') {
+    const showingPreview = state && state.htmlMode === 'preview';
+    const label = showingPreview ? '代码' : '预览';
+    const icon = showingPreview ? ICON_CODE : ICON_VIEW;
+    parts.push(`<button class="code-sheet-btn-primary" data-act="view" aria-label="${label}" disabled>${icon}<span>${label}</span></button>`);
+  }
+  parts.push(`<button class="code-sheet-btn" data-act="copy" aria-label="复制" disabled>${ICON_COPY()}</button>`);
+  if (kind === 'visual') {
+    parts.push(`<button class="code-sheet-btn" data-act="save-image" aria-label="保存图片" disabled>${ICON_IMAGE()}</button>`);
+  }
+  parts.push(`<button class="code-sheet-btn" data-act="share" aria-label="分享" disabled>${ICON_SHARE()}</button>`);
+  parts.push(`<span class="code-sheet-divider" aria-hidden="true"></span>`);
+  parts.push(`<button class="code-sheet-btn" data-act="close" aria-label="关闭" disabled>${ICON_CLOSE()}</button>`);
+  return parts.join('');
+}
+
+// ── 静态渲染辅助：内容区 HTML（复用上方 escapeHtml 逻辑）──
+function renderBodyHtmlStatic(kind, state) {
+  // HTML + 预览模式 → iframe（静态预览用 srcdoc）
+  if (kind === 'view' && state.htmlMode === 'preview') {
+    return `<iframe srcdoc="${escapeHtmlStatic(state.code)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
+  }
+  // 默认：代码视图
+  const langClass = state.langClass ? ` class="lang-${escapeHtmlStatic(state.langClass)}"` : '';
+  return `<pre><code${langClass}>${escapeHtmlStatic(state.code)}</code></pre>`;
+}
+
+function escapeHtmlStatic(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ── 静态渲染：代码 Sheet 带遮罩外壳（供 Feature Panel 快照用）──
+ * 与事件 Sheet 的 renderStaticSheetShell 类似，但用代码 Sheet 的 DOM 结构。
+ * opts.width / opts.height / opts.borderRadius 控制快照容器尺寸。
+ */
+export function renderStaticCodeSheetShell(opts = {}) {
+  const { lang = '', code = '', kind, htmlMode = 'code', width = '390px', height = '850px', borderRadius = '' } = opts;
+  const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode });
+  const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
+  return `<div class="fp-sheet-shell-frame" style="width:${width};height:${height};${radiusStyle}">
+    <div class="code-sheet-overlay is-open fp-static" style="position:absolute;inset:0;">
+      <div class="code-sheet-backdrop" data-code-sheet-close style="position:absolute;inset:0;background:rgba(0,0,0,0.18)"></div>
+      <div class="code-sheet-panel" style="position:absolute;left:0;right:0;bottom:0;top:54px;border-radius:30px 30px 0 0;transform:none;display:flex;flex-direction:column;background:#fafafa;padding:14px 16px;gap:12px">
+        <header class="code-sheet-header" style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+          ${inner.match(/<div class="code-sheet-left">.*?<\/div>/)?.[0] || '<div class="code-sheet-left"><span class="code-sheet-title">代码</span></div>'}
+          ${inner.match(/<div class="code-sheet-actions glass-capsule">.*?<\/div>/)?.[0] || ''}
+        </header>
+        <div class="code-sheet-body" style="flex:1;overflow-y:auto;background:#fff;border:1px solid #e9ecf1;border-radius:16px;padding:0">
+          ${inner.match(/<pre><code.*?>.*?<\/code><\/pre>|<iframe.*?<\/iframe>/)?.[0] || '<pre><code></code></pre>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}

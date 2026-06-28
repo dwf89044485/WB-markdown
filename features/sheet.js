@@ -8,7 +8,7 @@
 // ============================================================
 
 import { renderStaticSheetShell } from '../engine/sheet.js';
-import { renderStaticCodeSheet } from '../engine/code-fullscreen-sheet.js';
+import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
 const snapCache = {};
@@ -16,6 +16,17 @@ function snap(key, opts) {
   if (!snapCache[key]) snapCache[key] = renderStaticSheetShell(opts);
   return snapCache[key];
 }
+
+// ── 创建代办 sheet 样本内容 ──
+const TODO_BODY = [
+  '<div class="s-row tool-todo"><div class="s-ico"><div class="s-ico-img"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#E8F5E9"/><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke="#4CAF50"/><path d="M4.5 8L7 10.5L11.5 5.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="s-content"><div class="s-line"><span class="s-text">创建待办清单</span><span class="s-text dim">已完成</span></div></div></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width=".src"/><path d="M4 7L6.5 9.5L10.5 4.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="s-sub-txt">制定本周工作计划</span></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width=".src"/><path d="M4 7L6.5 9.5L10.5 4.5" stroke="#4CAF50" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="s-sub-txt">整理项目文档</span></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#FFF9C4" stroke="#F9A825" stroke-width=".src"/><circle cx="7" cy="7" r="2" fill="#F9A825"/></svg></div><span class="s-sub-txt active">准备演示材料</span></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">安排团队周会</span></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">回复客户邮件</span></div>',
+  '<div class="s-sub"><div class="s-sub-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="none" stroke="#BDBDBD" stroke-width=".src"/></svg></div><span class="s-sub-txt">更新项目进度看板</span></div>',
+].join('');
 
 // ── Code sheet 样本 ──
 const CODE_SAMPLE = `// 计算当日营养摄入汇总
@@ -32,21 +43,30 @@ function calcDailyNutrition(data) {
 
 function getSnapshots() {
   return {
-    // §2 构成：事件 Sheet 外壳
+    // §2 构成：事件 Sheet（创建代办示例）
     anatomyEvent: snap('anatomyEvent', {
       state: 'collapsed',
-      body: '<div class="sheet-empty" style="padding:40px 20px;text-align:center;color:#86868b">事件行 / 待办 / 二级详情</div>',
+      body: TODO_BODY,
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
-    // §2 构成：代码 Sheet 外壳
-    anatomyCode: renderStaticCodeSheet({ lang: 'javascript', code: CODE_SAMPLE }),
+    // §2 构成：代码 Sheet（带遮罩）
+    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '390px', height: '850px' }),
     // §3 状态对比
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',
       body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">40% · 内容超限被裁剪</div>',
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
     stateExpanded: snap('stateExpanded', {
       state: 'expanded',
       body: '<div class="sheet-empty" style="padding:50px 20px;text-align:center;color:#86868b;font-size:13px">80% · 内容可滚动</div>',
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
     // §5 动效：进入循环（从底部升起）
     motionRiseFall: snap('motionRiseFall', {
@@ -54,6 +74,9 @@ function getSnapshots() {
       showClose: false,
       showOverlay: true,
       body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">底部浮层升起</div>',
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
     // §5 动效：展开循环（40% → 80%）
     motionExpand: snap('motionExpand', {
@@ -61,11 +84,17 @@ function getSnapshots() {
       showClose: false,
       showOverlay: false,
       body: '<div class="sheet-empty" style="padding:40px 20px;text-align:center;color:#86868b;font-size:13px">上拖展开</div>',
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
     // §6 边界：空状态
     edgeEmpty: snap('edgeEmpty', {
       state: 'collapsed',
       body: '<div class="sheet-empty">当前状态暂无新增事件。</div>',
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
     }),
   };
 }
@@ -98,15 +127,12 @@ export default {
         <h2>1. 概述</h2>
         <h3>定义</h3>
         <p>Sheet 是 Agent 执行任务过程中，<strong>从屏幕底部升起的浮层容器</strong>，用于承载执行详情、工具事件、待办列表、代码全屏查看等内容。它覆盖在对话流之上，通过半透明遮罩与底部操作栏形成空间隔离。</p>
-        <p>项目中有两种 Sheet：<strong>事件 Sheet</strong>承载 Agent 执行过程信息（事件行、待办），支持折叠/展开两种高度；<strong>代码 Sheet</strong>承载代码块全屏查看，固定撑满到导航栏下方。两者共享"从底部升起"的动效语言，但结构、高度策略、交互方式不同（详见 §2 构成）。</p>
         <h3>核心职责</h3>
         <ul>
           <li>承载 Agent 执行过程的详情，不占用对话流空间</li>
           <li>通过折叠/展开两种高度，适配"快速瞥一眼"与"深入查看"两种阅读姿态</li>
           <li>提供统一的进出动效，让浮层的到来与离开有可感知的节奏</li>
         </ul>
-        <h3>设计目标</h3>
-        <p>让 Agent 的"执行细节"成为一种<strong>按需展开、随手收起</strong>的次级信息层，不打断主对话流的阅读连贯性。</p>
       </section>
 
       <section data-section="anatomy">
@@ -116,7 +142,7 @@ export default {
         <h3>2.1 事件 Sheet</h3>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
-            <span class="tag">事件 Sheet</span>
+            <span class="tag">事件 Sheet · 创建代办</span>
             <div class="fp-snapshot">${s.anatomyEvent}</div>
           </div>
           <div class="fp-snapshot-side-desc">
@@ -134,7 +160,7 @@ export default {
             </blockquote>
             <h4>④ 内容区（sheet-body）</h4>
             <blockquote>
-              <p>承载事件行、待办、二级详情。折叠态 overflow:hidden 裁剪溢出，展开态 overflow:auto 可滚动。</p>
+              <p>承载事件行、待办、二级详情。折叠态 overflow:hidden 裁剪溢出，展开态 overflow:auto 可滚动。示例展示的是"创建代办"场景——事件行 + 待办列表。</p>
             </blockquote>
           </div>
         </div>

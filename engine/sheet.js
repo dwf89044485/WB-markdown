@@ -435,17 +435,21 @@ export function renderStaticDetail(detail) {
 // opts.showClose:  是否显示关闭按钮（默认 true）
 // opts.showOverlay:是否显示遮罩背景（默认 true）
 // opts.frameCls:   外层容器额外 class（用于动效场景注入 data-motion-loop）
+// opts.width:      快照宽度（默认 320px）
+// opts.height:     快照容器高度（默认 480px）
+// opts.borderRadius: 快照容器圆角（默认 ''，即无圆角）
 export function renderStaticSheetShell(opts = {}) {
-  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '' } = opts;
+  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '' } = opts;
   const expanded = state === 'expanded';
   const sheetCls = expanded ? 'bottom-sheet expanded' : 'bottom-sheet';
   const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
+  const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   const closeSvg = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
   const glassLayers = '<span class="glass-layer lg-layer-one"></span><span class="glass-layer lg-layer-two"></span><span class="glass-layer-inner lg-layer-three"></span>';
   const closeBtnHtml = showClose
     ? `<div class="sheet-top-end"><button class="glass-btn aq-close-btn" type="button" tabindex="-1">${glassLayers}${closeSvg}</button></div>`
     : '<div class="sheet-top-end"></div>';
-  return `<div class="fp-sheet-shell-frame ${frameCls}">
+  return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
     <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
       <div class="${sheetCls}" style="transform:translateY(0)">
         <div class="sheet-top">

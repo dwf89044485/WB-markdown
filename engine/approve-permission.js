@@ -56,6 +56,7 @@ function showApprovePermission(data) {
     const apEl = document.getElementById('approvePermission');
     if (apEl) {
       apEl.classList.remove('ap-settled');
+      apEl.style.pointerEvents = ''; // 重置点击锁定（上次交互可能遗留）
     }
 
     renderApprovePermission();
@@ -138,15 +139,17 @@ function bindApprovePermissionEvents() {
     if (!row) return;
 
     const index = parseInt(row.dataset.index);
-    // 更新选中状态
     apState.data.selectedIndex = index;
     renderApprovePermission();
 
-    // 任何选项点击后立即 resolve
-    const resolve = apState.resolve;
-    const resultIdx = apState.data.selectedIndex;
-    hideApprovePermission();
-    if (resolve) resolve(resultIdx);
+    // 锁定点击，防止重复操作
+    container.style.pointerEvents = 'none';
+
+    // 停留 400ms 让用户感知选中状态，再开始出场动画
+    setTimeout(() => {
+      if (!apState) return;
+      hideApprovePermission();
+    }, 400);
   });
 }
 

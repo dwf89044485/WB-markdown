@@ -731,7 +731,7 @@ function constrainContentWidth(scrollEl, inner) {
   // 测量 fp-snapshot-trio（一二级 sheet + 说明区，三列并排）
   const trios = inner.querySelectorAll('.fp-snapshot-trio');
   trios.forEach((trio) => {
-    const children = trio.querySelectorAll(':scope > .fp-snapshot-wrap, :scope > .fp-snapshot-trio-desc');
+    const children = trio.querySelectorAll(':scope > .fp-snapshot-wrap, :scope > .fp-snapshot-trio-desc, :scope > .fp-snapshot-side-desc');
     if (children.length < 2) return;
 
     const firstTop = children[0].offsetTop;

@@ -221,14 +221,11 @@ export default {
             <tr><th>对比项</th><th>事件 Sheet</th><th>代码 Sheet</th></tr>
           </thead>
           <tbody>
-            <tr><td>遮罩</td><td>半透明 + 高斯模糊</td><td>半透明 + 高斯模糊（与事件 Sheet 统一）</td></tr>
             <tr><td>高度策略</td><td>百分比切换（折叠 40% / 展开 80%）</td><td>80% 固定高度（与事件 Sheet expanded 一致）</td></tr>
             <tr><td>顶栏结构</td><td>三段式：slot + 拖拽条 + 关闭按钮</td><td>两端式：标题 + 玻璃胶囊按钮组</td></tr>
             <tr><td>拖拽条</td><td>有</td><td>无</td></tr>
             <tr><td>拖拽折叠/展开</td><td>支持</td><td>不支持</td></tr>
             <tr><td>内容区容器</td><td>sheet-body（无独立边框）</td><td>code-sheet-body（白底 + 边框 + 圆角）</td></tr>
-            <tr><td>圆角</td><td>有</td><td>有（略小）</td></tr>
-            <tr><td>进出动画</td><td>遮罩快、浮层慢（分层进场）</td><td>遮罩与面板同步（更轻快）</td></tr>
           </tbody>
         </table>
         <blockquote>

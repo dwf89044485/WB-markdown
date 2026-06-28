@@ -1593,6 +1593,7 @@
 }
 .fp-motion-stage[data-motion-loop="sheet-rise-fall"],
 .fp-motion-stage[data-motion-loop="sheet-expand"] {
+  width: auto;
   overflow: hidden;
 }
 /* 遮罩同步淡入淡出，比浮层略快（0.28s vs 0.36s），与真实参数一致 */

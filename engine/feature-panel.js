@@ -522,6 +522,13 @@ async function renderRoute(route) {
     document.querySelectorAll('.dc-scene-btn').forEach((b) => {
       b.classList.toggle('is-active', b.dataset.scene === 'codeblock-showcase');
     });
+  } else if (f.id === 'sheet' || f.id === 'sheet-content') {
+    // 左侧 Demo 渲染代码块 showcase，展示代码块样式场景
+    // 因为 Sheet 与代码块全屏查看有紧密的交互关联
+    renderShowcase();
+    document.querySelectorAll('.dc-scene-btn').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.scene === 'codeblock-showcase');
+    });
   }
 }
 

@@ -7,7 +7,7 @@
 //       改左边 sheet 样式 → 右边文档自动同步
 // ============================================================
 
-import { renderStaticSheetShell, renderStaticDetail, renderStaticEventSheet } from '../engine/sheet.js';
+import { renderStaticSheetShell, renderStaticDetail, renderStaticEventSheet, renderStaticSheet } from '../engine/sheet.js';
 import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
@@ -56,17 +56,17 @@ function getSnapshots() {
     anatomyDetail: renderStaticDetail(getDetailFromScenario()),
     // §2 构成：代码 Sheet（带遮罩）
     anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px', height: '852px', borderRadius: '0', frameCls: 'fp-show-overlay' }),
-    // §3 状态对比
+    // §3 状态对比：使用真实事件行数据展示折叠/展开效果
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',
-      body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">40% · 内容超限被裁剪</div>',
+      body: renderStaticEventSheet('F1.a,F1.b'),
       width: '340px',
       height: '850px',
       borderRadius: '0',
     }),
     stateExpanded: snap('stateExpanded', {
       state: 'expanded',
-      body: '<div class="sheet-empty" style="padding:50px 20px;text-align:center;color:#86868b;font-size:13px">80% · 内容可滚动</div>',
+      body: renderStaticEventSheet('F1.a,F1.b'),
       width: '340px',
       height: '850px',
       borderRadius: '0',
@@ -76,7 +76,7 @@ function getSnapshots() {
       state: 'collapsed',
       showClose: false,
       showOverlay: true,
-      body: '<div class="sheet-empty" style="padding:30px 20px;text-align:center;color:#86868b;font-size:13px">底部浮层升起</div>',
+      body: renderStaticEventSheet('F1.a,F1.b'),
       width: '340px',
       height: '850px',
       borderRadius: '0',
@@ -86,7 +86,7 @@ function getSnapshots() {
       state: 'collapsed',
       showClose: false,
       showOverlay: false,
-      body: '<div class="sheet-empty" style="padding:40px 20px;text-align:center;color:#86868b;font-size:13px">上拖展开</div>',
+      body: renderStaticEventSheet('F1.a,F1.b'),
       width: '340px',
       height: '850px',
       borderRadius: '0',
@@ -94,7 +94,7 @@ function getSnapshots() {
     // §6 边界：空状态
     edgeEmpty: snap('edgeEmpty', {
       state: 'collapsed',
-      body: '<div class="sheet-empty">当前状态暂无新增事件。</div>',
+      body: renderStaticSheet([]),
       width: '340px',
       height: '850px',
       borderRadius: '0',

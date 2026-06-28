@@ -13,6 +13,7 @@ import approvePermission from './approve-permission.js';
 import scrollNav from './scroll-nav.js';
 import toolCallNode from './tool-call-node.js';
 import codeBlock from './code-block.js';
+import sheet from './sheet.js';
 
 export const featureList = [
   principles,
@@ -22,6 +23,7 @@ export const featureList = [
   toolCallNode,
   codeBlock,
   scrollNav,
+  sheet,
 ];
 
 // 按 id 快速查表

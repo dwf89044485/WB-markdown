@@ -425,6 +425,40 @@ export function renderStaticDetail(detail) {
   return `<div class="sd-container">${sections}</div>`;
 }
 
+// ── 静态快照：sheet 外壳（overlay + bottom-sheet + sheet-top + sheet-body）──
+// 供右侧 Feature Panel 展示 sheet 的构成、状态和动效。
+// class 结构与 index.html 中的 live DOM 完全一致，仅通过 .fp-sheet-shell-frame
+// 约束定位容器（live 版本依赖 phone-shell 绝对定位，快照需要独立容器）。
+//
+// opts.state:      'collapsed'(40%) | 'expanded'(80%)
+// opts.body:       sheet-body 内部 HTML（可选，默认空）
+// opts.showClose:  是否显示关闭按钮（默认 true）
+// opts.showOverlay:是否显示遮罩背景（默认 true）
+// opts.frameCls:   外层容器额外 class（用于动效场景注入 data-motion-loop）
+export function renderStaticSheetShell(opts = {}) {
+  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '' } = opts;
+  const expanded = state === 'expanded';
+  const sheetCls = expanded ? 'bottom-sheet expanded' : 'bottom-sheet';
+  const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
+  const closeSvg = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+  const glassLayers = '<span class="glass-layer lg-layer-one"></span><span class="glass-layer lg-layer-two"></span><span class="glass-layer-inner lg-layer-three"></span>';
+  const closeBtnHtml = showClose
+    ? `<div class="sheet-top-end"><button class="glass-btn aq-close-btn" type="button" tabindex="-1">${glassLayers}${closeSvg}</button></div>`
+    : '<div class="sheet-top-end"></div>';
+  return `<div class="fp-sheet-shell-frame ${frameCls}">
+    <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
+      <div class="${sheetCls}" style="transform:translateY(0)">
+        <div class="sheet-top">
+          <div class="sheet-top-start"></div>
+          <div class="sheet-handle"></div>
+          ${closeBtnHtml}
+        </div>
+        <div class="sheet-body">${body}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function initSheetChevrons() {
   const body = $('#sheetBody');
   if (!body) return;

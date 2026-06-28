@@ -395,7 +395,7 @@
 }
 .md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed {
   position: relative;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 .md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed pre {
   max-height: 280px;
@@ -437,7 +437,7 @@
 .fp-fs-preview-label {
   position: absolute;
   top: 8px;
-  left: 12px;
+  left: 16px;
   z-index: 10;
   font-size: 11px;
   font-weight: 600;
@@ -447,16 +447,19 @@
   pointer-events: none;
 }
 
-/* 底部 Sheet 预览：竖屏手机比例 */
+/* 底部 Sheet 预览：竖屏手机比例
+   直接包裹 renderStaticCodeSheet() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed/translateY 定位。 */
 .fp-fs-preview.fp-fs-sheet {
-  width: 360px;
-  min-width: 360px;
+  width: 320px;
+  min-width: 320px;
   height: 520px;
 }
-.fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-fs-static {
-  position: relative;
-  inset: auto;
-  z-index: auto;
+.fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-static {
+  position: absolute;
+  inset: 0;
+  top: auto;
+  z-index: 5;
   pointer-events: none;
   visibility: visible;
   opacity: 1;
@@ -468,19 +471,28 @@
   transform: none;
   height: 100%;
   box-shadow: none;
-  border-radius: 30px 30px 0 0;
+  border-radius: 20px 20px 0 0;
+  max-height: 320px;
+  padding: 12px 16px;
+  gap: 12px;
 }
 .fp-fs-preview.fp-fs-sheet .code-sheet-backdrop {
   display: none;
 }
-
-/* 横屏二级页预览：横屏手机比例 */
-.fp-fs-preview.fp-fs-landscape {
-  width: 560px;
-  min-width: 560px;
-  height: 340px;
+.fp-fs-preview.fp-fs-sheet .code-sheet-body {
+  overflow-y: auto;
+  max-height: 200px;
 }
-.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-fs-static {
+
+/* 横屏二级页预览：横屏手机比例
+   直接包裹 renderStaticTableFullscreen() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed 定位和进入动画。 */
+.fp-fs-preview.fp-fs-landscape {
+  width: 520px;
+  min-width: 520px;
+  height: 300px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-static {
   position: relative;
   inset: auto;
   z-index: auto;
@@ -490,15 +502,15 @@
   height: 100%;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
-  height: 64px;
-  padding: 0 16px;
+  height: 48px;
+  padding: 0 12px;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-fs-content {
-  padding: 0 16px;
+  padding: 0 12px;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
-  padding: 24px;
-  min-height: 200px;
+  padding: 16px;
+  min-height: 160px;
 }
 
 /* 全屏流程布局：对话流卡片 → 箭头 → 全屏预览 */
@@ -1371,4 +1383,121 @@
 /* 无序列表缩进与标题对齐 */
 #fpContent .markdown-body ul {
   padding-left: 14px;
+}
+
+/* ============================================================
+ * Sheet 快照样式（仅供 Feature Panel §sheet 使用）
+ * ============================================================ */
+
+/* ── 快照容器：模拟手机壳内的 sheet 定位 ───────────────────
+ * live 版本 sheet 依赖 phone-shell 绝对定位，快照需要独立容器。
+ * 宽度固定 320px（与 ask-question 快照宽度对齐），高度自适应内容。
+ */
+.fp-sheet-shell-frame {
+  position: relative;
+  width: 320px;
+  height: 420px;
+  border-radius: var(--phone-radius, 38px);
+  overflow: hidden;
+  background: #f5f5f7;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* 让快照内的 sheet-overlay 覆盖整个 frame */
+.fp-sheet-shell-frame .sheet-overlay {
+  position: absolute !important;
+  inset: 0;
+  z-index: 200;
+}
+
+/* 快照内 bottom-sheet 的高度由 state class 控制，不受父级百分比影响 */
+.fp-sheet-shell-frame .bottom-sheet {
+  height: 40% !important;
+}
+.fp-sheet-shell-frame .bottom-sheet.expanded {
+  height: 80% !important;
+}
+
+/* ── 拖拽状态机示意图（§3.3）────────────────────────────── */
+.fp-motion-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 24px 0;
+  padding: 32px 20px;
+  background: #f5f5f7;
+  border-radius: 12px;
+}
+.fp-motion-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 24px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  min-width: 120px;
+}
+.fp-motion-state .tag {
+  font-size: 13px;
+  font-weight: 600;
+}
+.fp-motion-state .fp-motion-hint {
+  font-size: 12px;
+  color: #86868b;
+  margin: 0;
+  text-align: center;
+}
+.fp-motion-arrow {
+  font-size: 18px;
+  color: #86868b;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+ * Sheet 动效循环（仅供 Feature Panel §4 使用，不影响真实运行时）
+ * ============================================================
+ * 4.1 进出动效循环：总周期 4s
+ *   升起 0.36s（9%）→ 停留 2s（50%）→ 落下 0.36s（9%）→ 间隔 1.28s（32%）
+ *   沿用真实参数：overlay opacity 0.28s ease，sheet transform 0.36s cubic-bezier(0.32,0.72,0,1)
+ */
+@keyframes fp-sheet-loop-rise-fall {
+  0%      { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  9%      { opacity: 1; transform: translateY(0);    animation-timing-function: linear; }
+  59%     { opacity: 1; transform: translateY(0);    animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  68%     { opacity: 0; transform: translateY(100%); animation-timing-function: linear; }
+  100%    { opacity: 0; transform: translateY(100%); }
+}
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"] .bottom-sheet {
+  animation: fp-sheet-loop-rise-fall 4s infinite;
+}
+/* 遮罩同步淡入淡出，比浮层略快（0.28s vs 0.36s），与真实参数一致 */
+@keyframes fp-sheet-loop-overlay {
+  0%      { opacity: 0; animation-timing-function: ease; }
+  7%      { opacity: 1; animation-timing-function: linear; }
+  59%     { opacity: 1; animation-timing-function: ease; }
+  66%     { opacity: 0; animation-timing-function: linear; }
+  100%    { opacity: 0; }
+}
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"] .sheet-overlay {
+  animation: fp-sheet-loop-overlay 4s infinite;
+}
+
+/* 4.2 展开/折叠动效循环：总周期 3s
+ *   折叠停留 1s（33%）→ 展开 0.32s（10.7%）→ 展开停留 0.8s（26.7%）→ 折叠 0.32s（10.7%）→ 间隔 0.56s（18.6%）
+ *   沿用真实参数：height 0.32s cubic-bezier(0.32,0.72,0,1)
+ */
+@keyframes fp-sheet-loop-expand {
+  0%      { height: 40%; animation-timing-function: linear; }
+  33%     { height: 40%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  43.7%   { height: 80%; animation-timing-function: linear; }
+  70.4%   { height: 80%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  81.1%   { height: 40%; animation-timing-function: linear; }
+  100%    { height: 40%; }
+}
+.fp-motion-stage[data-motion-loop="sheet-expand"] .bottom-sheet {
+  animation: fp-sheet-loop-expand 3s infinite;
 }

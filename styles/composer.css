@@ -47,10 +47,10 @@
   border-radius:28px;        /* 设计稿 borderRadius=28 */
   overflow:hidden;
   background:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
-/* 多行态背景色（设计稿 Variant5/6：#FAFAFA，lineCount>=4 时触发） */
+  box-shadow:0 4px 10px rgba(0,0,0,0.05), inset 1px 1px 0 0 rgba(255,255,255,1);
+/* 多行态背景色（设计稿 18:5225：#FFFFFF，lineCount>=4 时保持白色） */
 .composer-shell.is-expanded.has-expand-handle{
-  background:#FAFAFA;
+  background:#FFFFFF;
 }
   /* 始终 column：.cp-body（内容）在上、.cp-bar（按钮栏）在下。
    * 单行态 .cp-body 折叠为 0、占位文字浮在 bar 里；激活态 .cp-body 展开成 textarea。

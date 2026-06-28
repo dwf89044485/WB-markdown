@@ -214,9 +214,13 @@ export default {
             <blockquote>
               <p>图标按钮组，统一包含复制 / 分享 / 全屏。可视化类额外加「保存图片」。</p>
             </blockquote>
-            <h4>④ 内容区</h4>
+            <h4>③ 内容区</h4>
             <blockquote>
               <p>代码区域，支持语法高亮着色，提升代码可读性。</p>
+            </blockquote>
+            <h4>⑤ 查看全部按钮</h4>
+            <blockquote>
+              <p>代码区底部居中，超过 280px 自动折叠并出现「查看全部」按钮；点击拉起二级 Sheet 查看完整代码。</p>
             </blockquote>
           </div>
         </div>
@@ -224,12 +228,16 @@ export default {
 
       <section data-section="types">
         <h2>3. 类型</h2>
+        <p>由语言类型推导出 4 种类型，每种类型的按钮组合不同。<strong>主按钮的有无和功能是区分类型的唯一视觉标记</strong>。</p>
         <div class="fp-snapshot-row">
           ${labeled('可执行', s.typeExec)}
           ${labeled('可预览', s.typeView)}
           ${labeled('静态', s.typeStatic)}
           ${labeled('可视化', s.typeVisual)}
         </div>
+        <blockquote>
+          <p><strong>可执行</strong>（js / py / sh）→ ▶ 运行；<strong>可预览</strong>（html）→ ● 预览；<strong>静态</strong>（json / css / yaml）→ 无主按钮；<strong>可视化</strong>（mermaid / 表格）→ 无主按钮 + 保存图片。</p>
+        </blockquote>
       </section>
 
       <section data-section="interactions">

@@ -12,6 +12,7 @@ import askQuestion from './ask-question.js';
 import approvePermission from './approve-permission.js';
 import scrollNav from './scroll-nav.js';
 import toolCallNode from './tool-call-node.js';
+import codeBlock from './code-block.js';
 
 export const featureList = [
   principles,
@@ -19,6 +20,7 @@ export const featureList = [
   askQuestion,
   approvePermission,
   toolCallNode,
+  codeBlock,
   scrollNav,
 ];
 

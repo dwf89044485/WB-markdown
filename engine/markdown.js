@@ -36,9 +36,11 @@ const ICON_RUN = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
 const ICON_EXPAND = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5L7 8.5L10.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 // 生成代码块折叠展开按钮 HTML
-function renderExpandBtn({ disabled = false } = {}) {
+// expanded: true → 展开态（文案「收起」、图标已旋转）；false → 折叠态（文案「展开」）
+function renderExpandBtn({ disabled = false, expanded = false } = {}) {
   const disabledAttr = disabled ? ' disabled' : '';
-  return `<button class="wb-card-expand" type="button" aria-label="展开"${disabledAttr}><span class="wb-card-expand-label">展开</span><span class="wb-card-expand-icon">${ICON_EXPAND}</span></button>`;
+  const label = expanded ? '收起' : '展开';
+  return `<button class="wb-card-expand" type="button" aria-label="${label}"${disabledAttr}><span class="wb-card-expand-label">${label}</span><span class="wb-card-expand-icon">${ICON_EXPAND}</span></button>`;
 }
 
 // ── 卡片类型配置 ───────────────────────────────────────────
@@ -274,6 +276,9 @@ export function markdownToHtml(markdown) {
 
 // ── 静态渲染导出（供 Feature Panel 快照复用）──────────────
 // mode:'static' — 快照展示用，按钮视觉与 live 版本一致（不 disabled），但快照容器通过 pointer-events:none 阻止实际交互
+// collapsed: true → 折叠态（限高280px + 渐隐遮罩 + 展开按钮）
+// collapsed: false → 展开态（完整代码 + 收起按钮）
+// collapsed: null → 不折叠（无折叠按钮，用于短代码展示）
 export function renderStaticCodeCard({ lang, code, kind, collapsed = true }) {
   const cfg = kind
     ? { ...resolveCardConfig(lang), kind }
@@ -282,8 +287,18 @@ export function renderStaticCodeCard({ lang, code, kind, collapsed = true }) {
   const actions = buildCardActions(cfg.kind, { allowImageSave });
   const codeHtml = escapeHtml(code);
   const langAttr = lang ? ` class="lang-${escapeHtml(lang)}"` : '';
-  const collapseCls = collapsed ? 'is-collapsible is-collapsed' : 'is-collapsible';
-  const codeBody = `<div class="wb-card-body ${collapseCls}"><pre><code${langAttr}>${codeHtml}</code></pre>${renderExpandBtn({ disabled: true })}</div>`;
+  let collapseCls, expandBtn;
+  if (collapsed === null) {
+    collapseCls = '';
+    expandBtn = '';
+  } else if (collapsed) {
+    collapseCls = 'is-collapsible is-collapsed';
+    expandBtn = renderExpandBtn({ disabled: true, expanded: false });
+  } else {
+    collapseCls = 'is-collapsible';
+    expandBtn = renderExpandBtn({ disabled: true, expanded: true });
+  }
+  const codeBody = `<div class="wb-card-body ${collapseCls}"><pre><code${langAttr}>${codeHtml}</code></pre>${expandBtn}</div>`;
   return renderCardShell({
     title: cfg.title,
     actions,

@@ -369,7 +369,7 @@
   border-radius: 0;
 }
 
-/* 快照内代码区不折叠，完整展示用于说明 */
+/* 快照内代码区默认不折叠，完整展示用于说明 */
 .md .fp-snapshot .wb-card-body.is-collapsible {
   max-height: none !important;
   overflow: visible !important;
@@ -383,6 +383,175 @@
 }
 .md .fp-snapshot .wb-card-expand {
   display: none !important;
+}
+
+/* ── 4.1 折叠与展开演示：恢复 Demo 原始折叠行为 ──────────
+   .fp-collapse-demo 标记的快照容器，让折叠态真正展示
+   限高 280px + 渐隐遮罩 + 展开按钮，与 Demo 区完全一致。
+   ──────────────────────────────────────────────────────── */
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed {
+  position: relative;
+  overflow: hidden;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed pre {
+  max-height: 280px;
+  overflow: hidden;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed::after {
+  display: block !important;
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 75%);
+  pointer-events: none;
+  border-radius: 0 0 10px 10px;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-expand {
+  display: flex !important;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed .wb-card-expand {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 0 0 12px;
+  z-index: 1;
+}
+
+/* ── 全屏查看预览：fp-fs-preview ─────────────────────────
+   复用 Demo 的 code-sheet-overlay / tbl-fullscreen-overlay DOM，
+   但在说明栏内以"预览模式"展示（不依赖 phone-shell 定位）。
+   ──────────────────────────────────────────────────────── */
+.fp-fs-preview {
+  position: relative;
+  margin: 20px 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--md-border, #e9ecf1);
+  background: #f5f5f7;
+}
+.fp-fs-preview-label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 10;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--md-text-muted, #8e8e93);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* 底部 Sheet 预览：竖屏比例 */
+.fp-fs-preview.fp-fs-sheet {
+  width: 360px;
+  min-width: 360px;
+  height: 480px;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-fs-static {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 1;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-panel {
+  position: relative;
+  top: 28px;
+  left: 0; right: 0; bottom: 0;
+  transform: none;
+  border-radius: 20px 20px 0 0;
+  height: calc(100% - 28px);
+  box-shadow: none;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body {
+  min-height: 200px;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body pre {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 横屏二级页预览：横屏比例 */
+.fp-fs-preview.fp-fs-landscape {
+  width: 560px;
+  min-width: 560px;
+  height: 300px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-fs-static {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  display: flex;
+  border-radius: 0;
+  animation: none;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
+  height: 48px;
+  padding: 0 12px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fs-title {
+  font-size: 13px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fs-content {
+  padding: 0 12px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
+  padding: 12px;
+  min-height: 200px;
+}
+
+/* 全屏流程布局：对话流卡片 → 箭头 → 全屏预览 */
+.fp-fs-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 20px 0;
+}
+.fp-fs-flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.fp-fs-flow-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-text-muted, #8e8e93);
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+.fp-fs-flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--md-text-muted, #8e8e93);
+}
+.fp-fs-flow-arrow::before {
+  content: "";
+  display: inline-block;
+  width: 1.5px;
+  height: 16px;
+  background: var(--md-border, #d1d1d6);
+  margin-right: 8px;
+  border-radius: 1px;
+}
+
+/* 全屏预览内按钮禁用态 */
+.fp-fs-preview .code-sheet-btn[disabled],
+.fp-fs-preview .code-sheet-btn-primary[disabled],
+.fp-fs-preview .tbl-fs-btn[disabled],
+.fp-fs-preview .tbl-fs-back[disabled] {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* ── Tool Call Node 快照（status line）────────── */

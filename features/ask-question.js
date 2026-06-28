@@ -298,7 +298,7 @@ export default {
           ${labeled('用户输入', s.singleInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：点选即进入下一题（最后一题除外，按钮为"提交"）。</p>
+          <p><strong>交互</strong>：点击后，<span style="color:#ff3b30">等待 300ms，让用户感知到已选选项</span>，自动进入下一题。</p>
           <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         </blockquote>
         <h3>4.2 多选题</h3>

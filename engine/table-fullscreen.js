@@ -57,8 +57,10 @@ function syncFullscreenOrientation() {
   if (!isMobileFsMode()) {
     overlay.classList.remove('tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
     shell.classList.add('tbl-landscape');
-    if (window.buildGrid) window.buildGrid();
-    if (window.fitShellScale) window.fitShellScale();
+    setTimeout(function() {
+      if (window.buildGrid) window.buildGrid();
+      if (window.fitShellScale) window.fitShellScale();
+    }, 360);
     return;
   }
   shell.classList.remove('tbl-landscape');

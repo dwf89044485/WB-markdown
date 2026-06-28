@@ -241,7 +241,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 .phone-shell.phone-landscape{
   width:var(--layout-shell-h);height:var(--layout-shell-w);
 }
-body:has(.phone-shell.phone-landscape){
+body:has(.phone-shell.phone-landscape),
+body:has(.phone-shell.tbl-landscape){
   --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
 }
 

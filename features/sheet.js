@@ -170,8 +170,8 @@ export default {
         <p>项目中有两种 Sheet，分别承载不同类型的内容，在结构上有明显差异。<strong>事件 Sheet</strong>用于展示 Agent 执行过程中的事件行、待办列表等过程信息；<strong>代码 Sheet</strong>用于展示代码块全屏查看时的完整代码。两者共享"从底部升起"的动效语言，但 DOM 结构、高度策略、顶栏布局完全不同。</p>
 
         <h3>2.1 事件 Sheet</h3>
-        <div class="fp-snapshot-pair">
-          <div class="fp-snapshot-pair-item">
+        <div class="fp-snapshot-pair-groups">
+          <div class="fp-snapshot-side">
             <div class="fp-snapshot-wrap">
               <span class="tag">事件 Sheet · 创建代办</span>
               <div class="fp-snapshot">${s.anatomyEvent}</div>
@@ -195,7 +195,7 @@ export default {
               </blockquote>
             </div>
           </div>
-          <div class="fp-snapshot-pair-item">
+          <div class="fp-snapshot-side">
             <div class="fp-snapshot-wrap">
               <span class="tag">二级 Sheet · 详情</span>
               <div class="fp-snapshot">${s.anatomyDetail}</div>

@@ -897,25 +897,18 @@
   margin-bottom: 0;
 }
 
-/* 双列快照布局（2.1 事件 Sheet + 二级 Sheet 并排） */
-.fp-snapshot-pair {
+/* 分组并排布局：每组内 left=示例 right=说明，组间按屏幕宽度折行 */
+.fp-snapshot-pair-groups {
   display: flex;
-  gap: 32px;
+  flex-wrap: wrap;
+  gap: 40px;
   margin: 16px 0;
   align-items: flex-start;
 }
-.fp-snapshot-pair > .fp-snapshot-pair-item {
-  flex: 1;
+.fp-snapshot-pair-groups > .fp-snapshot-side {
+  flex: 1 1 480px;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.fp-snapshot-pair > .fp-snapshot-pair-item > .fp-snapshot-wrap {
   margin: 0;
-} 
-.fp-snapshot-pair > .fp-snapshot-pair-item > .fp-snapshot-wrap > .fp-snapshot {
-  width: 100%;
 }
 .fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);

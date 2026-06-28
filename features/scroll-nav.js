@@ -144,7 +144,7 @@ export default {
         <p>直接跳转至顶部。<strong>首次双击</strong>，Pop 提示"双击可跳转顶部"，此后静默执行。</p>
 
         <h4>连续点击</h4>
-        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转顶部"。无毕业逻辑，每次符合条件都出提示。</p>
+        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转顶部"。</p>
 
         <div class="fp-snapshot-row">
           ${labeled('首次双击 ↑<br>教学提示出现', s.tooltipUp, '提示 2.5s 后自动淡出')}
@@ -159,7 +159,7 @@ export default {
         <p>直接跳转至底部。<strong>首次双击</strong>，Pop 提示"双击可跳转底部"，此后静默执行。</p>
 
         <h4>连续点击</h4>
-        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转底部"。无毕业逻辑，每次符合条件都出提示。</p>
+        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转底部"。</p>
 
         <div class="fp-snapshot-row">
           ${labeled('首次双击 ↓<br>教学提示出现', s.tooltipDown)}

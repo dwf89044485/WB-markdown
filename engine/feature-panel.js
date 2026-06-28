@@ -512,6 +512,13 @@ function renderRoute(route) {
         if (token !== loadToken) hideOverlays();
       });
     }
+  } else if (f.id === 'scroll-nav') {
+    const anchor = f.anchors && f.anchors['buttons-appear'];
+    if (anchor) {
+      jumpToAnchor(anchor).then(() => {
+        if (token !== loadToken) hideOverlays();
+      });
+    }
   } else if (f.id === 'code-block') {
     // 左侧 Demo 渲染代码块 showcase，并高亮「代码块样式」场景按钮
     renderShowcase();

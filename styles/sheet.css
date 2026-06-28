@@ -72,7 +72,6 @@
 .bottom-sheet.code-variant{
   height:80% !important;
   padding:20px;
-  gap:20px;
 }
 .bottom-sheet.code-variant .sheet-handle{display:none;}
 .bottom-sheet.code-variant .sheet-top{

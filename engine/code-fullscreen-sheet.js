@@ -230,7 +230,7 @@ export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
   const resolvedKind = kind || resolveKindByLang(lang);
   const langClass = lang || '';
   const title = resolveTitleByLang(lang);
-  const state = { code, langClass, htmlMode, kind: resolvedKind, title };
+  const state = { code, langClass, htmlMode, kind: resolvedKind, title, lineNumbers: true };
 
   return renderCodeSheetHTML(state, { mode: 'static' });
 }

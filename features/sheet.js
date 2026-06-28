@@ -170,7 +170,7 @@ export default {
         <p>项目中有两种 Sheet，分别承载不同类型的内容，在结构上有明显差异。<strong>事件 Sheet</strong>用于展示 Agent 执行过程中的事件行、待办列表等过程信息；<strong>代码 Sheet</strong>用于展示代码块全屏查看时的完整代码。两者共享"从底部升起"的动效语言，但 DOM 结构、高度策略、顶栏布局完全不同。</p>
 
         <h3>2.1 事件 Sheet</h3>
-        <div class="fp-snapshot-duo">
+        <div class="fp-snapshot-side">
           <div class="fp-snapshot-duo-snaps">
             <div class="fp-snapshot-wrap">
               <span class="tag">一级 Sheet · 创建代办</span>
@@ -181,31 +181,13 @@ export default {
               <div class="fp-snapshot">${s.anatomyDetail}</div>
             </div>
           </div>
-          <div class="fp-snapshot-duo-desc">
+          <div class="fp-snapshot-side-desc">
             <h4>遮罩区</h4>
-            <table>
-              <thead><tr><th></th><th>一级 Sheet</th><th>二级 Sheet</th></tr></thead>
-              <tbody>
-                <tr><td>sheet-overlay</td><td>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</td><td>复用同一遮罩层，不额外叠加。从一级进入二级时遮罩保持，不闪动。</td></tr>
-              </tbody>
-            </table>
+            <p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。一二级 Sheet 共用同一遮罩层，切换时不闪动。</p>
             <h4>浮层顶部栏</h4>
-            <table>
-              <thead><tr><th></th><th>一级 Sheet</th><th>二级 Sheet</th></tr></thead>
-              <tbody>
-                <tr><td>sheet-top-start</td><td>空置，无内容。</td><td>返回按钮，点击回到一级列表。</td></tr>
-                <tr><td>sheet-handle</td><td>中央拖拽条，折叠/展开核心操作入口。</td><td>中央拖拽条，同左。</td></tr>
-                <tr><td>sheet-top-end</td><td>关闭按钮，点击关闭浮层。</td><td>关闭按钮，同左。</td></tr>
-              </tbody>
-            </table>
+            <p>三段式布局：左侧 slot、中央拖拽条、右侧关闭按钮。一级 Sheet 左侧空置，二级 Sheet 左侧有返回按钮。</p>
             <h4>内容区</h4>
-            <table>
-              <thead><tr><th></th><th>一级 Sheet</th><th>二级 Sheet</th></tr></thead>
-              <tbody>
-                <tr><td>容器</td><td>sheet-body，无独立边框。折叠态 overflow:hidden，展开态 overflow:auto。</td><td>sd-container，承载分组的详情卡片。</td></tr>
-                <tr><td>内容</td><td>事件行 + 待办列表。示例展示的是"创建代办"场景。</td><td>分组的详情卡片（sd-card），每张包含 label 和 content。支持文本和代码两种变体。</td></tr>
-              </tbody>
-            </table>
+            <p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p>
           </div>
         </div>
 

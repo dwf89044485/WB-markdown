@@ -225,8 +225,36 @@ export function initComposer() {
     moreBtn: $('.cp-wb-more-btn', shell),
     moreIcon: $('.cp-wb-icon', shell),
   };
+  initComposerIcons(shell);
   syncMoreButtonState();
   bindEvents();
+}
+
+// 把 composer 里的 <img> 替换成 icons-inline.js 管理的 inline SVG
+function initComposerIcons(shell) {
+  const ICONS = window.WORKBUDDY_INLINE_ICONS || {};
+  const mapping = [
+    ['.cp-fs-collapse', 'wb-minimize.svg'],
+    ['.cp-expand-handle', 'wb-maximize.svg'],
+    ['.cp-voice-btn', 'voice.svg'],
+    ['.cp-wb-icon', 'more.svg'],
+    ['.cp-wb-indicator', 'wb-more-indicator.svg'],
+  ];
+  for (const [sel, key] of mapping) {
+    const btn = $(sel, shell);
+    if (!btn) continue;
+    const img = btn.querySelector('img');
+    if (!img) continue;
+    const svgStr = ICONS[key];
+    if (!svgStr) continue;
+    const t = document.createElement('div');
+    t.innerHTML = svgStr;
+    const svg = t.firstChild;
+    if (svg) {
+      svg.setAttribute('aria-hidden', 'true');
+      img.replaceWith(svg);
+    }
+  }
 }
 
 export function destroy() {

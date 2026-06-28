@@ -3,10 +3,13 @@
 // ============================================================
 // 4 种类型：可执行 / 可预览 / 静态 / 可视化
 // 快照：复用 engine/markdown.js 的 renderStaticCodeCard
-// 全屏快照：复用 Demo 的 code-sheet-panel / tbl-fullscreen-overlay DOM 结构
+// 全屏快照：复用 engine/code-fullscreen-sheet.js 的 renderStaticCodeSheet
+//           复用 engine/table-fullscreen.js 的 renderStaticTableFullscreen
 // ============================================================
 
 import { renderStaticCodeCard } from '../engine/markdown.js';
+import { renderStaticCodeSheet } from '../engine/code-fullscreen-sheet.js';
+import { renderStaticTableFullscreen } from '../engine/table-fullscreen.js';
 
 // ── 样本数据（取自 engine/showcase-codeblock.js 的真实场景）──
 const SAMPLES = {
@@ -95,7 +98,6 @@ function getSnapshots() {
     typeVisual:    snap('typeVisual',   { lang: 'mermaid',    code: SAMPLES.mermaid }),
     // 折叠与展开：用长代码样本，确保超过 280px 阈值
     foldCollapsed: snap('foldCollapsed', { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
-    foldExpanded:  snap('foldExpanded',  { lang: 'javascript', code: SAMPLES.jsLong, collapsed: false }),
     // 全屏查看 — 对话流中的卡片快照
     fsCardJs:      snap('fsCardJs',     { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     fsCardHtml:    snap('fsCardHtml',   { lang: 'html',       code: SAMPLES.html, collapsed: null }),
@@ -113,89 +115,54 @@ function labeled(label, html, extraClass = '') {
   </div>`;
 }
 
-// ── 全屏快照辅助 ──
-// 复用 Demo 的真实 DOM 结构（code-sheet-panel / tbl-fullscreen-overlay），
-// 包裹在 .fp-fs-preview 容器内，以"预览模式"展示。
-// 样式由 feature-panel.css 中 .fp-fs-preview 专门控制（不依赖 phone-shell 定位）。
+// ── 全屏预览包装器 ──
+// 直接调用 engine 导出的真实渲染函数，包裹在 .fp-fs-preview 容器内，
+// 由 feature-panel.css 控制预览尺寸和定位覆盖。
+// 确保 Demo 改动时交互说明自动同步。
+//
+// 两种全屏模态的视觉差异：
+//   4.2.1 底部 Sheet 模态：竖屏手机壳 + 对话流 + Sheet 从底部滑入（导航栏可见）
+//   4.2.2 横屏二级页模态：手机壳横屏 + 全屏覆盖（隐藏所有手机 UI）
+// ──
 
-function fsSheetPreview({ title, bodyHtml, actionsHtml }) {
+function fsSheetWrap(html) {
   return `<div class="fp-fs-preview fp-fs-sheet">
-    <div class="fp-fs-preview-label">底部 Sheet 模态</div>
-    <div class="code-sheet-overlay is-open fp-fs-static">
-      <div class="code-sheet-backdrop"></div>
-      <div class="code-sheet-panel">
-        <header class="code-sheet-header">
-          <div class="code-sheet-left">
-            <span class="code-sheet-title">${title}</span>
+  <div class="fp-fs-preview-label">底部 Sheet 模态</div>
+  <div class="fp-fs-phone fp-fs-phone-portrait">
+    <div class="fp-fs-phone-status">
+      <span class="fp-fs-status-time">9:41</span>
+      <span class="fp-fs-status-icons">📶 🔋</span>
+    </div>
+    <div class="fp-fs-phone-nav">
+      <span class="fp-fs-nav-back">←</span>
+      <span class="fp-fs-nav-title">对话</span>
+      <span class="fp-fs-nav-more">⋯</span>
+    </div>
+    <div class="fp-fs-phone-conv">
+      <div class="fp-fs-msg fp-fs-msg-user">帮我写一个计算营养的函数</div>
+      <div class="fp-fs-msg fp-fs-msg-agent">
+        <div class="fp-fs-msg-label">AI</div>
+        <div class="fp-fs-mini-card">
+          <div class="fp-fs-mini-card-hdr">
+            <span class="fp-fs-mini-card-lang">JavaScript</span>
+            <span class="fp-fs-mini-card-btn">▶ 运行</span>
           </div>
-          <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
-        </header>
-        <div class="code-sheet-body">${bodyHtml}</div>
+          <div class="fp-fs-mini-card-body">// 计算当日营养摄入...<br>function calcDailyNutrition(data) {</div>
+        </div>
       </div>
     </div>
-  </div>`;
+    ${html}
+  </div>
+</div>`;
 }
 
-function fsLandscapePreview({ title, bodyHtml, actionsHtml }) {
+function fsLandscapeWrap(html) {
   return `<div class="fp-fs-preview fp-fs-landscape">
-    <div class="fp-fs-preview-label">横屏二级页模态</div>
-    <div class="tbl-fullscreen-overlay is-active fp-fs-static">
-      <div class="tbl-fs-nav">
-        <button class="tbl-fs-back" aria-label="返回" disabled>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="tbl-fs-title">${title}</div>
-        <div class="tbl-fs-actions">${actionsHtml}</div>
-      </div>
-      <div class="tbl-fs-content md">${bodyHtml}</div>
-    </div>
-  </div>`;
-}
-
-// 玻璃胶囊按钮组 HTML（复用 Demo 的图标和 class）
-// 从 window.WORKBUDDY_INLINE_ICONS 取图标，与 Demo 完全一致
-function getInlineIcon(name) {
-  const reg = (typeof window !== 'undefined' && window.WORKBUDDY_INLINE_ICONS) || {};
-  const raw = reg[name];
-  if (!raw) return '';
-  return raw
-    .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
-    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
-}
-
-const ICON_COPY = () => getInlineIcon('wb-copy.svg');
-const ICON_SHARE = () => getInlineIcon('wb-share.svg');
-const ICON_IMAGE = () => getInlineIcon('image.svg');
-const ICON_CLOSE = () => getInlineIcon('wb-close.svg');
-const ICON_RUN = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0ZM7.38086 5.70898C6.70946 5.30615 6.37376 5.10444 6.12012 5.24805C5.86664 5.39174 5.86621 5.78353 5.86621 6.56641V9.43359C5.86621 10.2165 5.86664 10.6083 6.12012 10.752C6.37376 10.8956 6.70946 10.6939 7.38086 10.291L9.77051 8.85742C10.4087 8.47449 10.7285 8.2831 10.7285 8C10.7285 7.7169 10.4087 7.52551 9.77051 7.14258L7.38086 5.70898Z"/></svg>';
-const ICON_VIEW = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" d="M8 1.14551C9.6472 1.14551 11.1583 1.6536 12.5332 2.6709C13.9081 3.68831 14.9194 5.04667 15.5674 6.74512L15.998 8.19238L16 8.2041C15.5529 10.2747 14.5828 11.9687 13.0898 13.2861C11.5967 14.6036 9.89997 15.2627 8 15.2627C6.10009 15.2627 4.40335 14.6036 2.91016 13.2861C1.41714 11.9687 0.447029 10.2747 0 8.2041C0.447021 6.13325 1.41696 4.43859 2.91016 3.12109C4.40335 1.8036 6.10009 1.14551 8 1.14551ZM8 4.75684C7.04822 4.75684 6.23551 5.09359 5.5625 5.7666C4.88952 6.43961 4.55273 7.25234 4.55273 8.2041C4.55277 9.15581 4.88953 9.96863 5.5625 10.6416C6.23549 11.3145 7.04828 11.6504 8 11.6504C8.95172 11.6504 9.76452 11.3146 10.4375 10.6416C11.1105 9.96863 11.4462 9.15581 11.4463 8.2041C11.4463 7.25238 11.1104 6.43959 10.4375 5.7666C9.76451 5.09361 8.95174 4.75686 8 4.75684ZM8 5.99707C8.60931 5.99709 9.12974 6.21275 9.56055 6.64355C9.99129 7.07436 10.2061 7.59481 10.2061 8.2041C10.206 8.81331 9.99134 9.33379 9.56055 9.76465C9.12975 10.1954 8.60929 10.4101 8 10.4102C7.39078 10.4102 6.87033 10.1954 6.43945 9.76465C6.00866 9.33379 5.79301 8.81331 5.79297 8.2041C5.79297 7.59477 6.00865 7.07438 6.43945 6.64355C6.87035 6.21272 7.39072 5.99707 8 5.99707Z"/></svg>';
-
-// Sheet 按钮组：运行 + 复制 + 分享 + 分隔线 + 关闭
-function sheetActionsCode() {
-  return `<button class="code-sheet-btn-primary" aria-label="运行" disabled>${ICON_RUN}<span>运行</span></button><button class="code-sheet-btn" aria-label="复制" disabled>${ICON_COPY()}</button><button class="code-sheet-btn" aria-label="分享" disabled>${ICON_SHARE()}</button><span class="code-sheet-divider" aria-hidden="true"></span><button class="code-sheet-btn" aria-label="关闭" disabled>${ICON_CLOSE()}</button>`;
-}
-// Sheet 按钮组：预览/代码切换 + 复制 + 分享 + 分隔线 + 关闭
-function sheetActionsHtml() {
-  return `<button class="code-sheet-btn-primary" aria-label="预览" disabled>${ICON_VIEW}<span>预览</span></button><button class="code-sheet-btn" aria-label="复制" disabled>${ICON_COPY()}</button><button class="code-sheet-btn" aria-label="分享" disabled>${ICON_SHARE()}</button><span class="code-sheet-divider" aria-hidden="true"></span><button class="code-sheet-btn" aria-label="关闭" disabled>${ICON_CLOSE()}</button>`;
-}
-// 横屏按钮组：复制 + 保存图片 + 分享
-// 与 Demo 一致：按钮图标由 JS 运行时注入（table-fullscreen.js initBtns），
-// 但静态预览中无法运行该 JS，所以直接内联图标 SVG
-const FS_COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 1.58943 0.657074)" d="M3.7804 11.4101Q3.1921 11.4035 2.9264 11.3839Q2.2536 11.3344 1.8193 11.1371Q0.7581 10.6552 0.2762 9.5941Q0.079 9.1598 0.0294 8.487Q0 8.0876 0 6.9589L0 4.8155Q0 3.3828 0.0469 2.8798Q0.126 2.0311 0.4397 1.5078Q0.84 0.84 1.5078 0.4397Q2.0311 0.126 2.8798 0.0469Q3.3828 0 4.8155 0L6.0922 0Q6.7465 0 6.9587 0.0294Q7.9864 0.1715 8.7229 0.908Q9.4594 1.6445 9.6016 2.6722Q9.6309 2.8845 9.6309 3.5387L8.6137 3.5387C10.3989 3.5399 11.3221 3.5643 11.9644 4.0633C12.1299 4.1918 12.2788 4.3407 12.4073 4.5062C12.9319 5.1815 12.9319 6.1672 12.9319 8.1386L12.9319 9.2787C12.9319 11.2501 12.9319 12.2358 12.4073 12.9111C12.2788 13.0766 12.1299 13.2255 11.9644 13.354C11.2891 13.8786 10.3034 13.8786 8.332 13.8786C6.3605 13.8786 5.3748 13.8786 4.6995 13.354Q4.534 13.2255 4.3852 13.0766 4.2566 12.9111C3.9691 12.5411 3.8392 12.0778 3.7804 11.4101ZM3.7346 10.205Q2.6043 10.1757 2.3155 10.0445Q1.6645 9.7489 1.3689 9.0979Q1.2 8.7261 1.2 6.9589L1.2 4.8155Q1.2 3.4386 1.2417 2.9911Q1.2955 2.4141 1.4689 2.1248Q1.7148 1.7148 2.1248 1.4689Q2.4141 1.2955 2.9911 1.2417Q3.4386 1.2 4.8155 1.2L6.0922 1.2Q6.6639 1.2 6.7943 1.218Q7.4229 1.305 7.8744 1.7565Q8.326 2.208 8.4129 2.8366Q8.4309 2.967 8.4309 3.5387L8.332 3.5387C6.3605 3.5387 5.3748 3.5387 4.6995 4.0633Q4.534 4.1918 4.3852 4.3407 4.2566 4.5062C3.732 5.1815 3.732 6.1672 3.732 8.1386L3.732 9.2787Q3.732 9.615 3.732 9.9226 3.7346 10.205ZM4.932 8.1386L4.932 9.2787Q4.932 10.9357 4.9899 11.4455Q5.0502 11.9767 5.2042 12.1749Q5.3054 12.3052 5.4357 12.4064Q5.6339 12.5604 6.1651 12.6207Q6.6749 12.6786 8.332 12.6786Q9.989 12.6786 10.4988 12.6207Q11.03 12.5604 11.2282 12.4064Q11.3585 12.3052 11.4597 12.1749Q11.6137 11.9767 11.674 11.4455Q11.7319 10.9357 11.7319 9.2787L11.7319 8.1386Q11.7319 6.4816 11.674 5.9718Q11.6137 5.4406 11.4597 5.2424Q11.3585 5.1121 11.2282 5.0109Q11.03 4.8569 10.4988 4.7966Q9.989 4.7387 6.1651 4.7966Q5.6339 4.8569 5.4357 5.0109Q5.3054 5.1121 5.2042 5.2424Q5.0502 5.4406 4.9899 5.9718Q4.932 6.4816 4.932 8.1386Z" fill-rule="evenodd"/></svg>';
-function landscapeActions() {
-  const copyIcon = getInlineIcon('wb-copy.svg') || FS_COPY_SVG;
-  const imageIcon = getInlineIcon('image.svg') || '';
-  const shareIcon = getInlineIcon('wb-share.svg') || '';
-  return `<button class="tbl-fs-btn" data-action="copy" aria-label="复制" disabled>${copyIcon}</button><button class="tbl-fs-btn" data-action="save-image" aria-label="保存图片" disabled>${imageIcon}</button><button class="tbl-fs-btn" data-action="share" aria-label="分享" disabled>${shareIcon}</button>`;
-}
-
-function escapeHtmlFs(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  <div class="fp-fs-preview-label">横屏二级页模态</div>
+  <div class="fp-fs-phone fp-fs-phone-landscape">
+    ${html}
+  </div>
+</div>`;
 }
 
 export default {
@@ -239,21 +206,21 @@ export default {
             <blockquote>
               <p>左侧显示语言名（如 JavaScript / HTML / JSON）。未识别语言首字母大写做标题。</p>
             </blockquote>
-            <h4>② 主操作按钮</h4>
+            <h4>② 操作按钮</h4>
             <blockquote>
-              <p>黑色胶囊按钮，因类型不同而不同：可执行类 → ▶ 运行；可预览类 → ● 预览；静态类 / 可视化类 无主按钮。</p>
+              <p>不同类型对应不同按钮，具体见3.类型</p>
             </blockquote>
             <h4>③ 次操作按钮组</h4>
             <blockquote>
               <p>图标按钮组，统一包含复制 / 分享 / 全屏。可视化类额外加「保存图片」。</p>
             </blockquote>
-            <h4>④ 代码区</h4>
+            <h4>③ 内容区</h4>
             <blockquote>
               <p>代码区域，支持语法高亮着色，提升代码可读性。</p>
             </blockquote>
-            <h4>⑤ 折叠展开按钮</h4>
+            <h4>⑤ 查看全部按钮</h4>
             <blockquote>
-              <p>代码区底部居中，超过 280px 自动折叠为「展开」按钮；点击切换折叠 / 展开态。</p>
+              <p>代码区底部居中，超过 280px 自动折叠并出现「查看全部」按钮；点击拉起二级 Sheet 查看完整代码。</p>
             </blockquote>
           </div>
         </div>
@@ -276,15 +243,14 @@ export default {
       <section data-section="interactions">
         <h2>4. 交互与状态</h2>
 
-        <h3>4.1 折叠与展开</h3>
-        <p>代码区高度超过 280px（约屏幕 1/3）时自动折叠，底部出现渐隐遮罩和「展开」按钮。点击切换两个状态——折叠态限高 280px 并用渐隐遮罩遮住溢出部分，展开态完整显示代码，按钮文案变为「收起」、箭头旋转 180°。</p>
+        <h3>4.1 折叠与查看全部</h3>
+        <p>代码区高度超过 280px（约屏幕 1/3）时自动折叠，底部出现渐隐遮罩和「查看全部」按钮。点击后拉起二级 Sheet 查看完整代码，关闭后回到折叠态。</p>
         <div class="fp-snapshot-row">
           ${labeled('折叠态（限高 280px + 渐隐遮罩）', s.foldCollapsed, 'fp-collapse-demo')}
-          ${labeled('展开态（完整代码 + 收起按钮）', s.foldExpanded, 'fp-collapse-demo')}
         </div>
         <blockquote>
-          <p>折叠态：代码区 <code>max-height: 280px</code>，底部 80px 渐变白色遮罩（<code>linear-gradient</code>），展开按钮定位在遮罩上方居中，文案「展开」。</p>
-          <p>展开态：代码区不限高，完整显示，展开按钮文案变为「收起」，箭头图标 <code>rotate(180deg)</code>。</p>
+          <p>折叠态：代码区 <code>max-height: 280px</code>，底部 80px 渐变白色遮罩（<code>linear-gradient</code>），「查看全部」按钮定位在遮罩上方居中。</p>
+          <p>点击「查看全部」→ 从底部滑入二级 Sheet，完整展示代码并支持语法高亮；关闭 Sheet 后回到对话流折叠态。</p>
           <p>短代码（≤ 280px）不出现折叠按钮，完整展示。</p>
         </blockquote>
 
@@ -301,11 +267,7 @@ export default {
           <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">底部 Sheet 全屏</div>
-            ${fsSheetPreview({
-              title: 'JavaScript',
-              bodyHtml: `<pre><code class="lang-javascript">${escapeHtmlFs(SAMPLES.jsLong)}</code></pre>`,
-              actionsHtml: sheetActionsCode()
-            })}
+            ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong }))}
           </div>
         </div>
         <blockquote>
@@ -324,11 +286,11 @@ export default {
           <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">横屏二级页全屏</div>
-            ${fsLandscapePreview({
+            ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
               bodyHtml: `<div class="tbl-mermaid-fs"><div style="padding:24px;color:var(--md-text-muted);font-size:14px;text-align:center;">Mermaid SVG 渲染区</div></div>`,
-              actionsHtml: landscapeActions()
-            })}
+              type: 'mermaid'
+            }))}
           </div>
         </div>
         <blockquote>

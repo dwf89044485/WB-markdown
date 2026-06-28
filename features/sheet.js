@@ -157,7 +157,7 @@ export default {
         <h3>2.1 事件 Sheet</h3>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
-            <span class="tag">事件 Sheet · 创建代办</span>
+            <span class="tag">一级 SHEET</span>
             <div class="fp-snapshot">${s.anatomyEvent}</div>
           </div>
           <div class="fp-snapshot-side-desc">
@@ -167,11 +167,10 @@ export default {
             <blockquote><p>三段式布局：左侧 slot、中央拖拽条、右侧关闭按钮。一级 Sheet 左侧空置，二级 Sheet 左侧有返回按钮。</p></blockquote>
             <h4>③ 内容区</h4>
             <blockquote><p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p></blockquote>
-            <p style="margin-top:16px;font-size:13px;color:#86868b">← 左图含遮罩层。二级 Sheet 的详情卡片见下图对照：</p>
-            <div class="fp-snapshot-detail-ref">
-              <span class="tag" style="margin:8px 0">二级 Sheet · 详情卡片</span>
-              <div class="fp-snapshot">${s.anatomyDetail}</div>
-            </div>
+          </div>
+          <div class="fp-snapshot-wrap">
+            <span class="tag" style="margin:8px 0">二级 Sheet · 详情卡片</span>
+            <div class="fp-snapshot">${s.anatomyDetail}</div>
           </div>
         </div>
 

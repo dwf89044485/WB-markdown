@@ -5,6 +5,7 @@
 
 import { markdownToHtml } from './markdown.js';
 import { pauseDirector } from './player.js';
+import { pushRoute } from './feature-router.js';
 
 const SHOWCASE_MARKDOWN = `# 今日营养摄入组件方案
 
@@ -180,5 +181,8 @@ document.querySelectorAll('[data-scene="codeblock-showcase"]').forEach(btn => {
     document.querySelectorAll('.dc-scene-btn').forEach(b => b.classList.remove('is-active'));
     btn.classList.add('is-active');
     renderShowcase();
+
+    // 联动右侧 Feature Panel：跳转到 code-block 交互说明
+    pushRoute('feature', 'code-block');
   });
 });

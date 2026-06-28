@@ -227,7 +227,9 @@ export default {
         <div class="fp-fs-flow">
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">对话流代码块渲染</div>
-            ${s.fsCardJs}
+            <div class="fp-snapshot-wrap">
+              <div class="fp-snapshot">${s.fsCardJs}</div>
+            </div>
           </div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">点击展开底部 Sheet 全屏</div>
@@ -245,7 +247,9 @@ export default {
         <div class="fp-fs-flow">
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">对话流代码块渲染</div>
-            ${s.fsCardMermaid}
+            <div class="fp-snapshot-wrap">
+              <div class="fp-snapshot">${s.fsCardMermaid}</div>
+            </div>
           </div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">点击展开进入二级页横屏</div>

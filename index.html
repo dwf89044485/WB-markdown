@@ -785,6 +785,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 
   buildGrid();
   fitShellScale();
+  window.buildGrid = buildGrid;
+  window.fitShellScale = fitShellScale;
   window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
   var ro = new ResizeObserver(function() { buildGrid(); fitShellScale(); });
   var shellViewport = document.querySelector('.shell-viewport');

@@ -57,6 +57,8 @@ function syncFullscreenOrientation() {
   if (!isMobileFsMode()) {
     overlay.classList.remove('tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
     shell.classList.add('tbl-landscape');
+    if (window.buildGrid) window.buildGrid();
+    if (window.fitShellScale) window.fitShellScale();
     return;
   }
   shell.classList.remove('tbl-landscape');
@@ -68,6 +70,8 @@ function syncFullscreenOrientation() {
     overlay.classList.add('tbl-mobile-portrait');
     overlay.classList.remove('tbl-mobile-landscape');
   }
+  if (window.buildGrid) window.buildGrid();
+  if (window.fitShellScale) window.fitShellScale();
 }
 
 /* ── Mermaid 渲染缓存 ─────────────────────────────────── */
@@ -153,6 +157,8 @@ function closeFullscreen() {
   shell.classList.remove('tbl-landscape');
   content.innerHTML = '';
   currentMermaidSrc = null;
+  if (window.buildGrid) window.buildGrid();
+  if (window.fitShellScale) window.fitShellScale();
 }
 fsBack.addEventListener('click', closeFullscreen);
 

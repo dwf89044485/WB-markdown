@@ -907,7 +907,7 @@
 }
 .fp-snapshot-pair-groups > .fp-snapshot-side {
   flex: 1 1 480px;
-  min-width: 0;
+  min-width: 914px;
   margin: 0;
 }
 .fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {

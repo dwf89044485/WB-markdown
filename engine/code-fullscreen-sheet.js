@@ -46,6 +46,13 @@ function getCardCode(card) {
   return codeEl ? codeEl.textContent : '';
 }
 
+function getCardCodeHtml(card) {
+  const mermaidSrc = card && card.querySelector('.wb-mermaid-svg script[type="text/x-mermaid-source"]');
+  if (mermaidSrc) return escapeHtml(mermaidSrc.textContent);
+  const codeEl = card && card.querySelector('pre code');
+  return codeEl ? codeEl.innerHTML : '';
+}
+
 function getCardLangClass(card) {
   if (card && card.querySelector('.wb-mermaid-svg')) return 'mermaid';
   const codeEl = card && card.querySelector('pre code');
@@ -120,12 +127,13 @@ function bindCodeSheetEvents(bodyEl) {
 function openCodeSheet(card, opts = {}) {
   const kind = getCardKind(card);
   const code = getCardCode(card);
+  const codeHtml = getCardCodeHtml(card);
   const langClass = getCardLangClass(card);
   const title = getCardTitle(card);
   const defaultHtmlMode = opts.htmlMode || 'code';
 
   currentCard = card;
-  currentState = { card, kind, code, langClass, title, htmlMode: defaultHtmlMode };
+  currentState = { card, kind, code, codeHtml, langClass, title, htmlMode: defaultHtmlMode };
 
   openSheet(null, null, {
     variant: 'code',
@@ -165,8 +173,10 @@ function renderBodyHtml(kind, state) {
   if (kind === 'view' && state.htmlMode === 'preview') {
     return `<iframe srcdoc="${escapeHtml(state.code)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
   }
-  const langClass = state.langClass ? ` class="lang-${escapeHtml(state.langClass)}"` : '';
-  return `<pre><code${langClass}>${escapeHtml(state.code)}</code></pre>`;
+  const langClass = state.langClass ? ` class="lang-${escapeHtml(state.langClass)} hljs"` : ' class="hljs"';
+  // 优先使用带高亮的 codeHtml（live 模式从卡片 innerHTML 提取），否则用纯文本
+  const codeContent = state.codeHtml || escapeHtml(state.code);
+  return `<pre><code${langClass}>${codeContent}</code></pre>`;
 }
 
 /* ── 事件接管 ─────────────────────────────────────────── */

@@ -52,8 +52,8 @@ const SN = {
   upBtn: null,         // #scrollUp
   downBtn: null,       // #scrollDown
   conv: null,          // .conversation
-  upState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 },
-  downState: { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 },
+  upState: { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 },
+  downState: { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 },
   scrollTicking: false,
   isTblFullscreen: false,
   isComposerActive: false,
@@ -229,38 +229,36 @@ function handleUpClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
-  // 连续快速点击追踪：间隔 >500ms 说明在阅读，重置计数
-  if (elapsed > 500) {
-    state.rapidStreak = 0;
-  }
-  state.rapidStreak++;
-
   if (elapsed <= 300) {
     // 双击 — 跳顶
+    state.rapidNonDblClickCount = 0;
     if (state.tooltipTimer) { clearTimeout(state.tooltipTimer); state.tooltipTimer = null; }
     removeTooltip(SN.upBtn);
     scrollToTopTurn();
-    // 首次双击：提示并毕业；后续双击：静默
-    if (!state.dblclickGraduated) {
-      state.dblclickGraduated = true;
-      showTooltip(SN.upBtn, '双击可跳转顶部');
-    }
+    showTooltip(SN.upBtn, '双击可跳转顶部');
     return;
   }
 
   // 单击 — 正常翻页
   doSingleUp();
 
-  // 连续快速点击 ≥3 次（无阅读停顿）且未毕业双击 → 提示用户双击存在
-  if (state.rapidStreak >= 3 && !state.dblclickGraduated) {
-    removeTooltip(SN.upBtn);
-    if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
-    state.tooltipTimer = setTimeout(() => {
-      if (!SN.upBtn.classList.contains('is-hidden')) {
-        showTooltip(SN.upBtn, '双击可跳转顶部');
-      }
-      state.tooltipTimer = null;
-    }, 100);
+  // 连续点击：每次点击不在双击阈值内（>300ms）但 <600ms，
+  // 连续 2 次以上，出 tooltip（无毕业逻辑，每次符合条件都出）
+  if (elapsed > 300 && elapsed < 600) {
+    state.rapidNonDblClickCount = (state.rapidNonDblClickCount || 0) + 1;
+    if (state.rapidNonDblClickCount >= 2) {
+      removeTooltip(SN.upBtn);
+      removeTooltip(SN.downBtn);
+      if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
+      state.tooltipTimer = setTimeout(() => {
+        if (!SN.upBtn.classList.contains('is-hidden')) {
+          showTooltip(SN.upBtn, '双击可跳转顶部');
+        }
+        state.tooltipTimer = null;
+      }, 100);
+    }
+  } else {
+    state.rapidNonDblClickCount = 0;
   }
 }
 
@@ -271,38 +269,36 @@ function handleDownClick() {
   const elapsed = now - state.lastClickTime;
   state.lastClickTime = now;
 
-  // 连续快速点击追踪：间隔 >500ms 说明在阅读，重置计数
-  if (elapsed > 500) {
-    state.rapidStreak = 0;
-  }
-  state.rapidStreak++;
-
   if (elapsed <= 300) {
     // 双击 — 跳底
+    state.rapidNonDblClickCount = 0;
     if (state.tooltipTimer) { clearTimeout(state.tooltipTimer); state.tooltipTimer = null; }
     removeTooltip(SN.downBtn);
     scrollToBottomTurn();
-    // 首次双击：提示并毕业；后续双击：静默
-    if (!state.dblclickGraduated) {
-      state.dblclickGraduated = true;
-      showTooltip(SN.downBtn, '双击可跳转底部');
-    }
+    showTooltip(SN.downBtn, '双击可跳转底部');
     return;
   }
 
   // 单击 — 正常翻页
   doSingleDown();
 
-  // 连续快速点击 ≥3 次（无阅读停顿）且未毕业双击 → 提示用户双击存在
-  if (state.rapidStreak >= 3 && !state.dblclickGraduated) {
-    removeTooltip(SN.downBtn);
-    if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
-    state.tooltipTimer = setTimeout(() => {
-      if (!SN.downBtn.classList.contains('is-hidden')) {
-        showTooltip(SN.downBtn, '双击可跳转底部');
-      }
-      state.tooltipTimer = null;
-    }, 100);
+  // 连续点击：每次点击不在双击阈值内（>300ms）但 <600ms，
+  // 连续 2 次以上，出 tooltip（无毕业逻辑，每次符合条件都出）
+  if (elapsed > 300 && elapsed < 600) {
+    state.rapidNonDblClickCount = (state.rapidNonDblClickCount || 0) + 1;
+    if (state.rapidNonDblClickCount >= 2) {
+      removeTooltip(SN.upBtn);
+      removeTooltip(SN.downBtn);
+      if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
+      state.tooltipTimer = setTimeout(() => {
+        if (!SN.downBtn.classList.contains('is-hidden')) {
+          showTooltip(SN.downBtn, '双击可跳转底部');
+        }
+        state.tooltipTimer = null;
+      }, 100);
+    }
+  } else {
+    state.rapidNonDblClickCount = 0;
   }
 }
 
@@ -402,8 +398,8 @@ export function initScrollNav() {
   if (!SN.nav || !SN.upBtn || !SN.downBtn || !SN.conv) return;
 
   // Reset state
-  SN.upState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 };
-  SN.downState = { lastClickTime: 0, tooltipTimer: null, dblclickGraduated: false, rapidStreak: 0 };
+  SN.upState = { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 };
+  SN.downState = { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 };
   SN.isTblFullscreen = false;
   SN.nav.classList.remove('is-hidden');
   SN.upBtn.classList.remove('is-hidden', 'is-appearing');

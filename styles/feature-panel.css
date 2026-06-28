@@ -1595,5 +1595,42 @@
   line-height: 1.5;
   padding: 12px 14px;
 }
-  padding: 12px 14px;
+
+/* ── 构成章节（图文上下） ─────────────────────────────── */
+.fp-anatomy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+.fp-anatomy-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.fp-anatomy-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f0f0f2;
+  font-size: 13px;
+  color: #86868b;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+.fp-anatomy-item h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1c;
+}
+.fp-anatomy-item p {
+  margin: 0;
+  color: #515154;
+  font-size: 14px;
+  line-height: 1.5;
 }

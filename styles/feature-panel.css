@@ -897,18 +897,62 @@
   margin-bottom: 0;
 }
 
-/* 分组并排布局：每组内 left=示例 right=说明，组间按屏幕宽度折行 */
-.fp-snapshot-pair-groups {
+/* 一二级 Sheet 并排 + 整合说明布局 */
+.fp-snapshot-duo {
   display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
+  flex-direction: column;
+  gap: 24px;
   margin: 16px 0;
-  align-items: flex-start;
 }
-.fp-snapshot-pair-groups > .fp-snapshot-side {
-  flex: 1 1 480px;
-  min-width: 914px;
+.fp-snapshot-duo-snaps {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.fp-snapshot-duo-snaps > .fp-snapshot-wrap {
+  flex-shrink: 0;
   margin: 0;
+}
+.fp-snapshot-duo-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #424245;
+}
+.fp-snapshot-duo-desc h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+  color: #1a1a1c;
+}
+.fp-snapshot-duo-desc h4:first-child {
+  margin-top: 0;
+}
+.fp-snapshot-duo-desc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.fp-snapshot-duo-desc table th,
+.fp-snapshot-duo-desc table td {
+  padding: 8px 12px;
+  border: 1px solid #e8e8ed;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.55;
+}
+.fp-snapshot-duo-desc table th {
+  background: #f5f5f7;
+  font-weight: 600;
+  color: #1a1a1c;
+  white-space: nowrap;
+}
+.fp-snapshot-duo-desc table th:first-child {
+  width: 140px;
+}
+.fp-snapshot-duo-desc table thead th {
+  background: #f5f5f7;
 }
 .fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);

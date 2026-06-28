@@ -434,6 +434,36 @@ export function renderStaticDetail(detail) {
   return renderDetailHTML(detail, 'static');
 }
 
+// ── 静态快照：完整事件 Sheet 内容（供 Feature Panel 使用）──
+// 与 ask-question 的 renderStaticAskQuestion 角色一致：
+// 从 scenario 真实帧数据渲染事件行 + 待办列表，一函数搞定
+export function renderStaticEventSheet(frameRefs) {
+  const scenario = window.WORKBUDDY_SCENARIO;
+  const frames = getFrames(frameRefs || '');
+  if (!frames.length) return '';
+
+  // 渲染事件行（去重，与 streamSheetContent 逻辑一致）
+  const seenKeys = new Set();
+  let html = '';
+  for (const f of frames) {
+    if (f.events) {
+      for (const ev of f.events) {
+        const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
+        if (seenKeys.has(key)) continue;
+        seenKeys.add(key);
+        html += renderEvent(ev).outerHTML;
+      }
+    }
+  }
+
+  // 待办快照
+  const baseline = scenario.todosBaseline || [];
+  const todoItems = computeTodoSnapshot(frames, baseline);
+  html += todoItems.map(t => renderTodo(t).outerHTML).join('');
+
+  return html;
+}
+
 // ── 静态快照：sheet 外壳（overlay + bottom-sheet + sheet-top + sheet-body）──
 // 供右侧 Feature Panel 展示 sheet 的构成、状态和动效。
 // class 结构与 index.html 中的 live DOM 完全一致，仅通过 .fp-sheet-shell-frame

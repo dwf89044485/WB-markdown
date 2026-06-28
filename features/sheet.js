@@ -7,7 +7,7 @@
 //       改左边 sheet 样式 → 右边文档自动同步
 // ============================================================
 
-import { renderStaticSheetShell, renderStaticDetail, renderEvent, renderTodo, getFrames, computeTodoSnapshot } from '../engine/sheet.js';
+import { renderStaticSheetShell, renderStaticDetail, renderStaticEventSheet } from '../engine/sheet.js';
 import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
@@ -15,34 +15,6 @@ const snapCache = {};
 function snap(key, opts) {
   if (!snapCache[key]) snapCache[key] = renderStaticSheetShell(opts);
   return snapCache[key];
-}
-
-// ── 从真实 scenario 帧数据渲染事件 Sheet 内容（复用 demo 渲染链路）──
-function renderEventSheetBody(frameRefs) {
-  const scenario = window.WORKBUDDY_SCENARIO;
-  const frames = getFrames(frameRefs);
-  if (!frames.length) return '';
-
-  // 渲染事件行（去重，与 demo 的 streamSheetContent 逻辑一致）
-  const seenKeys = new Set();
-  let html = '';
-  for (const f of frames) {
-    if (f.events) {
-      for (const ev of f.events) {
-        const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
-        if (seenKeys.has(key)) continue;
-        seenKeys.add(key);
-        html += renderEvent(ev).outerHTML;
-      }
-    }
-  }
-
-  // 待办快照：computeTodoSnapshot 与 demo 的 streamSheetContent 共用同一逻辑
-  const baseline = scenario.todosBaseline || [];
-  const todoItems = computeTodoSnapshot(frames, baseline);
-  html += todoItems.map(t => renderTodo(t).outerHTML).join('');
-
-  return html;
 }
 
 // ── Code sheet 样本 ──
@@ -74,7 +46,7 @@ function getSnapshots() {
     // 直接使用 scenario.sheetFrames 真实帧数据 + renderStaticSheetShell
     anatomyEvent: snap('anatomyEvent', {
       state: 'collapsed',
-      body: renderEventSheetBody('F1.a,F1.b'),
+      body: renderStaticEventSheet('F1.a,F1.b'),
       width: '393px',
       height: '852px',
       borderRadius: '0',

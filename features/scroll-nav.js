@@ -121,7 +121,7 @@ export default {
           </tbody>
         </table>
         <p><strong>例外</strong>：表格全屏时强制隐藏；对话不足一轮整体隐藏；输入框激活/全屏态时禁用。</p>
-        <div class="fp-snapshot-row">
+        <div class="fp-snapshot-row fp-snapshot-row--eq-height">
           ${labeled('对话在顶部<br>↓ 可见', s.onlyDown)}
           ${labeled('对话在中间<br>↑↓ 都可见', s.bothVisible)}
           ${labeled('对话在底部<br>↑ 可见', s.onlyUp)}
@@ -197,7 +197,7 @@ export default {
             <tr><td>快速 ↑ 后快速 ↓</td><td>各自独立，不触发跳顶/跳底</td></tr>
           </tbody>
         </table>
-        <div class="fp-snapshot-row edge-scroll">
+        <div class="fp-snapshot-row edge-scroll fp-snapshot-row--eq-height">
           ${labeled('对话只有一轮<br>↓ 可见，↑ 隐藏', s.edgeOneTurn)}
           ${labeled('表格全屏<br>整体隐藏', s.edgeFullscreen, 'is-hidden 生效，按钮完全不可见')}
         </div>

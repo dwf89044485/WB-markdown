@@ -860,6 +860,22 @@
   align-items: flex-start;
 }
 
+/* scroll-nav 显隐示例：快照等高等齐 */
+.fp-snapshot-row--eq-height {
+  align-items: stretch;
+}
+.fp-snapshot-row--eq-height .fp-snapshot-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.fp-snapshot-row--eq-height .fp-snapshot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
 /* 快照底部描述 */
 .fp-snapshot-caption {
   font-size: 13px;

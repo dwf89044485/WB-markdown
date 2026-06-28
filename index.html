@@ -739,6 +739,12 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   var panelAutoCollapsed = false;
 
   function fitShellScale(allowCollapse) {
+    // 手机端/standalone 模式：禁止缩放，手机壳就是视口本身
+    var root = document.documentElement;
+    var isStandalone = root.classList.contains('force-standalone') ||
+      (!root.classList.contains('force-desktop') && window.innerWidth <= 900);
+    if (isStandalone) return;
+
     var shell = document.querySelector('.phone-shell');
     if (!shell) return;
     var viewport = document.querySelector('.shell-viewport');

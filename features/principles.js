@@ -9,6 +9,7 @@ export default {
   id: 'principles',
   type: 'feature',
   label: '原则指南',
+  maxContentWidth: 1024,
   anchors: {},
   content: `
     <article class="fp-feature">

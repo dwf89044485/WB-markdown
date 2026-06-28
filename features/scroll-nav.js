@@ -29,24 +29,24 @@ function getSnapshots() {
     // §4 交互：教学提示（↓ 按钮）
     tooltipDown: snap('tooltipDown', { upVisible: true, downVisible: true, tooltip: { on: 'down', text: '双击可跳转底部' } }),
 
-    // §6 边界：对话只有一轮（只显示 ↓）
-    edgeOneTurn: snap('edgeOneTurn', { upVisible: false, downVisible: true }),
-    // §6 边界：表格全屏时强制隐藏
-    edgeFullscreen: snap('edgeFullscreen', { upVisible: false, downVisible: false }),
   };
 }
 
 // 辅助：带标签的快照块
-function labeled(label, html, desc, width) {
+function labeled(label, html, desc, width, height, alignSelf) {
   const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml;
-  const widthAttr = width ? ` style="width:${width}px"` : '';
-  return `<div class="fp-snapshot-wrap"${widthAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
+  const styles = [];
+  if (width) styles.push(`width:${width}px`);
+  if (height) styles.push(`height:${height}px`);
+  if (alignSelf) styles.push(`align-self:${alignSelf}`);
+  const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
+  return `<div class="fp-snapshot-wrap"${styleAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
 }
 
 // 辅助：并排快照
 function labeledRow(items) {
-  return `<div class="fp-snapshot-row">${items.map(i => labeled(i.label, i.html, i.desc, i.width)).join('')}</div>`;
+  return `<div class="fp-snapshot-row">${items.map(i => labeled(i.label, i.html, i.desc, i.width, i.height, i.alignSelf)).join('')}</div>`;
 }
 
 // 实际锚点目标：nodeIndex 2（含多轮对话，滚动按钮可见）
@@ -123,9 +123,9 @@ export default {
         </table>
         <p><strong>例外</strong>：表格全屏时强制隐藏；对话不足一轮整体隐藏；输入框激活/全屏态时禁用。</p>
         <div class="fp-snapshot-row fp-snapshot-row--eq-height">
-          ${labeled('对话在顶部<br>↓ 可见', s.onlyDown)}
-          ${labeled('对话在中间<br>↑↓ 都可见', s.bothVisible)}
-          ${labeled('对话在底部<br>↑ 可见', s.onlyUp)}
+          ${labeled('对话在顶部时', s.onlyDown, null, 260, 200, 'auto')}
+          ${labeled('对话在中间时', s.bothVisible, null, 260, 200, 'auto')}
+          ${labeled('对话在底部时', s.onlyUp, null, 260, 200, 'auto')}
         </div>
       </section>
 
@@ -196,27 +196,8 @@ export default {
         </table>
       </section>
 
-      <section data-section="edge-cases">
-        <h2>5. 边界与异常</h2>
-        <p>边界状态的重点是「按钮不能出现在不该出现的地方」，以及「该消失时要彻底消失」。</p>
-        <table>
-          <thead><tr><th>边界</th><th>体验要求</th></tr></thead>
-          <tbody>
-            <tr><td>对话只有一轮</td><td>↑ 隐藏（无更早轮次），↓ 可用（滚到底部）</td></tr>
-            <tr><td>表格全屏</td><td>整体强制隐藏，不叠加显示</td></tr>
-            <tr><td>输入框激活/全屏</td><td>整体禁用，避免与输入框操作冲突</td></tr>
-            <tr><td>最顶部双击 ↑</td><td>无效果（本来就在顶部），但不报错</td></tr>
-            <tr><td>快速 ↑ 后快速 ↓</td><td>各自独立，不触发跳顶/跳底</td></tr>
-          </tbody>
-        </table>
-        <div class="fp-snapshot-row edge-scroll fp-snapshot-row--eq-height">
-          ${labeled('对话只有一轮<br>↓ 可见，↑ 隐藏', s.edgeOneTurn)}
-          ${labeled('表格全屏<br>整体隐藏', s.edgeFullscreen, 'is-hidden 生效，按钮完全不可见')}
-        </div>
-      </section>
-
       <section data-section="rationale">
-        <h2>6. 设计原理</h2>
+        <h2>5. 设计原理</h2>
         <h3>为什么用「双击」而不是「长按」触发跳顶/跳底</h3>
         <p>双击是一个<strong>已有用户心智</strong>的操作（如网页双击选中、文件双击打开）。长按需要等待系统反馈（Haptic Touch），且移动端长按容易与拖拽冲突。双击 300ms 内完成，感知成本低。</p>
         <h3>为什么连续点击会触发教学提示</h3>
@@ -226,7 +207,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>7. Do / Don't</h2>
+        <h2>6. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
             <h3>Do</h3>

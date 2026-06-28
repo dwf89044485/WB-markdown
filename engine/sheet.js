@@ -265,6 +265,12 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   if (options.customRenderer) {
     const body = $('#sheetBody');
     body.innerHTML = '';
+    const sheet = $('#sheet');
+    if (options.variant === 'code') {
+      sheet.classList.add('code-variant');
+    } else {
+      sheet.classList.remove('code-variant');
+    }
     options.customRenderer(body);
     resetSheetHeight();
     const ov = $('#overlay');
@@ -294,6 +300,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   body.classList.remove('detail-mode');
   const sheet = $('#sheet');
   if (sheet) sheet.classList.remove('detail-mode');
+  if (sheet) sheet.classList.remove('code-variant');
 
   const hasEvents = frames.some(f => f.events && f.events.length);
   const hasTodos = frames.some(f =>
@@ -446,9 +453,9 @@ export function renderStaticDetail(detail) {
 // opts.borderRadius: 快照容器圆角（默认 ''，即无圆角）
 // opts.detailMode: 是否启用二级详情模式（默认 false），启用时 bottom-sheet 和 sheet-body 加 detail-mode class，sheet-top-start 显示返回按钮
 export function renderStaticSheetShell(opts = {}) {
-  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '', detailMode = false } = opts;
+  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '', detailMode = false, variant = '' } = opts;
   const expanded = state === 'expanded';
-  const sheetCls = 'bottom-sheet' + (expanded ? ' expanded' : '') + (detailMode ? ' detail-mode' : '');
+  const sheetCls = 'bottom-sheet' + (expanded ? ' expanded' : '') + (detailMode ? ' detail-mode' : '') + (variant === 'code' ? ' code-variant' : '');
   const bodyCls = 'sheet-body' + (detailMode ? ' detail-mode' : '');
   const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
@@ -460,6 +467,18 @@ export function renderStaticSheetShell(opts = {}) {
   const backBtnHtml = detailMode
     ? `<div class="sheet-top-start"><button class="glass-btn" type="button" tabindex="-1"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`
     : '<div class="sheet-top-start"></div>';
+
+  // code variant: 使用代码 Sheet 的头部结构
+  if (variant === 'code') {
+    return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
+    <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
+      <div class="${sheetCls}" style="transform:translateY(0)">
+        ${body}
+      </div>
+    </div>
+  </div>`;
+  }
+
   return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
     <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
       <div class="${sheetCls}" style="transform:translateY(0)">
@@ -513,6 +532,7 @@ export function closeSheet() {
   const ov = $('#overlay');
   if (body) body.classList.remove('detail-mode');
   if (sheet) sheet.classList.remove('detail-mode');
+  if (sheet) sheet.classList.remove('code-variant');
   resetSheetHeight();
   ov.style.pointerEvents = 'none';
   ov.className = 'sheet-overlay vis';

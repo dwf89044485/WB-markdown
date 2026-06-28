@@ -433,6 +433,11 @@ async function renderRoute(route) {
   // 自适应约束：同步测量 .fp-snapshot-row 卡片的自然平铺宽度
   constrainContentWidth(scrollEl, inner);
 
+  // 应用 feature 级别的内容区宽度偏好（可选，仅 principles 等模块设置）
+  if (f.maxContentWidth) {
+    inner.style.setProperty('--fp-max-content-width', f.maxContentWidth + 'px');
+  }
+
   // 渲染 Mermaid 流程图
   if (window.mermaid) {
     Promise.resolve().then(() => {

@@ -68,6 +68,26 @@
 }
 .sheet-overlay.show .bottom-sheet{transform:translateY(0);}
 
+/* ── CODE VARIANT — 代码 Sheet 覆盖样式 ──────────────────── */
+.bottom-sheet.code-variant{
+  height:80% !important;
+  padding:20px;
+  gap:20px;
+}
+.bottom-sheet.code-variant .sheet-handle{display:none;}
+.bottom-sheet.code-variant .sheet-top{
+  padding:0;
+  min-height:auto;
+}
+.bottom-sheet.code-variant .sheet-top-start{display:none;}
+.bottom-sheet.code-variant .sheet-top-end{display:none;}
+.bottom-sheet.code-variant .sheet-body{
+  padding:0;
+  overflow:visible;
+  gap:0;
+}
+.bottom-sheet.code-variant .sheet-body::before{display:none;}
+
 /* ── SHEET TOP ROW ─────────────────────────────────────────── */
 /* 一行三列：返回按钮 | handle 拖拽条 | 关闭按钮 */
 .sheet-top{
@@ -307,59 +327,19 @@
 
 /* ============================================================
    CODE FULLSCREEN SHEET — 代码块全屏展示（非表格）
-   规范来源：Figma node 134911:33988（HTML），134911:34027（其他）
-   - 容器：顶部圆角 30、底色 #fafafa、padding 20、gap 20
-   - 顶栏左：标题（HTML 类型替换为 segmented 控件）
-   - 顶栏右：玻璃胶囊（圆角 120、白底 30%、阴影、内嵌 0.8px 白描边）
-   - 内容区：白底 + #e9ecf1 边框 + 圆角 16，撑满剩余空间
-   - 进出动画：从 phone-shell 底部上滑（与 sheet-overlay 同款）
+   使用事件 Sheet 的 .sheet-overlay / .bottom-sheet 体系，
+   通过 .code-variant class 覆盖差异。
    ============================================================ */
-.code-sheet-overlay{
-  position:absolute;
-  inset:0;
-  z-index:80;
-  pointer-events:none;
-  display:none;
-  opacity:0;
-  transition:opacity 0.28s ease;
-  align-items:flex-end;
-}
-.code-sheet-overlay.is-open{
-  pointer-events:auto;
-  display:flex;
-}
-.code-sheet-overlay.is-visible{
-  opacity:1;
-}
-.code-sheet-backdrop{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.30);
-}
-.code-sheet-panel{
-  position:relative;
-  width:100%;
-  height:80%;
-  background:#fafafa;
-  border-radius:34px 34px 0 0;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  transform:translateY(100%);
-  transition:transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
-  box-shadow:0 4px 20px rgba(0,0,0,.1), 0 30px 64px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.08);
-}
-.code-sheet-overlay.is-visible .code-sheet-panel{ transform:translateY(0); }
 
 /* 顶栏 */
-.code-sheet-header{
+.bottom-sheet.code-variant .code-sheet-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   width:100%;
+  flex-shrink:0;
 }
-.code-sheet-left{
+.bottom-sheet.code-variant .code-sheet-left{
   display:flex;
   align-items:center;
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
@@ -367,14 +347,14 @@
   color:#000;
   white-space:nowrap;
 }
-.code-sheet-title{
+.bottom-sheet.code-variant .code-sheet-title{
   font-size:17px;
   font-weight:600;
   color:#000;
 }
 
 /* HTML 类型 segmented 控件「预览 / 代码」 */
-.code-sheet-tabs{
+.bottom-sheet.code-variant .code-sheet-tabs{
   display:flex;
   gap:4px;
   align-items:flex-start;
@@ -383,7 +363,7 @@
   padding:4px;
   width:141px;
 }
-.code-sheet-tab{
+.bottom-sheet.code-variant .code-sheet-tab{
   flex:1 0 0;
   display:flex;
   align-items:center;
@@ -400,10 +380,10 @@
   -webkit-tap-highlight-color:transparent;
   transition:background .14s ease;
 }
-.code-sheet-tab.is-active{ background:#fff; }
+.bottom-sheet.code-variant .code-sheet-tab.is-active{ background:#fff; }
 
 /* 玻璃胶囊按钮组 */
-.code-sheet-actions.glass-capsule{
+.bottom-sheet.code-variant .code-sheet-actions.glass-capsule{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -416,8 +396,8 @@
     0 6px 24px rgba(0,0,0,0.05),
     inset 0.8px 0.8px 0 0 #fff;
 }
-.code-sheet-btn,
-.code-sheet-btn-primary{
+.bottom-sheet.code-variant .code-sheet-btn,
+.bottom-sheet.code-variant .code-sheet-btn-primary{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -431,23 +411,23 @@
   outline:none;
   transition:background .12s ease;
 }
-.code-sheet-btn-primary{
+.bottom-sheet.code-variant .code-sheet-btn-primary{
   gap:4px;
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
   font-size:13px;
   line-height:16px;
 }
-.code-sheet-btn svg,
-.code-sheet-btn-primary svg{ display:block; width:16px; height:16px; }
+.bottom-sheet.code-variant .code-sheet-btn svg,
+.bottom-sheet.code-variant .code-sheet-btn-primary svg{ display:block; width:16px; height:16px; }
 @media (hover: hover){
-  .code-sheet-btn:hover,
-  .code-sheet-btn-primary:hover{ background:rgba(0,0,0,0.05); }
+  .bottom-sheet.code-variant .code-sheet-btn:hover,
+  .bottom-sheet.code-variant .code-sheet-btn-primary:hover{ background:rgba(0,0,0,0.05); }
 }
-.code-sheet-btn:active,
-.code-sheet-btn-primary:active{ background:rgba(0,0,0,0.08); }
+.bottom-sheet.code-variant .code-sheet-btn:active,
+.bottom-sheet.code-variant .code-sheet-btn-primary:active{ background:rgba(0,0,0,0.08); }
 
 /* 关闭按钮前的竖分割线 */
-.code-sheet-divider{
+.bottom-sheet.code-variant .code-sheet-divider{
   width:1px;
   height:12px;
   background:rgba(0,0,0,0.10);
@@ -456,7 +436,7 @@
 }
 
 /* 内容区 */
-.code-sheet-body{
+.bottom-sheet.code-variant .code-sheet-body{
   flex:1 1 0;
   background:#fff;
   border:1px solid #e9ecf1;
@@ -465,7 +445,7 @@
   position:relative;
   min-height:0;
 }
-.code-sheet-body pre{
+.bottom-sheet.code-variant .code-sheet-body pre{
   margin:0;
   padding:16px 18px;
   height:100%;
@@ -477,7 +457,7 @@
   background:transparent;
   white-space:pre;
 }
-.code-sheet-body pre code{
+.bottom-sheet.code-variant .code-sheet-body pre code{
   display:block;
   padding:0;
   background:transparent;
@@ -485,7 +465,7 @@
   font-size:inherit;
   line-height:inherit;
 }
-.code-sheet-body iframe{
+.bottom-sheet.code-variant .code-sheet-body iframe{
   display:block;
   width:100%;
   height:100%;

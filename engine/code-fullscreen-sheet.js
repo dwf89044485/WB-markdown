@@ -282,7 +282,7 @@ function escapeHtmlStatic(s) {
  * 使用 sheet.js 的 renderStaticSheetShell + variant='code' 统一渲染
  */
 export function renderStaticCodeSheetShell(opts = {}) {
-  const { lang = '', code = '', kind, htmlMode = 'code', width = '390px', height = '850px', borderRadius = '' } = opts;
+  const { lang = '', code = '', kind, htmlMode = 'code', width = '390px', height = '850px', borderRadius = '', frameCls = '' } = opts;
   const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode });
   return renderStaticSheetShell({
     variant: 'code',
@@ -291,6 +291,7 @@ export function renderStaticCodeSheetShell(opts = {}) {
     height,
     borderRadius,
     showClose: false,
-    showOverlay: true
+    showOverlay: true,
+    frameCls
   });
 }

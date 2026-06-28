@@ -1591,6 +1591,10 @@
 .fp-motion-stage[data-motion-loop="sheet-rise-fall"] .bottom-sheet {
   animation: fp-sheet-loop-rise-fall 4s infinite;
 }
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"],
+.fp-motion-stage[data-motion-loop="sheet-expand"] {
+  overflow: hidden;
+}
 /* 遮罩同步淡入淡出，比浮层略快（0.28s vs 0.36s），与真实参数一致 */
 @keyframes fp-sheet-loop-overlay {
   0%      { opacity: 0; animation-timing-function: ease; }

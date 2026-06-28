@@ -455,6 +455,17 @@ function renderRoute(route) {
   stopTcnModeLoop();
   stopAqSlideCycleLoop();
 
+  // 清理代码块 showcase 残留（切到非 code-block feature 时执行）
+  const showcaseMount = document.getElementById('showcaseMount');
+  if (showcaseMount) {
+    showcaseMount.remove();
+    // 恢复 #userMsgWrap / #agentMsg 的初始隐藏态，由后续 goToStep 重新控制显隐
+    ['userMsgWrap', 'agentMsg'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('is-hidden');
+    });
+  }
+
   // 切换到特定 feature 时，左侧 Demo 自动跳转到对应状态
   loadToken++;
   const token = loadToken;

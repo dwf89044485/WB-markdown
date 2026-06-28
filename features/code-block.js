@@ -7,7 +7,7 @@
 //           复用 engine/table-fullscreen.js 的 renderStaticTableFullscreen
 // ============================================================
 
-import { renderStaticCodeCard } from '../engine/markdown.js';
+import { renderStaticCodeCard, markdownToHtml } from '../engine/markdown.js';
 import { renderStaticCodeSheet } from '../engine/code-fullscreen-sheet.js';
 import { renderStaticTableFullscreen } from '../engine/table-fullscreen.js';
 
@@ -90,18 +90,19 @@ function snap(key, ...args) {
 }
 
 function getSnapshots() {
+  const tableCard = markdownToHtml(SAMPLES.table);
   return {
     typeExec:      snap('typeExec',     { lang: 'javascript', code: SAMPLES.js }),
     typeView:      snap('typeView',     { lang: 'html',       code: SAMPLES.html }),
     typeStatic:    snap('typeStatic',   { lang: 'json',       code: SAMPLES.json }),
     typeVisual:    snap('typeVisual',   { lang: 'mermaid',    code: SAMPLES.mermaid }),
-    typeTable:     snap('typeTable',     { lang: 'table',     code: SAMPLES.table }),
+    typeTable:     tableCard,
     // 折叠与展开：用长代码样本，确保超过 280px 阈值
     foldCollapsed: snap('foldCollapsed', { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     // 全屏查看 — 对话流中的卡片快照
     fsCardJs:      snap('fsCardJs',     { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     fsCardHtml:    snap('fsCardHtml',   { lang: 'html',       code: SAMPLES.html, collapsed: null }),
-    fsCardTable:   snap('fsCardTable',  { lang: 'table',     code: SAMPLES.table, collapsed: null }),
+    fsCardTable:   tableCard,
     fsCardMermaid: snap('fsCardMermaid',{ lang: 'mermaid',    code: SAMPLES.mermaid, collapsed: null }),
   };
 }
@@ -116,48 +117,19 @@ function labeled(label, html, extraClass = '') {
 }
 
 // ── 全屏预览包装器 ──
-// 直接调用 engine 导出的真实渲染函数（panelOnly/contentOnly 模式），
-// 只取 panel/content 部分放进手机壳预览框，绕开 overlay 的 fixed 定位。
+// 直接调用 engine 导出的真实渲染函数（完整 overlay DOM），
+// 包裹在 .fp-fs-preview 容器内，由 feature-panel.css 覆盖 fixed/translateY 定位。
 // 确保 Demo 改动时交互说明自动同步。
-// ──
-
 function fsSheetWrap(html) {
   return `<div class="fp-fs-preview fp-fs-sheet">
   <div class="fp-fs-preview-label">底部 Sheet 模态</div>
-  <div class="fp-fs-phone fp-fs-phone-portrait">
-    <div class="fp-fs-phone-status">
-      <span class="fp-fs-status-time">9:41</span>
-      <span class="fp-fs-status-icons">📶 🔋</span>
-    </div>
-    <div class="fp-fs-phone-nav">
-      <span class="fp-fs-nav-back">←</span>
-      <span class="fp-fs-nav-title">对话</span>
-      <span class="fp-fs-nav-more">⋯</span>
-    </div>
-    <div class="fp-fs-phone-conv">
-      <div class="fp-fs-msg fp-fs-msg-user">帮我写一个计算营养的函数</div>
-      <div class="fp-fs-msg fp-fs-msg-agent">
-        <div class="fp-fs-msg-label">AI</div>
-        <div class="fp-fs-mini-card">
-          <div class="fp-fs-mini-card-hdr">
-            <span class="fp-fs-mini-card-lang">JavaScript</span>
-            <span class="fp-fs-mini-card-btn">▶ 运行</span>
-          </div>
-          <div class="fp-fs-mini-card-body">// 计算当日营养摄入...<br>function calcDailyNutrition(data) {</div>
-        </div>
-      </div>
-    </div>
-    <div class="fp-fs-sheet-mount">${html}</div>
-  </div>
+  ${html}
 </div>`;
 }
-
 function fsLandscapeWrap(html) {
   return `<div class="fp-fs-preview fp-fs-landscape">
   <div class="fp-fs-preview-label">横屏二级页模态</div>
-  <div class="fp-fs-phone fp-fs-phone-landscape">
-    <div class="fp-fs-landscape-mount">${html}</div>
-  </div>
+  ${html}
 </div>`;
 }
 
@@ -253,7 +225,7 @@ export default {
           <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">底部 Sheet 全屏</div>
-            ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong, panelOnly: true }))}
+            ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong }))}
           </div>
         </div>
         <blockquote>
@@ -275,8 +247,7 @@ export default {
             ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
               bodyHtml: `<div class="tbl-mermaid-fs"><div style="padding:24px;color:var(--md-text-muted);font-size:14px;text-align:center;">Mermaid SVG 渲染区</div></div>`,
-              type: 'mermaid',
-              contentOnly: true
+              type: 'mermaid'
             }))}
           </div>
         </div>

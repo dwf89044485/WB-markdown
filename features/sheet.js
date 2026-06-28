@@ -198,11 +198,11 @@ export default {
           <div class="fp-snapshot-side-desc">
             <h4>① 遮罩层（code-sheet-overlay）</h4>
             <blockquote>
-              <p>半透明遮罩，无高斯模糊。比事件 Sheet 更轻——代码查看是"专注阅读"场景，不需要强隔离感。</p>
+              <p>半透明遮罩 + 高斯模糊，与事件 Sheet 共用同一套遮罩样式。点击遮罩关闭。</p>
             </blockquote>
             <h4>② 浮层主体（code-sheet-panel）</h4>
             <blockquote>
-              <p>白底，顶部圆角，<strong>固定撑满到导航栏下方</strong>，不按百分比切换高度。从底部升起。</p>
+              <p>白底，顶部圆角，<strong>80% 高度</strong>（与事件 Sheet expanded 状态一致），从底部升起。</p>
             </blockquote>
             <h4>③ 顶部栏（code-sheet-header）</h4>
             <blockquote>
@@ -221,8 +221,8 @@ export default {
             <tr><th>对比项</th><th>事件 Sheet</th><th>代码 Sheet</th></tr>
           </thead>
           <tbody>
-            <tr><td>遮罩</td><td>半透明 + 高斯模糊</td><td>半透明，无模糊</td></tr>
-            <tr><td>高度策略</td><td>百分比切换（折叠 / 展开）</td><td>固定撑满到导航栏下方</td></tr>
+            <tr><td>遮罩</td><td>半透明 + 高斯模糊</td><td>半透明 + 高斯模糊（与事件 Sheet 统一）</td></tr>
+            <tr><td>高度策略</td><td>百分比切换（折叠 40% / 展开 80%）</td><td>80% 固定高度（与事件 Sheet expanded 一致）</td></tr>
             <tr><td>顶栏结构</td><td>三段式：slot + 拖拽条 + 关闭按钮</td><td>两端式：标题 + 玻璃胶囊按钮组</td></tr>
             <tr><td>拖拽条</td><td>有</td><td>无</td></tr>
             <tr><td>拖拽折叠/展开</td><td>支持</td><td>不支持</td></tr>

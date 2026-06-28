@@ -7,7 +7,7 @@
 //       改左边 sheet 样式 → 右边文档自动同步
 // ============================================================
 
-import { renderStaticSheetShell, renderEvent, renderTodo } from '../engine/sheet.js';
+import { renderStaticSheetShell, renderStaticDetail, renderEvent, renderTodo } from '../engine/sheet.js';
 import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
@@ -51,6 +51,16 @@ function calcDailyNutrition(data) {
   return totals;
 }`;
 
+// ── 二级 sheet 样本 ──
+const SHEET_DETAIL = {
+  title: '执行命令',
+  sections: [
+    { label: '输入命令', variant: 'code', content: 'git diff --stat HEAD~3' },
+    { label: '输出结果', variant: 'text', content: 'features/sheet.js | 2 +-\n1 file changed, 1 insertion(+), 1 deletion(-)' },
+    { label: '退出码', variant: 'text', content: '0' },
+  ],
+};
+
 function getSnapshots() {
   const todoBody = renderTodoBody();
   return {
@@ -58,6 +68,15 @@ function getSnapshots() {
     anatomyEvent: snap('anatomyEvent', {
       state: 'collapsed',
       body: todoBody,
+      width: '390px',
+      height: '850px',
+      borderRadius: '0',
+    }),
+    // §2 构成：事件 Sheet 二级详情
+    anatomyDetail: snap('anatomyDetail', {
+      state: 'collapsed',
+      body: renderStaticDetail(SHEET_DETAIL),
+      detailMode: true,
       width: '390px',
       height: '850px',
       borderRadius: '0',
@@ -151,28 +170,50 @@ export default {
         <p>项目中有两种 Sheet，分别承载不同类型的内容，在结构上有明显差异。<strong>事件 Sheet</strong>用于展示 Agent 执行过程中的事件行、待办列表等过程信息；<strong>代码 Sheet</strong>用于展示代码块全屏查看时的完整代码。两者共享"从底部升起"的动效语言，但 DOM 结构、高度策略、顶栏布局完全不同。</p>
 
         <h3>2.1 事件 Sheet</h3>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">事件 Sheet · 创建代办</span>
-            <div class="fp-snapshot">${s.anatomyEvent}</div>
+        <div class="fp-snapshot-pair">
+          <div class="fp-snapshot-pair-item">
+            <div class="fp-snapshot-wrap">
+              <span class="tag">事件 Sheet · 创建代办</span>
+              <div class="fp-snapshot">${s.anatomyEvent}</div>
+            </div>
+            <div class="fp-snapshot-side-desc">
+              <h4>① 遮罩层（sheet-overlay）</h4>
+              <blockquote>
+                <p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</p>
+              </blockquote>
+              <h4>② 浮层主体（bottom-sheet）</h4>
+              <blockquote>
+                <p>白底，顶部圆角，高度按百分比切换。transform 驱动进出。</p>
+              </blockquote>
+              <h4>③ 顶部栏（sheet-top）</h4>
+              <blockquote>
+                <p>三段式布局：左侧 slot（sheet-top-start）、中央拖拽条（sheet-handle）、右侧关闭按钮（sheet-top-end）。拖拽条是折叠/展开的核心操作入口。</p>
+              </blockquote>
+              <h4>④ 内容区（sheet-body）</h4>
+              <blockquote>
+                <p>承载事件行、待办、二级详情。折叠态 overflow:hidden 裁剪溢出，展开态 overflow:auto 可滚动。示例展示的是"创建代办"场景——事件行 + 待办列表。</p>
+              </blockquote>
+            </div>
           </div>
-          <div class="fp-snapshot-side-desc">
-            <h4>① 遮罩层（sheet-overlay）</h4>
-            <blockquote>
-              <p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。</p>
-            </blockquote>
-            <h4>② 浮层主体（bottom-sheet）</h4>
-            <blockquote>
-              <p>白底，顶部圆角，高度按百分比切换。transform 驱动进出。</p>
-            </blockquote>
-            <h4>③ 顶部栏（sheet-top）</h4>
-            <blockquote>
-              <p>三段式布局：左侧 slot（sheet-top-start）、中央拖拽条（sheet-handle）、右侧关闭按钮（sheet-top-end）。拖拽条是折叠/展开的核心操作入口。</p>
-            </blockquote>
-            <h4>④ 内容区（sheet-body）</h4>
-            <blockquote>
-              <p>承载事件行、待办、二级详情。折叠态 overflow:hidden 裁剪溢出，展开态 overflow:auto 可滚动。示例展示的是"创建代办"场景——事件行 + 待办列表。</p>
-            </blockquote>
+          <div class="fp-snapshot-pair-item">
+            <div class="fp-snapshot-wrap">
+              <span class="tag">二级 Sheet · 详情</span>
+              <div class="fp-snapshot">${s.anatomyDetail}</div>
+            </div>
+            <div class="fp-snapshot-side-desc">
+              <h4>⑤ 返回按钮（sheet-top-start）</h4>
+              <blockquote>
+                <p>二级详情模式下，左侧 slot 从空置变为返回按钮，点击回到一级列表。</p>
+              </blockquote>
+              <h4>⑥ 详情容器（sd-container）</h4>
+              <blockquote>
+                <p>承载分组的详情卡片（sd-section），每张卡片包含 label 和 content。支持文本和代码两种变体。</p>
+              </blockquote>
+              <h4>⑦ 详情卡片（sd-card）</h4>
+              <blockquote>
+                <p>白底 + 边框 + 圆角，展示具体内容。代码变体使用等宽字体。</p>
+              </blockquote>
+            </div>
           </div>
         </div>
 

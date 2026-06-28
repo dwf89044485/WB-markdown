@@ -438,10 +438,12 @@ export function renderStaticDetail(detail) {
 // opts.width:      快照宽度（默认 320px）
 // opts.height:     快照容器高度（默认 480px）
 // opts.borderRadius: 快照容器圆角（默认 ''，即无圆角）
+// opts.detailMode: 是否启用二级详情模式（默认 false），启用时 bottom-sheet 和 sheet-body 加 detail-mode class，sheet-top-start 显示返回按钮
 export function renderStaticSheetShell(opts = {}) {
-  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '' } = opts;
+  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '', detailMode = false } = opts;
   const expanded = state === 'expanded';
-  const sheetCls = expanded ? 'bottom-sheet expanded' : 'bottom-sheet';
+  const sheetCls = 'bottom-sheet' + (expanded ? ' expanded' : '') + (detailMode ? ' detail-mode' : '');
+  const bodyCls = 'sheet-body' + (detailMode ? ' detail-mode' : '');
   const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   const closeSvg = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
@@ -449,15 +451,18 @@ export function renderStaticSheetShell(opts = {}) {
   const closeBtnHtml = showClose
     ? `<div class="sheet-top-end"><button class="glass-btn aq-close-btn" type="button" tabindex="-1">${glassLayers}${closeSvg}</button></div>`
     : '<div class="sheet-top-end"></div>';
+  const backBtnHtml = detailMode
+    ? `<div class="sheet-top-start"><button class="glass-btn" type="button" tabindex="-1"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`
+    : '<div class="sheet-top-start"></div>';
   return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
     <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
       <div class="${sheetCls}" style="transform:translateY(0)">
         <div class="sheet-top">
-          <div class="sheet-top-start"></div>
+          ${backBtnHtml}
           <div class="sheet-handle"></div>
           ${closeBtnHtml}
         </div>
-        <div class="sheet-body">${body}</div>
+        <div class="${bodyCls}">${body}</div>
       </div>
     </div>
   </div>`;

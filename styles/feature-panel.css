@@ -422,9 +422,9 @@
 }
 
 /* ── 全屏查看预览：fp-fs-preview ─────────────────────────
-   复用 Demo 的 code-sheet-overlay / tbl-fullscreen-overlay DOM，
+   复用 Demo 的 code-sheet-panel / tbl-fs-inner DOM（panelOnly/contentOnly 模式），
    在说明栏内以"预览模式"展示。
-   原则：只控制容器尺寸和定位，不覆盖 Demo 组件的内部样式。
+   原则：只控制手机壳容器尺寸和 panel 定位，不覆盖 Demo 组件的内部样式。
    ──────────────────────────────────────────────────────── */
 .fp-fs-preview {
   position: relative;
@@ -447,68 +447,149 @@
   pointer-events: none;
 }
 
-/* 底部 Sheet 预览：竖屏手机比例
-   直接包裹 renderStaticCodeSheet() 返回的真实 DOM，
-   .fp-static 标记静态预览态，覆盖 Demo 的 fixed/translateY 定位。 */
-.fp-fs-preview.fp-fs-sheet {
+/* ── 手机壳模拟（竖屏）── */
+.fp-fs-phone {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+.fp-fs-phone-portrait {
   width: 320px;
   min-width: 320px;
   height: 520px;
+  display: flex;
+  flex-direction: column;
 }
-.fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-static {
+.fp-fs-phone-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #000;
+  flex-shrink: 0;
+}
+.fp-fs-phone-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid #f0f0f2;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.fp-fs-phone-conv {
+  flex: 1;
+  overflow: hidden;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f7f7f9;
+}
+.fp-fs-msg-user {
+  align-self: flex-end;
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 16px 16px 4px 16px;
+  background: #007aff;
+  color: #fff;
+  font-size: 13px;
+}
+.fp-fs-msg-agent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fp-fs-msg-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--md-text-muted, #8e8e93);
+}
+.fp-fs-mini-card {
+  border: 1px solid var(--md-border, #e9ecf1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.fp-fs-mini-card-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #f5f5f7;
+  font-size: 11px;
+}
+.fp-fs-mini-card-lang { font-weight: 600; }
+.fp-fs-mini-card-btn { color: #007aff; font-weight: 600; }
+.fp-fs-mini-card-body {
+  padding: 8px 10px;
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: var(--md-text-muted, #8e8e93);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Sheet 模态：panel 钉在手机壳底部 ── */
+.fp-fs-sheet-mount {
   position: absolute;
-  inset: 0;
-  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 5;
-  pointer-events: none;
-  visibility: visible;
-  opacity: 1;
 }
-.fp-fs-preview.fp-fs-sheet .code-sheet-panel {
-  position: relative;
-  top: 0;
-  left: 0; right: 0; bottom: 0;
-  transform: none;
-  height: 100%;
-  box-shadow: none;
-  border-radius: 20px 20px 0 0;
+.fp-fs-sheet-mount .code-sheet-panel.fp-static {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
   max-height: 320px;
   padding: 12px 16px;
   gap: 12px;
+  box-shadow: 0 -8px 28px rgba(0,0,0,0.10);
 }
-.fp-fs-preview.fp-fs-sheet .code-sheet-backdrop {
-  display: none;
-}
-.fp-fs-preview.fp-fs-sheet .code-sheet-body {
+.fp-fs-sheet-mount .code-sheet-body {
   overflow-y: auto;
   max-height: 200px;
 }
 
-/* 横屏二级页预览：横屏手机比例
-   直接包裹 renderStaticTableFullscreen() 返回的真实 DOM，
-   .fp-static 标记静态预览态，覆盖 Demo 的 fixed 定位和进入动画。 */
-.fp-fs-preview.fp-fs-landscape {
+/* ── 横屏二级页模态 ── */
+.fp-fs-phone-landscape {
   width: 520px;
   min-width: 520px;
   height: 300px;
-}
-.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-static {
-  position: relative;
-  inset: auto;
-  z-index: auto;
   display: flex;
-  border-radius: 0;
-  animation: none;
-  height: 100%;
+  align-items: stretch;
 }
-.fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
+.fp-fs-landscape-mount {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.fp-fs-landscape-mount .tbl-fs-inner.fp-static {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+}
+.fp-fs-landscape-mount .tbl-fs-nav {
   height: 48px;
   padding: 0 12px;
+  flex-shrink: 0;
 }
-.fp-fs-preview.fp-fs-landscape .tbl-fs-content {
+.fp-fs-landscape-mount .tbl-fs-content {
+  flex: 1;
   padding: 0 12px;
+  overflow: auto;
 }
-.fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
+.fp-fs-landscape-mount .tbl-mermaid-fs {
   padding: 16px;
   min-height: 160px;
 }
@@ -798,6 +879,27 @@
   flex-shrink: 0;
   margin-top: 0;
   margin-bottom: 0;
+}
+
+/* 双列快照布局（2.1 事件 Sheet + 二级 Sheet 并排） */
+.fp-snapshot-pair {
+  display: flex;
+  gap: 32px;
+  margin: 16px 0;
+  align-items: flex-start;
+}
+.fp-snapshot-pair > .fp-snapshot-pair-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.fp-snapshot-pair > .fp-snapshot-pair-item > .fp-snapshot-wrap {
+  margin: 0;
+} 
+.fp-snapshot-pair > .fp-snapshot-pair-item > .fp-snapshot-wrap > .fp-snapshot {
+  width: 100%;
 }
 .fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);

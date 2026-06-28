@@ -336,33 +336,6 @@ export default {
             </blockquote>
           </div>
         </div>
-
-        <h3>4.1 展开/折叠动效（事件 Sheet 专属）</h3>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <div class="fp-motion-stage fp-sheet-motion-expand" data-motion-loop="sheet-expand">
-              ${s.motionExpand}
-            </div>
-          </div>
-          <div class="fp-snapshot-side-desc">
-            <p>拖拽松手后，面板在 40% 和 80% 之间吸附切换。高度变化使用与进出动效一致的缓动曲线，保持整体节奏统一。</p>
-            <table>
-              <thead>
-                <tr><th>属性</th><th>时长</th><th>缓动</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>height</td>
-                  <td>0.32s</td>
-                  <td>cubic-bezier(0.32, 0.72, 0, 1)</td>
-                </tr>
-              </tbody>
-            </table>
-            <blockquote>
-              <p>拖拽过程中 transition 临时关闭（实时跟随手指），松手瞬间恢复 transition，产生"吸附"的顿挫感。这种"跟手→吸附"的两段式反馈，是拖拽交互手感的核心。</p>
-            </blockquote>
-          </div>
-        </div>
       </section>
 
       <section data-section="related">

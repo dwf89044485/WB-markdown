@@ -674,7 +674,8 @@ function stopAqSlideCycleLoop() {
 
 /* ── 内容宽度自适应约束 ──────────────────────────────────────
  * 渲染完成后同步测量 .fp-snapshot-row 中卡片的自然平铺宽度
- * （所有卡片自身宽度 + gap 之和），以此约束内层容器 max-width。
+ * （所有卡片自身宽度 + gap 之和），以及 .fp-snapshot-side
+ * 左右并排布局的宽度，以此约束内层容器 max-width。
  * 约束加在 .fp-scroll-inner（内层）而非 .fp-scroll（外层），
  * 避免滚动条吃掉可用宽度导致非预期折行。
  * 大屏时不拉宽，小屏时自动折行，首次绘制即生效，无闪动。
@@ -692,15 +693,22 @@ function constrainContentWidth(scrollEl, inner) {
     const wraps = row.querySelectorAll(':scope > .fp-snapshot-wrap');
     if (wraps.length < 2) return;
 
+    // 只测量第一行可见的卡片（offsetTop 相同的为同一行）
+    const firstTop = wraps[0].offsetTop;
     let sum = 0;
-    wraps.forEach((w) => { sum += w.getBoundingClientRect().width; });
+    let visibleCount = 0;
+    wraps.forEach((w) => {
+      if (w.offsetTop === firstTop) {
+        sum += w.getBoundingClientRect().width;
+        visibleCount++;
+      }
+    });
 
     const gap = parseInt(window.getComputedStyle(row).columnGap) || 30;
-    const natural = sum + gap * (wraps.length - 1);
+    const natural = sum + gap * (visibleCount - 1);
     if (natural > maxNatural) maxNatural = Math.ceil(natural) + 2;
   });
 
-  const minW = parseInt(window.getComputedStyle(scrollEl).getPropertyValue('--fp-min-content-width')) || 840;
-  const targetWidth = Math.max(maxNatural, minW);
+  const targetWidth = Math.max(maxNatural, 840);
   inner.style.setProperty('--fp-max-content-width', targetWidth + 'px');
 }

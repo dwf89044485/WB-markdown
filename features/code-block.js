@@ -7,7 +7,7 @@
 //           复用 engine/table-fullscreen.js 的 renderStaticTableFullscreen
 // ============================================================
 
-import { renderStaticCodeCard, markdownToHtml } from '../engine/markdown.js';
+import { renderStaticCodeCard, renderStaticMermaidCard, markdownToHtml } from '../engine/markdown.js';
 import { renderStaticCodeSheet } from '../engine/code-fullscreen-sheet.js';
 import { renderStaticTableFullscreen } from '../engine/table-fullscreen.js';
 
@@ -91,12 +91,18 @@ function snap(key, ...args) {
 }
 
 function getSnapshots() {
-  const tableCard = markdownToHtml(SAMPLES.table);
+  let tableCard = '<div style="color:red">表格渲染失败</div>';
+  try {
+    tableCard = markdownToHtml(SAMPLES.table);
+  } catch (e) {
+    console.error('[code-block] markdownToHtml error:', e);
+    tableCard = `<div style="color:red">markdownToHtml 错误: ${e.message}</div>`;
+  }
   return {
     typeExec:      snap('typeExec',     { lang: 'javascript', code: SAMPLES.js }),
     typeView:      snap('typeView',     { lang: 'html',       code: SAMPLES.html }),
     typeStatic:    snap('typeStatic',   { lang: 'json',       code: SAMPLES.json }),
-    typeVisual:    snap('typeVisual',   { lang: 'mermaid',    code: SAMPLES.mermaid }),
+    typeVisual:    renderStaticMermaidCard(SAMPLES.mermaid),
     typeTable:     tableCard,
     // 折叠与展开：用长代码样本，确保超过 280px 阈值
     foldCollapsed: snap('foldCollapsed', { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
@@ -104,7 +110,7 @@ function getSnapshots() {
     fsCardJs:      snap('fsCardJs',     { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     fsCardHtml:    snap('fsCardHtml',   { lang: 'html',       code: SAMPLES.html, collapsed: null }),
     fsCardTable:   tableCard,
-    fsCardMermaid: snap('fsCardMermaid',{ lang: 'mermaid',    code: SAMPLES.mermaid, collapsed: null }),
+    fsCardMermaid: renderStaticMermaidCard(SAMPLES.mermaid),
   };
 }
 
@@ -247,7 +253,7 @@ export default {
             <div class="fp-fs-flow-label">横屏二级页全屏</div>
             ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
-              bodyHtml: `<div class="tbl-mermaid-fs"><div style="padding:24px;color:var(--md-text-muted);font-size:14px;text-align:center;">Mermaid SVG 渲染区</div></div>`,
+              bodyHtml: `<div class="tbl-mermaid-fs"><div class="mermaid">${SAMPLES.mermaid}</div></div>`,
               type: 'mermaid'
             }))}
           </div>

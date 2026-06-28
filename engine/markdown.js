@@ -32,15 +32,11 @@ const ICON_VIEW = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16
 // 「运行」(Subtract.svg) — 实心黑圆+白三角；用 currentColor + 内嵌白三角
 const ICON_RUN = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0ZM7.38086 5.70898C6.70946 5.30615 6.37376 5.10444 6.12012 5.24805C5.86664 5.39174 5.86621 5.78353 5.86621 6.56641V9.43359C5.86621 10.2165 5.86664 10.6083 6.12012 10.752C6.37376 10.8956 6.70946 10.6939 7.38086 10.291L9.77051 8.85742C10.4087 8.47449 10.7285 8.2831 10.7285 8C10.7285 7.7169 10.4087 7.52551 9.77051 7.14258L7.38086 5.70898Z"/></svg>';
 
-// 「展开」箭头 — 代码块折叠区底部
-const ICON_EXPAND = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5L7 8.5L10.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-// 生成代码块折叠展开按钮 HTML
-// expanded: true → 展开态（文案「收起」、图标已旋转）；false → 折叠态（文案「展开」）
-function renderExpandBtn({ disabled = false, expanded = false } = {}) {
+// 「查看全部」按钮 — 超长代码块底部，点击拉起二级 sheet（code-fullscreen-sheet.js）
+function renderExpandBtn({ disabled = false } = {}) {
   const disabledAttr = disabled ? ' disabled' : '';
-  const label = expanded ? '收起' : '展开';
-  return `<button class="wb-card-expand" type="button" aria-label="${label}"${disabledAttr}><span class="wb-card-expand-label">${label}</span><span class="wb-card-expand-icon">${ICON_EXPAND}</span></button>`;
+  const label = '查看全部';
+  return `<button class="wb-card-expand" type="button" aria-label="${label}"${disabledAttr}><span class="wb-card-expand-label">${label}</span></button>`;
 }
 
 // ── 卡片类型配置 ───────────────────────────────────────────
@@ -279,6 +275,22 @@ export function markdownToHtml(markdown) {
 // collapsed: true → 折叠态（限高280px + 渐隐遮罩 + 展开按钮）
 // collapsed: false → 展开态（完整代码 + 收起按钮）
 // collapsed: null → 不折叠（无折叠按钮，用于短代码展示）
+// ── 静态 Mermaid 可视化卡片（供 Feature Panel 快照复用）────────────
+// 卡片外壳与其他类型一致（标题 Mermaid + 复制/保存图片/分享/全屏 按钮），
+// 内容区直接放 .mermaid 容器，由 feature-panel.js 的 mermaid.run() 完成 SVG 渲染。
+export function renderStaticMermaidCard(code) {
+  const actions = buildCardActions('visual', { allowImageSave: true });
+  // code 不经过 escapeHtml —— Mermaid 解析 textContent，不是 HTML
+  const body = `<div class="wb-card-body"><div class="mermaid">${code}</div></div>`;
+  return renderCardShell({
+    title: 'Mermaid',
+    actions,
+    body,
+    extraOuterClass: 'wb-card-code wb-card-visual',
+    disabled: false,
+  });
+}
+
 export function renderStaticCodeCard({ lang, code, kind, collapsed = true }) {
   const cfg = kind
     ? { ...resolveCardConfig(lang), kind }

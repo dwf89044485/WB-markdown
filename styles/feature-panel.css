@@ -311,6 +311,7 @@
   display: flex;
   justify-content: flex-start;
   /* 快照内的组件左对齐 */
+  pointer-events: none;    /* 快照仅展示，按钮不触发 Demo 区事件代理 */
 }
 .fp-snapshot > * {
   flex-shrink: 0;           /* 防止组件宽度被挤压 */

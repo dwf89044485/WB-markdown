@@ -32,6 +32,15 @@ const ICON_VIEW = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16
 // 「运行」(Subtract.svg) — 实心黑圆+白三角；用 currentColor + 内嵌白三角
 const ICON_RUN = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0ZM7.38086 5.70898C6.70946 5.30615 6.37376 5.10444 6.12012 5.24805C5.86664 5.39174 5.86621 5.78353 5.86621 6.56641V9.43359C5.86621 10.2165 5.86664 10.6083 6.12012 10.752C6.37376 10.8956 6.70946 10.6939 7.38086 10.291L9.77051 8.85742C10.4087 8.47449 10.7285 8.2831 10.7285 8C10.7285 7.7169 10.4087 7.52551 9.77051 7.14258L7.38086 5.70898Z"/></svg>';
 
+// 「展开」箭头 — 代码块折叠区底部
+const ICON_EXPAND = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5L7 8.5L10.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// 生成代码块折叠展开按钮 HTML
+function renderExpandBtn({ disabled = false } = {}) {
+  const disabledAttr = disabled ? ' disabled' : '';
+  return `<button class="wb-card-expand" type="button" aria-label="展开"${disabledAttr}><span class="wb-card-expand-label">展开</span><span class="wb-card-expand-icon">${ICON_EXPAND}</span></button>`;
+}
+
 // ── 卡片类型配置 ───────────────────────────────────────────
 //   kind: 'executable' | 'view' | 'static' | 'visual'
 //     executable → 主按钮 ▶ 运行（js/python/bash 等）
@@ -98,22 +107,23 @@ function buildCardActions(kind, { allowImageSave = false } = {}) {
   return { primary, secondary };
 }
 
-function renderActionsHtml(actions) {
+function renderActionsHtml(actions, { disabled = false } = {}) {
+  const disabledAttr = disabled ? ' disabled' : '';
   const parts = [];
   if (actions.primary) {
     const a = actions.primary;
-    parts.push(`<button class="${a.cls}" aria-label="${a.label}">${a.icon}<span>${a.label}</span></button>`);
+    parts.push(`<button class="${a.cls}" aria-label="${a.label}"${disabledAttr}>${a.icon}<span>${a.label}</span></button>`);
   }
   for (const a of actions.secondary) {
-    parts.push(`<button class="${a.cls}" aria-label="${a.label}">${a.icon}</button>`);
+    parts.push(`<button class="${a.cls}" aria-label="${a.label}"${disabledAttr}>${a.icon}</button>`);
   }
   return parts.join('');
 }
 
 // 通用卡片外壳：标题在左、按钮在右、下方放 body
-function renderCardShell({ title, actions, body, extraOuterClass = '' }) {
+function renderCardShell({ title, actions, body, extraOuterClass = '', disabled = false }) {
   const outerCls = `tbl-outer wb-card ${extraOuterClass}`.trim();
-  const toolbar = `<div class="tbl-toolbar wb-card-toolbar"><span class="tbl-toolbar-title wb-card-title">${escapeHtml(title)}</span><div class="tbl-toolbar-actions wb-card-actions">${renderActionsHtml(actions)}</div></div>`;
+  const toolbar = `<div class="tbl-toolbar wb-card-toolbar"><span class="tbl-toolbar-title wb-card-title">${escapeHtml(title)}</span><div class="tbl-toolbar-actions wb-card-actions">${renderActionsHtml(actions, { disabled })}</div></div>`;
   return `<div class="${outerCls}">${toolbar}${body}</div>`;
 }
 
@@ -243,7 +253,7 @@ export function markdownToHtml(markdown) {
       // mermaid 走 visual（含保存图片），其他按 kind 决定
       const allowImageSave = cfg.kind === 'visual';
       const actions = buildCardActions(cfg.kind, { allowImageSave });
-      const codeBody = `<div class="wb-card-body is-collapsible is-collapsed"><pre><code${langAttr}>${codeHtml}</code></pre><button class="wb-card-expand" type="button" aria-label="展开"><span class="wb-card-expand-label">展开</span><span class="wb-card-expand-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5L7 8.5L10.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>`;
+      const codeBody = `<div class="wb-card-body is-collapsible is-collapsed"><pre><code${langAttr}>${codeHtml}</code></pre>${renderExpandBtn()}</div>`;
       out.push(renderCardShell({ title: cfg.title, actions, body: codeBody, extraOuterClass: `wb-card-code wb-card-${cfg.kind}` }));
       continue;
     }
@@ -260,4 +270,25 @@ export function markdownToHtml(markdown) {
     out.push(`<p>${inlineMarkdown(paras.join(' '))}</p>`);
   }
   return out.join('\n');
+}
+
+// ── 静态渲染导出（供 Feature Panel 快照复用）──────────────
+// mode:'static' — 快照展示用，按钮视觉与 live 版本一致（不 disabled），但快照容器通过 pointer-events:none 阻止实际交互
+export function renderStaticCodeCard({ lang, code, kind, collapsed = true }) {
+  const cfg = kind
+    ? { ...resolveCardConfig(lang), kind }
+    : resolveCardConfig(lang);
+  const allowImageSave = cfg.kind === 'visual';
+  const actions = buildCardActions(cfg.kind, { allowImageSave });
+  const codeHtml = escapeHtml(code);
+  const langAttr = lang ? ` class="lang-${escapeHtml(lang)}"` : '';
+  const collapseCls = collapsed ? 'is-collapsible is-collapsed' : 'is-collapsible';
+  const codeBody = `<div class="wb-card-body ${collapseCls}"><pre><code${langAttr}>${codeHtml}</code></pre>${renderExpandBtn({ disabled: true })}</div>`;
+  return renderCardShell({
+    title: cfg.title,
+    actions,
+    body: codeBody,
+    extraOuterClass: `wb-card-code wb-card-${cfg.kind}`,
+    disabled: false,
+  });
 }

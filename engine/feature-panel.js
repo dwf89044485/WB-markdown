@@ -440,6 +440,14 @@ function renderRoute(route) {
     });
   }
 
+  // 代码块语法高亮（与 Demo 区一致：跳过 mermaid，其余调 hljs.highlightElement）
+  if (window.hljs) {
+    scrollEl.querySelectorAll('pre code').forEach((el) => {
+      if (el.classList.contains('lang-mermaid') || el.dataset.highlighted) return;
+      try { window.hljs.highlightElement(el); } catch (e) { /* ignore */ }
+    });
+  }
+
   // 同步导航激活态
   tabBarEl.querySelectorAll('.fp-tab').forEach((t) => {
     t.classList.toggle('is-active', t.dataset.fpId === f.id);

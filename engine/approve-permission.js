@@ -145,11 +145,12 @@ function bindApprovePermissionEvents() {
     // 锁定点击，防止重复操作
     container.style.pointerEvents = 'none';
 
-    // 停留 400ms 让用户感知选中状态，再开始出场动画
+    // 停留 300ms 让用户感知选中状态，再开始出场动画
+    // 与 ask-question 单选自动前进的停留时间一致
     setTimeout(() => {
       if (!apState) return;
       hideApprovePermission();
-    }, 400);
+    }, 300);
   });
 }
 

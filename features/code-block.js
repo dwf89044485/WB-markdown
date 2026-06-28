@@ -226,12 +226,11 @@ export default {
         <p>可执行类（js / py / sh）、可预览类（html）、静态类（json / css / yaml）点击全屏 → 从底部滑入 Sheet 面板，覆盖到导航栏下方。Sheet 顶部为标题 + 玻璃胶囊按钮组，内容区展示完整代码并支持语法高亮。</p>
         <div class="fp-fs-flow">
           <div class="fp-fs-flow-step">
-            <div class="fp-fs-flow-label">对话流中的卡片</div>
+            <div class="fp-fs-flow-label">对话流代码块渲染</div>
             ${labeled('JavaScript 代码块（折叠态）', s.fsCardJs)}
           </div>
-          <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
-            <div class="fp-fs-flow-label">底部 Sheet 全屏</div>
+            <div class="fp-fs-flow-label">点击展开底部 Sheet 全屏</div>
             ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong }))}
           </div>
         </div>
@@ -245,12 +244,11 @@ export default {
         <p>可视化类（mermaid / 表格）点击全屏 → 手机壳物理旋转为横屏，进入全屏二级页面。顶部导航栏（返回按钮 + 标题 + 玻璃胶囊按钮组），内容区横向铺满展示 Mermaid SVG 或表格。</p>
         <div class="fp-fs-flow">
           <div class="fp-fs-flow-step">
-            <div class="fp-fs-flow-label">对话流中的卡片</div>
+            <div class="fp-fs-flow-label">对话流代码块渲染</div>
             ${labeled('Mermaid 代码块', s.fsCardMermaid)}
           </div>
-          <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
-            <div class="fp-fs-flow-label">横屏二级页全屏</div>
+            <div class="fp-fs-flow-label">点击展开进入二级页横屏</div>
             ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
               bodyHtml: `<div class="tbl-mermaid-fs"><div class="mermaid">${SAMPLES.mermaid}</div></div>`,

@@ -33,6 +33,7 @@
 | 8 | commit → 每完成一件事立即提交，不等用户说 | — |
 | 9 | `git reset` → 只能用 `--keep`，禁止用 `--hard` | `git reset --hard HEAD~1` |
 | 10 | Feature Panel 快照尺寸 → 由各 `features/<id>.js` 通过 `opts.width/height` 自行控制，禁止在 CSS 中用 `!important` 全局覆盖 | `.fp-snapshot .fp-sheet-shell-frame { width: 390px !important; }` |
+| 11 | Feature Panel 快照渲染 → 必须调 Demo 已有的 `renderStaticXxx()`，禁止在 feature 文件里重写 HTML | 在 `features/sheet.js` 里拼 `<header>...<pre>` 字符串 |
 
 ---
 
@@ -155,6 +156,8 @@ python3 -m http.server 8080
 - **锚点** → 对应 `features/<id>.js` 的 `anchors` 字段定义 `{ stepIndex, until, label }`
 
 以上 4 个位置之外出现说明渲染代码 = 违规。
+
+**快照渲染规范**（`docs/static-snapshot-pattern.md`）：右侧说明区里的组件截图/快照，**禁止重写 HTML**。必须调用左侧 Demo 已有的渲染函数，通过 `mode: 'static'` 参数生成。唯一真相源是 engine 层的 `renderXxxHTML()` 函数，live 和 static 共享。违规指征：feature 文件里出现 hardcoded HTML 模板字符串、`feature-panel.css` 里出现组件内部样式覆盖（padding/background/border）。
 
 **内容形态约束**：描述外观和行为的章节必须图文并茂，禁止纯文本段落。合规形态：
 

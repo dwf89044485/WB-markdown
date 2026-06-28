@@ -589,6 +589,10 @@
   padding-left: 4px;
 }
 /* 其他位置的状态行（fp-snapshot / fp-tcn-stack 内）保持默认边框样式不变 */
+/* 保障 Tool Call Node 扫光动画：status-fragments 的圆角不被 feature panel 覆盖 */
+.fp-content .step-detail-link.is-running .status-fragments{
+  border-radius:var(--cv-status-radius);
+}
 
 /* ── Tool Call Node 设计样式章节（3 模式循环 demo）────────── */
 .fp-tcn-modes {

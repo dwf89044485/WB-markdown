@@ -9,61 +9,25 @@
 // 循环动画：第 2 节「设计样式」3 个 mode 块顺序播放（逐条执行→全部完成）
 //           逻辑在 engine/feature-panel.js 的 startTcnModeLoop() 处理
 
-import { statusLineHTML, statusStackHTML } from '../engine/icons.js';
-import { renderStaticSheet, renderStaticDetail, renderStaticSheetShell, getFrames } from '../engine/sheet.js';
-import { glassCloseBtn, glassNavBtn, GLYPH_PREV } from '../engine/ask-question.js';
-
-// ── 快照缓存 ─────────────────────────────────────
-const snapCache = {};
-function snap(key, fn, ...args) {
-  if (!snapCache[key]) snapCache[key] = fn(...args);
-  return snapCache[key];
-}
+import { statusLineHTML } from '../engine/icons.js';
 
 function getSnapshots() {
-  // §2 构成：三种样式的静态展示
-  const flatLine = statusLineHTML(['正在搜索网页']);
-  const stackLine = statusStackHTML(['搜索网页', '创建文件', '读取文件']);
-  const cardLine = statusLineHTML(['正在执行命令']);
-
-  // §3 状态：进行中 vs 已完成
-  const runningSingle = `<div class="fp-tcn-inline">${statusLineHTML(['正在执行命令'])}</div>`;
-  const doneSingle = `<div class="fp-tcn-inline">${statusLineHTML(['执行命令'])}</div>`;
-  const runningMulti = `<div class="fp-tcn-inline">${statusLineHTML(['搜索网页', '创建文件', '正在读取文件'])}</div>`;
-  const doneMulti = `<div class="fp-tcn-inline">${statusLineHTML(['搜索网页', '创建文件', '读取文件'])}</div>`;
-
-  // §4 Sheet 交互：一级概览 + 二级详情
-  const SHEET_FRAMES = getFrames('F3.4d');
-  const SHEET_EVENTS = SHEET_FRAMES.flatMap(f => f.events || []);
-  const SHEET_DETAIL = SHEET_EVENTS[1]?.detail;
+  // 状态行辅助：running 状态自动加 is-running class（触发扫光动画）
+  const line = (labels, { running } = {}) => {
+    const cls = `step-detail-link${running ? ' is-running' : ''}`;
+    return `<button type="button" class="${cls}" tabindex="-1">${statusLineHTML(labels)}</button>`;
+  };
 
   return {
-    // §2 构成
-    flatLine,
-    stackLine,
-    cardLine,
-    // §3 状态
-    runningSingle,
-    doneSingle,
-    runningMulti,
-    doneMulti,
-    // §4 Sheet
-    sheetOverview: renderStaticSheet(SHEET_EVENTS),
-    sheetDetail: SHEET_DETAIL ? renderStaticDetail(SHEET_DETAIL) : '',
-    // §5 动效演示
-    motionDemo: runningSingle,
+    runningSingle: `<div class="fp-tcn-inline">${line(['正在执行命令'], { running: true })}</div>`,
+    doneSingle:   `<div class="fp-tcn-inline">${line(['执行命令'])}</div>`,
+    runningMulti: `<div class="fp-tcn-inline">${line(['搜索网页', '创建文件', '正在读取文件'], { running: true })}</div>`,
+    doneMulti:    `<div class="fp-tcn-inline">${line(['搜索网页', '创建文件', '读取文件'])}</div>`,
+    motionDemo:   `<div class="fp-tcn-inline">${line(['正在搜索网页'], { running: true })}</div>`,
   };
 }
 
-// ── 状态行快照（用真实 CSS + 真实 icon 推断）──────────
-function sl(labels, opts = {}) {
-  const { state = 'done' } = opts;
-  const cls = `step-detail-link${state === 'running' ? ' is-running' : ''}`;
-  return `<button type="button" class="${cls}" tabindex="-1">${statusLineHTML(labels)}</button>`;
-}
-
 // ── 设计样式章节的 demo 块（3 模式顺序循环）──────────
-// 样式类直接挂在容器上，替代 phone-shell 的区分作用
 function modeBlock(modeLabel, phoneClass, initialLine) {
   const isStack = phoneClass === 'tool-call-stack';
   return `<div class="fp-tcn-mode-demo ${phoneClass}" data-mode="${modeLabel}">
@@ -87,80 +51,11 @@ export default {
 
       <section data-section="overview">
         <h2>1. 概述</h2>
-        <h3>定义</h3>
-        <p>工具调用节点是 agent 在执行任务过程中<strong>调用外部工具时的状态反馈</strong>。它让用户知道 agent 正在做什么、做完了什么。</p>
-        <h3>使用场景</h3>
-        <ul>
-          <li>Agent 需要搜索网页获取信息</li>
-          <li>Agent 需要创建或修改文件</li>
-          <li>Agent 需要执行命令行指令</li>
-          <li>Agent 需要调用外部 API 或技能</li>
-        </ul>
-        <h3>设计目标</h3>
-        <p>让 agent 的<strong>工具调用过程可感知、可追踪</strong>，而不是只看到最终答案。</p>
-      </section>
-
-      <section data-section="anatomy">
-        <h2>2. 构成（三种样式）</h2>
-        <p>工具调用节点根据调用数量和强调需求，有三种视觉样式：</p>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">文字样式</span>
-            <div class="fp-snapshot">${s.flatLine}</div>
-          </div>
-          <div class="fp-snapshot-side-desc">
-            <h4>① 状态图标</h4>
-            <blockquote>
-              <p>根据工具类型自动推断图标（搜索、文件、终端等），让用户一眼看出在调用什么工具。</p>
-            </blockquote>
-            <h4>② 状态文本</h4>
-            <blockquote>
-              <p>进行中显示「正在X」，完成后显示「X」。<strong>靠「正在」前缀区分状态</strong>，不用额外的 badge 或图标。</p>
-            </blockquote>
-            <h4>③ 展开箭头</h4>
-            <blockquote>
-              <p>点击状态行可以展开 Sheet，查看每次工具调用的详细结果。</p>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="fp-snapshot-side" style="margin-top:24px">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">堆叠样式</span>
-            <div class="fp-snapshot">${s.stackLine}</div>
-          </div>
-          <div class="fp-snapshot-side-desc">
-            <h4>① 图标堆</h4>
-            <blockquote>
-              <p>多条工具调用完成后，折叠为<strong>图标堆 + 已执行 N 项</strong>的紧凑展示。</p>
-            </blockquote>
-            <h4>② 展开箭头</h4>
-            <blockquote>
-              <p>点击可以展开查看所有工具调用的详细列表。</p>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="fp-snapshot-side" style="margin-top:24px">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">边框样式</span>
-            <div class="fp-snapshot">${s.cardLine}</div>
-          </div>
-          <div class="fp-snapshot-side-desc">
-            <h4>① 边框容器</h4>
-            <blockquote>
-              <p>用边框强调关键的工具调用，让用户注意到这个操作比较重要。</p>
-            </blockquote>
-            <h4>② 内部结构与文字样式相同</h4>
-            <blockquote>
-              <p>只是外层加了边框，内部仍然是状态图标 + 状态文本 + 展开箭头。</p>
-            </blockquote>
-          </div>
-        </div>
+        <p>工具调用节点是 agent 调用外部工具时的状态行，位于 AI 消息气泡内、思考按钮下方、正式回答上方——让用户感知 agent 正在做什么、做完了什么。</p>
       </section>
 
       <section data-section="states">
-        <h2>3. 状态</h2>
+        <h2>2. 状态</h2>
         <p>两个状态，<strong>前缀「正在」是唯一的状态标记</strong>——同一工具调用在两个状态共用同一段文案，仅靠「正在」区分。</p>
 
         <div class="fp-states-row">
@@ -197,7 +92,7 @@ export default {
       </section>
 
       <section data-section="modes">
-        <h2>4. 设计样式</h2>
+        <h2>3. 设计样式</h2>
         <p>工具调用节点有 3 种视觉样式：<strong>文字</strong>（默认内联）/ <strong>堆叠</strong>（多条完成时折叠）/ <strong>边框</strong>（卡片强调）。下方同步演示从逐条执行到全部完成的完整过程——<strong>堆叠模式在完成时折叠为「图标堆 + 已执行 3 项」</strong>。</p>
         <div class="fp-snapshot-row fp-tcn-modes">
           <div class="fp-snapshot-wrap">
@@ -215,58 +110,11 @@ export default {
         </div>
       </section>
 
-      <section data-section="sheet">
-        <h2>5. Sheet 交互</h2>
-        <p>点击工具调用节点，弹出 Sheet 查看执行详情。以「执行命令」（<code>F3.4d</code>，含 3 个命令事件）为例。</p>
-
-        <h3>5.1 一级 Sheet — 概览</h3>
-        <p>显示所有工具调用的事件列表，点击某条事件可以展开二级 Sheet 查看详细结果。</p>
-        <div class="fp-sheet-pair">
-          <div class="fp-sheet-pair-item">
-            <span class="tag">一级 sheet-概览</span>
-            <div class="fp-sheet-mock">
-              <div class="bottom-sheet fp-bottom-sheet-static">
-                <div class="sheet-top">
-                  <div class="sheet-top-start"></div>
-                  <div class="sheet-handle"></div>
-                  <div class="sheet-top-end">${glassCloseBtn()}</div>
-                </div>
-                <div class="sheet-body">${s.sheetOverview}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="fp-sheet-pair-arrow"><span>›</span></div>
-
-          <div class="fp-sheet-pair-item">
-            <span class="tag">二级 sheet-详情</span>
-            <div class="fp-sheet-mock fp-sheet-mock-detail">
-              <div class="bottom-sheet detail-mode fp-bottom-sheet-static">
-                <div class="sheet-top">
-                  <div class="sheet-top-start">${glassNavBtn(GLYPH_PREV, false)}</div>
-                  <div class="sheet-handle"></div>
-                  <div class="sheet-top-end">${glassCloseBtn()}</div>
-                </div>
-                <div class="sheet-body detail-mode">${s.sheetDetail}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h3>5.2 交互流程</h3>
-        <blockquote>
-          <p><strong>触发区</strong>：点击状态行的任意位置（包括图标、文本、箭头）。</p>
-          <p><strong>一级 Sheet</strong>：从屏幕底部向上滑入，显示所有工具调用的事件列表。</p>
-          <p><strong>二级 Sheet</strong>：点击某条事件的展开箭头，滑入显示该事件的详细结果。</p>
-          <p><strong>关闭手势</strong>：点击遮罩背景、下拉手柄、或按 ESC 键。</p>
-        </blockquote>
-      </section>
-
       <section data-section="motion">
-        <h2>6. 动效</h2>
+        <h2>4. 动效</h2>
         <p>工具调用节点的核心动效是<strong>扫光动画</strong>，表示工具调用正在进行中。</p>
 
-        <h3>6.1 扫光动画</h3>
+        <h3>4.1 扫光动画</h3>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
             <div class="fp-motion-stage" data-motion-loop="tcn-sweep">
@@ -305,7 +153,7 @@ export default {
       </section>
 
       <section data-section="edge-cases">
-        <h2>7. 边界与异常</h2>
+        <h2>5. 边界与异常</h2>
         <p>边界状态的重点不是"能不能装下"，而是极端内容下仍然不能影响判断。</p>
         <table>
           <thead>
@@ -321,7 +169,7 @@ export default {
       </section>
 
       <section data-section="rationale">
-        <h2>8. 设计原理</h2>
+        <h2>6. 设计原理</h2>
         <h3>为什么只用「正在」前缀区分状态，而不是用 badge 或图标？</h3>
         <p>工具调用节点的核心职责是<strong>轻量反馈</strong>，不是强调状态变化。用「正在」前缀已经足够表达"进行中 vs 已完成"的差异，额外加 badge 或图标会让行内样式变重，干扰用户对后续正式回答的阅读。</p>
 
@@ -336,7 +184,7 @@ export default {
       </section>
 
       <section data-section="related">
-        <h2>9. Do / Don't</h2>
+        <h2>7. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
             <h3>Do</h3>

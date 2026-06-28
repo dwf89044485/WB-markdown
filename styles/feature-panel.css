@@ -342,6 +342,33 @@
   min-width: var(--cb-width, 360px);
 }
 
+/* ── 快照内 pre/code 重置 ──────────────────────────────────
+   #fpContent .markdown-body pre/code（本文件底部）是为文档正文代码块
+   设计的，带 #fpContent ID 选择器，特异性高于 demo 的
+   .md .wb-card-body pre，会误伤组件快照：给 pre 加白底+边框（嵌套边框），
+   给 code 加渐变灰底。此处用更高特异性重置，让 demo 原始样式生效。
+   ──────────────────────────────────────────────────────── */
+#fpContent .markdown-body .fp-snapshot pre,
+#fpContent .markdown-body .wb-card-body pre {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 12px 14px;
+  margin: 0;
+  color: var(--md-text-primary, #1c1c1e);
+  font-size: var(--md-font-pre, 13px);
+}
+#fpContent .markdown-body .fp-snapshot code,
+#fpContent .markdown-body .wb-card-body code {
+  background-color: transparent;
+  background-image: none;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
 /* 快照内代码区不折叠，完整展示用于说明 */
 .md .fp-snapshot .wb-card-body.is-collapsible {
   max-height: none !important;

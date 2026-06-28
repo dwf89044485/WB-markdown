@@ -127,7 +127,7 @@ flowchart LR
 接下来如果要继续，我可以补一份完整的 React 组件（含状态管理）+ 一个 Mock 接口给你调试。要做哪个？
 `;
 
-function renderShowcase() {
+export function renderShowcase() {
   const conv = document.getElementById('conv');
   if (!conv) return;
 

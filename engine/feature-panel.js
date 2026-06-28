@@ -18,6 +18,7 @@ import { showClickIndicator } from './click-indicator.js';
 import { openSheet, getFrames, renderStaticDetail, renderStaticSheet, setSheetBackState, renderDetailContent } from './sheet.js';
 import { setStatusLineLabels, statusLineHTML, statusStackHTML } from './icons.js';
 import { hideAllOverlays } from './overlay-registry.js';
+import { renderShowcase } from './showcase-codeblock.js';
 import { sleep } from './core.js';
 import { runSlideTransition, renderAskQuestionHTML } from './ask-question.js';
 import { SAMPLE_Q, defaultSampleAnswers } from '../features/ask-question.js';
@@ -484,6 +485,12 @@ function renderRoute(route) {
     goToStep(targetStep).catch(() => {});
     // 启动「设计样式」章节的 3 模式同步循环
     startTcnModeLoop();
+  } else if (f.id === 'code-block') {
+    // 左侧 Demo 渲染代码块 showcase，并高亮「代码块样式」场景按钮
+    renderShowcase();
+    document.querySelectorAll('.dc-scene-btn').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.scene === 'codeblock-showcase');
+    });
   }
 }
 

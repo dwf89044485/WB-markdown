@@ -4,7 +4,7 @@
  *   - 配置驱动：CARD_TYPES 表声明每种 lang → 标题、按钮组合、内容渲染器
  *   - 渲染入口：renderCardShell({type, title, body, hasPrimary})
  * 工具栏按钮（次按钮）：tbl-copy / tbl-save-image / tbl-share / tbl-maximize
- * 主按钮（黑底胶囊）：tbl-run（▶ 运行）、tbl-view（● 查看）
+ * 主按钮（黑底胶囊）：tbl-run（▶ 运行）、tbl-view（● 预览）
  * 全屏 JS 交互在 engine/table-fullscreen.js（仅表格），
  * 后续 run/view 行为占位待定（task #11）。
  */
@@ -27,7 +27,7 @@ const ICON_COPY     = () => getIcon('wb-copy.svg');
 const ICON_SHARE    = () => getIcon('wb-share.svg');
 const ICON_MAXIMIZE = () => getIcon('wb-maximize.svg');
 const ICON_IMAGE    = () => getIcon('image.svg');
-// 「查看」(wb-view 1.svg) — 黑色 fill，跟其他次按钮一致继承 currentColor
+// 「预览」(wb-view 1.svg) — 黑色 fill，跟其他次按钮一致继承 currentColor
 const ICON_VIEW = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" d="M8 1.14551C9.6472 1.14551 11.1583 1.6536 12.5332 2.6709C13.9081 3.68831 14.9194 5.04667 15.5674 6.74512L15.998 8.19238L16 8.2041C15.5529 10.2747 14.5828 11.9687 13.0898 13.2861C11.5967 14.6036 9.89997 15.2627 8 15.2627C6.10009 15.2627 4.40335 14.6036 2.91016 13.2861C1.41714 11.9687 0.447029 10.2747 0 8.2041C0.447021 6.13325 1.41696 4.43859 2.91016 3.12109C4.40335 1.8036 6.10009 1.14551 8 1.14551ZM8 4.75684C7.04822 4.75684 6.23551 5.09359 5.5625 5.7666C4.88952 6.43961 4.55273 7.25234 4.55273 8.2041C4.55277 9.15581 4.88953 9.96863 5.5625 10.6416C6.23549 11.3145 7.04828 11.6504 8 11.6504C8.95172 11.6504 9.76452 11.3146 10.4375 10.6416C11.1105 9.96863 11.4462 9.15581 11.4463 8.2041C11.4463 7.25238 11.1104 6.43959 10.4375 5.7666C9.76451 5.09361 8.95174 4.75686 8 4.75684ZM8 5.99707C8.60931 5.99709 9.12974 6.21275 9.56055 6.64355C9.99129 7.07436 10.2061 7.59481 10.2061 8.2041C10.206 8.81331 9.99134 9.33379 9.56055 9.76465C9.12975 10.1954 8.60929 10.4101 8 10.4102C7.39078 10.4102 6.87033 10.1954 6.43945 9.76465C6.00866 9.33379 5.79301 8.81331 5.79297 8.2041C5.79297 7.59477 6.00865 7.07438 6.43945 6.64355C6.87035 6.21272 7.39072 5.99707 8 5.99707Z"/></svg>';
 // 「运行」(Subtract.svg) — 实心黑圆+白三角；用 currentColor + 内嵌白三角
 const ICON_RUN = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0ZM7.38086 5.70898C6.70946 5.30615 6.37376 5.10444 6.12012 5.24805C5.86664 5.39174 5.86621 5.78353 5.86621 6.56641V9.43359C5.86621 10.2165 5.86664 10.6083 6.12012 10.752C6.37376 10.8956 6.70946 10.6939 7.38086 10.291L9.77051 8.85742C10.4087 8.47449 10.7285 8.2831 10.7285 8C10.7285 7.7169 10.4087 7.52551 9.77051 7.14258L7.38086 5.70898Z"/></svg>';
@@ -93,7 +93,7 @@ function buildCardActions(kind, { allowImageSave = false } = {}) {
   if (kind === 'executable') {
     primary = { cls: 'wb-card-btn-primary tbl-run',  label: '运行', icon: ICON_RUN };
   } else if (kind === 'view') {
-    primary = { cls: 'wb-card-btn-primary tbl-view', label: '查看', icon: ICON_VIEW };
+    primary = { cls: 'wb-card-btn-primary tbl-view', label: '预览', icon: ICON_VIEW };
   }
   return { primary, secondary };
 }

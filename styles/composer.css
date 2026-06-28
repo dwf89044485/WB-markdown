@@ -64,10 +64,11 @@
     margin 320ms cubic-bezier(0.22,1,0.36,1),
     border-radius 320ms cubic-bezier(0.22,1,0.36,1);
 }
-/* 激活态：高度由 JS 测量写入 --cp-height；内容改回贴顶（Figma 18:5225 展开态文字在上方）。 */
+/* 激活态：高度由 JS 测量写入 --cp-height。
+ * space-between：.cp-body 贴顶、.cp-bar 贴底（Figma 18:5225）。 */
 .composer-shell.is-expanded{
   height:var(--cp-height, 108px);
-  justify-content:flex-start;
+  justify-content:space-between;
 }
 /* 语音整体淡出预留钩子（语音功能后续阶段接入）。 */
 .composer-shell.is-fading-out{

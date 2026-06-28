@@ -264,7 +264,7 @@
   width:24px;height:24px;flex:0 0 24px;
   display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,0.70);
 }
-.file-card-arrow svg{width:16px;height:16px;display:block;}
+.file-card-arrow svg{width:14px;height:14px;display:block;}
 
 /* ── WB-CARD（通用工具卡片：表格/代码/HTML/Mermaid 共用外壳） ───
    规范来源：Figma node 8:2643

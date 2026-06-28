@@ -161,12 +161,12 @@
   display:block;
   flex-shrink:0;
 }
-/* 通用 press 态：浅灰圆 */
+/* 通用 press 态：撑满 46px 按钮 */
 .cp-tool-btn::after,
 .cp-send-btn::after,
 .cp-stop-btn::after{
-  content:""; position:absolute; inset:8px;
-  border-radius:50%;
+  content:""; position:absolute; inset:0;
+  border-radius:23px;
   background:transparent;
   transition:background .1s;
   pointer-events:none;

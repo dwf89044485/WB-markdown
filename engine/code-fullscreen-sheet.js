@@ -144,6 +144,78 @@ function openCodeSheet(card, opts = {}) {
   });
 }
 
+/* ── 产物列表 Sheet ──────────────────────────────────────── */
+/* 在 filecard 下方点击"查看全部产物(N) >"时拉起，
+   复用 code-variant header 样式，按钮只保留分享和关闭 */
+export function openProductsSheet(fileCards) {
+  const count = Array.isArray(fileCards) ? fileCards.length : 0;
+  const title = `全部产物(${count})`;
+
+  openSheet(null, null, {
+    variant: 'code',
+    customRenderer: (body) => {
+      // header
+      const header = document.createElement('header');
+      header.className = 'code-sheet-header';
+      header.innerHTML = `
+        <div class="code-sheet-left"><span class="code-sheet-title">${escapeHtml(title)}</span></div>
+        <div class="code-sheet-actions glass-capsule">${renderProductsActionsHtml()}</div>`;
+      // body
+      const list = document.createElement('div');
+      list.className = 'products-list';
+      if (Array.isArray(fileCards)) {
+        fileCards.forEach(card => {
+          const item = document.createElement('div');
+          item.className = 'product-item';
+          // 复用 renderFileCard 的卡片结构，但去掉箭头和链接行为
+          const iconFile = card.type === 'word' ? '_wb-file-html-solid.svg' : '_wb-file-pdf-solid.svg';
+          item.innerHTML = `
+            <div class="file-card-icon">
+              <img src="./icons/${iconFile}" alt="" class="file-card-icon-img">
+            </div>
+            <div class="file-card-info">
+              <div class="file-card-title">${escapeHtml(card.title || '')}</div>
+              <div class="file-card-meta">${escapeHtml(card.meta || '')}</div>
+            </div>`;
+          list.appendChild(item);
+        });
+      }
+      body.appendChild(header);
+      body.appendChild(list);
+      // 绑定 header 按钮事件
+      bindProductsSheetEvents(header);
+    }
+  });
+}
+
+function renderProductsActionsHtml() {
+  return `
+    <button class="code-sheet-btn" data-act="share" aria-label="分享">${ICON_SHARE()}</button>
+    <span class="code-sheet-divider" aria-hidden="true"></span>
+    <button class="code-sheet-btn" data-act="close" aria-label="关闭">${ICON_CLOSE()}</button>`;
+}
+
+function bindProductsSheetEvents(header) {
+  header.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'close') { closeSheet(); return; }
+    if (act === 'share') {
+      // 分享产物列表信息
+      const text = Array.from(document.querySelectorAll('.product-item .file-card-title'))
+        .map(el => el.textContent.trim())
+        .filter(Boolean)
+        .join('\n');
+      if (navigator.share) {
+        navigator.share({ text }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+    }
+  });
+}
+
 /* ── 渲染辅助：按钮组 HTML ────────────────────────────── */
 // mode: 'live' → 正常交互按钮；mode: 'static' → disabled 按钮（供右侧文档快照用）
 function renderActionsHtml(kind, state, options = {}) {

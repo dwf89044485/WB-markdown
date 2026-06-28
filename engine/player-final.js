@@ -6,6 +6,7 @@ import { sleepDelay, scrollToBottom } from './core.js';
 import { markdownToHtml } from './markdown.js';
 import { appendHTMLTypedTo } from './typewriter.js';
 import { openSheet, renderSearchItem, renderFileCard } from './sheet.js';
+import { openProductsSheet } from './code-fullscreen-sheet.js';
 import {
   scenario, $, state,
   RESPONSE_SVGS, collapseProcessIntoTiming, setComposerGenerating
@@ -177,6 +178,13 @@ export async function renderFinal({ onRegenerate } = {}) {
     for (const card of scenario.final.fileCards) {
       await appendHTMLTypedTo(mainBiz, renderFileCard(card));
     }
+    // 查看全部产物链接
+    const count = scenario.final.fileCards.length;
+    const linkWrap = document.createElement('div');
+    linkWrap.className = 'products-view-all';
+    linkWrap.innerHTML = `<span class="products-view-all-link">查看全部产物(${count}) ›</span>`;
+    linkWrap.addEventListener('click', () => openProductsSheet(scenario.final.fileCards));
+    mainBiz.appendChild(linkWrap);
   }
   renderFinalActions({ onRegenerate });
   bindSourceButton();

@@ -23,7 +23,7 @@
 //   compactHeightPx       → ResizeObserver 测 .cp-expanded (:53-61, min 72)
 //   建议项点击用 pointerdown（防 blur 先触发收起）          (:186)
 //
-// 导出：initComposer / destroy / setComposerChip / setComposerText
+// 导出：initComposer / destroy / setComposerChip / setComposerMoreButtonState / setComposerText
 // ============================================================
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -70,6 +70,28 @@ function syncLineCount() {
   if (!ta) return;
   state.lineCount = autoGrowAndCount(ta);
   els.shell.classList.toggle('has-expand-handle', state.lineCount >= 4);
+}
+
+function syncMoreButtonState() {
+  const btn = els.moreBtn;
+  if (!btn) return;
+
+  const modelIcon = (btn.dataset.modelIcon || '').trim() || './icons/wb-deep.svg';
+  const connectorIcon = (btn.dataset.connectorIcon || '').trim();
+
+  if (els.moreModelIcon) {
+    els.moreModelIcon.src = modelIcon;
+  }
+
+  if (els.moreConnectorIcon) {
+    if (connectorIcon) {
+      els.moreConnectorIcon.src = connectorIcon;
+    } else {
+      els.moreConnectorIcon.removeAttribute('src');
+    }
+  }
+
+  btn.classList.toggle('has-connector', !!connectorIcon);
 }
 
 // 测量激活态高度 → --cp-height。激活态 shell = .cp-body(含 textarea) + .cp-bar。
@@ -211,7 +233,11 @@ export function initComposer() {
     bar: $('.cp-bar', shell),
     textarea: $('.cp-textarea', shell),
     chipMount: $('.cp-chip-mount', shell),
+    moreBtn: $('.cp-wb-more-btn', shell),
+    moreModelIcon: $('.cp-wb-model-icon', shell),
+    moreConnectorIcon: $('.cp-wb-connector-icon', shell),
   };
+  syncMoreButtonState();
   bindEvents();
 }
 
@@ -236,6 +262,20 @@ export function setComposerChip(chip) {
     els.textarea.placeholder = chip.placeholder;
   }
   measureHeight();
+}
+
+// 设置 wb-more 按钮状态：默认显示模型图标；有 connectorIcon 时同时显示连接器图标
+export function setComposerMoreButtonState({ modelIcon, connectorIcon } = {}) {
+  if (!els.moreBtn) return;
+
+  if (typeof modelIcon === 'string') {
+    els.moreBtn.dataset.modelIcon = modelIcon;
+  }
+  if (typeof connectorIcon === 'string') {
+    els.moreBtn.dataset.connectorIcon = connectorIcon;
+  }
+
+  syncMoreButtonState();
 }
 
 // 设置 textarea 文字

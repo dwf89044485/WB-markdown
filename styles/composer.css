@@ -364,6 +364,24 @@
 .cp-wb-more-btn:active{
   opacity:0.7;
 }
+.cp-wb-icon-stack{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.cp-wb-model-icon,
+.cp-wb-connector-icon{
+  width:20px;
+  height:20px;
+  display:block;
+  border-radius:50%;
+}
+.cp-wb-connector-icon{
+  display:none;
+}
+.cp-wb-more-btn.has-connector .cp-wb-connector-icon{
+  display:block;
+}
 .cp-wb-chevron{
   display:block;
   flex-shrink:0;

@@ -40,9 +40,9 @@ export function renderStaticScrollNav(opts = {}) {
   const navClass = (!upVisible && !downVisible) ? 'scroll-nav is-hidden' : 'scroll-nav';
 
   return `
-    <div class="${navClass}" style="position:relative;height:auto;padding:20px 0;overflow:visible;pointer-events:auto;z-index:auto">
-      <button class="${upClass}" type="button" aria-label="上一条用户消息" style="position:relative;display:${upVisible ? 'flex' : 'none'};margin-left:auto;margin-bottom:8px;opacity:${upAppearing ? 0 : 1}">${upSVG}${tooltip && tooltip.on === 'up' ? tooltipHTML : ''}</button>
-      <button class="${downClass}" type="button" aria-label="下一条用户消息" style="position:relative;display:${downVisible ? 'flex' : 'none'};margin-left:auto;opacity:${downAppearing ? 0 : 1}">${downSVG}${tooltip && tooltip.on === 'down' ? tooltipHTML : ''}</button>
+    <div class="${navClass}" style="display:flex;flex-direction:column;align-items:flex-end;height:auto;padding:20px 0;overflow:visible;pointer-events:auto;z-index:auto">
+      <button class="${upClass}" type="button" aria-label="上一条用户消息" style="position:relative;display:${upVisible ? 'flex' : 'none'};margin-bottom:8px;opacity:${upAppearing ? 0 : 1}">${upSVG}${tooltip && tooltip.on === 'up' ? tooltipHTML : ''}</button>
+      <button class="${downClass}" type="button" aria-label="下一条用户消息" style="position:relative;display:${downVisible ? 'flex' : 'none'};opacity:${downAppearing ? 0 : 1}">${downSVG}${tooltip && tooltip.on === 'down' ? tooltipHTML : ''}</button>
     </div>`;
 }
 

@@ -67,68 +67,71 @@ function escapeHtml(s) {
 let currentState = null;
 let currentCard = null;
 
+/* ── 统一的代码 Sheet HTML 生成（live 和 static 共用）──
+ * 类似 renderAskQuestionHTML 的模式：mode='live' → 可交互；mode='static' → disabled
+ */
+function renderCodeSheetHTML(state, options = {}) {
+  const { mode = 'live' } = options;
+  const title = state.title || '';
+  const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtml(title)}</span></div>`;
+  const actionsHtml = renderActionsHtml(state.kind, state, { mode });
+  const bodyHtml = renderBodyHtml(state.kind, state);
+
+  return `<header class="code-sheet-header">
+    ${leftHtml}
+    <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
+  </header>
+  <div class="code-sheet-body">${bodyHtml}</div>`;
+}
+
+/* ── 代码 Sheet 事件绑定 ──────────────────────────── */
+function bindCodeSheetEvents(bodyEl) {
+  const header = bodyEl.querySelector('.code-sheet-header');
+  if (!header) return;
+  header.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'close') { closeSheet(); return; }
+    if (act === 'copy' && currentState) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(currentState.code).catch(() => {});
+      }
+      return;
+    }
+    if (act === 'share' && currentState) {
+      if (navigator.share) {
+        navigator.share({ text: currentState.code }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(currentState.code).catch(() => {});
+      }
+      return;
+    }
+    if (act === 'view' && currentState && currentState.kind === 'view') {
+      currentState.htmlMode = currentState.htmlMode === 'preview' ? 'code' : 'preview';
+      bodyEl.innerHTML = renderCodeSheetHTML(currentState, { mode: 'live' });
+      bindCodeSheetEvents(bodyEl);
+      return;
+    }
+  });
+}
+
 /* ── 通过 sheet.js 的 openSheet + customRenderer 打开代码 Sheet ── */
 function openCodeSheet(card, opts = {}) {
   const kind = getCardKind(card);
   const code = getCardCode(card);
   const langClass = getCardLangClass(card);
+  const title = getCardTitle(card);
   const defaultHtmlMode = opts.htmlMode || 'code';
 
   currentCard = card;
-  currentState = { card, kind, code, langClass, htmlMode: defaultHtmlMode };
+  currentState = { card, kind, code, langClass, title, htmlMode: defaultHtmlMode };
 
   openSheet(null, null, {
     variant: 'code',
     customRenderer: (body) => {
-      // 构建代码 Sheet 的完整内容
-      const title = getCardTitle(card);
-      const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtml(title)}</span></div>`;
-      const actionsHtml = renderActionsHtml(kind, currentState);
-      const bodyHtml = renderBodyHtml(kind, currentState);
-
-      body.innerHTML = `
-        <header class="code-sheet-header">
-          ${leftHtml}
-          <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
-        </header>
-        <div class="code-sheet-body">${bodyHtml}</div>
-      `;
-
-      // 绑定按钮事件
-      const header = body.querySelector('.code-sheet-header');
-      if (header) {
-        header.addEventListener('click', (e) => {
-          const btn = e.target.closest('[data-act]');
-          if (!btn) return;
-          const act = btn.dataset.act;
-          if (act === 'close') { closeSheet(); return; }
-          if (act === 'copy' && currentState) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(currentState.code).catch(() => {});
-            }
-            return;
-          }
-          if (act === 'share' && currentState) {
-            if (navigator.share) {
-              navigator.share({ text: currentState.code }).catch(() => {});
-            } else if (navigator.clipboard) {
-              navigator.clipboard.writeText(currentState.code).catch(() => {});
-            }
-            return;
-          }
-          if (act === 'view' && currentState && currentState.kind === 'view') {
-            currentState.htmlMode = currentState.htmlMode === 'preview' ? 'code' : 'preview';
-            // 重新渲染按钮和内容
-            const newActionsHtml = renderActionsHtml(currentState.kind, currentState);
-            const newBodyHtml = renderBodyHtml(currentState.kind, currentState);
-            const actionsEl = body.querySelector('.code-sheet-actions');
-            const bodyEl = body.querySelector('.code-sheet-body');
-            if (actionsEl) actionsEl.innerHTML = newActionsHtml;
-            if (bodyEl) bodyEl.innerHTML = newBodyHtml;
-            return;
-          }
-        });
-      }
+      body.innerHTML = renderCodeSheetHTML(currentState, { mode: 'live' });
+      bindCodeSheetEvents(body);
     }
   });
 }
@@ -205,18 +208,10 @@ document.addEventListener('click', (e) => {
 export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
   const resolvedKind = kind || resolveKindByLang(lang);
   const langClass = lang || '';
-  const state = { code, langClass, htmlMode, kind: resolvedKind };
-
   const title = resolveTitleByLang(lang);
-  const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtml(title)}</span></div>`;
-  const actionsHtml = renderActionsHtml(resolvedKind, state, { mode: 'static' });
-  const bodyHtml = renderBodyHtml(resolvedKind, state);
+  const state = { code, langClass, htmlMode, kind: resolvedKind, title };
 
-  return `<header class="code-sheet-header">
-    ${leftHtml}
-    <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
-  </header>
-  <div class="code-sheet-body">${bodyHtml}</div>`;
+  return renderCodeSheetHTML(state, { mode: 'static' });
 }
 
 // ── 静态渲染辅助 ────────────────────────────────────────

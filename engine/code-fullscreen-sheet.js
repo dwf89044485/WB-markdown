@@ -134,23 +134,26 @@ function openCodeSheet(card, opts = {}) {
 }
 
 /* ── 渲染辅助：按钮组 HTML ────────────────────────────── */
-function renderActionsHtml(kind, state) {
+// mode: 'live' → 正常交互按钮；mode: 'static' → disabled 按钮（供右侧文档快照用）
+function renderActionsHtml(kind, state, options = {}) {
+  const { mode = 'live' } = options;
+  const disabled = mode === 'static' ? ' disabled' : '';
   const parts = [];
   if (kind === 'executable') {
-    parts.push(`<button class="code-sheet-btn-primary" data-act="run" aria-label="运行">${ICON_RUN}<span>运行</span></button>`);
+    parts.push(`<button class="code-sheet-btn-primary" data-act="run" aria-label="运行"${disabled}>${ICON_RUN}<span>运行</span></button>`);
   } else if (kind === 'view') {
     const showingPreview = state && state.htmlMode === 'preview';
     const label = showingPreview ? '代码' : '预览';
     const icon = showingPreview ? ICON_CODE : ICON_VIEW;
-    parts.push(`<button class="code-sheet-btn-primary" data-act="view" aria-label="${label}">${icon}<span>${label}</span></button>`);
+    parts.push(`<button class="code-sheet-btn-primary" data-act="view" aria-label="${label}"${disabled}>${icon}<span>${label}</span></button>`);
   }
-  parts.push(`<button class="code-sheet-btn" data-act="copy" aria-label="复制">${ICON_COPY()}</button>`);
+  parts.push(`<button class="code-sheet-btn" data-act="copy" aria-label="复制"${disabled}>${ICON_COPY()}</button>`);
   if (kind === 'visual') {
-    parts.push(`<button class="code-sheet-btn" data-act="save-image" aria-label="保存图片">${ICON_IMAGE()}</button>`);
+    parts.push(`<button class="code-sheet-btn" data-act="save-image" aria-label="保存图片"${disabled}>${ICON_IMAGE()}</button>`);
   }
-  parts.push(`<button class="code-sheet-btn" data-act="share" aria-label="分享">${ICON_SHARE()}</button>`);
+  parts.push(`<button class="code-sheet-btn" data-act="share" aria-label="分享"${disabled}>${ICON_SHARE()}</button>`);
   parts.push(`<span class="code-sheet-divider" aria-hidden="true"></span>`);
-  parts.push(`<button class="code-sheet-btn" data-act="close" aria-label="关闭">${ICON_CLOSE()}</button>`);
+  parts.push(`<button class="code-sheet-btn" data-act="close" aria-label="关闭"${disabled}>${ICON_CLOSE()}</button>`);
   return parts.join('');
 }
 
@@ -205,9 +208,9 @@ export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
   const state = { code, langClass, htmlMode, kind: resolvedKind };
 
   const title = resolveTitleByLang(lang);
-  const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtmlStatic(title)}</span></div>`;
-  const actionsHtml = renderActionsHtmlStatic(resolvedKind, state);
-  const bodyHtml = renderBodyHtmlStatic(resolvedKind, state);
+  const leftHtml = `<div class="code-sheet-left"><span class="code-sheet-title">${escapeHtml(title)}</span></div>`;
+  const actionsHtml = renderActionsHtml(resolvedKind, state, { mode: 'static' });
+  const bodyHtml = renderBodyHtml(resolvedKind, state);
 
   return `<header class="code-sheet-header">
     ${leftHtml}
@@ -239,43 +242,6 @@ function resolveTitleByLang(lang) {
   };
   if (TITLES[key]) return TITLES[key];
   return key ? key.charAt(0).toUpperCase() + key.slice(1) : '代码';
-}
-
-function renderActionsHtmlStatic(kind, state) {
-  const parts = [];
-  if (kind === 'executable') {
-    parts.push(`<button class="code-sheet-btn-primary" data-act="run" aria-label="运行" disabled>${ICON_RUN}<span>运行</span></button>`);
-  } else if (kind === 'view') {
-    const showingPreview = state && state.htmlMode === 'preview';
-    const label = showingPreview ? '代码' : '预览';
-    const icon = showingPreview ? ICON_CODE : ICON_VIEW;
-    parts.push(`<button class="code-sheet-btn-primary" data-act="view" aria-label="${label}" disabled>${icon}<span>${label}</span></button>`);
-  }
-  parts.push(`<button class="code-sheet-btn" data-act="copy" aria-label="复制" disabled>${ICON_COPY()}</button>`);
-  if (kind === 'visual') {
-    parts.push(`<button class="code-sheet-btn" data-act="save-image" aria-label="保存图片" disabled>${ICON_IMAGE()}</button>`);
-  }
-  parts.push(`<button class="code-sheet-btn" data-act="share" aria-label="分享" disabled>${ICON_SHARE()}</button>`);
-  parts.push(`<span class="code-sheet-divider" aria-hidden="true"></span>`);
-  parts.push(`<button class="code-sheet-btn" data-act="close" aria-label="关闭" disabled>${ICON_CLOSE()}</button>`);
-  return parts.join('');
-}
-
-function renderBodyHtmlStatic(kind, state) {
-  if (kind === 'view' && state.htmlMode === 'preview') {
-    return `<iframe srcdoc="${escapeHtmlStatic(state.code)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
-  }
-  const langClass = state.langClass ? ` class="lang-${escapeHtmlStatic(state.langClass)}"` : '';
-  return `<pre><code${langClass}>${escapeHtmlStatic(state.code)}</code></pre>`;
-}
-
-function escapeHtmlStatic(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 /* ── 静态渲染：代码 Sheet 带遮罩外壳（供 Feature Panel 快照用）──

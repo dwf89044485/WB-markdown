@@ -1,12 +1,17 @@
 // ============================================================
 // SHEET-CONTENT — Sheet 内容类型 交互设计文档
 // ============================================================
-// 展示 Sheet 内部所有工具调用事件行的类型、状态和交互
-// 快照：由 engine/sheet.js 的 renderStaticSheet() 实时渲染
-//       改左边事件行样式 → 右边文档自动同步
+// 快照：直接复用左侧 Demo 的渲染函数
+//       renderStaticSheet() → 事件行 HTML
+//       renderStaticSheetShell() → Sheet 外壳 HTML
+//       renderStaticDetail() → 二级详情 HTML
+// 数据：直接从 scenario.js 的 sheetFrames 读取，不自己定义
 // ============================================================
 
-import { renderStaticSheet, renderStaticDetail, renderStaticSheetShell, renderEvent } from '../engine/sheet.js';
+import { renderStaticSheet, renderStaticDetail, renderStaticSheetShell } from '../engine/sheet.js';
+
+// ── 从 scenario.js 读取 sheetFrames 数据 ──────
+const SF = () => (window.WORKBUDDY_SCENARIO && window.WORKBUDDY_SCENARIO.sheetFrames) || {};
 
 // ── 快照缓存 ──────────────────────────────────
 const snapCache = {};
@@ -15,180 +20,95 @@ function snap(key, ...args) {
   return snapCache[key];
 }
 
-// ── 样本数据：每种工具调用类型的 events ────────
+// ── 带 Sheet 外壳的快照 ────────────────────────
+const SHELL_W = '340px';
+function shellSnap(key, events, opts = {}) {
+  const body = snap(key, events);
+  const isEmpty = !events || !events.length;
+  return renderStaticSheetShell({
+    body,
+    width: SHELL_W,
+    height: isEmpty ? '120px' : 'auto',
+    showClose: false,
+    showOverlay: false,
+    borderRadius: '12px',
+    ...opts,
+  });
+}
 
-// 1. 思考过程（🧠 → agent）
-const THINKING_EVENTS = [
-  { icon: '🧠', text: '思考过程', card: { title: '需求识别', body: '收到一个旅行规划请求。用户需要为一家四口设计关西7日行程。初步分析，这是典型的家庭旅行规划任务，涉及签证政策查询、交通方案设计、景点筛选等多个维度。' } },
+// ── 辅助：带标签的 Sheet 快照 ──────────────────
+function sheetLabeled(label, events, opts = {}) {
+  const key = label.replace(/\s+/g, '-');
+  const html = shellSnap(key, events, opts);
+  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span></div><div class="fp-snapshot">${html}</div></div>`;
+}
+
+function detailLabeled(label, detail) {
+  const html = renderStaticDetail(detail);
+  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span></div><div class="fp-snapshot">${html}</div></div>`;
+}
+
+// ── 从 sheetFrames 中提取各类型样本 ────────────
+function pickEvents(...frameKeys) {
+  const frames = SF();
+  return frameKeys.flatMap(k => (frames[k] && frames[k].events) || []);
+}
+
+// 基础类型（无二级详情）
+const TODO_CREATE_EVENTS = () => pickEvents('F1.a');
+const SEARCH_WEB_EVENTS = () => pickEvents('F1.c');
+const TODO_UPDATE_EVENTS = () => pickEvents('F1.h');
+const IMAGE_GEN_EVENTS = () => pickEvents('F2.b');
+const SKILL_CALL_EVENTS = () => pickEvents('F3.1b');
+const FILE_SEARCH_EVENTS = () => pickEvents('F3.3b');
+
+// 复杂类型（有二级详情）
+const THINKING_EVENTS = () => pickEvents('T.a');
+const CMD_EXEC_EVENTS = () => pickEvents('F3.4b');
+const SUBAGENT_EVENTS = () => pickEvents('F3.4b'); // 复用执行命令展示 detail
+
+// 混合类型（多事件组合）
+const FILE_CREATE_EVENTS = () => pickEvents('F3.2e');
+const FILE_SEARCH_EDIT_EVENTS = () => pickEvents('F3.3c');
+const CMD_MULTI_EVENTS = () => pickEvents('F3.4c');
+
+// 进行中状态
+const RUNNING_EVENTS = () => [
+  { icon: '🖥️', text: '正在执行命令', dim: 'python3 -c "import json; print(json.dumps(plan, ensure_ascii=False))"' },
 ];
 
-// 2. 创建待办（☐ → plan）
-const TODO_CREATE_EVENTS = [
-  { icon: '☐', text: '创建待办', dim: '任务理解与分解：明确需求、约束和输出格式' },
-];
-
-// 3. 搜索网页（🔍 → search）
-const SEARCH_WEB_EVENTS = [
-  { icon: '🔍', text: '搜索网页', dim: '正在搜索签证/入境政策、交通卡信息' },
-];
-
-// 4. 搜索网页 - 带搜索结果
-const SEARCH_RESULT_EVENTS = [
-  { icon: '🔍', text: '搜索网页', dim: '10项搜索已完成' },
-];
-
-// 5. 更新待办（☑️ → plan）
-const TODO_UPDATE_EVENTS = [
-  { icon: '☑️', text: '更新待办', dim: '搜索信息已收集完毕，更新任务进度' },
-];
-
-// 6. 生成图片（🖼️ → image）
-const IMAGE_GEN_EVENTS = [
-  { icon: '🖼️', text: '生成图片' },
-];
-
-// 7. 调用技能（📖 → skill）
-const SKILL_CALL_EVENTS = [
-  { icon: '📖', text: '调用技能', dim: 'docx' },
-];
-
-// 8. 创建文件（✏️ → edit / ⚠️ → debug / 👀 → view）
-const FILE_CREATE_EVENTS = [
-  { icon: '⚠️', text: '文件创建失败' },
-  { icon: '✏️', text: '创建文件', dim: 'generate_plan.js' },
-  { icon: '👀', text: '读取文件', dim: 'JS …generate_plan.js  308-317' },
-  { icon: '✏️', text: '编辑文件', dim: 'JS …generate_plan.js  +1 -1', card: { title: 'Edit patch', body: '+1 -1 · 修正脚本中的异常字符。' } },
-];
-
-// 9. 搜索文件（🔍 → search）
-const FILE_SEARCH_EVENTS = [
-  { icon: '🔍', text: '搜索文件', dim: '\\u81EA\\u7136|\\u81EA\\u7然' },
-];
-
-// 10. 执行命令（🖥️ → terminal）— 有二级详情
-const CMD_EXEC_EVENTS = [
-  { icon: '🖥️', text: '执行命令', dim: 'python3 -c "import json; print(json.dumps(plan, ensure_ascii=False))"',
-    detail: {
-      sections: [
-        { label: '输入命令', variant: 'code', content: 'python3 -c "import json; print(json.dumps(plan, ensure_ascii=False))"' },
-        { label: '输出结果', variant: 'text', content: '{"title": "日本关西旅行方案", "days": [{"day": 1, "city": "大阪", "spots": ["道顿堀", "大阪城"]}]}' },
-        { label: '退出码', variant: 'text', content: '0' },
-      ],
-    },
-  },
-];
-
-// 11. 搜索文件 + 编辑文件（混合）
-const FILE_SEARCH_EDIT_EVENTS = [
-  { icon: '🔍', text: '搜索文件', dim: '\\u81EA\\u7136|\\u81EA\\u7然' },
-  { icon: '✏️', text: '编辑文件', dim: '… +1 -1' },
-];
-
-// 12. 委派 Subagent（🐱 → agent）
-const SUBAGENT_EVENTS = [
-  { icon: '🐱', text: 'Sub Coding Agent', dim: 'Rewrite docx generator script' },
-  { icon: '↳', text: '嵌套子对话流', card: { title: 'Subagent result', body: '重写 docx generator script，移除异常转义，重新生成文档。' } },
-];
-
-// 13. 多事件混合（执行命令多条）
-const CMD_MULTI_EVENTS = [
-  { icon: '🖥️', text: '执行命令', dim: 'python3 -c "import json; d=json.load(open(\'plan.json\')); print(d[\'title\'])"',
-    detail: {
-      sections: [
-        { label: '输入命令', variant: 'code', content: 'python3 -c "import json; d=json.load(open(\'plan.json\')); print(d[\'title\'])"' },
-        { label: '输出结果', variant: 'text', content: '日本关西旅行方案 v1.0' },
-        { label: '退出码', variant: 'text', content: '0' },
-      ],
-    },
-  },
-  { icon: '🖥️', text: '执行命令', dim: 'cd /sessions/6a2189a4ac3de7 && git diff --stat',
-    detail: {
-      sections: [
-        { label: '输入命令', variant: 'code', content: 'cd /sessions/6a2189a4ac3de7 && git diff --stat' },
-        { label: '输出结果', variant: 'text', content: 'plan.json      | 2 +-\nitinerary.md   | 15 +++++++++++++++\n3 files changed, 17 insertions(+), 1 deletion(-)' },
-        { label: '退出码', variant: 'text', content: '0' },
-      ],
-    },
-  },
-];
-
-// ── 二级详情样本 ──
-const SHEET_DETAIL = {
-  title: '执行命令',
-  sections: [
-    { label: '输入命令', variant: 'code', content: 'python3 -c "import json; print(json.dumps(plan, ensure_ascii=False))"' },
-    { label: '输出结果', variant: 'text', content: '{"title": "日本关西旅行方案", "days": [{"day": 1, "city": "大阪", "spots": ["道顿堀", "大阪城"]}]}' },
-    { label: '退出码', variant: 'text', content: '0' },
-  ],
+// 二级详情样本
+const SHEET_DETAIL = () => {
+  const ev = CMD_EXEC_EVENTS();
+  return ev[0] && ev[0].detail ? ev[0].detail : { sections: [] };
 };
 
-function getSnapshots() {
-  return {
-    // §2 构成
-    anatomy: snap('anatomy', THINKING_EVENTS),
+// 流式追加演示
+const STREAM_EVENTS = () => [
+  { icon: '🔍', text: '搜索网页', dim: '正在搜索签证/入境政策' },
+  { icon: '🔍', text: '搜索网页', dim: '正在查询天气趋势' },
+  { icon: '🔍', text: '搜索网页', dim: '正在查询汇率与预算换算' },
+];
 
-    // §3 类型
-    typeThinking:    snap('typeThinking', THINKING_EVENTS),
-    typeTodoCreate:  snap('typeTodoCreate', TODO_CREATE_EVENTS),
-    typeSearchWeb:   snap('typeSearchWeb', SEARCH_WEB_EVENTS),
-    typeTodoUpdate:  snap('typeTodoUpdate', TODO_UPDATE_EVENTS),
-    typeImageGen:    snap('typeImageGen', IMAGE_GEN_EVENTS),
-    typeSkillCall:   snap('typeSkillCall', SKILL_CALL_EVENTS),
-    typeFileCreate:  snap('typeFileCreate', FILE_CREATE_EVENTS),
-    typeFileSearch:  snap('typeFileSearch', FILE_SEARCH_EVENTS),
-    typeCmdExec:     snap('typeCmdExec', CMD_EXEC_EVENTS),
-    typeSubagent:    snap('typeSubagent', SUBAGENT_EVENTS),
-    typeCmdMulti:    snap('typeCmdMulti', CMD_MULTI_EVENTS),
-    typeFileSearchEdit: snap('typeFileSearchEdit', FILE_SEARCH_EDIT_EVENTS),
+// 命令文本超长
+const LONG_CMD_EVENTS = () => [{
+  icon: '🖥️', text: '执行命令',
+  dim: 'python3 -c "import json; import sys; data=json.load(sys.stdin); print(json.dumps({k: v for k, v in data.items() if v is not None}, ensure_ascii=False, indent=2))"',
+}];
 
-    // §4 状态
-    stateRunning:  snap('stateRunning', [{ icon: '🖥️', text: '正在执行命令', dim: 'python3 -c "import json; print(json.dumps(plan, ensure_ascii=False))"' }]),
-    stateDone:     snap('stateDone', CMD_EXEC_EVENTS),
-    stateWarning:  snap('stateWarning', [{ icon: '⚠️', text: '文件创建失败' }]),
-    stateCard:     snap('stateCard', THINKING_EVENTS),
-    stateChevron:  snap('stateChevron', CMD_EXEC_EVENTS),
-
-    // §5 动效
-    motionStream: snap('motionStream', [
-      { icon: '🔍', text: '搜索网页', dim: '正在搜索签证/入境政策' },
-      { icon: '🔍', text: '搜索网页', dim: '正在查询天气趋势' },
-      { icon: '🔍', text: '搜索网页', dim: '正在查询汇率与预算换算' },
-    ]),
-
-    // §6 边界
-    edgeLong: snap('edgeLong', [
-      { icon: '🖥️', text: '执行命令', dim: 'python3 -c "import json; import sys; data=json.load(sys.stdin); print(json.dumps({k: v for k, v in data.items() if v is not None}, ensure_ascii=False, indent=2))"' },
-    ]),
-    edgeEmpty: snap('edgeEmpty', []),
-    edgeMany: snap('edgeMany', Array.from({ length: 8 }, (_, i) => ({
-      icon: i % 2 === 0 ? '🔍' : '🖥️',
-      text: i % 2 === 0 ? '搜索网页' : '执行命令',
-      dim: `第 ${i + 1} 项工具调用`,
-      detail: i % 2 === 1 ? {
-        sections: [
-          { label: '输入命令', variant: 'code', content: `echo "task ${i + 1}"` },
-          { label: '输出结果', variant: 'text', content: `task ${i + 1} completed` },
-          { label: '退出码', variant: 'text', content: '0' },
-        ],
-      } : undefined,
-    }))),
-  };
-}
-
-// ── 辅助：带标签的快照块 ──────────────────────────
-function labeled(label, html, btnAnchor, desc) {
-  const btn = btnAnchor
-    ? `<button class="fp-anchor-btn" data-anchor="${btnAnchor}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
-    : '';
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
-  const rightPart = descHtml + btn;
-  return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
-}
-
-// 带锚点按钮
-function labeledWithAnchor(label, html, anchorId) {
-  return `<div class="fp-snapshot-wrap"><div class="fp-tag-row"><span class="tag">${label}</span><button class="dc-btn" data-anchor="${anchorId}">查看示例<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="fp-snapshot">${html}</div></div>`;
-}
+// 多条事件行（8条混合）
+const MANY_EVENTS = () => Array.from({ length: 8 }, (_, i) => ({
+  icon: i % 2 === 0 ? '🔍' : '🖥️',
+  text: i % 2 === 0 ? '搜索网页' : '执行命令',
+  dim: `第 ${i + 1} 项工具调用`,
+  detail: i % 2 === 1 ? {
+    sections: [
+      { label: '输入命令', variant: 'code', content: `echo "task ${i + 1}"` },
+      { label: '输出结果', variant: 'text', content: `task ${i + 1} completed` },
+      { label: '退出码', variant: 'text', content: '0' },
+    ],
+  } : undefined,
+}));
 
 export default {
   id: 'sheet-content',
@@ -196,7 +116,6 @@ export default {
   label: 'Sheet 内容类型',
   anchors: {},
   get content() {
-    const s = getSnapshots();
     return `
     <article class="fp-feature">
       <header class="fp-feature-header">
@@ -221,11 +140,10 @@ export default {
       <section data-section="anatomy">
         <h2>2. 事件行构成</h2>
         <p>每条工具调用事件行由图标、文本、状态标记和可选的展开入口组成。事件行有两种层级：<strong>一级事件行</strong>展示概要信息，<strong>二级详情</strong>展示完整细节。</p>
+
+        <h3>2.1 一级事件行</h3>
         <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">一级事件行 · 思考过程</span>
-            <div class="fp-snapshot">${s.anatomy}</div>
-          </div>
+          <div>${sheetLabeled('思考过程', THINKING_EVENTS())}</div>
           <div class="fp-snapshot-side-desc">
             <h4>① 图标区</h4>
             <blockquote>
@@ -241,17 +159,14 @@ export default {
             </blockquote>
             <h4>④ 信息卡片</h4>
             <blockquote>
-              <p>部分事件行（思考过程、编辑文件、Subagent）携带 <code>card</code> 数据，在事件行下方直接展示摘要信息。</p>
+              <p>部分事件行（思考过程、编辑文件）携带 <code>card</code> 数据，在事件行下方直接展示摘要信息。</p>
             </blockquote>
           </div>
         </div>
 
         <h3>2.2 二级详情页</h3>
         <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">二级详情 · 执行命令</span>
-            <div class="fp-snapshot">${renderStaticDetail(SHEET_DETAIL)}</div>
-          </div>
+          <div>${detailLabeled('二级详情 · 执行命令', SHEET_DETAIL())}</div>
           <div class="fp-snapshot-side-desc">
             <h4>① 返回按钮</h4>
             <blockquote>
@@ -276,30 +191,29 @@ export default {
         <h3>3.1 基础类型（无二级详情）</h3>
         <p>以下类型展示概要信息，不携带 <code>detail</code> 数据，事件行无 <code>›</code> 箭头。</p>
         <div class="fp-snapshot-row">
-          ${labeled('创建待办', s.typeTodoCreate)}
-          ${labeled('搜索网页', s.typeSearchWeb)}
-          ${labeled('更新待办', s.typeTodoUpdate)}
+          ${sheetLabeled('创建待办', TODO_CREATE_EVENTS())}
+          ${sheetLabeled('搜索网页', SEARCH_WEB_EVENTS())}
+          ${sheetLabeled('更新待办', TODO_UPDATE_EVENTS())}
         </div>
         <div class="fp-snapshot-row">
-          ${labeled('生成图片', s.typeImageGen)}
-          ${labeled('调用技能', s.typeSkillCall)}
-          ${labeled('搜索文件', s.typeFileSearch)}
+          ${sheetLabeled('生成图片', IMAGE_GEN_EVENTS())}
+          ${sheetLabeled('调用技能', SKILL_CALL_EVENTS())}
+          ${sheetLabeled('搜索文件', FILE_SEARCH_EVENTS())}
         </div>
 
         <h3>3.2 复杂类型（有二级详情）</h3>
         <p>以下类型携带 <code>detail</code> 数据，事件行右侧显示 <code>›</code> 箭头，点击可展开二级详情页。</p>
         <div class="fp-snapshot-row">
-          ${labeled('思考过程', s.typeThinking)}
-          ${labeled('执行命令', s.typeCmdExec)}
-          ${labeled('委派 Subagent', s.typeSubagent)}
+          ${sheetLabeled('思考过程', THINKING_EVENTS())}
+          ${sheetLabeled('执行命令', CMD_EXEC_EVENTS())}
         </div>
 
         <h3>3.3 混合类型（多事件组合）</h3>
         <p>同一工具调用阶段内可能包含多种事件类型，按时间顺序排列。例如创建文件阶段可能包含失败、创建、读取、编辑等多个事件。</p>
         <div class="fp-snapshot-row">
-          ${labeled('创建文件阶段', s.typeFileCreate)}
-          ${labeled('搜索+编辑', s.typeFileSearchEdit)}
-          ${labeled('多条执行命令', s.typeCmdMulti)}
+          ${sheetLabeled('创建文件阶段', FILE_CREATE_EVENTS())}
+          ${sheetLabeled('搜索+编辑', FILE_SEARCH_EDIT_EVENTS())}
+          ${sheetLabeled('多条执行命令', CMD_MULTI_EVENTS())}
         </div>
       </section>
 
@@ -309,8 +223,8 @@ export default {
         <h3>4.1 进行中 vs 已完成</h3>
         <p>事件行的状态由文本前缀决定：<strong>「正在」前缀表示进行中</strong>，去掉「正在」表示已完成。图标和文本颜色也随之变化。</p>
         <div class="fp-snapshot-row">
-          ${labeled('进行中', s.stateRunning)}
-          ${labeled('已完成', s.stateDone)}
+          ${sheetLabeled('进行中', RUNNING_EVENTS())}
+          ${sheetLabeled('已完成', CMD_EXEC_EVENTS())}
         </div>
         <blockquote>
           <p><strong>进行中</strong>：文本带「正在」前缀，图标使用原始颜色，右上角有旋转加载动画。</p>
@@ -320,7 +234,7 @@ export default {
         <h3>4.2 警告状态</h3>
         <p>工具调用失败时，事件行显示警告图标（⚠️），文本颜色变为橙色，不显示 <code>›</code> 箭头。</p>
         <div class="fp-snapshot-row">
-          ${labeled('警告状态', s.stateWarning)}
+          ${sheetLabeled('警告状态', pickEvents('F3.2b'))}
         </div>
         <blockquote>
           <p>警告状态由 <code>isWarningEvent()</code> 函数判断，匹配 <code>⚠</code>、<code>失败</code>、<code>异常</code> 等关键词。警告行使用独立的 <code>icon.warn</code> SVG 图标，不受 <code>inferToolIconKey</code> 推断影响。</p>
@@ -329,7 +243,7 @@ export default {
         <h3>4.3 信息卡片</h3>
         <p>部分事件行携带 <code>card</code> 数据，在事件行下方直接展示摘要信息卡片，无需点击展开。</p>
         <div class="fp-snapshot-row">
-          ${labeled('思考过程卡片', s.stateCard)}
+          ${sheetLabeled('思考过程卡片', THINKING_EVENTS())}
         </div>
         <blockquote>
           <p>卡片由 <code>event-card</code> 容器承载，包含 <code>event-card-title</code>（标题）和 <code>event-card-body</code>（正文）。流式渲染时，卡片正文以打字机效果逐字输出。</p>
@@ -338,7 +252,7 @@ export default {
         <h3>4.4 展开箭头</h3>
         <p>携带 <code>detail</code> 数据的事件行右侧显示 <code>›</code> 箭头，点击后从一级 Sheet 切换到二级详情页。</p>
         <div class="fp-snapshot-row">
-          ${labeled('有箭头（可展开）', s.stateChevron)}
+          ${sheetLabeled('有箭头（可展开）', CMD_EXEC_EVENTS())}
         </div>
         <blockquote>
           <p>点击箭头后，当前 Sheet 状态被保存到 <code>sheetBackState</code>，左上角出现返回按钮。二级详情页以 <code>slide-in-right</code> 动效滑入。</p>
@@ -351,10 +265,7 @@ export default {
 
         <h3>5.1 流式追加</h3>
         <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">流式追加演示</span>
-            <div class="fp-snapshot">${s.motionStream}</div>
-          </div>
+          <div>${sheetLabeled('流式追加演示', STREAM_EVENTS())}</div>
           <div class="fp-snapshot-side-desc">
             <p>事件行从上到下逐条出现，间隔由 <code>frameDelay</code>（默认 520ms）控制。每条事件行出现时无入场动画（直接出现），但 Sheet 内容区自动滚动到底部。</p>
             <table>
@@ -386,37 +297,29 @@ export default {
         </div>
 
         <h3>5.2 二级详情滑入</h3>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-side-desc">
-            <p>点击 <code>›</code> 箭头后，二级详情页从右侧滑入，覆盖一级 Sheet 的列表视图。返回时从左侧滑出。</p>
-            <table>
-              <thead>
-                <tr><th>方向</th><th>时长</th><th>缓动</th><th>意图</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>滑入（入场）</td>
-                  <td>300ms</td>
-                  <td>ease-out</td>
-                  <td>详情页从右侧"推入"，末尾减速让内容落座</td>
-                </tr>
-                <tr>
-                  <td>滑出（出场）</td>
-                  <td>250ms</td>
-                  <td>ease-in-out</td>
-                  <td>比入场略快，避免返回后的等待感</td>
-                </tr>
-              </tbody>
-            </table>
-            <blockquote>
-              <p>二级详情页的滑入方向与 Sheet 升起方向垂直（Sheet 从下往上，详情从右往左），形成空间的层次感——用户能直觉地感知"我在 Sheet 内部又深入了一层"。</p>
-            </blockquote>
-          </div>
-          <div class="fp-snapshot-wrap">
-            <span class="tag">二级详情页</span>
-            <div class="fp-snapshot">${renderStaticDetail(SHEET_DETAIL)}</div>
-          </div>
-        </div>
+        <p>点击 <code>›</code> 箭头后，二级详情页从右侧滑入，覆盖一级 Sheet 的列表视图。返回时从左侧滑出。</p>
+        <table>
+          <thead>
+            <tr><th>方向</th><th>时长</th><th>缓动</th><th>意图</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>滑入（入场）</td>
+              <td>300ms</td>
+              <td>ease-out</td>
+              <td>详情页从右侧"推入"，末尾减速让内容落座</td>
+            </tr>
+            <tr>
+              <td>滑出（出场）</td>
+              <td>250ms</td>
+              <td>ease-in-out</td>
+              <td>比入场略快，避免返回后的等待感</td>
+            </tr>
+          </tbody>
+        </table>
+        <blockquote>
+          <p>二级详情页的滑入方向与 Sheet 升起方向垂直（Sheet 从下往上，详情从右往左），形成空间的层次感——用户能直觉地感知"我在 Sheet 内部又深入了一层"。</p>
+        </blockquote>
       </section>
 
       <section data-section="edge-cases">
@@ -428,16 +331,16 @@ export default {
           </thead>
           <tbody>
             <tr><td>命令文本超长</td><td>事件行自然截断，不破坏行内布局</td></tr>
-            <tr><td>空状态</td><td>显示"当前状态暂无新增事件"占位符</td></tr>
+            <tr><td>空状态</td><td>显示"当前状态暂无事件"占位符</td></tr>
             <tr><td>事件行过多（10+）</td><td>Sheet 内部纵向滚动，不影响 Sheet 高度</td></tr>
             <tr><td>二级详情 sections 为空</td><td>不渲染详情页，保持一级 Sheet 列表</td></tr>
             <tr><td>事件行 detail 数据缺失</td><td>不显示 <code>›</code> 箭头，事件行不可展开</td></tr>
           </tbody>
         </table>
         <div class="fp-snapshot-row">
-          ${labeled('命令文本超长', s.edgeLong)}
-          ${labeled('空状态', s.edgeEmpty)}
-          ${labeled('多条事件行', s.edgeMany)}
+          ${sheetLabeled('命令文本超长', LONG_CMD_EVENTS())}
+          ${sheetLabeled('空状态', [])}
+          ${sheetLabeled('多条事件行', MANY_EVENTS())}
         </div>
       </section>
 

@@ -1758,14 +1758,22 @@
   font-size: 13px;
 }
 /* 确保 fp-snapshot 内 Sheet 外壳快照正确布局 */
+.fp-snapshot .fp-sheet-shell-frame {
+  position: relative;
+}
+.fp-snapshot .fp-sheet-shell-frame .sheet-overlay {
+  position: relative !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
 .fp-snapshot .fp-sheet-shell-frame .bottom-sheet {
   transform: translateY(0) !important;
   position: relative !important;
-}
-.fp-snapshot .fp-sheet-shell-frame .sheet-overlay {
-  position: absolute !important;
-  background: transparent !important;
-  backdrop-filter: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06) !important;
 }
 /* 事件行列表容器（renderStaticSheet 返回的多个 s-row 直接平铺） */
 .fp-snapshot-wrap .fp-snapshot {

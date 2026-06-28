@@ -110,34 +110,6 @@ export default {
 
       <section data-section="anatomy">
         <h2>2. 按钮构成（结构）</h2>
-        <p>两个按钮固定在对话容器右下角、输入框上方，分别为向上（↑）和向下（↓）。按钮只在需要时出现，避免干扰阅读。</p>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-wrap">
-            <span class="tag">完整按钮组</span>
-            <div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${s.bothVisible}</div>
-            <button class="fp-anchor-btn" data-anchor="buttons-appear" style="margin-top:12px">看左侧按钮出现示例</button>
-          </div>
-          <div class="fp-snapshot-side-desc">
-            <h4>① ↑ 向上按钮</h4>
-            <blockquote>
-              <p><strong>位置</strong>：输入框上方 10px，对话右侧 8px。</p>
-              <p><strong>尺寸</strong>：36×36px，圆角 50%（圆形）。</p>
-              <p><strong>背景</strong>：毛玻璃效果（与 nav-bar 一致），深色箭头图标。</p>
-            </blockquote>
-
-            <h4>② ↓ 向下按钮</h4>
-            <blockquote>
-              <p><strong>位置</strong>：↑ 按钮下方 8px，同一垂直轴。</p>
-              <p><strong>逻辑</strong>：与 ↑ 对称，但「向下」的语义相反——跳到下一轮或底部。</p>
-            </blockquote>
-
-            <h4>③ 教学提示（Tooltip）</h4>
-            <blockquote>
-              <p>首次双击时，在按钮左侧弹出带背景气泡，2.5s 后自动淡出。同一按钮不重复提示（毕业后静默）。</p>
-            </blockquote>
-          </div>
-        </div>
-
         <h3>显隐规则</h3>
         <p>只取决于滚动位置，让不需要的按钮自动消失：</p>
         <table>

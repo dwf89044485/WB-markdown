@@ -1655,11 +1655,9 @@
 .fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant {
   position: relative;
   width: 100%;
-  height: 80% !important;
   transform: none;
   border-radius: 34px 34px 0 0;
   box-shadow: none;
-  padding: 14px 14px;
 }
 .fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant .code-sheet-body {
   overflow-y: auto;
@@ -1670,11 +1668,6 @@
   font-size: 11px;
   line-height: 1.5;
   padding: 12px 14px;
-}
-/* 代码 Sheet 快照容器：移除圆角避免与 bottom-sheet 自身圆角叠加，投影不被裁切 */
-.fp-snapshot .fp-sheet-shell-frame:has(.bottom-sheet.code-variant) {
-  border-radius: 0;
-  overflow: visible;
 }
 
 /* ── 构成章节（图文上下） ─────────────────────────────── */

@@ -755,12 +755,18 @@
   flex-wrap: wrap;
   gap: var(--fp-row-gap, 30px);
   margin: 16px 0;
-  align-items: flex-start;
+  align-items: flex-start !important;
 }
 .fp-snapshot-row > .fp-snapshot-wrap {
   flex: none;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
+  align-self: flex-start;
+}
+/* row 上下文内，wrap 里首个可见内容元素清 top margin，保证真正顶对齐 */
+.fp-snapshot-row > .fp-snapshot-wrap > .fp-motion-diagram,
+.fp-snapshot-row > .fp-snapshot-wrap > h4,
+.fp-snapshot-row > .fp-snapshot-wrap > .tag {
+  margin-top: 0 !important;
 }
 /* 卡片高度不一时顶部对齐，避免拉伸 */
 .fp-snapshot-row.edge-scroll {

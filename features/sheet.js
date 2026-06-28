@@ -30,15 +30,15 @@ function calcDailyNutrition(data) {
   return totals;
 }`;
 
-// ── 二级 sheet 样本 ──
-const SHEET_DETAIL = {
-  title: '执行命令',
-  sections: [
-    { label: '输入命令', variant: 'code', content: 'git diff --stat HEAD~3' },
-    { label: '输出结果', variant: 'text', content: 'features/sheet.js | 2 +-\n1 file changed, 1 insertion(+), 1 deletion(-)' },
-    { label: '退出码', variant: 'text', content: '0' },
-  ],
-};
+// ── 从 scenario 真实帧获取二级详情数据 ──
+function getDetailFromScenario() {
+  const s = window.WORKBUDDY_SCENARIO;
+  const frame = s.sheetFrames && s.sheetFrames['F3.4b'];
+  if (frame && frame.events && frame.events[0] && frame.events[0].detail) {
+    return frame.events[0].detail;
+  }
+  return { sections: [] };
+}
 
 function getSnapshots() {
   return {
@@ -52,8 +52,8 @@ function getSnapshots() {
       borderRadius: '0',
       frameCls: 'fp-show-overlay',
     }),
-    // §2 构成：事件 Sheet 二级详情（作为附件对照展示）
-    anatomyDetail: renderStaticDetail(SHEET_DETAIL),
+    // §2 构成：事件 Sheet 二级详情（从 scenario 真实帧数据获取）
+    anatomyDetail: renderStaticDetail(getDetailFromScenario()),
     // §2 构成：代码 Sheet（带遮罩）
     anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px', height: '852px', frameCls: 'fp-show-overlay' }),
     // §3 状态对比

@@ -55,7 +55,7 @@ function getSnapshots() {
     // §2 构成：事件 Sheet 二级详情（从 scenario 真实帧数据获取）
     anatomyDetail: renderStaticDetail(getDetailFromScenario()),
     // §2 构成：代码 Sheet（带遮罩）
-    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px', height: '852px', frameCls: 'fp-show-overlay' }),
+    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '393px', height: '852px', borderRadius: '0', frameCls: 'fp-show-overlay' }),
     // §3 状态对比
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',

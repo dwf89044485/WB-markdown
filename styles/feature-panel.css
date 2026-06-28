@@ -1671,6 +1671,11 @@
   line-height: 1.5;
   padding: 12px 14px;
 }
+/* 代码 Sheet 快照容器：移除圆角避免与 bottom-sheet 自身圆角叠加，投影不被裁切 */
+.fp-snapshot .fp-sheet-shell-frame:has(.bottom-sheet.code-variant) {
+  border-radius: 0;
+  overflow: visible;
+}
 
 /* ── 构成章节（图文上下） ─────────────────────────────── */
 .fp-anatomy-list {

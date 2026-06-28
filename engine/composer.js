@@ -27,6 +27,7 @@
 // ============================================================
 
 const $ = (sel, root = document) => root.querySelector(sel);
+const { svgFromRegistry } = await import('./engine/icons.js');
 
 // ── 内部状态（DOM 是真相源，state 仅缓存计算值）────────────
 const state = {
@@ -76,10 +77,10 @@ function syncMoreButtonState() {
   const btn = els.moreBtn;
   if (!btn) return;
 
-  const modelIcon = (btn.dataset.modelIcon || '').trim() || './icons/wb-more.svg';
+  const raw = (btn.dataset.modelIcon || '').trim() || './icons/more.svg';
 
   if (els.moreIcon) {
-    els.moreIcon.src = modelIcon;
+    els.moreIcon.src = raw;
   }
 }
 
@@ -237,7 +238,6 @@ function initComposerIcons(shell) {
     ['.cp-fs-collapse', 'wb-minimize.svg'],
     ['.cp-expand-handle', 'wb-maximize.svg'],
     ['.cp-voice-btn', 'voice.svg'],
-    ['.cp-wb-icon', 'more.svg'],
     ['.cp-wb-indicator', 'wb-more-indicator.svg'],
   ];
   for (const [sel, key] of mapping) {

@@ -168,10 +168,10 @@ export default {
             <h4>③ 内容区</h4>
             <blockquote><p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p></blockquote>
           </div>
-          <div class="fp-snapshot-wrap">
-            <span class="tag" style="margin:8px 0">二级 Sheet · 详情卡片</span>
-            <div class="fp-snapshot">${s.anatomyDetail}</div>
-          </div>
+        </div>
+        <div class="fp-snapshot-wrap" style="margin-top:16px">
+          <span class="tag" style="margin:8px 0">二级 Sheet · 详情卡片</span>
+          <div class="fp-snapshot">${s.anatomyDetail}</div>
         </div>
 
         <h3>2.2 代码 Sheet</h3>

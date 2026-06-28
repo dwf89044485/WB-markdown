@@ -102,9 +102,11 @@ function syncVisibility(scrollTop, skipEntrance) {
   const prevUpHidden = SN.upBtn.classList.contains('is-hidden');
   const prevDownHidden = SN.downBtn.classList.contains('is-hidden');
 
-  // 切换显隐
-  SN.upBtn.classList.toggle('is-hidden', !showUp);
-  SN.downBtn.classList.toggle('is-hidden', !showDown);
+  // 切换显隐：按钮有活跃 tooltip 时暂不隐藏，避免 tooltip 被一起隐藏
+  const upHasActiveTooltip = SN.upBtn.querySelector('.sn-tooltip:not(.is-leaving)');
+  const downHasActiveTooltip = SN.downBtn.querySelector('.sn-tooltip:not(.is-leaving)');
+  SN.upBtn.classList.toggle('is-hidden', !showUp && !upHasActiveTooltip);
+  SN.downBtn.classList.toggle('is-hidden', !showDown && !downHasActiveTooltip);
 
   SN.nav.classList.toggle('is-hidden', !showUp && !showDown);
 
@@ -345,7 +347,7 @@ function showTooltip(btn, text) {
     // 如果仍然存在才开始消失动画
     if (tip.parentNode) {
       tip.classList.add('is-leaving');
-      setTimeout(() => { if (tip.parentNode) tip.remove(); }, 200);
+      setTimeout(() => { if (tip.parentNode) { tip.remove(); updateScrollNav(); } }, 200);
     }
   }, 2500);
 }

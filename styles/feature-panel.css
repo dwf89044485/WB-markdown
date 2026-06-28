@@ -423,7 +423,8 @@
 
 /* ── 全屏查看预览：fp-fs-preview ─────────────────────────
    复用 Demo 的 code-sheet-overlay / tbl-fullscreen-overlay DOM，
-   但在说明栏内以"预览模式"展示（不依赖 phone-shell 定位）。
+   在说明栏内以"预览模式"展示。
+   原则：只控制容器尺寸和定位，不覆盖 Demo 组件的内部样式。
    ──────────────────────────────────────────────────────── */
 .fp-fs-preview {
   position: relative;
@@ -446,11 +447,11 @@
   pointer-events: none;
 }
 
-/* 底部 Sheet 预览：竖屏比例 */
+/* 底部 Sheet 预览：竖屏手机比例 */
 .fp-fs-preview.fp-fs-sheet {
   width: 360px;
   min-width: 360px;
-  height: 480px;
+  height: 520px;
 }
 .fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-fs-static {
   position: relative;
@@ -462,26 +463,22 @@
 }
 .fp-fs-preview.fp-fs-sheet .code-sheet-panel {
   position: relative;
-  top: 28px;
+  top: 0;
   left: 0; right: 0; bottom: 0;
   transform: none;
-  border-radius: 20px 20px 0 0;
-  height: calc(100% - 28px);
+  height: 100%;
   box-shadow: none;
+  border-radius: 30px 30px 0 0;
 }
-.fp-fs-preview.fp-fs-sheet .code-sheet-body {
-  min-height: 200px;
-}
-.fp-fs-preview.fp-fs-sheet .code-sheet-body pre {
-  font-size: 12px;
-  line-height: 1.5;
+.fp-fs-preview.fp-fs-sheet .code-sheet-backdrop {
+  display: none;
 }
 
-/* 横屏二级页预览：横屏比例 */
+/* 横屏二级页预览：横屏手机比例 */
 .fp-fs-preview.fp-fs-landscape {
   width: 560px;
   min-width: 560px;
-  height: 300px;
+  height: 340px;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-fs-static {
   position: relative;
@@ -490,19 +487,17 @@
   display: flex;
   border-radius: 0;
   animation: none;
+  height: 100%;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
-  height: 48px;
-  padding: 0 12px;
-}
-.fp-fs-preview.fp-fs-landscape .tbl-fs-title {
-  font-size: 13px;
+  height: 64px;
+  padding: 0 16px;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-fs-content {
-  padding: 0 12px;
+  padding: 0 16px;
 }
 .fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
-  padding: 12px;
+  padding: 24px;
   min-height: 200px;
 }
 

@@ -122,6 +122,7 @@ function fsSheetPreview({ title, bodyHtml, actionsHtml }) {
   return `<div class="fp-fs-preview fp-fs-sheet">
     <div class="fp-fs-preview-label">底部 Sheet 模态</div>
     <div class="code-sheet-overlay is-open fp-fs-static">
+      <div class="code-sheet-backdrop"></div>
       <div class="code-sheet-panel">
         <header class="code-sheet-header">
           <div class="code-sheet-left">

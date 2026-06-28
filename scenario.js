@@ -704,9 +704,17 @@ window.WORKBUDDY_SCENARIO = {
 - [Visa 日本旅行保险推荐](https://www.visa.com.cn/travel/)
 
 `,
-    "fileCard": {
-      "title": "日本关西家庭旅行方案 v1.0",
-      "meta": "PDF · 2.3MB"
-    }
+    "fileCards": [
+      {
+        "title": "日本关西家庭旅行方案 v1.0",
+        "meta": "PDF · 2.3MB",
+        "type": "pdf"
+      },
+      {
+        "title": "日本关西旅游策划案",
+        "meta": "Word · 1.8MB",
+        "type": "word"
+      }
+    ]
   }
 };

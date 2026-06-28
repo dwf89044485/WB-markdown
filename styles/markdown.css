@@ -248,7 +248,8 @@
   width:28px;height:28px;flex:0 0 28px;
   display:flex;align-items:center;justify-content:center;
 }
-.file-card-icon svg{width:24px;height:24px;display:block;}
+.file-card-icon svg,
+.file-card-icon img{width:28px;height:28px;display:block;}
 .file-card-info{
   flex:1;min-width:0;
   display:flex;flex-direction:column;gap:0;
@@ -261,10 +262,11 @@
   font-size:13px;color:rgba(0,0,0,0.50);line-height:20px;letter-spacing:0;
 }
 .file-card-arrow{
-  width:24px;height:24px;flex:0 0 24px;
+  width:16px;height:16px;flex:0 0 16px;
   display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,0.70);
 }
-.file-card-arrow svg{width:14px;height:14px;display:block;}
+.file-card-arrow svg,
+.file-card-arrow img{width:16px;height:16px;display:block;}
 
 /* ── WB-CARD（通用工具卡片：表格/代码/HTML/Mermaid 共用外壳） ───
    规范来源：Figma node 8:2643

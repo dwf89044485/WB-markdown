@@ -173,8 +173,10 @@ export async function renderFinal({ onRegenerate } = {}) {
   const main = $('#mainMd');
   const mainBiz = $('#mainBiz');
   await appendHTMLTypedTo(main, scenario.final.markdown ? markdownToHtml(scenario.final.markdown) : scenario.final.html);
-  if (scenario.final && scenario.final.fileCard) {
-    await appendHTMLTypedTo(mainBiz, renderFileCard(scenario.final.fileCard));
+  if (scenario.final && Array.isArray(scenario.final.fileCards)) {
+    for (const card of scenario.final.fileCards) {
+      await appendHTMLTypedTo(mainBiz, renderFileCard(card));
+    }
   }
   renderFinalActions({ onRegenerate });
   bindSourceButton();

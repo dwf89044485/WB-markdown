@@ -133,7 +133,7 @@ function openCodeSheet(card, opts = {}) {
   const defaultHtmlMode = opts.htmlMode || 'code';
 
   currentCard = card;
-  currentState = { card, kind, code, codeHtml, langClass, title, htmlMode: defaultHtmlMode };
+  currentState = { card, kind, code, codeHtml, langClass, title, htmlMode: defaultHtmlMode, lineNumbers: true };
 
   openSheet(null, null, {
     variant: 'code',
@@ -176,6 +176,17 @@ function renderBodyHtml(kind, state) {
   const langClass = state.langClass ? ` class="lang-${escapeHtml(state.langClass)} hljs"` : ' class="hljs"';
   // 优先使用带高亮的 codeHtml（live 模式从卡片 innerHTML 提取），否则用纯文本
   const codeContent = state.codeHtml || escapeHtml(state.code);
+
+  // 行号：左侧 gutter + 右侧代码，两栏布局
+  if (state.lineNumbers) {
+    const lines = (state.code || '').split('\n');
+    const gutterNums = lines.map((_, i) => i + 1).join('\n');
+    return `<div class="code-lines">
+      <div class="code-line-gutter" aria-hidden="true">${gutterNums}</div>
+      <pre class="code-line-content"><code${langClass}>${codeContent}</code></pre>
+    </div>`;
+  }
+
   return `<pre><code${langClass}>${codeContent}</code></pre>`;
 }
 

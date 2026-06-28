@@ -755,10 +755,10 @@
   flex-wrap: wrap;
   gap: var(--fp-row-gap, 30px);
   margin: 16px 0;
+  align-items: flex-start;
 }
 .fp-snapshot-row > .fp-snapshot-wrap {
-  flex-shrink: 0;
-  min-width: 280px;
+  flex: none;
   margin-top: 0;
   margin-bottom: 0;
 }

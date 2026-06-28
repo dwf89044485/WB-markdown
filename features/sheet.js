@@ -82,7 +82,7 @@ function getSnapshots() {
       borderRadius: '0',
     }),
     // §2 构成：代码 Sheet（带遮罩）
-    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '390px', height: '850px' }),
+    anatomyCode: renderStaticCodeSheetShell({ lang: 'javascript', code: CODE_SAMPLE, width: '390px', height: '850px', borderRadius: '0' }),
     // §3 状态对比
     stateCollapsed: snap('stateCollapsed', {
       state: 'collapsed',

@@ -504,6 +504,14 @@ function renderRoute(route) {
     goToStep(targetStep).catch(() => {});
     // 启动「设计样式」章节的 3 模式同步循环
     startTcnModeLoop();
+  } else if (f.id === 'scroll-nav') {
+    // 跳到 nodeIndex 2（多轮对话，滚动按钮可见），让左侧 Demo 展示滚动按钮出现状态
+    const anchor = f.anchors && f.anchors['buttons-appear'];
+    if (anchor) {
+      jumpToAnchor(anchor).then(() => {
+        if (token !== loadToken) hideOverlays();
+      });
+    }
   } else if (f.id === 'code-block') {
     // 左侧 Demo 渲染代码块 showcase，并高亮「代码块样式」场景按钮
     renderShowcase();

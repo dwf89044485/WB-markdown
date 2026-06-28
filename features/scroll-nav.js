@@ -25,9 +25,9 @@ function getSnapshots() {
     bothHidden: snap('bothHidden', { upVisible: false, downVisible: false }),
 
     // §4 交互：双击后出现的教学提示（↑ 按钮）
-    tooltipUp: snap('tooltipUp', { upVisible: true, downVisible: true, tooltip: { on: 'up', text: '双击 ↑ 可跳转对话顶部' } }),
+    tooltipUp: snap('tooltipUp', { upVisible: true, downVisible: true, tooltip: { on: 'up', text: '双击可跳转顶部' } }),
     // §4 交互：教学提示（↓ 按钮）
-    tooltipDown: snap('tooltipDown', { upVisible: true, downVisible: true, tooltip: { on: 'down', text: '双击 ↓ 可跳转对话底部' } }),
+    tooltipDown: snap('tooltipDown', { upVisible: true, downVisible: true, tooltip: { on: 'down', text: '双击可跳转底部' } }),
 
     // §6 边界：对话只有一轮（只显示 ↓）
     edgeOneTurn: snap('edgeOneTurn', { upVisible: false, downVisible: true }),
@@ -141,10 +141,10 @@ export default {
         </ul>
 
         <h4>双击</h4>
-        <p>直接跳转至顶部。<strong>首次双击</strong>，Pop 提示"双击 ↑ 可跳转对话顶部"，此后静默执行。</p>
+        <p>直接跳转至顶部。<strong>首次双击</strong>，Pop 提示"双击可跳转顶部"，此后静默执行。</p>
 
         <h4>连续点击</h4>
-        <p>连续点击超过 3 次，且不在双击阈值内，判断用户想回顶但不知道双击交互。Pop 提示"双击 ↑ 可跳转对话顶部"，当用户正确双击后，不再弹 Pop 提示。</p>
+        <p>连续点击超过 3 次，且不在双击阈值内，判断用户想回顶但不知道双击交互。Pop 提示"双击可跳转顶部"，当用户正确双击后，不再弹 Pop 提示。</p>
 
         <div class="fp-snapshot-row">
           ${labeled('首次双击 ↑<br>教学提示出现', s.tooltipUp, '提示 2.5s 后自动淡出，毕业后不再出现')}
@@ -156,10 +156,10 @@ export default {
         <p>跳到下一轮开头；已是最后一轮则直接滚到对话底部。</p>
 
         <h4>双击</h4>
-        <p>直接跳转至底部。<strong>首次双击</strong>，Pop 提示"双击 ↓ 可跳转对话底部"，此后静默执行。</p>
+        <p>直接跳转至底部。<strong>首次双击</strong>，Pop 提示"双击可跳转底部"，此后静默执行。</p>
 
         <h4>连续点击</h4>
-        <p>连续点击超过 3 次，且不在双击阈值内，判断用户想到底但不知道双击交互。Pop 提示"双击 ↓ 可跳转对话底部"，当用户正确双击后，不再弹 Pop 提示。</p>
+        <p>连续点击超过 3 次，且不在双击阈值内，判断用户想到底但不知道双击交互。Pop 提示"双击可跳转底部"，当用户正确双击后，不再弹 Pop 提示。</p>
 
         <div class="fp-snapshot-row">
           ${labeled('首次双击 ↓<br>教学提示出现', s.tooltipDown)}

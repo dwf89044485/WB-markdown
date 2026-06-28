@@ -243,7 +243,7 @@ function handleUpClick() {
     // 首次双击：提示并毕业；后续双击：静默
     if (!state.dblclickGraduated) {
       state.dblclickGraduated = true;
-      showTooltip(SN.upBtn, '双击 ↑ 可跳转对话顶部');
+      showTooltip(SN.upBtn, '双击可跳转顶部');
     }
     return;
   }
@@ -257,7 +257,7 @@ function handleUpClick() {
     if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
     state.tooltipTimer = setTimeout(() => {
       if (!SN.upBtn.classList.contains('is-hidden')) {
-        showTooltip(SN.upBtn, '双击 ↑ 可跳转对话顶部');
+        showTooltip(SN.upBtn, '双击可跳转顶部');
       }
       state.tooltipTimer = null;
     }, 100);
@@ -285,7 +285,7 @@ function handleDownClick() {
     // 首次双击：提示并毕业；后续双击：静默
     if (!state.dblclickGraduated) {
       state.dblclickGraduated = true;
-      showTooltip(SN.downBtn, '双击 ↓ 可跳转对话底部');
+      showTooltip(SN.downBtn, '双击可跳转底部');
     }
     return;
   }
@@ -299,7 +299,7 @@ function handleDownClick() {
     if (state.tooltipTimer) clearTimeout(state.tooltipTimer);
     state.tooltipTimer = setTimeout(() => {
       if (!SN.downBtn.classList.contains('is-hidden')) {
-        showTooltip(SN.downBtn, '双击 ↓ 可跳转对话底部');
+        showTooltip(SN.downBtn, '双击可跳转底部');
       }
       state.tooltipTimer = null;
     }, 100);
@@ -337,7 +337,9 @@ function doSingleDown() {
 // ── Tooltip ───────────────────────────────────────────────
 
 function showTooltip(btn, text) {
-  removeTooltip(btn);
+  // 先移除两个按钮上的所有 tooltip（互斥：同一时间只显示一个）
+  removeTooltip(SN.upBtn);
+  removeTooltip(SN.downBtn);
   const tip = document.createElement('div');
   tip.className = 'sn-tooltip';
   tip.textContent = text;

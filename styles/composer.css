@@ -48,6 +48,10 @@
   overflow:hidden;
   background:#fff;
   box-shadow:0 4px 10px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.08);
+/* 多行态背景色（设计稿 Variant5/6：#FAFAFA，lineCount>=4 时触发） */
+.composer-shell.is-expanded.has-expand-handle{
+  background:#FAFAFA;
+}
   /* 始终 column：.cp-body（内容）在上、.cp-bar（按钮栏）在下。
    * 单行态 .cp-body 折叠为 0、占位文字浮在 bar 里；激活态 .cp-body 展开成 textarea。
    * 按钮栏 .cp-bar 始终在底部一行，单行↔激活切换时按钮 DOM 不动、不跳。 */
@@ -120,8 +124,12 @@
   margin-left:auto;
   display:flex;
   align-items:center;
-  gap:10px;            /* 设计稿 mic↔send 间距 */
+  gap:10px;            /* 设计稿默认间距 */
   flex-shrink:0;
+}
+/* 有内容时发送按钮替换加号，wb-more↔send gap 为 6px（设计稿 EL-c26872e7） */
+.composer-shell.has-content .cp-bar-right{
+  gap:6px;
 }
 /* 激活态时占位文字不在 bar 占位，[+] 仍靠左、右侧组靠右（margin-left:auto 已保证） */
 

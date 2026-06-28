@@ -1501,3 +1501,43 @@
 .fp-motion-stage[data-motion-loop="sheet-expand"] .bottom-sheet {
   animation: fp-sheet-loop-expand 3s infinite;
 }
+
+/* ============================================================
+ * 代码 Sheet 快照样式（§2.2 构成对比中使用）
+ * 代码 Sheet 快照直接放在 .fp-snapshot 内，不经过 fsSheetWrap，
+ * 需要独立约束定位和尺寸。
+ * ============================================================ */
+.fp-snapshot .code-sheet-overlay.fp-static {
+  position: relative;
+  inset: auto;
+  width: 320px;
+  height: 420px;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 1;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.fp-snapshot .code-sheet-overlay.fp-static .code-sheet-backdrop {
+  display: none;
+}
+.fp-snapshot .code-sheet-overlay.fp-static .code-sheet-panel {
+  position: absolute;
+  top: 0;
+  left: 0; right: 0; bottom: 0;
+  transform: none;
+  border-radius: 20px 20px 0 0;
+  padding: 14px 16px;
+  gap: 12px;
+  box-shadow: none;
+}
+.fp-snapshot .code-sheet-overlay.fp-static .code-sheet-body {
+  overflow-y: auto;
+  max-height: 300px;
+}
+.fp-snapshot .code-sheet-overlay.fp-static .code-sheet-body pre {
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 12px 14px;
+}

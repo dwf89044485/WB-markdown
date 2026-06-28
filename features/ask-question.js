@@ -319,7 +319,7 @@ export default {
           ${labeled('用户输入', s.sortInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：拖拽手柄或长按选项进入拖拽模式（移动 3px 即触发），松手后选项落位。首次进入有引导气泡，完成首次拖拽后永久消失。</p>
+          <p><strong>交互</strong>：<strong style="color:#a8071a">下一步按钮默认亮起，可直接下一步。</strong>拖拽移动 3px 触发排序，首次进入有引导气泡，完成首次拖拽后永久消失。</p>
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         </blockquote>
       </section>

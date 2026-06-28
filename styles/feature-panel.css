@@ -1397,7 +1397,6 @@
   position: relative;
   width: 320px;
   height: 420px;
-  border-radius: var(--phone-radius, 38px);
   overflow: hidden;
   background: #f5f5f7;
   border: 1px solid rgba(0,0,0,0.06);
@@ -1504,40 +1503,103 @@
 
 /* ============================================================
  * 代码 Sheet 快照样式（§2.2 构成对比中使用）
- * 代码 Sheet 快照直接放在 .fp-snapshot 内，不经过 fsSheetWrap，
- * 需要独立约束定位和尺寸。
+ * 代码 Sheet 快照由 renderStaticCodeSheetShell 生成，结构为：
+ *   .code-sheet-overlay.fp-static
+ *     ├── .code-sheet-backdrop
+ *     └── .code-sheet-panel
+ *         ├── .code-sheet-header
+ *         └── .code-sheet-body
+ * 直接放在 .fp-snapshot 内，需要独立约束定位和尺寸。
  * ============================================================ */
 .fp-snapshot .code-sheet-overlay.fp-static {
   position: relative;
   inset: auto;
-  width: 320px;
-  height: 420px;
+  width: 390px;
+  height: 850px;
   pointer-events: none;
   visibility: visible;
   opacity: 1;
   overflow: hidden;
-  border-radius: 20px;
   border: 1px solid rgba(0,0,0,0.06);
 }
 .fp-snapshot .code-sheet-overlay.fp-static .code-sheet-backdrop {
-  display: none;
+  display: block;
+  opacity: 0.18;
+  position: absolute;
+  inset: 0;
+  background: #000;
 }
 .fp-snapshot .code-sheet-overlay.fp-static .code-sheet-panel {
   position: absolute;
-  top: 0;
-  left: 0; right: 0; bottom: 0;
+  top: auto;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 75%;
   transform: none;
-  border-radius: 20px 20px 0 0;
+  border-radius: 30px 30px 0 0;
+  box-shadow: none;
   padding: 14px 16px;
   gap: 12px;
-  box-shadow: none;
 }
 .fp-snapshot .code-sheet-overlay.fp-static .code-sheet-body {
   overflow-y: auto;
-  max-height: 300px;
+  max-height: none;
+  flex: 1;
 }
 .fp-snapshot .code-sheet-overlay.fp-static .code-sheet-body pre {
   font-size: 11px;
   line-height: 1.5;
   padding: 12px 14px;
+}
+
+/* ============================================================
+ * 工具调用节点构成标注线样式（§2 构成中使用）
+ * ============================================================ */
+.fp-anatomy-annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fp-annotation {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fp-annotation--icon {
+  top: 50%;
+  left: -120px;
+  transform: translateY(-50%);
+}
+
+.fp-annotation--text {
+  top: 50%;
+  right: -120px;
+  transform: translateY(-50%);
+}
+
+.fp-annotation--sweep {
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.fp-annotation--chevron {
+  top: 50%;
+  right: -100px;
+  transform: translateY(-50%);
+}
+
+.fp-annotation-line {
+  width: 60px;
+  height: 1px;
+  background: #86868b;
+}
+
+.fp-annotation-label {
+  font-size: 12px;
+  color: #86868b;
+  white-space: nowrap;
 }

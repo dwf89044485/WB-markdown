@@ -529,11 +529,16 @@
   min-width: 0;
 }
 .fp-fs-flow-label {
-  font-size: 12px;
-  font-weight: 600;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--md-text-muted, #8e8e93);
+  background: var(--md-bg-inset, #f0f0f5);
+  border: 1px solid var(--md-border, #d1d1d6);
+  border-radius: 4px;
+  padding: 2px 6px;
   margin-bottom: 8px;
-  padding-left: 2px;
+  line-height: 1.4;
 }
 
 /* 全屏预览内按钮禁用态 */
@@ -1721,14 +1726,18 @@
 /* ============================================================
  * Sheet 内容类型快照（Sheet Content）
  * ============================================================ */
-/* 事件行列表快照 — 与 Sheet 快照宽度一致 */
-.fp-snapshot > .s-row,
-.fp-snapshot-wrap .fp-snapshot > .s-row {
-  width: 340px;
-  min-width: 340px;
+/* Sheet 外壳快照容器 — 使用 renderStaticSheetShell 输出 */
+.fp-snapshot .fp-sheet-shell-frame {
+  width: 340px !important;
+  flex-shrink: 0;
+}
+/* Sheet 外壳快照中的 sheet-body 限制高度 */
+.fp-snapshot .fp-sheet-shell-frame .sheet-body {
+  max-height: 260px;
+  overflow-y: auto;
 }
 /* 二级详情快照 */
-.fp-snapshot > .sd-container {
+.fp-snapshot .sd-container {
   width: 340px;
   min-width: 340px;
 }
@@ -1739,14 +1748,24 @@
   max-height: 120px;
   overflow-y: auto;
 }
-/* 空状态快照 */
+/* 空状态快照内 sheet-empty 居中 */
 .fp-snapshot .sheet-empty {
-  width: 340px;
-  min-width: 340px;
+  width: 100%;
+  min-width: auto;
   padding: 30px 20px;
   text-align: center;
   color: #86868b;
   font-size: 13px;
+}
+/* 确保 fp-snapshot 内 Sheet 外壳快照正确布局 */
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet {
+  transform: translateY(0) !important;
+  position: relative !important;
+}
+.fp-snapshot .fp-sheet-shell-frame .sheet-overlay {
+  position: absolute !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 /* 事件行列表容器（renderStaticSheet 返回的多个 s-row 直接平铺） */
 .fp-snapshot-wrap .fp-snapshot {

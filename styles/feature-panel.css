@@ -1674,6 +1674,11 @@
   padding: 14px 16px;
   gap: 12px;
 }
+.fp-snapshot .bottom-sheet.code-variant .sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .fp-snapshot .bottom-sheet.code-variant .code-sheet-body {
   overflow-y: auto;
   max-height: none;

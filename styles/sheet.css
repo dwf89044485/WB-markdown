@@ -85,6 +85,9 @@
   padding:0;
   overflow:visible;
   gap:0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 .bottom-sheet.code-variant .sheet-body::before{display:none;}
 

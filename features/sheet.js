@@ -7,7 +7,7 @@
 //       改左边 sheet 样式 → 右边文档自动同步
 // ============================================================
 
-import { renderStaticSheetShell, renderStaticDetail, renderEvent, renderTodo } from '../engine/sheet.js';
+import { renderStaticSheetShell, renderStaticDetail, renderEvent, renderTodo, getFrames, computeTodoSnapshot } from '../engine/sheet.js';
 import { renderStaticCodeSheetShell } from '../engine/code-fullscreen-sheet.js';
 
 // ── 快照缓存 ──────────────────────────────────
@@ -17,25 +17,32 @@ function snap(key, opts) {
   return snapCache[key];
 }
 
-// ── 创建代办 sheet 样本（复用 Demo 真实渲染函数）──
-function renderTodoBody() {
-  const eventHtml = renderEvent({
-    text: '创建待办清单',
-    dim: '已完成',
-    icon: 'wb-todo.svg',
-  }).outerHTML;
+// ── 从真实 scenario 帧数据渲染事件 Sheet 内容（复用 demo 渲染链路）──
+function renderEventSheetBody(frameRefs) {
+  const scenario = window.WORKBUDDY_SCENARIO;
+  const frames = getFrames(frameRefs);
+  if (!frames.length) return '';
 
-  const todos = [
-    { text: '制定本周工作计划', status: 'done' },
-    { text: '整理项目文档', status: 'done' },
-    { text: '准备演示材料', status: 'active' },
-    { text: '安排团队周会', status: 'todo' },
-    { text: '回复客户邮件', status: 'todo' },
-    { text: '更新项目进度看板', status: 'todo' },
-  ];
-  const todoHtml = todos.map(t => renderTodo(t).outerHTML).join('');
+  // 渲染事件行（去重，与 demo 的 streamSheetContent 逻辑一致）
+  const seenKeys = new Set();
+  let html = '';
+  for (const f of frames) {
+    if (f.events) {
+      for (const ev of f.events) {
+        const key = `${ev.icon || ''}|${ev.text || ''}|${ev.dim || ''}`;
+        if (seenKeys.has(key)) continue;
+        seenKeys.add(key);
+        html += renderEvent(ev).outerHTML;
+      }
+    }
+  }
 
-  return eventHtml + todoHtml;
+  // 待办快照：computeTodoSnapshot 与 demo 的 streamSheetContent 共用同一逻辑
+  const baseline = scenario.todosBaseline || [];
+  const todoItems = computeTodoSnapshot(frames, baseline);
+  html += todoItems.map(t => renderTodo(t).outerHTML).join('');
+
+  return html;
 }
 
 // ── Code sheet 样本 ──
@@ -62,15 +69,16 @@ const SHEET_DETAIL = {
 };
 
 function getSnapshots() {
-  const todoBody = renderTodoBody();
   return {
     // §2 构成：事件 Sheet（创建代办示例）
-    // autoHeight 让 sheet 高度由内容自然撑开，像 ask-question 一样展示组件本身
+    // 直接使用 scenario.sheetFrames 真实帧数据 + renderStaticSheetShell
     anatomyEvent: snap('anatomyEvent', {
-      autoHeight: true,
-      body: todoBody,
-      width: '320px',
+      state: 'collapsed',
+      body: renderEventSheetBody('F1.a,F1.b'),
+      width: '393px',
+      height: '500px',
       borderRadius: '0',
+      frameCls: 'fp-show-overlay',
     }),
     // §2 构成：事件 Sheet 二级详情（作为附件对照展示）
     anatomyDetail: renderStaticDetail(SHEET_DETAIL),

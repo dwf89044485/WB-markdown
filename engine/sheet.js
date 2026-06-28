@@ -60,7 +60,7 @@ function renderOutput(output) {
 }
 
 // ── Todo snapshot（保留，供 getFullTodoList 复用）─────────
-function computeTodoSnapshot(frames, baseline) {
+export function computeTodoSnapshot(frames, baseline) {
   const lastOverrideFrame = [...frames].reverse().find(f =>
     (f.todoOverrides !== undefined) || (f.todos && f.todos.length)
   );
@@ -384,32 +384,42 @@ export async function goBackInSheet(e) {
 }
 
 // ── Render detail content (二级 sheet, 数据驱动) ──────────
-export function renderDetailContent(detail, container) {
-  container.innerHTML = '';
-  container.classList.add('detail-mode');
-  const sheet = container.closest('.bottom-sheet');
-  if (sheet) sheet.classList.add('detail-mode');
-  const wrapper = document.createElement('div');
-  wrapper.className = 'sd-container slide-in-right';
-
-  for (const section of (detail.sections || [])) {
-    const sec = document.createElement('div');
-    sec.className = 'sd-section';
-
-    const label = document.createElement('div');
-    label.className = 'sd-label';
-    label.textContent = section.label || '';
-    sec.appendChild(label);
-
-    const card = document.createElement('div');
-    card.className = 'sd-card' + (section.variant === 'code' ? ' sd-variant-code' : '');
-    card.textContent = section.content || '';
-    sec.appendChild(card);
-
-    wrapper.appendChild(sec);
+// 统一 HTML 生成函数（左右两侧共用）
+// mode: 'live' → 生成 DOM 并注入到 container
+// mode: 'static' → 返回 HTML 字符串
+function renderDetailHTML(detail, mode = 'static', container) {
+  if (!detail || !detail.sections || !detail.sections.length) {
+    if (mode === 'live' && container) {
+      container.innerHTML = '';
+      return;
+    }
+    return '';
   }
 
-  container.appendChild(wrapper);
+  const sectionsHtml = detail.sections.map(section => {
+    const cardCls = 'sd-card' + (section.variant === 'code' ? ' sd-variant-code' : '');
+    return `<div class="sd-section">
+      <div class="sd-label">${escapeHtml(section.label || '')}</div>
+      <div class="${cardCls}">${escapeHtml(section.content || '')}</div>
+    </div>`;
+  }).join('');
+
+  const html = `<div class="sd-container slide-in-right">${sectionsHtml}</div>`;
+
+  if (mode === 'live' && container) {
+    container.innerHTML = '';
+    container.classList.add('detail-mode');
+    const sheet = container.closest('.bottom-sheet');
+    if (sheet) sheet.classList.add('detail-mode');
+    container.insertAdjacentHTML('beforeend', html);
+    return;
+  }
+
+  return html;
+}
+
+export function renderDetailContent(detail, container) {
+  renderDetailHTML(detail, 'live', container);
 }
 
 // ── 静态快照渲染（供右侧文档面板用）─────────────
@@ -421,15 +431,7 @@ export function renderStaticSheet(events) {
 
 // 二级 sheet：把 detail.sections 渲染为 sd-container
 export function renderStaticDetail(detail) {
-  if (!detail || !detail.sections || !detail.sections.length) return '';
-  const sections = detail.sections.map(section => {
-    const cardCls = 'sd-card' + (section.variant === 'code' ? ' sd-variant-code' : '');
-    return `<div class="sd-section">
-      <div class="sd-label">${escapeHtml(section.label || '')}</div>
-      <div class="${cardCls}">${escapeHtml(section.content || '')}</div>
-    </div>`;
-  }).join('');
-  return `<div class="sd-container">${sections}</div>`;
+  return renderDetailHTML(detail, 'static');
 }
 
 // ── 静态快照：sheet 外壳（overlay + bottom-sheet + sheet-top + sheet-body）──
@@ -452,13 +454,18 @@ export function renderStaticDetail(detail) {
 // opts.height:     快照容器高度（默认 480px）
 // opts.borderRadius: 快照容器圆角（默认 ''，即无圆角）
 // opts.detailMode: 是否启用二级详情模式（默认 false），启用时 bottom-sheet 和 sheet-body 加 detail-mode class，sheet-top-start 显示返回按钮
+// opts.autoHeight: 是否由内容撑开高度（默认 false），为 true 时 bottom-sheet 不设固定高度，由内容撑开
 export function renderStaticSheetShell(opts = {}) {
-  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '', detailMode = false, variant = '' } = opts;
+  const { state = 'collapsed', body = '', showClose = true, showOverlay = true, frameCls = '', width = '320px', height = '480px', borderRadius = '', detailMode = false, variant = '', autoHeight = false } = opts;
   const expanded = state === 'expanded';
-  const sheetCls = 'bottom-sheet' + (expanded ? ' expanded' : '') + (detailMode ? ' detail-mode' : '') + (variant === 'code' ? ' code-variant' : '');
+  const sheetCls = 'bottom-sheet' + (expanded ? ' expanded' : '') + (detailMode ? ' detail-mode' : '') + (variant === 'code' ? ' code-variant' : '') + (autoHeight ? ' auto-height' : '');
   const bodyCls = 'sheet-body' + (detailMode ? ' detail-mode' : '');
   const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
+  const frameHeight = autoHeight ? 'auto' : height;
+  const sheetStyle = autoHeight ? 'transform:translateY(0);height:auto;min-height:0' : 'transform:translateY(0)';
+  const overlayPosition = autoHeight ? 'position:relative;' : 'position:absolute;inset:0;';
+  const frameOverflow = autoHeight ? 'overflow:visible;' : '';
   const closeSvg = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
   const glassLayers = '<span class="glass-layer lg-layer-one"></span><span class="glass-layer lg-layer-two"></span><span class="glass-layer-inner lg-layer-three"></span>';
   const closeBtnHtml = showClose
@@ -470,18 +477,18 @@ export function renderStaticSheetShell(opts = {}) {
 
   // code variant: 使用代码 Sheet 的头部结构
   if (variant === 'code') {
-    return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
-    <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
-      <div class="${sheetCls}" style="transform:translateY(0)">
-        ${body}
+    return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${frameHeight};${radiusStyle}${frameOverflow}">
+    <div class="sheet-overlay vis show" style="${overlayPosition}${overlayStyle}">
+      <div class="${sheetCls}" style="${sheetStyle}">
+        <div class="sheet-body">${body}</div>
       </div>
     </div>
   </div>`;
   }
 
-  return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${height};${radiusStyle}">
-    <div class="sheet-overlay vis show" style="position:absolute;inset:0;${overlayStyle}">
-      <div class="${sheetCls}" style="transform:translateY(0)">
+  return `<div class="fp-sheet-shell-frame ${frameCls}" style="width:${width};height:${frameHeight};${radiusStyle}${frameOverflow}">
+    <div class="sheet-overlay vis show" style="${overlayPosition}${overlayStyle}">
+      <div class="${sheetCls}" style="${sheetStyle}">
         <div class="sheet-top">
           ${backBtnHtml}
           <div class="sheet-handle"></div>

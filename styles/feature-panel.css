@@ -1540,16 +1540,16 @@
 
 /* 让快照内的 sheet-overlay 覆盖整个 frame */
 .fp-sheet-shell-frame .sheet-overlay {
-  position: absolute !important;
+  position: absolute;
   inset: 0;
   z-index: 200;
 }
 
 /* 快照内 bottom-sheet 的高度由 state class 控制，不受父级百分比影响 */
-.fp-sheet-shell-frame .bottom-sheet {
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height) {
   height: 40% !important;
 }
-.fp-sheet-shell-frame .bottom-sheet.expanded {
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height).expanded {
   height: 80% !important;
 }
 
@@ -1650,42 +1650,23 @@
  *         └── .bottom-sheet.code-variant
  *             ├── .code-sheet-header
  *             └── .code-sheet-body
- * 直接放在 .fp-snapshot 内，需要独立约束定位和尺寸。
+ * 直接放在 .fp-snapshot 内，通过 .fp-sheet-shell-frame 约束尺寸。
  * ============================================================ */
-.fp-snapshot .sheet-overlay {
-  position: relative;
-  inset: auto;
-  width: 390px;
-  height: 850px;
-  pointer-events: none;
-  display: flex !important;
-  opacity: 1 !important;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.06);
-  background: transparent;
-  backdrop-filter: none;
-  align-items: flex-end;
-}
-.fp-snapshot .bottom-sheet.code-variant {
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant {
   position: relative;
   width: 100%;
   height: 80% !important;
   transform: none;
   border-radius: 34px 34px 0 0;
   box-shadow: none;
-  padding: 14px 16px;
+  padding: 14px 14px;
 }
-.fp-snapshot .bottom-sheet.code-variant .sheet-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.fp-snapshot .bottom-sheet.code-variant .code-sheet-body {
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant .code-sheet-body {
   overflow-y: auto;
   max-height: none;
   flex: 1;
 }
-.fp-snapshot .bottom-sheet.code-variant .code-sheet-body pre {
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant .code-sheet-body pre {
   font-size: 11px;
   line-height: 1.5;
   padding: 12px 14px;
@@ -1748,9 +1729,10 @@
 /* ============================================================
  * Sheet 内容类型快照（Sheet Content）
  * ============================================================ */
-/* Sheet 外壳快照容器 — 使用 renderStaticSheetShell 输出 */
+/* Sheet 外壳快照容器 — 使用 renderStaticSheetShell 输出
+ * 宽度由 renderStaticSheetShell 的 width 参数控制（内联样式），
+ * CSS 不覆盖，让各 feature 自行控制宽度 */
 .fp-snapshot .fp-sheet-shell-frame {
-  width: 340px !important;
   flex-shrink: 0;
 }
 /* Sheet 外壳快照中的 sheet-body 限制高度 */
@@ -1779,22 +1761,26 @@
   color: #86868b;
   font-size: 13px;
 }
-/* 确保 fp-snapshot 内 Sheet 外壳快照正确布局 */
+/* 确保 fp-snapshot 内 Sheet 外壳快照正确布局
+ * 移除了 !important 覆盖，让 renderStaticSheetShell 的内联样式（position:absolute;inset:0）
+ * 和参数（width/height/state）完全控制布局 */
 .fp-snapshot .fp-sheet-shell-frame {
   position: relative;
 }
 .fp-snapshot .fp-sheet-shell-frame .sheet-overlay {
-  position: relative !important;
   background: transparent !important;
   backdrop-filter: none !important;
   padding: 0 !important;
   pointer-events: none;
 }
+/* 构成章节的 Sheet 快照需展示遮罩，以匹配真实 Demo 外观 */
+.fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-overlay {
+  background: rgba(0,0,0,0.30) !important;
+  backdrop-filter: blur(10px) !important;
+}
 .fp-snapshot .fp-sheet-shell-frame .bottom-sheet {
   transform: translateY(0) !important;
   position: relative !important;
-  height: auto !important;
-  min-height: 0 !important;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06) !important;
 }
 /* 事件行列表容器（renderStaticSheet 返回的多个 s-row 直接平铺） */

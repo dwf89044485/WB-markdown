@@ -1,7 +1,7 @@
 // ============================================================
 // CODE BLOCK — 代码块容器 交互设计文档
 // ============================================================
-// 4 种类型：可执行 / 可预览 / 静态 / 可视化
+// 5 种类型：可执行 / 可预览 / 静态 / 可视化 / 表格
 // 快照：复用 engine/markdown.js 的 renderStaticCodeCard
 // 全屏快照：复用 engine/code-fullscreen-sheet.js 的 renderStaticCodeSheet
 //           复用 engine/table-fullscreen.js 的 renderStaticTableFullscreen
@@ -95,12 +95,13 @@ function getSnapshots() {
     typeView:      snap('typeView',     { lang: 'html',       code: SAMPLES.html }),
     typeStatic:    snap('typeStatic',   { lang: 'json',       code: SAMPLES.json }),
     typeVisual:    snap('typeVisual',   { lang: 'mermaid',    code: SAMPLES.mermaid }),
+    typeTable:     snap('typeTable',     { lang: 'table',     code: SAMPLES.table }),
     // 折叠与展开：用长代码样本，确保超过 280px 阈值
     foldCollapsed: snap('foldCollapsed', { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     // 全屏查看 — 对话流中的卡片快照
     fsCardJs:      snap('fsCardJs',     { lang: 'javascript', code: SAMPLES.jsLong, collapsed: true }),
     fsCardHtml:    snap('fsCardHtml',   { lang: 'html',       code: SAMPLES.html, collapsed: null }),
-    fsCardTable:   snap('fsCardTable',  { lang: 'mermaid',    code: SAMPLES.mermaid, collapsed: null }),
+    fsCardTable:   snap('fsCardTable',  { lang: 'table',     code: SAMPLES.table, collapsed: null }),
     fsCardMermaid: snap('fsCardMermaid',{ lang: 'mermaid',    code: SAMPLES.mermaid, collapsed: null }),
   };
 }
@@ -115,13 +116,9 @@ function labeled(label, html, extraClass = '') {
 }
 
 // ── 全屏预览包装器 ──
-// 直接调用 engine 导出的真实渲染函数，包裹在 .fp-fs-preview 容器内，
-// 由 feature-panel.css 控制预览尺寸和定位覆盖。
+// 直接调用 engine 导出的真实渲染函数（panelOnly/contentOnly 模式），
+// 只取 panel/content 部分放进手机壳预览框，绕开 overlay 的 fixed 定位。
 // 确保 Demo 改动时交互说明自动同步。
-//
-// 两种全屏模态的视觉差异：
-//   4.2.1 底部 Sheet 模态：竖屏手机壳 + 对话流 + Sheet 从底部滑入（导航栏可见）
-//   4.2.2 横屏二级页模态：手机壳横屏 + 全屏覆盖（隐藏所有手机 UI）
 // ──
 
 function fsSheetWrap(html) {
@@ -150,7 +147,7 @@ function fsSheetWrap(html) {
         </div>
       </div>
     </div>
-    ${html}
+    <div class="fp-fs-sheet-mount">${html}</div>
   </div>
 </div>`;
 }
@@ -159,7 +156,7 @@ function fsLandscapeWrap(html) {
   return `<div class="fp-fs-preview fp-fs-landscape">
   <div class="fp-fs-preview-label">横屏二级页模态</div>
   <div class="fp-fs-phone fp-fs-phone-landscape">
-    ${html}
+    <div class="fp-fs-landscape-mount">${html}</div>
   </div>
 </div>`;
 }
@@ -225,6 +222,7 @@ export default {
           ${labeled('可预览', s.typeView)}
           ${labeled('静态', s.typeStatic)}
           ${labeled('可视化', s.typeVisual)}
+          ${labeled('表格', s.typeTable)}
         </div>
       </section>
 
@@ -255,7 +253,7 @@ export default {
           <div class="fp-fs-flow-arrow">↓ 点击全屏按钮</div>
           <div class="fp-fs-flow-step">
             <div class="fp-fs-flow-label">底部 Sheet 全屏</div>
-            ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong }))}
+            ${fsSheetWrap(renderStaticCodeSheet({ lang: 'javascript', code: SAMPLES.jsLong, panelOnly: true }))}
           </div>
         </div>
         <blockquote>
@@ -277,7 +275,8 @@ export default {
             ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
               bodyHtml: `<div class="tbl-mermaid-fs"><div style="padding:24px;color:var(--md-text-muted);font-size:14px;text-align:center;">Mermaid SVG 渲染区</div></div>`,
-              type: 'mermaid'
+              type: 'mermaid',
+              contentOnly: true
             }))}
           </div>
         </div>

@@ -91,7 +91,6 @@ function snap(key, ...args) {
 
 function getSnapshots() {
   return {
-    anatomy:       snap('anatomy',      { lang: 'javascript', code: SAMPLES.js }),
     typeExec:      snap('typeExec',     { lang: 'javascript', code: SAMPLES.js }),
     typeView:      snap('typeView',     { lang: 'html',       code: SAMPLES.html }),
     typeStatic:    snap('typeStatic',   { lang: 'json',       code: SAMPLES.json }),
@@ -199,28 +198,21 @@ export default {
         <p>所有代码块共用同一套外壳结构，区别只在按钮组合和代码区折叠行为。以可执行类（JavaScript）为例：</p>
         <div class="fp-snapshot-side">
           <div class="fp-snapshot-wrap">
-            <div class="fp-snapshot">${s.anatomy}</div>
+            <div class="fp-snapshot">${s.foldCollapsed}</div>
           </div>
-          <div class="fp-snapshot-side-desc">
+            <div class="fp-snapshot-side-desc">
             <h4>① 标题栏</h4>
             <blockquote>
               <p>左侧显示语言名（如 JavaScript / HTML / JSON）。未识别语言首字母大写做标题。</p>
             </blockquote>
             <h4>② 操作按钮</h4>
             <blockquote>
-              <p>不同类型对应不同按钮，具体见3.类型</p>
-            </blockquote>
-            <h4>③ 次操作按钮组</h4>
-            <blockquote>
-              <p>图标按钮组，统一包含复制 / 分享 / 全屏。可视化类额外加「保存图片」。</p>
+              <p>操作按钮区，固定的按钮为复制、分享、放大，此外，不同类型还会对应出现不同按钮，具体见3.类型</p>
             </blockquote>
             <h4>③ 内容区</h4>
             <blockquote>
               <p>代码区域，支持语法高亮着色，提升代码可读性。</p>
-            </blockquote>
-            <h4>⑤ 查看全部按钮</h4>
-            <blockquote>
-              <p>代码区底部居中，超过 280px 自动折叠并出现「查看全部」按钮；点击拉起二级 Sheet 查看完整代码。</p>
+              <p>当内容超过280px时，出现"查看全部"按钮，点击拉起Sheet。</p>
             </blockquote>
           </div>
         </div>
@@ -228,16 +220,12 @@ export default {
 
       <section data-section="types">
         <h2>3. 类型</h2>
-        <p>由语言类型推导出 4 种类型，每种类型的按钮组合不同。<strong>主按钮的有无和功能是区分类型的唯一视觉标记</strong>。</p>
         <div class="fp-snapshot-row">
           ${labeled('可执行', s.typeExec)}
           ${labeled('可预览', s.typeView)}
           ${labeled('静态', s.typeStatic)}
           ${labeled('可视化', s.typeVisual)}
         </div>
-        <blockquote>
-          <p><strong>可执行</strong>（js / py / sh）→ ▶ 运行；<strong>可预览</strong>（html）→ ● 预览；<strong>静态</strong>（json / css / yaml）→ 无主按钮；<strong>可视化</strong>（mermaid / 表格）→ 无主按钮 + 保存图片。</p>
-        </blockquote>
       </section>
 
       <section data-section="interactions">

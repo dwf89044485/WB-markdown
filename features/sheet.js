@@ -170,24 +170,22 @@ export default {
         <p>项目中有两种 Sheet，分别承载不同类型的内容，在结构上有明显差异。<strong>事件 Sheet</strong>用于展示 Agent 执行过程中的事件行、待办列表等过程信息；<strong>代码 Sheet</strong>用于展示代码块全屏查看时的完整代码。两者共享"从底部升起"的动效语言，但 DOM 结构、高度策略、顶栏布局完全不同。</p>
 
         <h3>2.1 事件 Sheet</h3>
-        <div class="fp-snapshot-side">
-          <div class="fp-snapshot-duo-snaps">
-            <div class="fp-snapshot-wrap">
-              <span class="tag">一级 Sheet · 创建代办</span>
-              <div class="fp-snapshot">${s.anatomyEvent}</div>
-            </div>
-            <div class="fp-snapshot-wrap">
-              <span class="tag">二级 Sheet · 详情</span>
-              <div class="fp-snapshot">${s.anatomyDetail}</div>
-            </div>
+        <div class="fp-snapshot-trio">
+          <div class="fp-snapshot-wrap">
+            <span class="tag">一级 Sheet · 创建代办</span>
+            <div class="fp-snapshot">${s.anatomyEvent}</div>
           </div>
-          <div class="fp-snapshot-side-desc">
+          <div class="fp-snapshot-wrap">
+            <span class="tag">二级 Sheet · 详情</span>
+            <div class="fp-snapshot">${s.anatomyDetail}</div>
+          </div>
+          <div class="fp-snapshot-trio-desc">
             <h4>遮罩区</h4>
-            <p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。一二级 Sheet 共用同一遮罩层，切换时不闪动。</p>
+            <blockquote><p>半透明遮罩 + 高斯模糊，覆盖整个手机壳。点击遮罩关闭；浮层内部不关闭。一二级 Sheet 共用同一遮罩层，切换时不闪动。</p></blockquote>
             <h4>浮层顶部栏</h4>
-            <p>三段式布局：左侧 slot、中央拖拽条、右侧关闭按钮。一级 Sheet 左侧空置，二级 Sheet 左侧有返回按钮。</p>
+            <blockquote><p>三段式布局：左侧 slot、中央拖拽条、右侧关闭按钮。一级 Sheet 左侧空置，二级 Sheet 左侧有返回按钮。</p></blockquote>
             <h4>内容区</h4>
-            <p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p>
+            <blockquote><p>一级 Sheet 承载事件行 + 待办列表。二级 Sheet 承载分组的详情卡片，支持文本和代码两种变体。</p></blockquote>
           </div>
         </div>
 

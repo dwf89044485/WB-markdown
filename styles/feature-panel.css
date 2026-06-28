@@ -422,9 +422,9 @@
 }
 
 /* ── 全屏查看预览：fp-fs-preview ─────────────────────────
-   复用 Demo 的 code-sheet-panel / tbl-fs-inner DOM（panelOnly/contentOnly 模式），
+   复用 Demo 的 code-sheet-overlay / tbl-fullscreen-overlay DOM，
    在说明栏内以"预览模式"展示。
-   原则：只控制手机壳容器尺寸和 panel 定位，不覆盖 Demo 组件的内部样式。
+   原则：只控制容器尺寸和定位，不覆盖 Demo 组件的内部样式。
    ──────────────────────────────────────────────────────── */
 .fp-fs-preview {
   position: relative;
@@ -447,149 +447,68 @@
   pointer-events: none;
 }
 
-/* ── 手机壳模拟（竖屏）── */
-.fp-fs-phone {
-  position: relative;
-  overflow: hidden;
-  background: #fff;
-}
-.fp-fs-phone-portrait {
+/* 底部 Sheet 预览：竖屏手机比例
+   直接包裹 renderStaticCodeSheet() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed/translateY 定位。 */
+.fp-fs-preview.fp-fs-sheet {
   width: 320px;
   min-width: 320px;
   height: 520px;
-  display: flex;
-  flex-direction: column;
 }
-.fp-fs-phone-status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #000;
-  flex-shrink: 0;
-}
-.fp-fs-phone-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  border-bottom: 1px solid #f0f0f2;
-  font-size: 14px;
-  font-weight: 500;
-  flex-shrink: 0;
-}
-.fp-fs-phone-conv {
-  flex: 1;
-  overflow: hidden;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #f7f7f9;
-}
-.fp-fs-msg-user {
-  align-self: flex-end;
-  max-width: 80%;
-  padding: 8px 12px;
-  border-radius: 16px 16px 4px 16px;
-  background: #007aff;
-  color: #fff;
-  font-size: 13px;
-}
-.fp-fs-msg-agent {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.fp-fs-msg-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--md-text-muted, #8e8e93);
-}
-.fp-fs-mini-card {
-  border: 1px solid var(--md-border, #e9ecf1);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fff;
-}
-.fp-fs-mini-card-hdr {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  background: #f5f5f7;
-  font-size: 11px;
-}
-.fp-fs-mini-card-lang { font-weight: 600; }
-.fp-fs-mini-card-btn { color: #007aff; font-weight: 600; }
-.fp-fs-mini-card-body {
-  padding: 8px 10px;
-  font-family: 'SF Mono', monospace;
-  font-size: 10px;
-  color: var(--md-text-muted, #8e8e93);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ── Sheet 模态：panel 钉在手机壳底部 ── */
-.fp-fs-sheet-mount {
+.fp-fs-preview.fp-fs-sheet .code-sheet-overlay.fp-static {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  top: auto;
   z-index: 5;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 1;
 }
-.fp-fs-sheet-mount .code-sheet-panel.fp-static {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  transform: none !important;
+.fp-fs-preview.fp-fs-sheet .code-sheet-panel {
+  position: relative;
+  top: 0;
+  left: 0; right: 0; bottom: 0;
+  transform: none;
+  height: 100%;
+  box-shadow: none;
+  border-radius: 20px 20px 0 0;
   max-height: 320px;
   padding: 12px 16px;
   gap: 12px;
-  box-shadow: 0 -8px 28px rgba(0,0,0,0.10);
 }
-.fp-fs-sheet-mount .code-sheet-body {
+.fp-fs-preview.fp-fs-sheet .code-sheet-backdrop {
+  display: none;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body {
   overflow-y: auto;
   max-height: 200px;
 }
 
-/* ── 横屏二级页模态 ── */
-.fp-fs-phone-landscape {
+/* 横屏二级页预览：横屏手机比例
+   直接包裹 renderStaticTableFullscreen() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed 定位和进入动画。 */
+.fp-fs-preview.fp-fs-landscape {
   width: 520px;
   min-width: 520px;
   height: 300px;
-  display: flex;
-  align-items: stretch;
 }
-.fp-fs-landscape-mount {
-  flex: 1;
+.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-static {
+  position: relative;
+  inset: auto;
+  z-index: auto;
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.fp-fs-landscape-mount .tbl-fs-inner.fp-static {
-  display: flex;
-  flex-direction: column;
+  border-radius: 0;
+  animation: none;
   height: 100%;
-  background: #fff;
 }
-.fp-fs-landscape-mount .tbl-fs-nav {
+.fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
   height: 48px;
   padding: 0 12px;
-  flex-shrink: 0;
 }
-.fp-fs-landscape-mount .tbl-fs-content {
-  flex: 1;
+.fp-fs-preview.fp-fs-landscape .tbl-fs-content {
   padding: 0 12px;
-  overflow: auto;
 }
-.fp-fs-landscape-mount .tbl-mermaid-fs {
+.fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
   padding: 16px;
   min-height: 160px;
 }
@@ -860,28 +779,54 @@
   align-items: flex-start;
 }
 
-/* scroll-nav 显隐示例：快照等高等齐 */
-.fp-snapshot-row--eq-height {
-  align-items: stretch;
-}
-.fp-snapshot-row--eq-height .fp-snapshot-wrap {
-  display: flex;
-  flex-direction: column;
-}
-.fp-snapshot-row--eq-height .fp-snapshot {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-}
-
 /* 快照底部描述 */
 .fp-snapshot-caption {
   font-size: 13px;
   color: #6e6e73;
   line-height: 1.55;
   margin-top: 10px;
+}
+
+/* 三列并排：快照 × 2 + 说明 */
+.fp-snapshot-trio {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.fp-snapshot-trio > .fp-snapshot-wrap {
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.fp-snapshot-trio-desc {
+  flex: 1;
+  min-width: 240px;
+  padding-top: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #424245;
+}
+.fp-snapshot-trio-desc h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: #1a1a1c;
+}
+.fp-snapshot-trio-desc h4:first-child {
+  margin-top: 0;
+}
+.fp-snapshot-trio-desc blockquote {
+  margin: 0 0 12px;
+  padding: 0 0 0 14px;
+  border-left: 3px solid #e8e8ed;
+}
+.fp-snapshot-trio-desc blockquote p {
+  font-size: 14px;
+  margin: 0;
+  color: #424245;
+  line-height: 1.65;
 }
 
 /* 卡片 + 文字描述 左右并排布局 */
@@ -896,71 +841,13 @@
   margin-top: 0;
   margin-bottom: 0;
 }
-
-/* 一二级 Sheet 并排 + 整合说明布局 */
-.fp-snapshot-duo {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin: 16px 0;
-}
-.fp-snapshot-duo-snaps {
-  display: flex;
-  gap: 32px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-.fp-snapshot-duo-snaps > .fp-snapshot-wrap {
-  flex-shrink: 0;
-  margin: 0;
-}
-.fp-snapshot-duo-desc {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #424245;
-}
-.fp-snapshot-duo-desc h4 {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 20px 0 12px;
-  color: #1a1a1c;
-}
-.fp-snapshot-duo-desc h4:first-child {
-  margin-top: 0;
-}
-.fp-snapshot-duo-desc table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-.fp-snapshot-duo-desc table th,
-.fp-snapshot-duo-desc table td {
-  padding: 8px 12px;
-  border: 1px solid #e8e8ed;
-  text-align: left;
-  vertical-align: top;
-  line-height: 1.55;
-}
-.fp-snapshot-duo-desc table th {
-  background: #f5f5f7;
-  font-weight: 600;
-  color: #1a1a1c;
-  white-space: nowrap;
-}
-.fp-snapshot-duo-desc table th:first-child {
-  width: 140px;
-}
-.fp-snapshot-duo-desc table thead th {
-  background: #f5f5f7;
-}
 .fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
   width: var(--aq-width, 350px);
   min-width: var(--aq-width, 350px);
 }
 .fp-snapshot-side-desc {
   flex: 1;
-  min-width: 500px;
+  min-width: 0;
   padding-top: 4px;
   font-size: 14px;
   line-height: 1.6;
@@ -1466,7 +1353,8 @@
   margin-bottom: 8px;
 }
 /* 快照侧边说明中的 h4 覆盖上面的通用规则（同特异性，靠后优先） */
-#fpContent .fp-snapshot-side-desc h4 {
+#fpContent .fp-snapshot-side-desc h4,
+#fpContent .fp-snapshot-trio-desc h4 {
   margin-top: 16px !important;
   margin-bottom: 16px !important;
 }
@@ -1552,6 +1440,7 @@
   position: relative;
   width: 320px;
   height: 420px;
+  border-radius: var(--phone-radius, 38px);
   overflow: hidden;
   background: #f5f5f7;
   border: 1px solid rgba(0,0,0,0.06);
@@ -1706,55 +1595,5 @@
   line-height: 1.5;
   padding: 12px 14px;
 }
-
-/* ============================================================
- * 工具调用节点构成标注线样式（§2 构成中使用）
- * ============================================================ */
-.fp-anatomy-annotations {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.fp-annotation {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.fp-annotation--icon {
-  top: 50%;
-  left: -120px;
-  transform: translateY(-50%);
-}
-
-.fp-annotation--text {
-  top: 50%;
-  right: -120px;
-  transform: translateY(-50%);
-}
-
-.fp-annotation--sweep {
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.fp-annotation--chevron {
-  top: 50%;
-  right: -100px;
-  transform: translateY(-50%);
-}
-
-.fp-annotation-line {
-  width: 60px;
-  height: 1px;
-  background: #86868b;
-}
-
-.fp-annotation-label {
-  font-size: 12px;
-  color: #86868b;
-  white-space: nowrap;
+  padding: 12px 14px;
 }

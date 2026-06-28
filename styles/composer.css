@@ -135,7 +135,7 @@
 }
 /* 激活态时占位文字不在 bar 占位，[+] 仍靠左、右侧组靠右（margin-left:auto 已保证） */
 
-/* ── 按钮容器统一 46×46，图标各自尺寸 ───────────────────────── */
+/* ── 按钮容器统一 46×46，图标统一 20×20 ────────────────────── */
 .cp-tool-btn,
 .cp-send-btn,
 .cp-stop-btn{
@@ -150,6 +150,16 @@
   border-radius:23px;
   overflow:hidden;
   -webkit-tap-highlight-color:transparent;
+}
+/* 所有工具图标统一 20×20 */
+.cp-tool-btn svg,
+.cp-tool-btn img,
+.cp-expand-handle img,
+.cp-fs-collapse img{
+  width:20px;
+  height:20px;
+  display:block;
+  flex-shrink:0;
 }
 /* 通用 press 态：浅灰圆 */
 .cp-tool-btn::after,

@@ -87,8 +87,10 @@ import { renderStaticXxx } from '../engine/xxx.js';
 | 组件 | 引擎文件 | 统一函数 | 静态入口 | 差异点 |
 |------|----------|----------|----------|--------|
 | 问答卡片 | `engine/ask-question.js` | `renderAskQuestionHTML(questions, stepIndex, answers, options)` | `renderStaticAskQuestion()` | static 时按钮 disabled，无 id/data-action |
-| 事件 Sheet | `engine/sheet.js` | `renderEvent(event)` / `renderTodo(todo)` | `renderStaticEventSheet(frameRefs)` | 直接复用 `renderEvent` 和 `renderTodo`（它们返回 DOM 节点，静态场景直接取 outerHTML） |
-| 代码 Sheet | `engine/code-fullscreen-sheet.js` | `renderActionsHtml(kind, state, options)` / `renderBodyHtml(kind, state)` | `renderStaticCodeSheet()` | static 时按钮 disabled |
+| 事件 Sheet | `engine/sheet.js` | `renderEvent(event)` / `renderTodo(todo)` | `renderStaticEventSheet(frameRefs)` | 直接复用 live 函数，取 outerHTML |
+| 代码 Sheet | `engine/code-fullscreen-sheet.js` | `renderCodeSheetHTML(state, options)` | `renderStaticCodeSheet()` / `renderStaticCodeSheetShell()` | mode='static' 时按钮 disabled；live 路径另存 `codeHtml` 保留高亮 |
+
+> **注意**：`renderActionsHtml` / `renderBodyHtml` 是 `renderCodeSheetHTML` 内部调用的辅助函数，不是统一入口。统一入口只有一个 `renderCodeSheetHTML`。
 
 ### 关键约束
 

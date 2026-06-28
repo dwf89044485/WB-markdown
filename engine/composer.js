@@ -76,7 +76,7 @@ function syncMoreButtonState() {
   const btn = els.moreBtn;
   if (!btn) return;
 
-  const modelIcon = (btn.dataset.modelIcon || '').trim() || './icons/wb-deep.svg';
+  const modelIcon = (btn.dataset.modelIcon || '').trim() || './icons/wb-more.svg';
   const connectorIcon = (btn.dataset.connectorIcon || '').trim();
 
   if (els.moreModelIcon) {

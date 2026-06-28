@@ -65,10 +65,14 @@
     border-radius 320ms cubic-bezier(0.22,1,0.36,1);
 }
 /* 激活态：高度由 JS 测量写入 --cp-height。
- * space-between：.cp-body 贴顶、.cp-bar 贴底（Figma 18:5225）。 */
+ * 始终 justify-content:flex-end（单行态按钮栏贴底），
+ * 展开态用 margin-top:auto 把 .cp-bar 推到底部，
+ * 避免 justify-content 在 flex-end↔space-between 之间跳变导致按钮栏抖动。 */
 .composer-shell.is-expanded{
   height:var(--cp-height, 108px);
-  justify-content:space-between;
+}
+.composer-shell.is-expanded .cp-bar{
+  margin-top:auto;
 }
 /* 语音整体淡出预留钩子（语音功能后续阶段接入）。 */
 .composer-shell.is-fading-out{

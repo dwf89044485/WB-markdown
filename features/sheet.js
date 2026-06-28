@@ -76,7 +76,7 @@ function getSnapshots() {
       state: 'collapsed',
       body: renderEventSheetBody('F1.a,F1.b'),
       width: '393px',
-      height: '500px',
+      height: '852px',
       borderRadius: '0',
       frameCls: 'fp-show-overlay',
     }),

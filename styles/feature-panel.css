@@ -1740,6 +1740,10 @@
   max-height: 260px;
   overflow-y: auto;
 }
+/* 构成章节解剖快照：按 40% 真实高度展示 sheet-body，不截断 */
+.fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-body {
+  max-height: none;
+}
 /* 二级详情快照 */
 .fp-snapshot .sd-container {
   width: 340px;

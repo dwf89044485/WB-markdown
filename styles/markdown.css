@@ -255,10 +255,10 @@
 }
 .file-card-title{
   font-size:14px;font-weight:600;color:rgba(0,0,0,0.90);
-  line-height:24px;letter-spacing:-0.1px;
+  line-height:24px;letter-spacing:0;
 }
 .file-card-meta{
-  font-size:13px;color:rgba(0,0,0,0.50);line-height:20px;letter-spacing:-0.1px;
+  font-size:13px;color:rgba(0,0,0,0.50);line-height:20px;letter-spacing:0;
 }
 .file-card-arrow{
   width:24px;height:24px;flex:0 0 24px;

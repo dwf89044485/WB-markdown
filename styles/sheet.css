@@ -448,6 +448,7 @@
 /* 内容区 */
 .bottom-sheet.code-variant .code-sheet-body{
   flex:1 1 0;
+  background:#fff;
   overflow:hidden;
   position:relative;
   min-height:0;

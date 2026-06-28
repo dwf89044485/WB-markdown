@@ -365,19 +365,8 @@ export default {
         </div>
       </section>
 
-      <section data-section="edge-cases">
-        <h2>5. 边界与异常</h2>
-        <div class="fp-snapshot-row edge-scroll">
-          ${labeled('空状态', s.edgeEmpty)}
-        </div>
-      </section>
-
-      <section data-section="rationale">
-        <h2>6. 设计原理</h2>
-      </section>
-
       <section data-section="related">
-        <h2>7. Do / Don't</h2>
+        <h2>5. Do / Don't</h2>
         <div class="fp-do-dont">
           <div class="fp-do">
             <h3>Do</h3>

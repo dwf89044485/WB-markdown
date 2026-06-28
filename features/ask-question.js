@@ -308,7 +308,7 @@ export default {
           ${labeled('用户输入', s.multiInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：点选项 toggle 选中/取消，不会自动前进，需手动按"下一步"确认。</p>
+          <p><strong>交互</strong>：点选项 toggle 选中/取消，<strong style="color:#a8071a">不自动进入下一题</strong>，需手动按"下一步"确认。</p>
           <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         </blockquote>
         <h3 id="sec-sort">4.3 排序题</h3>

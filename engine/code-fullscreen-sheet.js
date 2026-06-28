@@ -364,8 +364,8 @@ export function renderStaticCodeSheetShell(opts = {}) {
   const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode, panelOnly: true });
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   return `<div class="fp-sheet-shell-frame" style="width:${width};height:${height};${radiusStyle}">
-    <div class="code-sheet-overlay is-open fp-static" style="position:absolute;inset:0;">
-      <div class="code-sheet-backdrop" data-code-sheet-close style="position:absolute;inset:0;background:rgba(0,0,0,0.30);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)"></div>
+    <div class="code-sheet-overlay is-open fp-static">
+      <div class="code-sheet-backdrop" data-code-sheet-close></div>
       ${inner}
     </div>
   </div>`;

@@ -367,8 +367,8 @@
   white-space:nowrap;
 }
 .code-sheet-title{
-  /* 普通卡片标题（与卡片头一致） */
-  font-size:13px;
+  font-size:17px;
+  font-weight:600;
   color:#000;
 }
 

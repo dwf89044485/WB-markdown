@@ -5,7 +5,7 @@
 //   - 表格 → 不接管，让 table-fullscreen.js 走横屏 overlay
 //   - 其他 → 阻止默认全屏，弹本模块的 sheet
 
-import { openSheet, closeSheet, renderStaticSheetShell } from './sheet.js';
+import { openSheet, closeSheet, renderStaticSheetShell, renderFileCard } from './sheet.js';
 
 /* ── 图标 ─────────────────────────────────────────────── */
 const INLINE = (typeof window !== 'undefined' && window.WORKBUDDY_INLINE_ICONS) || {};
@@ -152,7 +152,7 @@ export function openProductsSheet(fileCards) {
   const title = `全部产物(${count})`;
 
   openSheet(null, null, {
-    variant: 'code',
+    variant: 'products',
     customRenderer: (body) => {
       // header
       const header = document.createElement('header');
@@ -167,16 +167,10 @@ export function openProductsSheet(fileCards) {
         fileCards.forEach(card => {
           const item = document.createElement('div');
           item.className = 'product-item';
-          // 复用 renderFileCard 的卡片结构，但去掉箭头和链接行为
-          const iconFile = card.type === 'word' ? '_wb-file-html-solid.svg' : '_wb-file-pdf-solid.svg';
-          item.innerHTML = `
-            <div class="file-card-icon">
-              <img src="./icons/${iconFile}" alt="" class="file-card-icon-img">
-            </div>
-            <div class="file-card-info">
-              <div class="file-card-title">${escapeHtml(card.title || '')}</div>
-              <div class="file-card-meta">${escapeHtml(card.meta || '')}</div>
-            </div>`;
+          // 直接复用对话流里的 renderFileCard 样式，去掉箭头
+          item.innerHTML = renderFileCard(card);
+          const arrow = item.querySelector('.file-card-arrow');
+          if (arrow) arrow.style.display = 'none';
           list.appendChild(item);
         });
       }

@@ -74,7 +74,7 @@
   min-height:0 !important;
 }
 
-/* ── CODE VARIANT — 代码 Sheet 覆盖样式 ──────────────────── */
+/* ── CODE VARIANT — 代码 Sheet 覆盖样式（80% 高度）────────── */
 .bottom-sheet.code-variant{
   height:80% !important;
   padding:0;
@@ -95,6 +95,28 @@
   gap:0;
 }
 .bottom-sheet.code-variant .sheet-body::before{display:none;}
+
+/* ── PRODUCTS VARIANT — 产物 Sheet 覆盖样式（40% 高度）────── */
+.bottom-sheet.products-variant{
+  height:40% !important;
+  padding:0;
+  transition:height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1);
+}
+.bottom-sheet.products-variant .sheet-handle{display:none;}
+.bottom-sheet.products-variant .sheet-top{
+  padding:0;
+  min-height:auto;
+}
+.bottom-sheet.products-variant .sheet-top-start{display:none;}
+.bottom-sheet.products-variant .sheet-top-end{display:none;}
+.bottom-sheet.products-variant .sheet-body{
+  padding:0;
+  overflow:visible;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.bottom-sheet.products-variant .sheet-body::before{display:none;}
 
 /* ── SHEET TOP ROW ─────────────────────────────────────────── */
 /* 一行三列：返回按钮 | handle 拖拽条 | 关闭按钮 */
@@ -340,7 +362,8 @@
    ============================================================ */
 
 /* 顶栏 */
-.bottom-sheet.code-variant .code-sheet-header{
+.bottom-sheet.code-variant .code-sheet-header,
+.bottom-sheet.products-variant .code-sheet-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -349,7 +372,8 @@
   border-bottom:1px solid #E9ECF1;
   padding:16px;
 }
-.bottom-sheet.code-variant .code-sheet-left{
+.bottom-sheet.code-variant .code-sheet-left,
+.bottom-sheet.products-variant .code-sheet-left{
   display:flex;
   align-items:center;
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
@@ -357,7 +381,8 @@
   color:#000;
   white-space:nowrap;
 }
-.bottom-sheet.code-variant .code-sheet-title{
+.bottom-sheet.code-variant .code-sheet-title,
+.bottom-sheet.products-variant .code-sheet-title{
   font-size:17px;
   font-weight:600;
   color:#000;
@@ -393,7 +418,8 @@
 .bottom-sheet.code-variant .code-sheet-tab.is-active{ background:#fff; }
 
 /* 玻璃胶囊按钮组 */
-.bottom-sheet.code-variant .code-sheet-actions.glass-capsule{
+.bottom-sheet.code-variant .code-sheet-actions.glass-capsule,
+.bottom-sheet.products-variant .code-sheet-actions.glass-capsule{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -407,7 +433,9 @@
     inset 0.8px 0.8px 0 0 #fff;
 }
 .bottom-sheet.code-variant .code-sheet-btn,
-.bottom-sheet.code-variant .code-sheet-btn-primary{
+.bottom-sheet.code-variant .code-sheet-btn-primary,
+.bottom-sheet.products-variant .code-sheet-btn,
+.bottom-sheet.products-variant .code-sheet-btn-primary{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -421,23 +449,31 @@
   outline:none;
   transition:background .12s ease;
 }
-.bottom-sheet.code-variant .code-sheet-btn-primary{
+.bottom-sheet.code-variant .code-sheet-btn-primary,
+.bottom-sheet.products-variant .code-sheet-btn-primary{
   gap:4px;
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
   font-size:13px;
   line-height:16px;
 }
 .bottom-sheet.code-variant .code-sheet-btn svg,
-.bottom-sheet.code-variant .code-sheet-btn-primary svg{ display:block; width:16px; height:16px; }
+.bottom-sheet.code-variant .code-sheet-btn-primary svg,
+.bottom-sheet.products-variant .code-sheet-btn svg,
+.bottom-sheet.products-variant .code-sheet-btn-primary svg{ display:block; width:16px; height:16px; }
 @media (hover: hover){
   .bottom-sheet.code-variant .code-sheet-btn:hover,
-  .bottom-sheet.code-variant .code-sheet-btn-primary:hover{ background:rgba(0,0,0,0.05); }
+  .bottom-sheet.code-variant .code-sheet-btn-primary:hover,
+  .bottom-sheet.products-variant .code-sheet-btn:hover,
+  .bottom-sheet.products-variant .code-sheet-btn-primary:hover{ background:rgba(0,0,0,0.05); }
 }
 .bottom-sheet.code-variant .code-sheet-btn:active,
-.bottom-sheet.code-variant .code-sheet-btn-primary:active{ background:rgba(0,0,0,0.08); }
+.bottom-sheet.code-variant .code-sheet-btn-primary:active,
+.bottom-sheet.products-variant .code-sheet-btn:active,
+.bottom-sheet.products-variant .code-sheet-btn-primary:active{ background:rgba(0,0,0,0.08); }
 
 /* 关闭按钮前的竖分割线 */
-.bottom-sheet.code-variant .code-sheet-divider{
+.bottom-sheet.code-variant .code-sheet-divider,
+.bottom-sheet.products-variant .code-sheet-divider{
   width:1px;
   height:12px;
   background:rgba(0,0,0,0.10);
@@ -526,39 +562,35 @@
 .s-sub .spin{animation:spin 1.1s linear infinite;}
 
 /* ============================================================
-   PRODUCTS LIST — 产物列表（code-variant sheet 内的产物展示）
+   PRODUCTS LIST — 产物列表（products-variant sheet 内的产物展示）
    ============================================================ */
-.bottom-sheet.code-variant .products-list{
+.bottom-sheet.products-variant .products-list{
   flex:1;
   overflow-y:auto;
-  padding:8px 20px 20px;
-}
-.bottom-sheet.code-variant .product-item{
+  padding:16px;
+  gap:16px;
   display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid #f0f0f0;
+  flex-direction:column;
 }
-.bottom-sheet.code-variant .product-item:last-child{
+.bottom-sheet.products-variant .product-item{
+  padding:0;
+}
+.bottom-sheet.products-variant .product-item:first-child{
+  padding-top:0;
+  padding-bottom:0;
+}
+.bottom-sheet.products-variant .product-item:last-child{
+  padding-bottom:0;
+  padding-top:0;
+}
+
+/* 产物 sheet header：无分割线，背景与内容区一致 */
+.bottom-sheet.products-variant .code-sheet-header{
   border-bottom:none;
+  background:#FAFAFA;
 }
-.bottom-sheet.code-variant .product-item .file-card-icon{flex-shrink:0;}
-.bottom-sheet.code-variant .product-item .file-card-info{flex:1;min-width:0;}
-.bottom-sheet.code-variant .product-item .file-card-title{
-  font-size:14px;
-  font-weight:500;
-  color:#1c1c1e;
-  line-height:1.4;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.bottom-sheet.code-variant .product-item .file-card-meta{
-  font-size:12px;
-  color:#8e8e93;
-  line-height:1.4;
-  margin-top:2px;
+.bottom-sheet.products-variant .products-list{
+  background:#FAFAFA;
 }
 
 /* ── 查看全部产物链接 ────────────────────────────── */
@@ -571,8 +603,8 @@
   align-items:center;
   gap:4px;
   font-size:13px;
-  font-weight:500;
-  color:#007aff;
+  font-weight:400;
+  color:#1c1c1e;
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;

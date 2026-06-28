@@ -399,7 +399,7 @@ function bindEvents() {
   });
 }
 
-function renderRoute(route) {
+async function renderRoute(route) {
   let f;
   if (route.view === 'overview') {
     f = getFeature('overview') || featureList[0];
@@ -508,18 +508,10 @@ function renderRoute(route) {
     // 跳到 nodeIndex 2（多轮对话，滚动按钮可见），让左侧 Demo 展示滚动按钮出现状态
     const anchor = f.anchors && f.anchors['buttons-appear'];
     if (anchor) {
-      jumpToAnchor(anchor).then(() => {
-        if (token !== loadToken) hideOverlays();
-      });
+      await jumpToAnchor(anchor);
+      if (token !== loadToken) hideOverlays();
     }
-  } else if (f.id === 'scroll-nav') {
-    const anchor = f.anchors && f.anchors['buttons-appear'];
-    if (anchor) {
-      jumpToAnchor(anchor).then(() => {
-        if (token !== loadToken) hideOverlays();
-      });
-    }
-  } else if (f.id === 'code-block') {
+      }
     // 左侧 Demo 渲染代码块 showcase，并高亮「代码块样式」场景按钮
     renderShowcase();
     document.querySelectorAll('.dc-scene-btn').forEach((b) => {

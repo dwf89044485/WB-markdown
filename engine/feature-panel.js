@@ -415,6 +415,9 @@ function renderRoute(route) {
   const scrollEl = contentEl.querySelector('.fp-scroll');
   scrollEl.innerHTML = f.content;
 
+  // 给 .fp-snapshot 加 md class，复用 markdown.css 中 .md .wb-card 全套样式
+  scrollEl.querySelectorAll('.fp-snapshot').forEach((el) => el.classList.add('md'));
+
   // 将内容移入内层容器，max-width 约束加在内层上，不受滚动条影响
   let inner = scrollEl.querySelector('.fp-scroll-inner');
   if (!inner) {

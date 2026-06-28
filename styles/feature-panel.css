@@ -325,6 +325,38 @@
   min-width: var(--app-width, 350px);
 }
 
+/* ── Code Block 快照（代码块卡片）────────── */
+/* .fp-snapshot 已加 md class（见 feature-panel.js），markdown.css 中
+   .md .wb-card 全套样式直接命中，无需在此重写。此处只保留：
+   1. 宽度控制（与 Demo 区代码块等宽）
+   2. 快照不折叠的覆盖规则（说明文档需完整展示代码） */
+
+/* 宽度与 Demo 区代码块一致 */
+.fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot > .tbl-outer.wb-card-visual,
+.fp-snapshot-row .fp-snapshot-wrap .fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot-row .fp-snapshot-wrap .fp-snapshot > .tbl-outer.wb-card-visual {
+  width: var(--cb-width, 360px);
+  min-width: var(--cb-width, 360px);
+}
+
+/* 快照内代码区不折叠，完整展示用于说明 */
+.md .fp-snapshot .wb-card-body.is-collapsible {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.md .fp-snapshot .wb-card-body.is-collapsible.is-collapsed pre {
+  max-height: none;
+  overflow: visible;
+}
+.md .fp-snapshot .wb-card-body.is-collapsible::after {
+  display: none !important;
+}
+.md .fp-snapshot .wb-card-expand {
+  display: none !important;
+}
+
 /* ── Tool Call Node 快照（status line）────────── */
 .fp-tcn-stack {
   display: flex;

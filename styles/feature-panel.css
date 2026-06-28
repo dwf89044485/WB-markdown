@@ -831,6 +831,11 @@
   line-height: 1.6;
   color: #424245;
 }
+/* fp-snapshot-side-desc 在 fp-snapshot-trio 容器内时，固定宽度不压缩 */
+.fp-snapshot-trio > .fp-snapshot-side-desc {
+  flex: 0 0 400px;
+  min-width: 0;
+}
 .fp-snapshot-trio-desc h4 {
   font-size: 15px;
   font-weight: 600;

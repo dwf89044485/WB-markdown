@@ -916,7 +916,7 @@
 }
 .fp-snapshot-side-desc {
   flex: 1;
-  min-width: 0;
+  min-width: 500px;
   padding-top: 4px;
   font-size: 14px;
   line-height: 1.6;

@@ -1450,7 +1450,11 @@
   justify-content: space-between;
   padding: 7px 12px;
   background: #f7f7f7;
-  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.06));
+  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.06)) !important;
+}
+/* 表头行底线 —— 覆盖 GitHub Markdown CSS */
+#fpContent .markdown-body .tbl th {
+  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.08)) !important;
 }
 #fpContent .markdown-body .tbl-toolbar-title.wb-card-title {
   font-family: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;

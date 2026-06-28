@@ -250,7 +250,7 @@ overlay && overlay.addEventListener('click', (e) => {
  * 复用上方已有的 renderLeft / renderActions / renderBody 逻辑，
  * 只是把结果拼成 HTML 字符串返回（而非写入 DOM slot）。
  * ───────────────────────────────────────────────────────── */
-export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
+export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code', panelOnly = false }) {
   const resolvedKind = kind || resolveKindByLang(lang);
   const langClass = lang || '';
   const state = { code, langClass, htmlMode, kind: resolvedKind };
@@ -264,6 +264,17 @@ export function renderStaticCodeSheet({ lang, code, kind, htmlMode = 'code' }) {
 
   // ── 内容区（复用 renderBodyHtmlStatic）──
   const bodyHtml = renderBodyHtmlStatic(resolvedKind, state);
+
+  // ── panelOnly：只返回 panel（不含 overlay 壳和 backdrop），供 Feature Panel 快照复用 ──
+  if (panelOnly) {
+    return `<div class="code-sheet-panel fp-static">
+      <header class="code-sheet-header">
+        ${leftHtml}
+        <div class="code-sheet-actions glass-capsule">${actionsHtml}</div>
+      </header>
+      <div class="code-sheet-body">${bodyHtml}</div>
+    </div>`;
+  }
 
   // ── 拼装与 index.html #codeSheet 完全一致的 DOM 结构 ──
   return `<div class="code-sheet-overlay is-open fp-static">
@@ -350,20 +361,12 @@ function escapeHtmlStatic(s) {
  */
 export function renderStaticCodeSheetShell(opts = {}) {
   const { lang = '', code = '', kind, htmlMode = 'code', width = '390px', height = '850px', borderRadius = '' } = opts;
-  const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode });
+  const inner = renderStaticCodeSheet({ lang, code, kind, htmlMode, panelOnly: true });
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   return `<div class="fp-sheet-shell-frame" style="width:${width};height:${height};${radiusStyle}">
     <div class="code-sheet-overlay is-open fp-static" style="position:absolute;inset:0;">
       <div class="code-sheet-backdrop" data-code-sheet-close style="position:absolute;inset:0;background:rgba(0,0,0,0.18)"></div>
-      <div class="code-sheet-panel" style="position:absolute;left:0;right:0;bottom:0;top:54px;border-radius:30px 30px 0 0;transform:none;display:flex;flex-direction:column;background:#fafafa;padding:14px 16px;gap:12px">
-        <header class="code-sheet-header" style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-          ${inner.match(/<div class="code-sheet-left">.*?<\/div>/)?.[0] || '<div class="code-sheet-left"><span class="code-sheet-title">代码</span></div>'}
-          ${inner.match(/<div class="code-sheet-actions glass-capsule">.*?<\/div>/)?.[0] || ''}
-        </header>
-        <div class="code-sheet-body" style="flex:1;overflow-y:auto;background:#fff;border:1px solid #e9ecf1;border-radius:16px;padding:0">
-          ${inner.match(/<pre><code.*?>.*?<\/code><\/pre>|<iframe.*?<\/iframe>/)?.[0] || '<pre><code></code></pre>'}
-        </div>
-      </div>
+      ${inner}
     </div>
   </div>`;
 }

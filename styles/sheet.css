@@ -55,7 +55,7 @@
   position:relative;
   background:#FAFAFA;
   width:100%;
-  height:40%;
+  height:50%;
   border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
   padding-bottom:var(--sheet-bottom-padding);
   transform:translateY(100%);
@@ -74,9 +74,9 @@
   min-height:0 !important;
 }
 
-/* ── CODE VARIANT — 代码 Sheet 覆盖样式（80% 高度）────────── */
+/* ── CODE VARIANT — 代码 Sheet 覆盖样式（90% 高度）────────── */
 .bottom-sheet.code-variant{
-  height:80% !important;
+  height:90% !important;
   padding:0;
   transition:height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1);
 }
@@ -96,9 +96,9 @@
 }
 .bottom-sheet.code-variant .sheet-body::before{display:none;}
 
-/* ── PRODUCTS VARIANT — 产物 Sheet 覆盖样式（40% 高度）────── */
+/* ── PRODUCTS VARIANT — 产物 Sheet 覆盖样式（50% 高度）────── */
 .bottom-sheet.products-variant{
-  height:40% !important;
+  height:50% !important;
   padding:0;
   transition:height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1);
 }

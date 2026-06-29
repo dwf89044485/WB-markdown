@@ -10,6 +10,10 @@ const scenario = window.WORKBUDDY_SCENARIO;
 const $ = (sel, root = document) => root.querySelector(sel);
 let sheetRenderToken = 0;
 
+// ── Sheet 高度常量 ────────────────────────────────────────
+const SHEET_HEIGHT_COLLAPSED = 50;  // 折叠态高度（%）
+const SHEET_HEIGHT_EXPANDED   = 90;  // 展开态高度（%）
+
 // ── Event row ─────────────────────────────────────────────
 export function renderEvent(event) {
   const isWarn = isWarningEvent(event);
@@ -110,7 +114,7 @@ function scrollSheetBody(body) {
   const sheet = $('#sheet');
   if (!sheet) return;
 
-  // 80% + 用户已翻上去 → 不打断
+  // 90% + 用户已翻上去 → 不打断
   if (sheet.classList.contains('expanded')) {
     const threshold = 20;
     if (body.scrollTop < body.scrollHeight - body.clientHeight - threshold) return;
@@ -323,7 +327,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     return;
   }
 
-  // Show sheet overlay (body starts empty, height at 40%)
+  // Show sheet overlay (body starts empty, height at 50%)
   const ov = $('#overlay');
   if (!options.skipHeightReset) {
     resetSheetHeight();
@@ -501,7 +505,7 @@ export function renderStaticSheetShell(opts = {}) {
   const overlayStyle = showOverlay ? '' : 'background:transparent;backdrop-filter:none;';
   const radiusStyle = borderRadius ? `border-radius:${borderRadius};` : '';
   const frameHeight = autoHeight ? 'auto' : height;
-  const sheetStyle = autoHeight ? 'transform:translateY(0);height:auto;min-height:0' : expanded ? 'transform:translateY(0);height:80%' : 'transform:translateY(0)';
+  const sheetStyle = autoHeight ? 'transform:translateY(0);height:auto;min-height:0' : expanded ? `transform:translateY(0);height:${SHEET_HEIGHT_EXPANDED}%` : 'transform:translateY(0)';
   const overlayPosition = autoHeight ? 'position:relative;' : 'position:absolute;inset:0;';
   const frameOverflow = autoHeight ? 'overflow:visible;' : '';
   const closeSvg = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
@@ -596,8 +600,8 @@ export function maybeClose(e) {
 }
 
 // ── Drag interaction ──────────────────────────────────────
-// 40%: 面板任意位置操控——上拖展开、下拖关闭
-// 80%: 内容在顶部时下拖折叠；不在顶部时正常滚动
+// 50%: 面板任意位置操控——上拖展开、下拖关闭
+// 90%: 内容在顶部时下拖折叠；不在顶部时正常滚动
 let dragState = null;
 
 function resetSheetHeight() {
@@ -618,7 +622,7 @@ function initSheetDrag() {
     const isExpanded = sheet.classList.contains('expanded');
 
     if (!isExpanded) {
-      // 40%: 整个面板都可拖
+      // 50%: 整个面板都可拖
       e.preventDefault();
       dragState = { resize: true, startExpanded: false,
         startY: touch.clientY, startH: rect.height,
@@ -626,7 +630,7 @@ function initSheetDrag() {
       return;
     }
 
-    // 80%: 内容在顶部时才可能折叠
+    // 90%: 内容在顶部时才可能折叠
     if (body.scrollTop > 0) return;
     dragState = { resize: false, startExpanded: true,
       startY: touch.clientY, startH: rect.height,
@@ -639,7 +643,7 @@ function initSheetDrag() {
     const dy = dragState.startY - y;
     const isExpanded = sheet.classList.contains('expanded');
 
-    // 80%: 首次上拖则释放（走滚动）
+    // 90%: 首次上拖则释放（走滚动）
     if (isExpanded && !dragState.resize) {
       if (dy >= 0) { dragState = null; return; }
       dragState.resize = true;
@@ -670,13 +674,13 @@ function initSheetDrag() {
     const wasExpanded = dragState.startExpanded;
     dragState = null;
     sheet.style.transition = 'height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1)';
-    // 双向滞后：从40%拉起需过半（50%）才展开，从80%拉下到75%即折叠
+    // 双向滞后：从折叠态拉起需过半（50%）才展开，从展开态拉下到75%即折叠
     const threshold = wasExpanded ? 75 : 50;
     if (pct >= threshold) {
-      sheet.style.height = '80%';
+      sheet.style.height = SHEET_HEIGHT_EXPANDED + '%';
       sheet.classList.add('expanded');
     } else {
-      sheet.style.height = '40%';
+      sheet.style.height = SHEET_HEIGHT_COLLAPSED + '%';
       sheet.classList.remove('expanded');
     }
     sheet.addEventListener('transitionend', function h() {

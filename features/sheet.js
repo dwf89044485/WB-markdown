@@ -1,7 +1,7 @@
 // ============================================================
 // SHEET — 底部浮层交互逻辑设计文档
 // ============================================================
-// 第一优先级：sheet 本身的交互逻辑（40%/80%状态、出现/消失、拖拽、动效）
+// 第一优先级：sheet 本身的交互逻辑（50%/90%状态、出现/消失、拖拽、动效）
 // 不涉及 sheet 内部具体内容渲染（事件行、待办、二级详情等）
 // 快照：由 engine/sheet.js 的 renderStaticSheetShell() 实时渲染
 //       改左边 sheet 样式 → 右边文档自动同步
@@ -92,7 +92,7 @@ function getSnapshots() {
       borderRadius: '0',
       frameCls: 'fp-show-overlay',
     }),
-    // §5 动效：展开循环（40% → 80%）
+    // §5 动效：展开循环（50% → 90%）
     motionExpand: snap('motionExpand', {
       state: 'collapsed',
       showClose: false,
@@ -187,7 +187,7 @@ export default {
             </blockquote>
             <h4>② 浮层主体（code-sheet-panel）</h4>
             <blockquote>
-              <p>白底，顶部圆角，<strong>80% 高度</strong>（与事件 Sheet expanded 状态一致），从底部升起。</p>
+              <p>白底，顶部圆角，<strong>90% 高度</strong>（与事件 Sheet expanded 状态一致），从底部升起。</p>
             </blockquote>
             <h4>③ 顶部栏（code-sheet-header）</h4>
             <blockquote>
@@ -206,7 +206,7 @@ export default {
             <tr><th>对比项</th><th>事件 Sheet</th><th>代码 Sheet</th></tr>
           </thead>
           <tbody>
-            <tr><td>高度策略</td><td>百分比切换（折叠 40% / 展开 80%）</td><td>80% 固定高度（与事件 Sheet expanded 一致）</td></tr>
+            <tr><td>高度策略</td><td>百分比切换（折叠 50% / 展开 90%）</td><td>90% 固定高度（与事件 Sheet expanded 一致）</td></tr>
             <tr><td>顶栏结构</td><td>三段式：slot + 拖拽条 + 关闭按钮</td><td>两端式：标题 + 玻璃胶囊按钮组</td></tr>
             <tr><td>拖拽条</td><td>有</td><td>无</td></tr>
             <tr><td>拖拽折叠/展开</td><td>支持</td><td>不支持</td></tr>
@@ -226,20 +226,20 @@ export default {
 
         <h3>3.1 两种高度状态</h3>
         <div class="fp-snapshot-row">
-          ${labeled('折叠态 40%', s.stateCollapsed)}
-          ${labeled('展开态 80%', s.stateExpanded)}
+          ${labeled('折叠态 50%', s.stateCollapsed)}
+          ${labeled('展开态 90%', s.stateExpanded)}
         </div>
         <table>
           <thead>
             <tr><th>状态</th><th>高度</th><th>overflow-y</th><th>滚动权限</th></tr>
           </thead>
           <tbody>
-            <tr><td>折叠态</td><td>40%</td><td>hidden</td><td>代码内可设 scrollTop 偏移，用户不可手动滚动</td></tr>
-            <tr><td>展开态</td><td>80%</td><td>auto</td><td>用户可自由滚动</td></tr>
+            <tr><td>折叠态</td><td>50%</td><td>hidden</td><td>代码内可设 scrollTop 偏移，用户不可手动滚动</td></tr>
+            <tr><td>展开态</td><td>90%</td><td>auto</td><td>用户可自由滚动</td></tr>
           </tbody>
         </table>
         <blockquote>
-          <p><strong>打开时永远是 40%</strong>。无论后续流式加载多少内容，面板高度不自动变化。内容溢出由 overflow:hidden 裁剪，用户需主动展开才能看到全部。</p>
+          <p><strong>打开时永远是 50%</strong>。无论后续流式加载多少内容，面板高度不自动变化。内容溢出由 overflow:hidden 裁剪，用户需主动展开才能看到全部。</p>
         </blockquote>
 
         <h3>3.2 拖拽状态机</h3>
@@ -248,12 +248,12 @@ export default {
           <div class="fp-snapshot-wrap">
             <div class="fp-motion-diagram" style="border:1px solid #e9ecf1;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px">
               <div class="fp-motion-state" data-state="collapsed">
-                <span class="tag">折叠态 40%</span>
+                <span class="tag">折叠态 50%</span>
                 <p class="fp-motion-hint">上拖展开 · 下拖关闭</p>
               </div>
               <div class="fp-motion-arrow">↕ 拖拽</div>
               <div class="fp-motion-state" data-state="expanded">
-                <span class="tag">展开态 80%</span>
+                <span class="tag">展开态 90%</span>
                 <p class="fp-motion-hint">内容在顶时下拖折叠</p>
               </div>
             </div>
@@ -263,9 +263,9 @@ export default {
             <blockquote>
               <p>拖拽实时跟手，松手后按<strong>双向滞后阈值</strong>决定落点：</p>
               <ul>
-                <li>40% 态上拖，松手 ≥ 50% → 展开到 80%；下拖 > 40px → 关闭</li>
-                <li>80% 态下拖（内容在顶），松手 < 75% → 折叠到 40%</li>
-                <li>80% 态内容不在顶部时，拖拽不拦截，走原生滚动</li>
+                <li>50% 态上拖，松手 ≥ 50% → 展开到 90%；下拖 > 40px → 关闭</li>
+                <li>90% 态下拖（内容在顶），松手 < 75% → 折叠到 50%</li>
+                <li>90% 态内容不在顶部时，拖拽不拦截，走原生滚动</li>
               </ul>
               <p>滞后带（50%~75%）防止临界区域反复弹跳。</p>
             </blockquote>
@@ -315,7 +315,7 @@ export default {
           <div class="fp-do">
             <h3>Do</h3>
             <ul>
-              <li>事件 Sheet 打开时保持 40%，让用户决定是否展开。</li>
+              <li>事件 Sheet 打开时保持 50%，让用户决定是否展开。</li>
               <li>拖拽时实时跟随手指，松手后吸附。</li>
               <li>遮罩先建立隔离，浮层随后升起。</li>
               <li>折叠态裁剪溢出，传递"非核心信息"的信号。</li>
@@ -327,7 +327,7 @@ export default {
               <li>不要根据内容量自动展开事件 Sheet。</li>
               <li>不要在拖拽过程中使用 transition，会产生延迟跟手感。</li>
               <li>不要让遮罩和浮层使用相同时长，会失去层次感。</li>
-              <li>不要在折叠态允许用户手动滚动，会破坏 40% 的空间约束。</li>
+              <li>不要在折叠态允许用户手动滚动，会破坏 50% 的空间约束。</li>
             </ul>
           </div>
         </div>

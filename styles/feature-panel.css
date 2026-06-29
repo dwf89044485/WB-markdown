@@ -673,7 +673,7 @@
 .fp-sheet-mock-detail {
   background: #FAFAFA;
 }
-/* 文档里的 bottom-sheet：脱离 height:40%，按内容自适应 */
+/* 文档里的 bottom-sheet：脱离 height:50%，按内容自适应 */
 .fp-content .fp-bottom-sheet-static {
   height: auto;
   position: relative;
@@ -1552,10 +1552,10 @@
 
 /* 快照内 bottom-sheet 的高度由 state class 控制，不受父级百分比影响 */
 .fp-sheet-shell-frame .bottom-sheet:not(.auto-height):not(.code-variant) {
-  height: 40% !important;
+  height: 50% !important;
 }
 .fp-sheet-shell-frame .bottom-sheet:not(.auto-height).expanded:not(.code-variant) {
-  height: 80% !important;
+  height: 90% !important;
 }
 
 /* ── 拖拽状态机示意图（§3.3）────────────────────────────── */
@@ -1636,12 +1636,12 @@
  *   沿用真实参数：height 0.32s cubic-bezier(0.32,0.72,0,1)
  */
 @keyframes fp-sheet-loop-expand {
-  0%      { height: 40%; animation-timing-function: linear; }
-  33%     { height: 40%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
-  43.7%   { height: 80%; animation-timing-function: linear; }
-  70.4%   { height: 80%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
-  81.1%   { height: 40%; animation-timing-function: linear; }
-  100%    { height: 40%; }
+  0%      { height: 50%; animation-timing-function: linear; }
+  33%     { height: 50%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  43.7%   { height: 90%; animation-timing-function: linear; }
+  70.4%   { height: 90%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  81.1%   { height: 50%; animation-timing-function: linear; }
+  100%    { height: 50%; }
 }
 .fp-motion-stage[data-motion-loop="sheet-expand"] .bottom-sheet {
   animation: fp-sheet-loop-expand 3s infinite;
@@ -1743,7 +1743,7 @@
   max-height: 260px;
   overflow-y: auto;
 }
-/* 构成章节解剖快照：按 40% 真实高度展示 sheet-body，不截断 */
+/* 构成章节解剖快照：按 50% 真实高度展示 sheet-body，不截断 */
 .fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-body {
   max-height: none;
 }

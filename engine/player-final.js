@@ -185,6 +185,11 @@ export async function renderFinal({ onRegenerate } = {}) {
     linkWrap.innerHTML = `<span class="products-view-all-link">查看全部产物(${count}) ›</span>`;
     linkWrap.addEventListener('click', () => openProductsSheet(scenario.final.fileCards));
     mainBiz.appendChild(linkWrap);
+    // 导航栏"文件"按钮 → 拉起产物 sheet
+    const fileBtn = document.querySelector('.capsule-btn[aria-label="文件"]');
+    if (fileBtn) {
+      fileBtn.addEventListener('click', () => openProductsSheet(scenario.final.fileCards));
+    }
   }
   renderFinalActions({ onRegenerate });
   bindSourceButton();

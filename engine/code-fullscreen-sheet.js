@@ -167,10 +167,8 @@ export function openProductsSheet(fileCards) {
         fileCards.forEach(card => {
           const item = document.createElement('div');
           item.className = 'product-item';
-          // 直接复用对话流里的 renderFileCard 样式，去掉箭头
+          // 直接复用对话流里的 renderFileCard 样式
           item.innerHTML = renderFileCard(card);
-          const arrow = item.querySelector('.file-card-arrow');
-          if (arrow) arrow.style.display = 'none';
           list.appendChild(item);
         });
       }

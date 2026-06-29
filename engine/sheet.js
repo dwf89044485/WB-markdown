@@ -271,8 +271,13 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
     const sheet = $('#sheet');
     if (options.variant === 'code') {
       sheet.classList.add('code-variant');
+      sheet.classList.remove('products-variant');
+    } else if (options.variant === 'products') {
+      sheet.classList.add('products-variant');
+      sheet.classList.remove('code-variant');
     } else {
       sheet.classList.remove('code-variant');
+      sheet.classList.remove('products-variant');
     }
     options.customRenderer(body);
     resetSheetHeight();
@@ -303,7 +308,7 @@ export async function openSheet(frameRefs, explicitTitle, options = {}) {
   body.classList.remove('detail-mode');
   const sheet = $('#sheet');
   if (sheet) sheet.classList.remove('detail-mode');
-  if (sheet) sheet.classList.remove('code-variant');
+  if (sheet) { sheet.classList.remove('code-variant'); sheet.classList.remove('products-variant'); }
 
   const hasEvents = frames.some(f => f.events && f.events.length);
   const hasTodos = frames.some(f =>
@@ -572,7 +577,7 @@ export function closeSheet() {
   const ov = $('#overlay');
   if (body) body.classList.remove('detail-mode');
   if (sheet) sheet.classList.remove('detail-mode');
-  if (sheet) sheet.classList.remove('code-variant');
+  if (sheet) { sheet.classList.remove('code-variant'); sheet.classList.remove('products-variant'); }
   resetSheetHeight();
   ov.style.pointerEvents = 'none';
   ov.className = 'sheet-overlay vis';

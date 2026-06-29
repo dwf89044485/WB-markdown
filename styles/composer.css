@@ -410,16 +410,17 @@
   flex-shrink:0;
 }
 
-/* wb-more 胶囊显隐动效：单行态 opacity:0 + 右移 20px 隐藏（不占布局空间），
- * 展开态过渡到 opacity:1 + 归位，实现从右向左渐现。
+/* wb-more 胶囊显隐动效：与框体展开完全同步（320ms 同时长、无延迟）。
+ * 单行态 opacity:0 + 右移 20px 隐藏（不占布局空间），
+ * 展开态 opacity:1 + 归位，与 .composer-shell 高度展开同时发生。
  * 用 visibility 替代 display:none，使 opacity/transform 可过渡。 */
 .cp-wb-more-btn {
   opacity: 0;
   visibility: hidden;
   transform: translateX(20px);
-  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-              visibility 0ms 240ms;
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0ms 320ms;
   pointer-events: none;
 }
 .composer-shell.is-expanded .cp-wb-more-btn,
@@ -427,8 +428,8 @@
   opacity: 1;
   visibility: visible;
   transform: translateX(0);
-  transition: opacity 240ms 80ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 240ms 80ms cubic-bezier(0.22, 1, 0.36, 1),
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
               visibility 0ms 0ms;
   pointer-events: auto;
 }

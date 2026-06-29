@@ -361,18 +361,16 @@
 /* 全屏态展开手柄不需要 */
 .composer-shell.is-fullscreen .cp-expand-handle{ display:none; }
 
-/* 全屏态：cp-bar 收到底部，发送按钮绝对定位右下角 */
+/* 全屏态：cp-bar 收到底部，flex 布局让按钮行自然撑开 */
 .composer-shell.is-fullscreen .cp-bar{
-  position:relative;
   padding:5px 20px 20px;
 }
 /* 全屏态发送常显（覆盖默认 display:none）*/
 .composer-shell.is-fullscreen .cp-send-btn{ display:flex; }
-/* 全屏态发送绝对定位右下角 */
+/* 全屏态右侧按钮组靠右，不走 absolute 避免脱离文档流 */
 .composer-shell.is-fullscreen .cp-bar-right{
-  position:absolute;
-  right:20px;
-  bottom:20px;
+  margin-left:auto;
+  gap:10px;
 }
 
 /* ── wb-more 胶囊（Figma 10:4074）────────────────────────── */

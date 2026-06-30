@@ -412,6 +412,11 @@ async function renderRoute(route) {
     }
   }
 
+  // 边界：featureList 为空时直接返回，避免访问 undefined.content
+  if (!f) {
+    return;
+  }
+
   currentFeature = f;
   const scrollEl = contentEl.querySelector('.fp-scroll');
   scrollEl.innerHTML = f.content;

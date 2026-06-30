@@ -440,6 +440,26 @@
   margin-top: var(--aq-option-gap);
 }
 
+.aq-voice-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.aq-voice-btn svg {
+  display: block;
+}
+.aq-voice-btn:active {
+  transform: scale(.95);
+}
+
 .aq-input-bar .aq-input-field {
   flex: 1;
   height: 100%;
@@ -482,6 +502,27 @@
 .aq-action-btn.is-action {
   background: var(--aq-btn-action-bg);
   color: #FFFFFF;
+}
+
+/* 图标按钮（下一步 / 提交） */
+.aq-action-btn.is-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.aq-action-btn.is-icon svg {
+  display: block;
+}
+.aq-action-btn.is-icon:active {
+  transform: scale(.95);
 }
 
 /* ── 静态快照（文档面板用）──────────────────── */

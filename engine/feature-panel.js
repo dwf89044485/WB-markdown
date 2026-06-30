@@ -519,16 +519,14 @@ async function renderRoute(route) {
   } else if (f.id === 'code-block') {
     // 左侧 Demo 渲染代码块 showcase，并高亮「代码块样式」场景按钮
     renderShowcase();
-    document.querySelectorAll('.dc-scene-btn').forEach((b) => {
-      b.classList.toggle('is-active', b.dataset.scene === 'codeblock-showcase');
-    });
+    document.querySelectorAll('.dc-scene-btn').forEach((b) => b.classList.remove('is-active'));
+    document.querySelector('.dc-scene-btn[data-scene="codeblock-showcase"]')?.classList.add('is-active');
   } else if (f.id === 'sheet' || f.id === 'sheet-content') {
     // 左侧 Demo 渲染代码块 showcase，展示代码块样式场景
     // 因为 Sheet 与代码块全屏查看有紧密的交互关联
     renderShowcase();
-    document.querySelectorAll('.dc-scene-btn').forEach((b) => {
-      b.classList.toggle('is-active', b.dataset.scene === 'codeblock-showcase');
-    });
+    document.querySelectorAll('.dc-scene-btn').forEach((b) => b.classList.remove('is-active'));
+    document.querySelector('.dc-scene-btn[data-scene="codeblock-showcase"]')?.classList.add('is-active');
   }
 }
 

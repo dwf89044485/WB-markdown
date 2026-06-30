@@ -378,8 +378,8 @@
   // 场景按钮：点击后切换到选中态、跳转对应步骤并自动播放
   document.querySelectorAll('.dc-scene-btn[data-node-index]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
-      // 清除所有按钮的选中态
-      document.querySelectorAll('.dc-scene-btn[data-node-index]').forEach(function(b) {
+      // 清除所有场景按钮的选中态（互斥单选）
+      document.querySelectorAll('.dc-scene-btn').forEach(function(b) {
         b.classList.remove('is-active');
       });
       btn.classList.add('is-active');

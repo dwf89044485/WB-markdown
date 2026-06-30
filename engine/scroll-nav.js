@@ -217,7 +217,8 @@ function scrollToTopTurn() {
 
 function scrollToBottomTurn() {
   if (!SN.turns.length) return;
-  smoothScrollTo(SN.conv.scrollHeight);
+  // 滚动到对话容器最底部（scrollTop 最大值为 scrollHeight - clientHeight）
+  smoothScrollTo(SN.conv.scrollHeight - SN.conv.clientHeight);
 }
 
 // ── Click logic (single & double) ─────────────────────────

@@ -112,6 +112,88 @@ function measureHeight() {
 
 let _expandAt = 0;  // 展开时间戳，blur 保护用
 
+// ── FLIP 动画：多行态 ↔ 全屏态的平滑过渡 ──────────────────
+// 全屏态用 position:absolute 脱离文档流，CSS 无法过渡 position 属性，
+// 用 FLIP（First-Last-Invert-Play）补上这段过渡：
+// 1. 记录切换前位置/尺寸 (First)
+// 2. 瞬间应用状态变更 (Last)
+// 3. 用 transform 反向偏移让元素视觉回到原位 (Invert)
+// 4. 下一帧释放 transform，带 transition 过渡到新位 (Play)
+let _flipToken = 0;
+
+function flipTransition(enter) {
+  const el = els.shell;
+  if (!el) return;
+  const token = ++_flipToken;
+
+  // FIRST: 记录当前位置/尺寸
+  const firstRect = el.getBoundingClientRect();
+
+  // 禁用 transition，让状态变更瞬间生效
+  el.style.transition = 'none';
+
+  // LAST: 应用状态变更
+  if (enter) {
+    state.fullScreen = true;
+    el.classList.add('is-fullscreen');
+    if (els.composer) els.composer.classList.add('cp-is-fullscreen');
+    if (els.textarea) els.textarea.style.height = '';
+  } else {
+    state.fullScreen = false;
+    el.classList.remove('is-fullscreen');
+    if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
+    syncLineCount();
+    measureHeight();
+  }
+
+  // 强制 reflow，让浏览器计算新布局
+  void el.offsetHeight;
+
+  const lastRect = el.getBoundingClientRect();
+
+  // INVERT: 计算偏移量，用 transform 让元素视觉回到 First 位置
+  const deltaX = firstRect.left - lastRect.left;
+  const deltaY = firstRect.top - lastRect.top;
+  const scaleX = lastRect.width > 0 ? firstRect.width / lastRect.width : 1;
+  const scaleY = lastRect.height > 0 ? firstRect.height / lastRect.height : 1;
+
+  // 变化太小则跳过动画
+  if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1 &&
+      Math.abs(scaleX - 1) < 0.01 && Math.abs(scaleY - 1) < 0.01) {
+    el.style.transition = '';
+    el.style.transformOrigin = '';
+    return;
+  }
+
+  el.style.transformOrigin = 'top left';
+  el.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+
+  // 强制 reflow，提交 transform
+  void el.offsetHeight;
+
+  // PLAY: 启用 transition，释放 transform
+  el.style.transition = 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms cubic-bezier(0.22, 1, 0.36, 1)';
+  el.style.transform = '';
+
+  // 清理：transition 结束后还原 inline style（token 防并发冲突）
+  const onEnd = (e) => {
+    if (token !== _flipToken) return;
+    if (e.propertyName !== 'transform') return;
+    el.style.transition = '';
+    el.style.transformOrigin = '';
+    el.removeEventListener('transitionend', onEnd);
+  };
+  el.addEventListener('transitionend', onEnd);
+
+  // 兜底：420ms 后强制清理
+  setTimeout(() => {
+    if (token !== _flipToken) return;
+    el.style.transition = '';
+    el.style.transformOrigin = '';
+    el.removeEventListener('transitionend', onEnd);
+  }, 420);
+}
+
 function expand() {
   if (state.expanded) return;
   _expandAt = Date.now();
@@ -139,12 +221,13 @@ function collapse() {
 
 function enterFullScreen() {
   if (!state.expanded || state.lineCount < 4 || state.voiceMode) return;
-  state.fullScreen = true;
-  els.shell.classList.add('is-fullscreen');
-  if (els.composer) els.composer.classList.add('cp-is-fullscreen');
-  // 清除 autoGrowAndCount 写入的 inline height：全屏态 textarea 高度由 CSS
-  // height:100% 撑满 cp-body，inline height 会覆盖 stylesheet 导致内容区不拓展。
-  if (els.textarea) els.textarea.style.height = '';
+  flipTransition(true);
+  requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
+}
+
+function exitFullScreen() {
+  if (!state.fullScreen) return;
+  flipTransition(false);
   requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
 }
 

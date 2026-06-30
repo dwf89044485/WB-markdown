@@ -19,7 +19,7 @@
   --aq-option-height: 46px;
   --aq-option-radius: 10px;
   --aq-option-gap: 10px;
-  --aq-option-padding: 10px;
+  --aq-option-padding: 10px 8px;
 
   --aq-badge-bg: #EBEBEB;
   --aq-badge-radius: 180px;
@@ -432,11 +432,15 @@
 /* 底部输入栏 */
 .aq-input-bar {
   display: flex;
-  align-items: center;
+  align-items: center;  /* 单行：居中 */
   gap: 10px;
   width: 100%;
   min-height: 36px; /* 至少与按钮等高 */
   margin-top: var(--aq-option-gap);
+}
+/* 多行：按钮底对齐 */
+.aq-input-bar.aq-bar-multiline {
+  align-items: flex-end;
 }
 
 .aq-voice-btn {

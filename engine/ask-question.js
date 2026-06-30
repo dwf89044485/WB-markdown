@@ -96,6 +96,9 @@ function renderAskQuestion() {
     sortableInstance.destroy();
     sortableInstance = null;
   }
+
+  // 恢复 textarea 高度与对齐状态（innerHTML 替换后丢失）
+  autoGrowTextarea();
 }
 
 function escapeAQHtml(str) {
@@ -310,7 +313,15 @@ function autoGrowTextarea() {
   const el = document.getElementById('aqInput');
   if (!el || el.tagName !== 'TEXTAREA') return;
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+  const sh = el.scrollHeight;
+  el.style.height = Math.min(sh, 200) + 'px';
+
+  // 根据行数切换对齐：单行居中 / 多行按钮底对齐
+  const bar = el.closest('.aq-input-bar');
+  if (bar) {
+    const lineCount = Math.round(sh / 24); // 24 = --aq-line-height
+    bar.classList.toggle('aq-bar-multiline', lineCount > 1);
+  }
 }
 
 function goToStep(index) {

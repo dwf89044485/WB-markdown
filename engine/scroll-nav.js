@@ -54,7 +54,7 @@ const SN = {
   upBtn: null,         // #scrollUp
   downBtn: null,       // #scrollDown
   conv: null,          // .conversation
-  upState: { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 },
+  upState: { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0, dblTooltipShown: false },
   downState: { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 },
   scrollTicking: false,
   isTblFullscreen: false,
@@ -236,7 +236,10 @@ function handleUpClick() {
     if (state.tooltipTimer) { clearTimeout(state.tooltipTimer); state.tooltipTimer = null; }
     removeTooltip(SN.upBtn);
     scrollToTopTurn();
-    showTooltip(SN.upBtn, '双击可跳转顶部');
+    if (!state.dblTooltipShown) {
+      state.dblTooltipShown = true;
+      showTooltip(SN.upBtn, '双击可跳转顶部');
+    }
     return;
   }
 
@@ -307,16 +310,16 @@ function doSingleUp() {
   const idx = getCurrentTurnIndex();
   if (idx < 0) return;
 
-  // 判断上一轮 agent-msg 是否在可视区内
-  let prevAgentInView = false;
-  if (idx > 0) {
-    const agentEl = SN.turns[idx].agentMsg;
-    const agentRect = agentEl.getBoundingClientRect();
+  // 判断当前轮 user-msg 是否在可视区内
+  let curUserInView = false;
+  if (idx >= 0) {
+    const userEl = SN.turns[idx].userMsg;
+    const userRect = userEl.getBoundingClientRect();
     const convRect = SN.conv.getBoundingClientRect();
-    prevAgentInView = agentRect.top < convRect.bottom && agentRect.bottom > convRect.top;
+    curUserInView = userRect.top < convRect.bottom && userRect.bottom > convRect.top;
   }
 
-  const target = prevAgentInView ? idx - 1 : idx;
+  const target = curUserInView ? idx - 1 : idx;
   if (target >= 0) scrollToUserMsg(target);
 }
 
@@ -399,7 +402,7 @@ export function initScrollNav() {
   if (!SN.nav || !SN.upBtn || !SN.downBtn || !SN.conv) return;
 
   // Reset state
-  SN.upState = { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 };
+  SN.upState = { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0, dblTooltipShown: false };
   SN.downState = { lastClickTime: 0, tooltipTimer: null, rapidNonDblClickCount: 0 };
   SN.isTblFullscreen = false;
   SN.nav.classList.remove('is-hidden');

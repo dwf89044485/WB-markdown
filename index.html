@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>WorkBuddy — Agent 对话流动态原型</title>
 <link rel="stylesheet" href="./vendor/fonts/inter.css">
 <link rel="stylesheet" href="./styles/base.css?v=2">
@@ -777,7 +777,9 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   window.buildGrid = buildGrid;
   window.fitShellScale = fitShellScale;
   window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
-  var ro = new ResizeObserver(function() { buildGrid(); fitShellScale(); });
+  var ro = new ResizeObserver(function() {
+    requestAnimationFrame(function() { buildGrid(); fitShellScale(); });
+  });
   var shellViewport = document.querySelector('.shell-viewport');
   if(shellViewport) ro.observe(shellViewport);
 

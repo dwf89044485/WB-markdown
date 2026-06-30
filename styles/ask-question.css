@@ -10,7 +10,7 @@
   --aq-text-semibold: 600;
   --aq-font: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
   --aq-font-sm: 12px;
-  --aq-font-base: 16px;
+  --aq-font-base: 14px;
   --aq-font-lg: 17px;
   --aq-line-height: 24px;
 
@@ -468,7 +468,7 @@
   background: transparent;
   font-family: var(--aq-font);
   font-weight: var(--aq-text-regular);
-  font-size: 16px; /* 必须 ≥16px，防止 iOS Safari 点击时自动缩放页面 */
+  font-size: 14px; /* 与选项文字统一；<14px 会在 iOS Safari 触发自动缩放 */
   line-height: var(--aq-line-height);
   color: var(--aq-text);
   padding: 0;

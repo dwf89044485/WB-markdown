@@ -142,6 +142,9 @@ function enterFullScreen() {
   state.fullScreen = true;
   els.shell.classList.add('is-fullscreen');
   if (els.composer) els.composer.classList.add('cp-is-fullscreen');
+  // 清除 autoGrowAndCount 写入的 inline height：全屏态 textarea 高度由 CSS
+  // height:100% 撑满 cp-body，inline height 会覆盖 stylesheet 导致内容区不拓展。
+  if (els.textarea) els.textarea.style.height = '';
   requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
 }
 
@@ -151,6 +154,8 @@ function exitFullScreen() {
   els.shell.classList.remove('is-fullscreen');
   if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
   requestAnimationFrame(() => {
+    // 重建 compact 态 inline height（autoGrowAndCount 在 syncLineCount 内）
+    syncLineCount();
     measureHeight();
     if (els.textarea) els.textarea.focus();
   });

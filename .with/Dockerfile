@@ -35,12 +35,11 @@ RUN rm -rf /usr/share/nginx/html/.git \
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Set proper permissions
-RUN chown -R appuser:appgroup /usr/share/nginx/html && \
+RUN sed -i 's|pid        /run/nginx.pid;|pid        /tmp/nginx.pid;|' /etc/nginx/nginx.conf && \
+    chown -R appuser:appgroup /usr/share/nginx/html && \
     chown -R appuser:appgroup /var/cache/nginx && \
     chown -R appuser:appgroup /var/log/nginx && \
-    chown -R appuser:appgroup /etc/nginx/conf.d && \
-    mkdir -p /run/nginx && \
-    chown -R appuser:appgroup /run/nginx
+    chown -R appuser:appgroup /etc/nginx/conf.d
 
 EXPOSE 8000
 

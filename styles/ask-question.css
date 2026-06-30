@@ -477,7 +477,7 @@
   font-size: 14px;
   line-height: var(--aq-line-height);
   color: var(--aq-text);
-  padding: 0;
+  padding: 6px 0;   /* 单行时文字在 36px 内垂直居中（(36-24)/2），多行不受影响 */
   overflow-y: auto;
   white-space: pre-wrap;
   word-wrap: break-word;

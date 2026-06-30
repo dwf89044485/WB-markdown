@@ -43,7 +43,6 @@
   --aq-pill-size: 36px;
   --aq-pill-radius: 999px;
 
-  --aq-input-height: 50px;
   --aq-input-placeholder-opacity: 0.3;
 }
 
@@ -433,10 +432,10 @@
 /* 底部输入栏 */
 .aq-input-bar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
   width: 100%;
-  height: var(--aq-input-height);
+  min-height: 36px; /* 至少与按钮等高 */
   margin-top: var(--aq-option-gap);
 }
 
@@ -462,20 +461,36 @@
 
 .aq-input-bar .aq-input-field {
   flex: 1;
-  height: 100%;
+  min-width: 0;
+  min-height: 36px;
+  max-height: 200px;
+  resize: none;
   border: none;
   outline: none;
   background: transparent;
   font-family: var(--aq-font);
   font-weight: var(--aq-text-regular);
-  font-size: 14px; /* 与选项文字统一；viewport 已禁用缩放，iOS 不会自动放大 */
+  font-size: 14px;
   line-height: var(--aq-line-height);
   color: var(--aq-text);
   padding: 0;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .aq-input-bar .aq-input-field::placeholder {
   color: var(--aq-text);
   opacity: var(--aq-input-placeholder-opacity);
+}
+.aq-input-field::-webkit-scrollbar {
+  width: 4px;
+}
+.aq-input-field::-webkit-scrollbar-track {
+  background: transparent;
+}
+.aq-input-field::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 2px;
 }
 
 .aq-action-btn {

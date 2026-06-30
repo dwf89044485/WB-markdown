@@ -220,7 +220,7 @@ function renderAskQuestionHTML(questions, stepIndex, answers, options = {}) {
       <button class="aq-voice-btn" type="button"${isStatic ? ' tabindex="-1"' : ''}>
         ${VOICE_SVG}
       </button>
-      <input class="aq-input-field"${id(' id="aqInput"')} type="text" autocomplete="off" value="${escapeAttr(a.customInput)}" placeholder="${escapeAttr(placeholderText)}"${isStatic ? ' readonly tabindex="-1"' : ''}>
+      <textarea class="aq-input-field"${id(' id="aqInput"')} rows="1" placeholder="${escapeAttr(placeholderText)}"${isStatic ? ' readonly tabindex="-1"' : ''}>${escapeAQHtml(a.customInput)}</textarea>
       <button class="aq-action-btn ${btnClass}"${id(' id="aqAction"')} type="button"${isStatic ? ' tabindex="-1"' : ''}${isStatic ? '' : ' data-action="aq-action"'}>${btnContent}</button>
     </div>`;
 
@@ -295,6 +295,7 @@ function onInputChange(text) {
   const a = answers[stepIndex];
 
   a.customInput = text;
+  autoGrowTextarea();
   if (q.type === 'single' && a.selected !== null) {
     a.selected = null;
     // 需要重渲染以取消选项选中态（会重置光标位置，但这是用户触发的即时反馈）
@@ -303,6 +304,13 @@ function onInputChange(text) {
     // 轻量更新：仅按钮文案/样式可能变化
     updateActionButton();
   }
+}
+
+function autoGrowTextarea() {
+  const el = document.getElementById('aqInput');
+  if (!el || el.tagName !== 'TEXTAREA') return;
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 200) + 'px';
 }
 
 function goToStep(index) {

@@ -217,9 +217,7 @@ function scrollToTopTurn() {
 
 function scrollToBottomTurn() {
   if (!SN.turns.length) return;
-  const idx = SN.turns.length - 1;
-  const top = Math.max(0, SN.turns[idx].userMsg.offsetTop - navBarOverlap());
-  smoothScrollTo(top);
+  smoothScrollTo(SN.conv.scrollHeight);
 }
 
 // ── Click logic (single & double) ─────────────────────────

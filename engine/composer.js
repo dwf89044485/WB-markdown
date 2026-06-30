@@ -229,25 +229,37 @@ function collapse() {
   state.fullScreen = false;
   els.shell.classList.remove('is-expanded', 'is-fullscreen');
   if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
+  els.shell.style.removeProperty('--cp-fs-height');
   unobserveHeight();
 }
 
 function enterFullScreen() {
   if (!state.expanded || state.lineCount < 4 || state.voiceMode) return;
-  flipTransition(true);
+  state.fullScreen = true;
+  els.shell.classList.add('is-fullscreen');
+  if (els.composer) els.composer.classList.add('cp-is-fullscreen');
   requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
 }
 
 function exitFullScreen() {
   if (!state.fullScreen) return;
-  flipTransition(false);
-  requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
+  state.fullScreen = false;
+  els.shell.classList.remove('is-fullscreen');
+  if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
+  requestAnimationFrame(() => {
+    measureHeight();
+    if (els.textarea) els.textarea.focus();
+  });
 }
 
 // ── ResizeObserver 生命周期 ──────────────────────────────
 function observeHeight() {
   if (resizeObserver || !els.textarea) return;
-  resizeObserver = new ResizeObserver(measureHeight);
+  resizeObserver = new ResizeObserver(() => {
+    // ResizeObserver 回调中不直接触发同步布局（getBoundingClientRect），
+    // 推迟到下一帧避免 "ResizeObserver loop completed with undelivered notifications" 警告。
+    requestAnimationFrame(measureHeight);
+  });
   resizeObserver.observe(els.textarea);
 }
 function unobserveHeight() {

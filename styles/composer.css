@@ -295,32 +295,28 @@
 .composer.cp-is-fullscreen .cp-fs-backdrop{
   opacity:0.3;
 }
-/* 全屏态把整个 composer 提到 navbar 之上，确保 shell 盖住 navbar。
- * 同时脱离 phone-shell 的 flex 流撑满整列（status-bar+对话区+composer），
- * 作为内层 .composer-shell.is-fullscreen 的定位上下文（inset:0）。 */
+/* 全屏态：composer 脱离文档流定位在底部，shell 用 height 过渡实现"框体变大"
+ * 关键设计：shell 的 height 从 --cp-height 平滑过渡到 --cp-fs-height（phone-shell 高度），
+ * CSS transition 对 height 持续生效，实现 1→2→3 连续过渡而非闪切。
+ * position:absolute 本身不能过渡，但 height 的过渡动画覆盖了视觉变化的主要部分，
+ * 用户看到的是白色卡片从展开态高度平滑撑满全屏。 */
 .composer.cp-is-fullscreen{
   position:absolute;
-  inset:0;
+  bottom:0; left:0; right:0;
   z-index:70;
-  padding:0;            /* 全屏态 shell 自己控制内边距，去掉 composer 默认 padding */
-  background:transparent;  /* 背景由内层 shell 和蒙层负责 */
+  padding:0;
+  background:transparent;
 }
 /* 全屏态隐藏 composer 顶部渐变条（::before），避免在覆盖区露出灰边 */
 .composer.cp-is-fullscreen::before{ display:none; }
 
 .composer-shell.is-fullscreen{
-  /* 脱离 composer 文档流，相对 phone-shell（position:relative）撑满整列，
-   * 覆盖 status-bar / 对话区 / composer，工具栏自然落在 phone-shell 底部。
-   * 不用 100dvh：本原型在桌面用 transform:scale 预览手机壳，100dvh 取的是
-   * 桌面视口而非手机壳内部高度，坐标系错位会导致 shell 撑不开、工具栏被裁。 */
-  position:absolute;
-  inset:0;
-  height:auto;          /* 配合 top:0;bottom:0 自动撑满 composer，覆盖 expanded 的 var(--cp-height) 和基础 56px */
+  height:var(--cp-fs-height, 700px); /* 由 JS 在 enterFullScreen 时写入 phone-shell 内部高度 */
   width:100%;
   margin-inline:0;
   border-radius:24px 24px 0 0;
   align-items:stretch;
-  z-index:65;  /* 高于全屏蒙层(60)，确保白色卡片盖在蒙层之上 */
+  z-index:65;
 }
 /* 全屏态顶部工具栏：默认隐藏，全屏时显示 */
 .cp-fs-topbar{

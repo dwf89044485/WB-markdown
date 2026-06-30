@@ -432,7 +432,7 @@
 /* 底部输入栏 */
 .aq-input-bar {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 10px;
   width: 100%;
   min-height: 36px; /* 至少与按钮等高 */

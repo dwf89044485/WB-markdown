@@ -1,0 +1,514 @@
+/* ── Ask User Question ─────────────────────────────── */
+:root {
+  --aq-bg: #FAFAFA;
+  --aq-radius: 20px;
+  --aq-padding: 20px;
+  --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
+
+  --aq-text: #3D3D3D;
+  --aq-text-regular: 400;
+  --aq-text-semibold: 600;
+  --aq-font: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --aq-font-sm: 12px;
+  --aq-font-base: 14px;
+  --aq-font-lg: 17px;
+  --aq-line-height: 24px;
+
+  --aq-option-bg: #F2F2F2;
+  --aq-option-selected-bg: #EBEBEB;
+  --aq-option-height: 46px;
+  --aq-option-radius: 10px;
+  --aq-option-gap: 10px;
+  --aq-option-padding: 10px;
+
+  --aq-badge-bg: #EBEBEB;
+  --aq-badge-radius: 180px;
+  --aq-badge-padding: 2px 12px;
+
+  --aq-num-size: 20px;
+  --aq-num-radius: 90px;
+  --aq-num-bg: #F2F2F2;
+
+  --aq-checkbox-size: 20px;
+  --aq-checkbox-radius: 8px;
+  --aq-checkbox-border: #D5D5D5;
+  --aq-checkbox-checked-bg: #3D3D3D;
+
+  --aq-btn-skip-bg: #F4F2F2;
+  --aq-btn-action-bg: #3D3D3D;
+  --aq-btn-height: 36px;
+  --aq-btn-radius: 120px;
+  --aq-btn-padding: 1px 18px;
+
+  --aq-pill-size: 36px;
+  --aq-pill-radius: 999px;
+
+  --aq-input-height: 50px;
+  --aq-input-placeholder-opacity: 0.3;
+}
+
+/* 卡片整体 — 替换 composer 显示在相同位置 */
+.ask-question {
+  display: none;
+  padding: 0 var(--composer-padding-x) var(--composer-padding-bottom);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 11;
+}
+.ask-question.is-active {
+  display: flex;
+}
+
+.ask-question-card {
+  width: 100%;
+  background: var(--aq-bg);
+  border-radius: var(--aq-radius);
+  box-shadow: var(--aq-shadow);
+  padding: var(--aq-padding) var(--aq-padding) 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden; /* 滑切时裁剪 aq-body 溢出 */
+  /* 入场动效由 JS 动态添加的 aq-entering 类触发，通过 animation 驱动 */
+}
+
+/* 入场 / 出场动效 keyframes */
+@keyframes aq-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes aq-slide-down {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+.ask-question-card.aq-entering {
+  animation: aq-slide-up 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+.ask-question-card.aq-leaving {
+  animation: aq-slide-down 0.25s ease-in-out forwards;
+}
+
+/* ── 循环升降演示（仅供 feature panel §5 使用，不影响真实运行时）──
+ * 总周期 3.55s = 升 0.3s + 停留 2s + 落 0.25s + 间隔 1s
+ * 时间百分比：升 8.45% / 停留至 64.79% / 落至 71.83% / 间隔至 100%
+ * 升起段沿用 cubic-bezier(0, 0, 0.2, 1)，落下段沿用 ease-in-out —— 与真实参数一致
+ */
+@keyframes aq-loop-rise-fall {
+  0%      { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+  8.45%   { opacity: 1; transform: translateY(0);    animation-timing-function: linear; }
+  64.79%  { opacity: 1; transform: translateY(0);    animation-timing-function: ease-in-out; }
+  71.83%  { opacity: 0; transform: translateY(100%); animation-timing-function: linear; }
+  100%    { opacity: 0; transform: translateY(100%); }
+}
+.ask-question-card.aq-loop-rise-fall,
+.fp-motion-stage[data-motion-loop="rise-fall"] .ask-question-card {
+  animation: aq-loop-rise-fall 3.55s infinite;
+}
+
+/* 顶栏：左箭头 + 步骤 + 右箭头 + 关闭 */
+.aq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.aq-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aq-nav-btn {
+  width: var(--aq-pill-size);
+  height: var(--aq-pill-size);
+  border-radius: var(--aq-pill-radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  box-sizing: border-box;
+  color: var(--aq-text);
+}
+.aq-nav-btn svg {
+  position: relative;
+}
+.aq-nav-btn:active {
+  transform: scale(.985);
+}
+.aq-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+
+.aq-step-indicator {
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-semibold);
+  font-size: 14px;
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+  width: 48px;
+  text-align: center;
+  display: inline-block;
+}
+
+.aq-close-btn {
+  width: var(--aq-pill-size);
+  height: var(--aq-pill-size);
+  border-radius: var(--aq-pill-radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.aq-close-btn:active {
+  transform: scale(.985);
+}
+.aq-close-btn svg {
+  position: relative;
+  color: #3D3D3D;
+}
+
+/* 问题区：标签 + 文字 */
+.aq-question-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.aq-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: var(--aq-badge-padding);
+  background: var(--aq-badge-bg);
+  border-radius: var(--aq-badge-radius);
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-semibold);
+  font-size: var(--aq-font-sm);
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+  flex-shrink: 0;
+}
+
+
+.aq-question-text {
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-semibold);
+  font-size: var(--aq-font-lg);
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 选项列表 */
+.aq-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aq-option-gap);
+  align-self: stretch;
+}
+/* 选项过多时允许内部滚动 */
+.aq-options.many-options {
+  max-height: 247px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.aq-options.many-options::-webkit-scrollbar {
+  width: 4px;
+}
+.aq-options.many-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+.aq-options.many-options::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 2px;
+}
+
+/* 单个选项行 */
+.aq-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  padding: var(--aq-option-padding);
+  min-height: var(--aq-option-height);
+  background: var(--aq-option-bg);
+  border-radius: var(--aq-option-radius);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.aq-option.is-selected {
+  background: var(--aq-option-selected-bg);
+}
+
+/* 排序行 */
+.aq-option.is-sort {
+  cursor: grab;
+  touch-action: none;        /* 阻止移动端页面滚动 */
+  -webkit-user-select: none;
+  user-select: none !important;
+  -webkit-touch-callout: none;
+}
+.aq-option.is-sort * {
+  -webkit-user-select: none;
+  user-select: none !important;
+  -webkit-touch-callout: none;
+  touch-action: none;        /* 子元素也阻止触摸滚动，确保整行可拖 */
+}
+.aq-option.is-sort:active {
+  cursor: grabbing;
+}
+
+/* SortableJS 拖拽状态类 */
+.aq-sort-chosen {
+  /* 被选中（手指按下）的原始行 — 白底+投影浮起效果 */
+  background: #fff !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 1;
+}
+.aq-sort-ghost {
+  /* 原位占位 — 完全不可见 */
+  opacity: 0 !important;
+}
+.aq-sort-fallback {
+  /* 跟随手指的克隆元素 — 白底+投影 */
+  background: #fff !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08) !important;
+  border-radius: var(--aq-option-radius) !important;
+  z-index: 9999 !important;
+  opacity: 1 !important;
+}
+/* 排序拖拽提示（停留3秒后高亮第2项） */
+.aq-option.aq-sort-hint {
+  background: #fff !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 2;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.aq-option.aq-sort-hint-out {
+  position: relative;
+  z-index: 2;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.aq-sort-hint-pop {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--aq-text);
+  color: #fff;
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-regular);
+  font-size: 12px;
+  line-height: 20px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: aq-hint-pop-in 0.3s ease-out;
+}
+.aq-sort-hint-pop::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--aq-text);
+}
+@keyframes aq-hint-pop-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.aq-sort-hint-pop-out {
+  animation: aq-hint-pop-out 0.25s ease-in forwards;
+}
+@keyframes aq-hint-pop-out {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(4px); }
+}
+
+/* 选项左侧：序号 + 文字 */
+.aq-option-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.aq-option-num {
+  width: var(--aq-num-size);
+  height: var(--aq-num-size);
+  border-radius: var(--aq-num-radius);
+  background: var(--aq-num-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-regular);
+  font-size: var(--aq-font-sm);
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+  flex-shrink: 0;
+}
+.aq-option.is-selected .aq-option-num {
+  font-weight: var(--aq-text-semibold);
+}
+
+.aq-option-text {
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-regular);
+  font-size: var(--aq-font-base);
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+}
+.aq-option.is-selected .aq-option-text {
+  font-weight: var(--aq-text-semibold);
+}
+
+/* 选项右侧：单选 ✓ / 多选 ☑ / 排序 ≡ */
+.aq-option-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* 单选选中图标 */
+.aq-check-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 多选复选框 */
+.aq-checkbox {
+  width: var(--aq-checkbox-size);
+  height: var(--aq-checkbox-size);
+  border-radius: var(--aq-checkbox-radius);
+  background: var(--aq-bg);
+  border: 1px solid var(--aq-checkbox-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.aq-option.is-selected .aq-checkbox {
+  background: var(--aq-checkbox-checked-bg);
+  border-color: var(--aq-checkbox-checked-bg);
+}
+
+/* 排序拖拽手柄 */
+.aq-drag-handle {
+  width: 16px;
+  height: 16px;
+  color: var(--aq-text);
+  opacity: 0.4;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 底部输入栏 */
+.aq-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: var(--aq-input-height);
+  margin-top: var(--aq-option-gap);
+}
+
+.aq-input-bar .aq-input-field {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-regular);
+  font-size: 16px; /* 必须 ≥16px，防止 iOS Safari 点击时自动缩放页面 */
+  line-height: var(--aq-line-height);
+  color: var(--aq-text);
+  padding: 0;
+}
+.aq-input-bar .aq-input-field::placeholder {
+  color: var(--aq-text);
+  opacity: var(--aq-input-placeholder-opacity);
+}
+
+.aq-action-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: var(--aq-btn-padding);
+  height: var(--aq-btn-height);
+  border-radius: var(--aq-btn-radius);
+  border: none;
+  cursor: pointer;
+  font-family: var(--aq-font);
+  font-weight: var(--aq-text-semibold);
+  font-size: 14px;
+  line-height: var(--aq-line-height);
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.aq-action-btn.is-skip {
+  background: var(--aq-btn-skip-bg);
+  color: var(--aq-text);
+}
+.aq-action-btn.is-action {
+  background: var(--aq-btn-action-bg);
+  color: #FFFFFF;
+}
+
+/* ── 静态快照（文档面板用）──────────────────── */
+.aq-static {
+  pointer-events: none;
+  user-select: none;
+}
+/* 静态快照中允许选项区域滚动交互 */
+.aq-static .aq-options.many-options {
+  pointer-events: auto;
+}
+
+/* ── 重渲染静默：防止每次 innerHTML 替换重播入场动效 ── */
+.ask-question.aq-settled .ask-question-card.aq-entering {
+  animation: none;
+}
+
+/* ── 切题滑切：滑轨（goToStep 中动态构建，transition 驱动 transform）─── */
+.aq-slide-track {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+.aq-slide-track > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

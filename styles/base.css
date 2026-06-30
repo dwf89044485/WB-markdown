@@ -1,0 +1,528 @@
+/* ============================================================
+   BASE — Reset · Phone Shell · Status Bar · Nav Bar · Glass System · Composer
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+  background:#fafafa;
+}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+  background:#fafafa;
+  min-height:100dvh;
+  height:100dvh;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  overflow:hidden;
+}
+
+:root{
+  --spacing-0:0px;
+  --spacing-2:2px;
+  --spacing-3:3px;
+  --spacing-4:4px;
+  --spacing-5:5px;
+  --spacing-6:6px;
+  --spacing-7:7px;
+  --spacing-8:8px;
+  --spacing-9:9px;
+  --spacing-10:10px;
+  --spacing-11:11px;
+  --spacing-12:12px;
+  --spacing-13:13px;
+  --spacing-14:14px;
+  --spacing-16:16px;
+  --spacing-18:18px;
+  --spacing-20:20px;
+  --spacing-21:21px;
+  --spacing-24:24px;
+  --spacing-26:26px;
+  --spacing-30:30px;
+  --spacing-32:32px;
+  --spacing-34:34px;
+  --spacing-36:36px;
+  --spacing-38:38px;
+  --spacing-40:40px;
+  --spacing-46:46px;
+  --spacing-47:47px;
+  --spacing-54:54px;
+  --spacing-62:62px;
+  --spacing-64:64px;
+  --spacing-72:72px;
+  --spacing-74:74px;
+  --spacing-80:80px;
+  --spacing-92:92px;
+  --spacing-100:100px;
+
+  --standalone-conversation-padding-top:var(--spacing-64);
+  --standalone-msg-gutter-x:var(--spacing-16);
+  --standalone-composer-padding-x:var(--spacing-12);
+  --standalone-composer-padding-bottom:10px;
+
+  --nav-bar-top-offset:var(--spacing-54);
+  --nav-bar-gap:var(--spacing-8);
+  --nav-bar-padding-top:var(--spacing-8);
+  --nav-bar-padding-x:var(--spacing-16);
+  --nav-bar-padding-bottom:24px;
+  --nav-center-margin-left:var(--spacing-8);
+  --nav-center-gap:var(--spacing-2);
+
+  --composer-padding-x:var(--spacing-20);
+  --composer-padding-bottom:var(--spacing-32);
+  --composer-fade-height:var(--spacing-40);
+
+  --status-icon-color:#000;
+
+  /* ── LAYOUT TOKENS (phone shell / left area / layout) ── */
+  --layout-shell-w:393px;
+  --layout-shell-h:852px;
+  --layout-left-area-w:524px;
+  --layout-min-w:1440px;
+  --layout-notes-min-w:840px;
+  --fp-feature-header-w:718px;
+  --scroll-nav-overlap-extra:40px;
+}
+/* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */
+:root.device-pad {
+  --layout-shell-w:840px;
+  --layout-shell-h:1190px;
+  --layout-left-area-w:976px;
+  --layout-min-w:1860px;
+  --layout-notes-min-w:840px;
+  --fp-feature-header-w:718px;
+  --scroll-nav-overlap-extra:40px;
+}
+/* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
+/* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
+html.force-standalone body,
+html.is-standalone body{
+  display:block;
+  padding:0;
+  background:#fafafa;
+  min-height:100dvh;
+  height:100dvh;
+  overflow:hidden;
+}
+html.force-standalone .phone-shell,
+html.is-standalone .phone-shell{
+  width:100%;
+  height:100dvh;
+  border-radius:0;
+  box-shadow:none;
+  border:none;
+  background:#fafafa;
+}
+html.force-standalone .status-bar,
+html.is-standalone .status-bar{display:none;}
+html.force-standalone .nav-bar,
+html.is-standalone .nav-bar{top:0;padding-top:0;}
+html.force-standalone .conversation,
+html.is-standalone .conversation{padding-top:var(--standalone-conversation-padding-top);}
+html.force-standalone .design-notes,
+html.is-standalone .design-notes{display:none;}
+html.force-standalone .paper-bg,
+html.is-standalone .paper-bg,
+html.force-standalone .grid-overlay,
+html.is-standalone .grid-overlay{display:none;}
+html.force-standalone .left-area,
+html.is-standalone .left-area{width:100%;background:#fafafa;}
+html.force-standalone .layout-main,
+html.is-standalone .layout-main{position:relative;z-index:1;}
+html.is-standalone .demo-controls{display:none;}
+html.force-standalone .user-msg-wrap,
+html.is-standalone .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
+html.force-standalone .agent-msg,
+html.is-standalone .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
+html.force-standalone .composer,
+html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
+
+/* 自动识别：小屏默认 standalone，?standalone=0 可关闭 */
+@media (max-width:599px){
+  html:not(.force-desktop) body{
+    display:block;
+    padding:0;
+    background:#fafafa;
+    min-height:100dvh;
+    height:100dvh;
+    overflow:hidden;
+  }
+  html:not(.force-desktop) .phone-shell{
+    width:100%;
+    height:100dvh;
+    border-radius:0;
+    box-shadow:none;
+    border:none;
+    background:#fafafa;
+  }
+  html:not(.force-desktop) .status-bar{display:none;}
+  html:not(.force-desktop) .nav-bar{top:0;padding-top:10px;}
+  html:not(.force-desktop) .conversation{padding-top:var(--standalone-conversation-padding-top);}
+  html:not(.force-desktop) .design-notes,
+  html:not(.force-desktop) .dc-toggle,
+  html:not(.force-desktop) .demo-controls,
+  html:not(.force-desktop) .paper-bg,
+  html:not(.force-desktop) .grid-overlay{display:none;}
+  html:not(.force-desktop) .left-area{width:100%;background:#fafafa;}
+  html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
+  html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
+  html:not(.force-desktop) .composer{padding:0 var(--standalone-composer-padding-x) max(var(--standalone-composer-padding-bottom), env(safe-area-inset-bottom));}
+  html:not(.force-desktop) .layout-main{padding:0;gap:0;position:relative;z-index:1;}
+}
+
+/* ── 双栏档布局（屏宽 ≥ 600px）─────────────────────── */
+@media (min-width:600px){
+  body{
+    /* 让横滚出现：去掉居中、改为左对齐 */
+    display:block;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:0;
+  }
+  .layout-main{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    /* 总宽至少 1364：左 524 + 右 840 */
+    min-width:var(--layout-min-w);
+    width:100%;
+    height:100dvh;
+    padding:0;
+    gap:0;
+  }
+  .left-area{
+    width:var(--layout-left-area-w);
+    flex:0 0 var(--layout-left-area-w);
+    height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .shell-viewport{
+    flex:1 1 0;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    width:100%;
+  }
+  .design-notes{
+    flex:1 1 var(--layout-notes-min-w);
+    min-width:var(--layout-notes-min-w);
+    height:100dvh;
+    padding:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+      url("../assets/paper/texture.png");
+    background-repeat:no-repeat, repeat;
+    background-attachment:scroll, fixed;
+    border-left:1px solid rgba(0,0,0,0.04);
+  }
+}
+
+/* ── PHONE SHELL ─────────────────────────────────────────── */
+.phone-shell{
+  width:var(--layout-shell-w);height:var(--layout-shell-h);background:#fafafa;border-radius:0;
+  box-shadow:none;
+  border:1px solid rgba(0,0,0,0.08);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  isolation:isolate;
+  flex-shrink:0;
+  transform-origin:center center;
+  will-change:transform;
+}
+/* 横屏模式：交换宽高 */
+.phone-shell.phone-landscape{
+  width:var(--layout-shell-h);height:var(--layout-shell-w);
+}
+body:has(.phone-shell.phone-landscape),
+body:has(.phone-shell.tbl-landscape){
+  --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
+}
+
+/* ── STATUS BAR ──────────────────────────────────────────── */
+.status-bar{
+  height:54px;
+  background:#fafafa;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  padding-top:21px;
+  flex-shrink:0;
+}
+.status-time-wrap{
+  width:139px;
+  padding:0 6px 0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+}
+.status-time{
+  font-family:'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:17px;
+  font-weight:590;
+  line-height:1;
+  color:#000;
+  letter-spacing:-0.01em;
+  white-space:nowrap;
+}
+.status-icons-wide{
+  width:139px;
+  height:20px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-end;
+}
+.status-icons-wide svg{display:block;width:139px;height:20px;}
+.status-icons-wide svg path{fill:var(--status-icon-color) !important;}
+
+/* ── NAV BAR ─────────────────────────────────────────────── */
+.nav-bar{
+  position:absolute;
+  top:var(--nav-bar-top-offset);left:0;right:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:var(--nav-bar-gap);
+  padding:var(--nav-bar-padding-top) var(--nav-bar-padding-x) var(--nav-bar-padding-bottom);
+  pointer-events:none;
+  background:linear-gradient(to bottom, #fafafa 0%, #fafafa 80%, rgba(250,250,250,0) 100%);
+}
+/* 伪元素承载毛玻璃 */
+.nav-bar::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:#fafafa;
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+  pointer-events:none;
+}
+.nav-bar > *{pointer-events:auto;}
+.nav-center{
+  flex:1;
+  min-width:0;
+  margin-left:var(--nav-center-margin-left);
+  display:flex;
+  flex-direction:column;
+  gap:var(--nav-center-gap);
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.nav-title{
+  font-size:14px;
+  font-weight:500;
+  color:#1c1c1e;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.nav-subtitle{
+  font-size:12px;
+  color:#8e8e93;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.nav-icon{position:relative;z-index:2;flex-shrink:0;}
+
+/* ── GLASS SYSTEM ────────────────────────────────────────── */
+.glass-blur{
+  -webkit-backdrop-filter:blur(32px) saturate(150%);
+  backdrop-filter:blur(32px) saturate(150%);
+}
+.glass-btn,
+.glass-capsule{
+  position:relative;
+  z-index:10;
+  overflow:hidden;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.5);
+  border-top-color:rgba(255,255,255,0.82);
+  border-left-color:rgba(255,255,255,0.62);
+  border-right-color:rgba(255,255,255,0.36);
+  background:#fafafa;
+  box-shadow:0 7px 30px rgba(2,6,23,0.075),inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(255,255,255,0.12);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.glass-btn:active,
+.glass-capsule:active{transform:scale(.985);}
+.glass-layer,
+.glass-layer-inner{pointer-events:none;position:absolute;border-radius:inherit;inset:0;}
+.glass-layer-inner{inset:1px;}
+.lg-layer-one,
+.lg-capsule-layer-one{background:linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08));}
+.lg-layer-two,
+.lg-capsule-layer-two{background:radial-gradient(circle at 30% 22%, rgba(255,255,255,0.58), transparent 38%),linear-gradient(135deg, rgba(255,255,255,0.2), transparent 48%);}
+.lg-layer-three,
+.lg-capsule-layer-three{box-shadow:inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -8px 14px rgba(255,255,255,0.08);}
+
+.nav-menu-btn{
+  width:46px;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  cursor:pointer;
+  position:relative;
+}
+.nav-menu-btn::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.nav-menu-btn:active::after{background:rgba(0,0,0,0.04);}
+.nav-menu-btn,
+.capsule-btn{border:none;}
+
+.nav-actions{
+  display:inline-flex;
+  align-items:center;
+  height:46px;
+}
+.capsule-btn{
+  position:relative;
+  z-index:2;
+  width:46px;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:none;
+  cursor:pointer;
+  position:relative;
+}
+.capsule-btn::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;pointer-events:none;
+  background:transparent;transition:background .1s;
+}
+.capsule-btn:active::after{background:rgba(0,0,0,0.05);}
+.capsule-divider{
+  width:1px;
+  height:20px;
+  align-self:center;
+  background:rgba(28,28,30,0.12);
+  position:relative;
+  z-index:2;
+}
+
+/* ── COMPOSER ────────────────────────────────────────────── */
+/* ── COMPOSER ───────────────────────────────────────────── */
+/* 输入框样式已迁移至 styles/composer.css（唯一出处）。
+ * 此处仅保留 :root 中的 --composer-* / --standalone-composer-* CSS 变量，
+ * 以及上方媒体查询里的 .composer 响应式 padding。 */
+
+/* ── SCROLL NAV ─────────────────────────────────────────── */
+.scroll-nav {
+  position: relative;
+  height: 0;
+  overflow: visible;
+  flex-shrink: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.scroll-nav.is-hidden {
+  display: none;
+}
+.scroll-nav-btn {
+  pointer-events: auto;
+  position: absolute;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 120px;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow:
+    0px 6px 24px 0px rgba(0, 0, 0, 0.05),
+    inset 0.8px 0.8px 0px 0px rgba(255, 255, 255, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, bottom 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+#scrollUp {
+  bottom: calc(10px + 36px + 8px);
+}
+#scrollDown {
+  bottom: 10px;
+}
+.scroll-nav-btn:hover {
+  opacity: 0.8;
+}
+.scroll-nav-btn:active {
+  opacity: 0.6;
+}
+.scroll-nav-btn.is-hidden {
+  display: none;
+}
+/* 入场初始态：纯渐显，无位移 */
+.scroll-nav-btn.is-appearing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Scroll Nav Tooltip ─────────────────────────────────── */
+.sn-tooltip {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  background: rgba(0,0,0,0.78);
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  animation: sn-tooltip-in 0.2s ease forwards;
+}
+@keyframes sn-tooltip-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.sn-tooltip.is-leaving {
+  animation: sn-tooltip-out 0.2s ease forwards;
+}
+@keyframes sn-tooltip-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* ============================================================
+   TAG — 共享排版组件：分类/状态/截图标注小标签
+   - 默认中性灰；如有彩色需求，加 .tag--accent / .tag--warn 等变体
+   - 用于 feature panel 截图角标、ask-question 题型药丸等场景
+   ============================================================ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: 0;
+  background: transparent;
+  color: #6e6e73;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  align-self: flex-start;
+  border: 1px solid rgba(0,0,0,0.1);
+}

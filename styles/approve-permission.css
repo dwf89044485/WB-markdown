@@ -1,0 +1,212 @@
+/* ── Approve Permission ──────────────────────────── */
+:root {
+  --ap-bg: #FFFFFF;
+  --ap-radius: 20px;
+  --ap-padding: 20px;
+  --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
+
+  --ap-text: #3D3D3D;
+  --ap-text-title: rgba(0, 0, 0, 0.9);
+  --ap-text-regular: 400;
+  --ap-text-medium: 500;
+  --ap-text-semibold: 600;
+  --ap-font: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ap-font-sm: 12px;
+  --ap-font-base: 14px;
+  --ap-font-title: 16px;
+  --ap-line-height: 24px;
+
+  --ap-warning-color: #B12B41;
+
+  --ap-option-bg: #FAFAFA;
+  --ap-option-selected-bg: #EBEBEB;
+  --ap-option-height: 46px;
+  --ap-option-radius: 10px;
+  --ap-option-gap: 10px;
+  --ap-option-padding: 10px;
+  --ap-option-text-gap: 6px;
+
+  --ap-num-size: 20px;
+  --ap-num-radius: 90px;
+  --ap-num-bg: #F2F2F2;
+  --ap-num-selected-bg: #3D3D3D;
+  --ap-num-color: #3D3D3D;
+  --ap-num-selected-color: #FFFFFF;
+
+}
+
+/* 卡片容器 — 替换 composer 显示在相同位置 */
+.approve-permission {
+  display: none;
+  padding: 0 var(--composer-padding-x) var(--composer-padding-bottom);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 11;
+}
+.approve-permission.is-active {
+  display: flex;
+}
+
+.ap-card {
+  width: 100%;
+  background: var(--ap-bg);
+  border-radius: var(--ap-radius);
+  box-shadow: var(--ap-shadow);
+  padding: var(--ap-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 标题与风险提示（总高 45） */
+.ap-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ap-title {
+  font-family: var(--ap-font);
+  font-weight: var(--ap-text-medium);
+  font-size: var(--ap-font-title);
+  line-height: 24px;
+  color: var(--ap-text-title);
+  margin: 0;
+}
+
+.ap-warning-line {
+  font-family: var(--ap-font);
+  font-weight: var(--ap-text-regular);
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--ap-warning-color);
+  margin: 0;
+}
+
+/* 描述区：上下各 16，文本 15/21 */
+.ap-desc-wrap {
+  padding: 16px 0;
+}
+
+.ap-desc-line {
+  font-family: var(--ap-font);
+  font-weight: var(--ap-text-regular);
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--ap-text);
+  margin: 0;
+  word-break: break-all;
+}
+
+/* 选项列表 */
+.ap-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ap-option-gap);
+  align-self: stretch;
+}
+
+/* 单个选项行 */
+.ap-option {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding: var(--ap-option-padding);
+  height: var(--ap-option-height);
+  background: var(--ap-option-bg);
+  border-radius: var(--ap-option-radius);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+  box-sizing: border-box;
+  gap: var(--ap-option-text-gap);
+}
+
+.ap-option.is-selected {
+  background: var(--ap-option-selected-bg);
+}
+
+/* 序号圆标 */
+.ap-option-num {
+  width: var(--ap-num-size);
+  height: var(--ap-num-size);
+  border-radius: var(--ap-num-radius);
+  background: var(--ap-num-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--ap-font);
+  font-weight: var(--ap-text-regular);
+  font-size: var(--ap-font-sm);
+  line-height: 24px;
+  color: var(--ap-num-color);
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ap-option.is-selected .ap-option-num {
+  background: var(--ap-num-selected-bg);
+  color: var(--ap-num-selected-color);
+  font-weight: var(--ap-text-semibold);
+}
+
+.ap-option-text {
+  font-family: var(--ap-font);
+  font-weight: var(--ap-text-regular);
+  font-size: var(--ap-font-base);
+  line-height: var(--ap-line-height);
+  color: var(--ap-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ap-option.is-selected .ap-option-text {
+  font-weight: var(--ap-text-semibold);
+}
+
+/* ── 静态快照（文档面板用）──────────────────── */
+.ap-static {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── 入场 / 出场动效 ── */
+@keyframes ap-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ap-slide-down {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+.ap-card.ap-entering {
+  animation: ap-slide-up 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+.ap-card.ap-leaving {
+  animation: ap-slide-down 0.25s ease-in-out forwards;
+}
+
+/* ── 重渲染静默 ── */
+.approve-permission.ap-settled .ap-card.ap-entering {
+  animation: none;
+}
+
+/* ── 文档面板 · 升降循环演示 ───────────────────────
+ * 总周期 3.55s = 升 0.3s + 停留 2s + 落 0.25s + 间隔 1s
+ * 时间百分比：升 8.45% / 停留至 64.79% / 落至 71.83% / 间隔至 100%
+ * 升起段沿用 cubic-bezier(0, 0, 0.2, 1)，落下段沿用 ease-in-out
+ */
+@keyframes ap-loop-rise-fall {
+  0%      { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+  8.45%   { opacity: 1; transform: translateY(0);    animation-timing-function: linear; }
+  64.79%  { opacity: 1; transform: translateY(0);    animation-timing-function: ease-in-out; }
+  71.83%  { opacity: 0; transform: translateY(100%); animation-timing-function: linear; }
+  100%    { opacity: 0; transform: translateY(100%); }
+}
+.fp-motion-stage[data-motion-loop="rise-fall-ap"] .ap-card {
+  animation: ap-loop-rise-fall 3.55s infinite;
+}

@@ -1,0 +1,52 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# AI / Agent config
+.agent
+.agents
+.claude
+.codebuddy
+.gstack
+.superpowers
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Documentation
+README.md
+AGENTS.md
+CLAUDE.md
+MARKDOWN_STYLE_TOKENS.md
+*.md
+docs
+
+# CI/CD
+.github
+.vercel
+vercel.json
+vercel-build.sh
+
+# Environment
+.env
+.env.local
+
+# Misc
+coverage
+.cache
+tmp
+temp
+design-notes.js

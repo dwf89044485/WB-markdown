@@ -1,0 +1,755 @@
+/* ============================================================
+   DEMO CONTROLS — Playback control bar outside phone shell
+   ============================================================ */
+
+/* ── Paper background panel (paper.design style) ───────── */
+/* 全屏高的左侧纸纹背景，纯装饰 */
+.paper-bg{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100vh;
+  background-image:url("../assets/paper/texture.png");
+  background-repeat:repeat;
+  z-index:0;
+  pointer-events:none;
+}
+.paper-bg::before{
+  content:'';
+  position:fixed;
+  top:0;
+  left:var(--layout-left-area-w);
+  right:0;
+  height:100vh;
+  background:rgba(255,255,255,0.3);
+  z-index:0;
+  pointer-events:none;
+}
+.paper-bg::after{
+  content:'';
+  position:fixed;
+  top:0;
+  left:var(--layout-left-area-w);
+  width:1px;
+  height:100vh;
+  background:#A6A59B;
+  z-index:1;
+  pointer-events:none;
+}
+
+/* ── Grid overlay: 网格虚线独立层 ────────────────────── */
+.grid-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  opacity:0.6;
+}
+
+/* ── Panel container ───────────────────────────────────────── */
+/* ── Toggle button (梯形拉手) ────────────────────────────────── */
+.dc-toggle{
+  position:relative;
+  z-index:1;
+  display:block;
+  margin:0 auto 0;
+  padding:0;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  line-height:0;
+  flex-shrink:0;
+}
+.dc-toggle img{ display:none; }
+.dc-toggle:not(.is-collapsed) .dc-toggle-open{ display:block; }
+.dc-toggle.is-collapsed .dc-toggle-close{ display:block; }
+
+/* 按钮底部 1px 重叠盖住面板顶边线 */
+.dc-toggle + .demo-controls{ margin-top:-2px; }
+
+.demo-controls{
+  --dc-control-height:30px;
+  --dc-control-radius:10px;
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  gap:0;
+  padding:20px 20px 20px;
+  background:
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    url("../assets/paper/texture.png");
+  background-repeat:no-repeat, repeat;
+  background-attachment:scroll, fixed;
+  border:none;
+  border-top:1px solid #BBBAB1;
+  border-radius:0;
+  box-shadow:none;
+  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
+  flex-shrink:0;
+  overflow:hidden;
+  max-height:600px;
+  transition:max-height .36s cubic-bezier(.32,.72,0,1),
+             opacity .36s ease,
+             padding .36s ease,
+             border-width .36s ease;
+}
+
+.demo-controls:not(.is-expanded){
+  max-height:0;
+  opacity:0;
+  padding-top:0;
+  padding-bottom:0;
+  border-width:0;
+}
+
+/* ── Left panel (30%) ───────────────────────────────────────── */
+.dc-left{
+  flex:4;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.dc-scene-title{
+  font-size:18px;
+  line-height:22px;
+  font-weight:600;
+  color:#000;
+  white-space:nowrap;
+}
+
+.dc-scene-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  flex:1;
+}
+
+.dc-scene-btn{
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  height:30px;
+  transition:background .12s ease;
+  font-size:12px;
+  line-height:22px;
+  color:rgba(0,0,0,.7);
+  padding:0 4px;
+}
+
+.dc-scene-btn:hover{ background:rgba(0,0,0,0.04); }
+.dc-scene-btn:active{ background:rgba(0,0,0,0.08); }
+.dc-scene-btn.is-active{
+  background:#3B3B3B;
+  color:#fff;
+  font-weight:600;
+}
+
+/* ── Divider ────────────────────────────────────────────────── */
+.dc-divider{
+  width:1px;
+  align-self:stretch;
+  background:rgba(0,0,0,0.08);
+  margin:0 16px;
+}
+
+/* ── Right panel (70%) ──────────────────────────────────────── */
+.dc-right{
+  flex:6;
+  display:flex;
+  flex-direction:column;
+}
+
+.dc-main{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* ── Row ───────────────────────────────────────────────────── */
+.dc-row{
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:4px;
+}
+
+/* ── Tweak row ──────────────────────────────────────────────── */
+.dc-row-tweak{
+  justify-content:space-between;
+  gap:0;
+}
+.dc-tweak-labels{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  flex-shrink:0;
+}
+.dc-tweak-title{
+  font-size:18px;
+  line-height:22px;
+  font-weight:600;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#000;
+}
+.dc-tweak-hash{
+  font-size:13px;
+  line-height:18px;
+  font-weight:200;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#8e8e93;
+}
+.dc-tweak-reload{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  height:22px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:13px;
+  line-height:22px;
+  font-weight:400;
+  font-family:'PingFang SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  color:#000;
+  flex-shrink:0;
+  padding:0;
+}
+.dc-tweak-reload svg{
+  width:14px;
+  height:14px;
+  display:block;
+  flex-shrink:0;
+}
+.dc-tweak-reload svg path{ fill:#000; }
+.dc-tweak-reload:active{ opacity:.6; }
+
+/* ── Token 速度只读显示 ────────────────────────────────────── */
+.dc-speed-ro{
+  display:flex;
+  flex:0 1 auto;
+  width:63px;
+  justify-content:center;
+  align-items:center;
+  height:var(--dc-control-height);
+  padding:0 12px;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+}
+.dc-speed-ro-value{
+  font-size:12px;
+  flex:1 1 0px;
+  font-weight:500;
+  line-height:22px;
+  color:#000;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0.5px;
+}
+
+.dc-pill,
+.dc-segment,
+.dc-speed-track,
+.dc-icon-btn{
+  border-radius:var(--dc-control-radius);
+}
+
+@supports (corner-shape: squircle) {
+  .dc-pill,
+  .dc-segment,
+  .dc-speed-track,
+  .dc-icon-btn,
+  .dc-seg-btn{
+    border-radius:var(--dc-control-radius);
+    corner-shape:superellipse(2);
+  }
+}
+
+/* ── Label ─────────────────────────────────────────────────── */
+.dc-label{
+  flex-shrink:0;
+  font-size:13px;
+  font-weight:500;
+  color:#000;
+  line-height:22px;
+  letter-spacing:0;
+  white-space:nowrap;
+}
+
+/* ── Pill buttons (Row 1: 上一步/自动播放/下一步) ─────────── */
+.dc-pills{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+}
+
+.dc-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:var(--dc-control-height);
+  padding:0;
+  border:0;
+  background:#EBEBEB;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
+  font-weight:500;
+  line-height:22px;
+  cursor:pointer;
+  outline:none;
+  white-space:nowrap;
+  transition:background .12s ease,color .12s ease;
+}
+
+#ctrlPrevStep,
+#ctrlNextStep,
+#ctrlAutoStep{
+  flex:1;
+  width:auto;
+}
+
+/* ── Auto button icon toggle ─────────────────────────── */
+.dc-pill .dc-play-icon  { display:inline; }
+.dc-pill .dc-pause-icon { display:none; }
+.dc-pill.is-active .dc-play-icon  { display:none; }
+.dc-pill.is-active .dc-pause-icon { display:inline; }
+
+.dc-pill:disabled{
+  opacity:.35;
+  cursor:default;
+}
+
+.dc-pill:hover:not(:disabled):not(.is-active){ background:#E2E2E2; }
+.dc-pill:active:not(:disabled):not(.is-active){ background:#DADADA; }
+.dc-pill.is-active:hover:not(:disabled){ background:#4A4A4A; }
+.dc-pill.is-active:active:not(:disabled){ background:#555; }
+
+.dc-pill.is-active{
+  background:#3B3B3B;
+  color:#fff;
+  font-weight:600;
+}
+
+/* ── Segmented control (Row 2: 边框/文字/堆叠) ─────────────── */
+.dc-segment{
+  flex:1;
+  display:flex;
+  align-items:center;
+  height:var(--dc-control-height);
+  padding:0;
+  gap:0;
+  background:#EBEBEB;
+  overflow:hidden;
+}
+
+.dc-seg-btn{
+  flex:1;
+  height:var(--dc-control-height);
+  padding:0;
+  border:0;
+  border-radius:var(--dc-control-radius);
+  background:transparent;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
+  font-weight:500;
+  line-height:22px;
+  cursor:pointer;
+  outline:none;
+  white-space:nowrap;
+  transition:background .12s ease,color .12s ease;
+}
+
+.dc-seg-btn.is-active{
+  background:rgba(0,0,0,.75);
+  color:#fff;
+  font-weight:600;
+}
+
+.dc-seg-btn:hover:not(.is-active){ background:rgba(0,0,0,.06); }
+.dc-seg-btn:active:not(.is-active){ background:rgba(0,0,0,.1); }
+.dc-seg-btn.is-active:hover{ background:rgba(0,0,0,.82); }
+.dc-seg-btn.is-active:active{ background:rgba(0,0,0,.88); }
+
+/* ── Speed row (Row 3) ────────────────────────────────────── */
+.dc-speed{
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.dc-speed-track{
+  --speed-progress:81.6667%;
+  flex:1;
+  min-width:0;
+  height:var(--dc-control-height);
+  position:relative;
+  overflow:hidden;
+  background:#EBEBEB;
+  flex-shrink:1;
+}
+
+.dc-speed-track::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:var(--speed-progress);
+  background:rgba(0,0,0,.75);
+  border-radius:inherit;
+  corner-shape:inherit;
+  pointer-events:none;
+}
+
+.dc-speed-track::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:clamp(0px, calc(var(--speed-progress) - 13px), calc(100% - 3px));
+  width:3px;
+  height:14px;
+  border-radius:2px;
+  background:#fff;
+  transform:translateY(-50%);
+  pointer-events:none;
+}
+
+.dc-speed input[type="range"]{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:100%;
+  margin:0;
+  position:relative;
+  z-index:1;
+  background:transparent;
+  box-shadow:none;
+  border:none;
+  outline:none;
+  cursor:pointer;
+}
+
+.dc-speed input[type="range"]::-webkit-slider-runnable-track{
+  height:var(--dc-control-height);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+
+.dc-speed input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:var(--dc-control-height);
+  border:0;
+  box-shadow:none;
+  background:transparent;
+  margin-top:0;
+}
+
+/* 手机面板滑杆触控区域放大 */
+.pc-body .dc-speed input[type="range"]::-webkit-slider-thumb{
+  width:40px;
+}
+.pc-body .dc-speed input[type="range"]::-moz-range-thumb{
+  width:40px;
+}
+
+.dc-speed input[type="range"]::-moz-range-track{
+  height:var(--dc-control-height);
+  background:transparent;
+  border:0;
+}
+
+.dc-speed input[type="range"]::-moz-range-thumb{
+  width:18px;
+  height:var(--dc-control-height);
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+
+/* Icon button (refresh) */
+.dc-icon-btn{
+  width:var(--dc-control-height);
+  height:var(--dc-control-height);
+  padding:0;
+  border:0;
+  background:#EBEBEB;
+  color:rgba(0,0,0,.7);
+  cursor:pointer;
+  outline:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  position:relative;
+  transition:background .12s ease;
+}
+
+/* Touch target extension for mobile: 30→44px without visual change */
+@media (pointer: coarse) {
+  .dc-icon-btn::after{
+    content:'';
+    position:absolute;
+    inset:-7px;
+  }
+}
+
+.dc-icon-btn:hover{ background:#E2E2E2; }
+.dc-icon-btn:active{ background:#DADADA; }
+
+.dc-icon-btn svg{
+  width:16px;
+  height:16px;
+  display:block;
+}
+
+/* ── Orientation toggle ────────────────────────────────── */
+.dc-orientation-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  height:var(--dc-control-height);
+  padding:0 8px;
+  border:0;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
+  font-weight:500;
+  line-height:22px;
+  cursor:pointer;
+  outline:none;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:background .12s ease,color .12s ease;
+}
+.dc-orientation-btn:hover{ background:#E2E2E2; }
+.dc-orientation-btn:active{ background:#DADADA; }
+.dc-orientation-btn svg{
+  width:16px;
+  height:16px;
+  display:block;
+  flex-shrink:0;
+}
+
+/* ── Pad resolution dropdown ──────────────────────────────── */
+.dc-pad-select{
+  display:none;
+  height:var(--dc-control-height);
+  padding:0 22px 0 8px;
+  border:0;
+  border-radius:var(--dc-control-radius);
+  background:#EBEBEB;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
+  font-weight:500;
+  line-height:var(--dc-control-height);
+  cursor:pointer;
+  outline:none;
+  white-space:nowrap;
+  flex-shrink:0;
+  -webkit-appearance:none;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='rgba(0,0,0,.45)'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 7px center;
+  background-size:10px 6px;
+  transition:background-color .12s ease;
+}
+html.device-pad .dc-pad-select{ display:inline-block; }
+.dc-pad-select:hover{ background:#E2E2E2; }
+.dc-pad-select:active{ background:#DADADA; }
+
+/* ── Hash ──────────────────────────────────────────────────── */
+.dc-hash{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:13px;
+  line-height:22px;
+  font-weight:300;
+  color:#8e8e93;
+  letter-spacing:0;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+}
+.dc-hash-value{
+  font-weight:300;
+}
+
+/* ── Phone top sheet ───────────────────────────────────────── */
+.phone-controls{
+  position:absolute;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  opacity:0;
+  display:flex;
+  align-items:flex-start;
+  transition:opacity .3s ease;
+}
+.phone-controls.is-open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.pc-backdrop{display:none;}
+
+.pc-panel{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  max-height:60%;
+  pointer-events:auto;
+  background:#fff;
+  border-radius:0 0 34px 34px;
+  box-shadow:0 4px 24px rgba(0,0,0,.15);
+  transform:translateY(-100%);
+  transition:transform .36s cubic-bezier(.32,.72,0,1);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  --dc-control-height:30px;
+  --dc-control-radius:10px;
+}
+.phone-controls.is-open .pc-panel{transform:translateY(0);}
+
+.pc-body{
+  flex:1;
+  overflow-y:auto;
+  padding:34px 20px 0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
+}
+
+.pc-handle{
+  width:100%;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  cursor:pointer;
+  gap:0;
+  margin-top:auto;
+  padding:16px 0 28px;
+  position:relative;
+  z-index:1;
+}
+.pc-handle::before,
+.pc-handle::after{
+  content:"";
+  display:block;
+  width:28px;
+  height:4px;
+  background:#d7d7dc;
+  border-radius:2px;
+}
+.pc-handle::before{
+  transform:rotate(-24deg);
+  transform-origin:right center;
+  margin-right:-1px;
+}
+.pc-handle::after{
+  transform:rotate(24deg);
+  transform-origin:left center;
+  margin-left:-1px;
+}
+
+.phone-controls [data-phone-hide]{display:none;}
+
+/* ── Design notes panel ───────────────────────────────────── */
+.design-notes{
+  flex:1;
+  min-width:280px;
+  height:100%;
+  background:transparent;
+  border-radius:0;
+  border:none;
+  display:flex;
+}
+
+.design-notes-inner{
+  width:100%;
+  height:100%;
+  padding:0;
+  overflow:visible;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',sans-serif;
+}
+
+.design-notes-placeholder{
+  margin:auto;
+  font-size:15px;
+  font-weight:400;
+  color:#bbb;
+}
+
+.design-note-card{
+  background:#f8f8f8;
+  border-radius:12px;
+  border:1px solid #eee;
+  padding:14px 14px 12px;
+}
+
+.design-notes-title{
+  font-size:14px;
+  font-weight:600;
+  line-height:1.45;
+  color:#111;
+  margin:0 0 8px;
+}
+
+.design-notes-body{
+  margin:0;
+  font-size:13px;
+  line-height:1.65;
+  color:#434343;
+}
+
+.design-notes-list{
+  margin:10px 0 0;
+  padding-left:18px;
+}
+
+.design-notes-list li{
+  font-size:13px;
+  line-height:1.6;
+  color:#434343;
+}
+
+.design-notes-error{
+  background:#fff4f4;
+  border:1px solid #ffcaca;
+  color:#b42318;
+  border-radius:10px;
+  padding:12px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* ── Media query: compact layout on short screens ─────────── */
+/* ── Desktop wide layout: restore base.css intent (no gap between left/right) ─ */
+@media (min-width:600px){
+  .layout-main{gap:0;padding:0;}
+}
+
+@media (max-height:920px) and (min-width:901px){
+  .layout-main{padding:10px;gap:16px;}
+  .demo-controls{padding:16px;}
+  .dc-main{gap:14px;}
+  .design-notes{height:100%;min-width:240px;}
+}

@@ -1,0 +1,447 @@
+/* ============================================================
+ * COMPOSER — 输入框（唯一样式出处）
+ * ============================================================
+ * 职责：输入框容器、外壳、侧边按钮、停止按钮、占位文字及其动画。
+ * 状态用 class 驱动（.is-generating / 后续 .is-expanded / .is-fullscreen ...），
+ * JS 只 toggle class + 写 CSS 变量，不写 inline style。
+ *
+ * 加载顺序：index.html 中在 base.css 之后引入（确保覆盖正确）。
+ * 依赖的 CSS 变量（--composer-padding-x / --composer-padding-bottom /
+ * --composer-fade-height / --standalone-composer-padding-* ）仍定义在
+ * base.css 的 :root，本文件直接引用（CSS 变量全局可见）。
+ *
+ * 行号速查：
+ *   .composer 容器 + fade           → 见下方第一段
+ *   .composer-shell 外壳            → is-generating 等状态 class 挂在这里
+ *   .composer-side-btn 侧边按钮      → [+] / 麦克风 / 停止
+ *   .composer-stop-*  停止按钮        → 播放引擎 setComposerGenerating 控制
+ *   .composer-placeholder 占位文字
+ *
+ * 集成约定（勿改 class 名）：播放引擎 engine/player-state.js 的
+ * setComposerGenerating() 依赖 .composer-shell.is-generating 切换停止按钮，
+ * 并隐藏 .composer-placeholder。新 DOM 必须保留这些 class 与 #composerStopBtn。
+ * ============================================================ */
+
+.composer{
+  padding:0 var(--composer-padding-x) var(--composer-padding-bottom);
+  flex-shrink:0;
+  position:relative;
+  background:#fafafa;
+}
+.composer::before{
+  content:"";
+  position:absolute;
+  top:calc(var(--composer-fade-height) * -1);
+  left:0;right:0;
+  height:var(--composer-fade-height);
+  background:linear-gradient(to bottom,rgba(250,250,250,0) 0%,rgba(250,250,250,1) 100%);
+  pointer-events:none;
+  z-index:1;
+}
+.composer-shell{
+  position:relative;
+  z-index:10;
+  width:100%;
+  min-height:56px;          /* 设计稿：46 按钮 + 上下各 5 padding */
+  height:56px;
+  border-radius:28px;        /* 设计稿 borderRadius=28 */
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05), inset 1px 1px 0 0 rgba(255,255,255,1);
+  /* 始终 column：.cp-body（内容）在上、.cp-bar（按钮栏）在下。
+   * 单行态 .cp-body 折叠为 0、占位文字浮在 bar 里；激活态 .cp-body 展开成 textarea。
+   * 按钮栏 .cp-bar 始终在底部一行，单行↔激活切换时按钮 DOM 不动、不跳。 */
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  transition:
+    height 320ms cubic-bezier(0.22,1,0.36,1),
+    width 320ms cubic-bezier(0.22,1,0.36,1),
+    margin 320ms cubic-bezier(0.22,1,0.36,1),
+    border-radius 320ms cubic-bezier(0.22,1,0.36,1);
+}
+/* 多行态背景色（设计稿 18:5225：#FFFFFF，lineCount>=4 时保持白色） */
+.composer-shell.is-expanded.has-expand-handle{
+  background:#FFFFFF;
+}
+/* 激活态：高度由 JS 测量写入 --cp-height。
+ * 始终 justify-content:flex-end（单行态按钮栏贴底），
+ * 展开态用 margin-top:auto 把 .cp-bar 推到底部，
+ * 避免 justify-content 在 flex-end↔space-between 之间跳变导致按钮栏抖动。 */
+.composer-shell.is-expanded{
+  height:var(--cp-height, 108px);
+}
+.composer-shell.is-expanded .cp-bar{
+  margin-top:auto;
+}
+/* 语音整体淡出预留钩子（语音功能后续阶段接入）。 */
+.composer-shell.is-fading-out{
+  opacity:0;
+  transition:opacity 250ms cubic-bezier(0.32,0.72,0,1);
+}
+
+/* ── 内容区 .cp-body（设计稿 134804:2932）────────────────────
+ * 单行态隐藏；激活态 column：[chip(可选)] + [文字行 .cp-text-row]。
+ * 外层 padding 13/15/0。 */
+.cp-body{ display:none; }
+.composer-shell.is-expanded .cp-body{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  padding:13px 15px 0;
+}
+/* 文字行（设计稿 #2932 row）：[textarea flex:1] gap4 [展开手柄 26]，顶对齐 */
+.cp-text-row{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  width:100%;
+  gap:4px;
+}
+/* 单行态占位文字（bar 内，居中，flex:1 占满 + 与 mic 之间空隙） */
+.cp-bar-placeholder{
+  flex:1;
+  min-width:0;
+  text-align:center;
+  font-size:17px;
+  line-height:24px;
+  color:rgba(0,0,0,0.3);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  user-select:none;
+  pointer-events:none;
+}
+/* 激活态：隐藏 bar 内占位文字（内容交给 cp-body 的 textarea），bar 右侧按钮组靠右 */
+.composer-shell.is-expanded .cp-bar-placeholder{ display:none; }
+/* 生成中单行态：占位文字隐藏（给停止按钮让位视觉，与迁移前一致） */
+.composer-shell.is-generating:not(.is-expanded) .cp-bar-placeholder{ visibility:hidden; }
+
+/* ── 常驻按钮栏 .cp-bar（单行/激活共用，按钮不重建）──────────
+ * 始终 row、padding 5、[+] 左、右侧按钮组靠右。 */
+.cp-bar{
+  display:flex;
+  align-items:center;
+  width:100%;
+  padding:5px;
+  flex-shrink:0;
+}
+.cp-bar-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;            /* 设计稿默认间距 */
+  flex-shrink:0;
+}
+/* 有内容时发送按钮替换加号，wb-more↔send gap 为 6px（设计稿 EL-c26872e7） */
+.composer-shell.has-content .cp-bar-right{
+  gap:6px;
+}
+/* 激活态时占位文字不在 bar 占位，[+] 仍靠左、右侧组靠右（margin-left:auto 已保证） */
+
+/* ── 按钮容器统一 46×46，图标统一 20×20 ────────────────────── */
+.cp-tool-btn,
+.cp-send-btn,
+.cp-stop-btn{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:46px;height:46px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+  padding:0;
+  border-radius:23px;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+/* 所有工具图标统一 20×20，保持原始比例不拉伸 */
+.cp-tool-btn svg,
+.cp-tool-btn img,
+.cp-expand-handle svg,
+.cp-expand-handle img,
+.cp-fs-collapse svg,
+.cp-fs-collapse img{
+  width:20px;
+  height:20px;
+  display:block;
+  flex-shrink:0;
+  object-fit:contain;
+}
+/* 通用 press 态：撑满 46px 按钮 */
+.cp-tool-btn::after,
+.cp-send-btn::after,
+.cp-stop-btn::after{
+  content:""; position:absolute; inset:0;
+  border-radius:23px;
+  background:transparent;
+  transition:background .1s;
+  pointer-events:none;
+}
+.cp-tool-btn:active::after,
+.cp-send-btn:active::after,
+.cp-stop-btn:active::after{
+  background:rgba(60,60,67,0.12);
+}
+.cp-send-btn svg{ width:40px; height:40px; display:block; }
+
+/* 停止圆点：全局统一 40×40（与发送圆、设计稿一致）。 */
+.composer-stop-circle{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+  flex-shrink:0;
+}
+.composer-stop-icon{display:block;animation:composer-stop-spin 4s linear infinite;}
+@keyframes composer-stop-spin{
+  0%{transform:rotate(0deg);}
+  7.5%{transform:rotate(90deg);}
+  25%{transform:rotate(90deg);}
+  32.5%{transform:rotate(180deg);}
+  50%{transform:rotate(180deg);}
+  57.5%{transform:rotate(270deg);}
+  75%{transform:rotate(270deg);}
+  82.5%{transform:rotate(360deg);}
+  100%{transform:rotate(360deg);}
+}
+
+/* ── 右侧按钮三态显隐（mic 常驻；发送/停止按状态切换）──────────
+ *   无内容、非生成      → 仅 mic
+ *   有内容              → mic + 发送
+ *   生成中且无内容      → mic + 停止
+ * 发送与停止互斥，永不同屏；单行/激活共用同一组按钮，切换不跳。 */
+.cp-send-btn{ display:none; }
+.cp-stop-btn{ display:none; }
+.composer-shell.has-content .cp-send-btn{ display:flex; }
+.composer-shell.is-generating:not(.has-content) .cp-stop-btn{ display:flex; }
+
+/* ── Chip 标签（激活态，有 chip 时由 JS 注入 .cp-chip）──────── */
+.cp-chip-mount:empty{ display:none; }
+.cp-chip{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  margin-bottom:4px;
+  gap:6px;
+  padding:6px 10px 6px 8px;
+  background:#E7EFF4;
+  border-radius:100px;
+  border:none;
+  cursor:pointer;
+}
+.cp-chip-label{ display:flex; align-items:center; gap:3px; }
+.cp-chip-label svg{ width:15px; height:15px; color:#030303; }
+.cp-chip-text{ font-size:12px; line-height:16px; color:#030303; }
+.cp-chip-close{ width:10px; height:10px; opacity:.4; flex-shrink:0; }
+
+/* ── 激活态 textarea + 展开手柄 ───────────────────────────────
+ * textarea：flex:1 占满文字行剩余宽度，内层 padding 1px 4px（设计稿 #2933 text）。
+ * 顶对齐由 .cp-text-row 的 align-items:flex-start 实现。 */
+.cp-textarea{
+  display:none;             /* 单行态隐藏，激活态显示 */
+  min-width:0;
+  flex:1;
+  resize:none;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:17px;
+  line-height:24px;
+  max-height:200px;
+  overflow-y:auto;
+  font-family:"PingFang SC", "Helvetica Neue", sans-serif;
+  color:#000;
+  padding:1px 4px;          /* 设计稿内层 text frame padding */
+}
+.composer-shell.is-expanded .cp-textarea{ display:block; }
+.cp-textarea::placeholder{ color:rgba(0,0,0,0.3); }
+/* 展开手柄：行内 26×26（设计稿 #2935），lineCount<4 时用 visibility 隐藏但保留占位，
+ * 避免出现/消失时 textarea 宽度跳变。 */
+.cp-expand-handle{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+  position:relative;
+  visibility:hidden;
+  pointer-events:none;
+}
+.composer-shell.is-expanded.has-expand-handle .cp-expand-handle{
+  visibility:visible;
+  pointer-events:auto;
+}
+.cp-expand-handle::after{ content:""; position:absolute; inset:-9px; }
+
+/* ============================================================
+ * 全屏态（Batch 5）— 参数核对自附录 A.6.4 / chatboxgreen.tsx:267-300
+ * shell 撑满视口高、左右各溢出 26px（贴齐手机壳边缘），顶部留圆角、底部拉直。
+ * ============================================================ */
+
+/* 全屏蒙层：默认透明无交互；全屏态时压暗下方 navbar/对话区。
+ * z-index 高于 navbar(50)、低于全屏 composer。 */
+.cp-fs-backdrop{
+  position:fixed;
+  inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  z-index:60;
+  transition:opacity 300ms ease-out;
+}
+/* 全屏态 class 由 composer.js toggle 到 .composer 上（不用 :has()，兼容 iOS 13.4+）。 */
+.composer.cp-is-fullscreen .cp-fs-backdrop{
+  opacity:0.3;
+}
+/* 全屏态把整个 composer 提到 navbar 之上，确保 shell 盖住 navbar。
+ * 同时脱离 phone-shell 的 flex 流撑满整列（status-bar+对话区+composer），
+ * 作为内层 .composer-shell.is-fullscreen 的定位上下文（inset:0）。 */
+.composer.cp-is-fullscreen{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  padding:0;            /* 全屏态 shell 自己控制内边距，去掉 composer 默认 padding */
+  background:transparent;  /* 背景由内层 shell 和蒙层负责 */
+}
+/* 全屏态隐藏 composer 顶部渐变条（::before），避免在覆盖区露出灰边 */
+.composer.cp-is-fullscreen::before{ display:none; }
+
+.composer-shell.is-fullscreen{
+  /* 脱离 composer 文档流，相对 phone-shell（position:relative）撑满整列，
+   * 覆盖 status-bar / 对话区 / composer，工具栏自然落在 phone-shell 底部。
+   * 不用 100dvh：本原型在桌面用 transform:scale 预览手机壳，100dvh 取的是
+   * 桌面视口而非手机壳内部高度，坐标系错位会导致 shell 撑不开、工具栏被裁。 */
+  position:absolute;
+  inset:0;
+  height:auto;          /* 配合 top:0;bottom:0 自动撑满 composer，覆盖 expanded 的 var(--cp-height) 和基础 56px */
+  width:100%;
+  margin-inline:0;
+  border-radius:24px 24px 0 0;
+  align-items:stretch;
+  z-index:65;  /* 高于全屏蒙层(60)，确保白色卡片盖在蒙层之上 */
+}
+/* 全屏态顶部工具栏：默认隐藏，全屏时显示 */
+.cp-fs-topbar{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  padding:10px 20px 4px;
+  flex-shrink:0;
+}
+.composer-shell.is-fullscreen .cp-fs-topbar{ display:flex; }
+.cp-fs-clear{
+  font-size:14px;
+  line-height:24px;
+  color:rgba(0,0,0,0.4);
+  border:none;background:none;cursor:pointer;
+  padding:0;
+}
+.cp-fs-collapse{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  flex-shrink:0;
+  border:none;background:none;cursor:pointer;
+}
+.cp-fs-collapse::after{ content:""; position:absolute; inset:-9px; }
+
+/* 全屏态：cp-body 撑满剩余高度，textarea 填满 cp-body */
+.composer-shell.is-fullscreen .cp-body{
+  display:flex;
+  flex:1;
+  overflow:hidden;
+  padding:4px 20px 0;
+}
+.composer-shell.is-fullscreen .cp-text-row{
+  flex:1;
+  align-items:stretch;
+}
+.composer-shell.is-fullscreen .cp-textarea{
+  display:block;
+  flex:1;
+  height:100%;
+  max-height:none;
+  overflow-y:auto;
+  font-size:14px;
+  line-height:24px;
+  min-height:120px;
+  color:#1c1c1e;
+}
+/* 全屏态展开手柄不需要 */
+.composer-shell.is-fullscreen .cp-expand-handle{ display:none; }
+
+/* 全屏态：cp-bar 收到底部，flex 布局让按钮行自然撑开 */
+.composer-shell.is-fullscreen .cp-bar{
+  padding:5px 20px 20px;
+}
+/* 全屏态发送常显（覆盖默认 display:none）*/
+.composer-shell.is-fullscreen .cp-send-btn{ display:flex; }
+/* 全屏态右侧按钮组靠右，不走 absolute 避免脱离文档流 */
+.composer-shell.is-fullscreen .cp-bar-right{
+  margin-left:auto;
+  gap:10px;
+}
+
+/* ── wb-more 胶囊（Figma 10:4074）────────────────────────── */
+.cp-wb-more-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 14px;
+  background:#eff0f2;
+  border-radius:60px;
+  border:none;
+  cursor:pointer;
+  flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.cp-wb-more-btn:active{
+  opacity:0.7;
+}
+.cp-wb-icon{
+  width:23px;
+  height:20px;
+  display:block;
+  flex-shrink:0;
+}
+.cp-wb-separator{
+  width:0;
+  height:17px;
+  border-left:0.5px solid #868688;
+  flex-shrink:0;
+}
+.cp-wb-indicator{
+  width:18px;
+  height:18px;
+  display:block;
+  flex-shrink:0;
+}
+
+/* wb-more 胶囊显隐动效：与框体展开完全同步（320ms 同时长、无延迟）。
+ * 单行态 opacity:0 + 右移 20px 隐藏（不占布局空间），
+ * 展开态 opacity:1 + 归位，与 .composer-shell 高度展开同时发生。
+ * 用 visibility 替代 display:none，使 opacity/transform 可过渡。 */
+.cp-wb-more-btn {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(20px);
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0ms 320ms;
+  pointer-events: none;
+}
+.composer-shell.is-expanded .cp-wb-more-btn,
+.composer-shell.is-fullscreen .cp-wb-more-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0ms 0ms;
+  pointer-events: auto;
+}

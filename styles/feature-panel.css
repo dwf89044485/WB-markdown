@@ -1,0 +1,1797 @@
+/* ============================================================
+   FEATURE PANEL — 右侧交互说明栏样式
+   视觉方向：极简作品集风格（参考 Ines Maruchal）
+   - 衬线标题 + 无衬线正文
+   - 中性暖色调，慷慨留白
+   - 精致排版层级
+   ============================================================ */
+
+/* 容器 */
+.fp-root{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
+  color:#1a1a1c;
+  --fp-min-content-width:1000;
+}
+
+/* ── 顶部导航 ─────────────────────────────────────────────── */
+.fp-nav{
+  flex-shrink:0;
+  padding:20px 0 28px 64px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:0;
+  background-color:transparent;
+  background-image:none;
+  box-shadow:none;
+  border-bottom:1px solid rgba(0,0,0,0.12);
+}
+/* 区域标签：同 feature header h1 风格 */
+.fp-section-label{
+  font-family:Georgia,'Noto Serif SC','Songti SC',serif;
+  font-size:36px;
+  font-weight:400;
+  line-height:1.15;
+  color:#111114;
+  letter-spacing:-0.015em;
+  white-space:nowrap;
+  margin-bottom:18px;
+}
+/* Tab 标签栏 */
+.fp-tab-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.fp-tab{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:500;
+  line-height:1.3;
+  color:#6e6e73;
+  background:transparent;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:0;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  transition:color .15s ease,background .15s ease,border-color .15s ease;
+  letter-spacing:0.01em;
+}
+.fp-tab:hover{
+  color:#1a1a1c;
+  border-color:rgba(0,0,0,0.15);
+  background:rgba(0,0,0,0.02);
+}
+.fp-tab:active{
+  background:rgba(0,0,0,0.04);
+}
+.fp-tab.is-active{
+  color:#fff;
+  background:#1a1a1c;
+  border-color:#1a1a1c;
+}
+
+/* ── 内容区 ─────────────────────────────────────────────────── */
+.fp-content{
+  flex:1;
+  min-height:0;
+  overflow:visible;
+}
+/* 滚动容器：overflow-y:auto 会迫使 overflow-x 也 auto（CSS 规范）。
+   卡片阴影因此被裁切。解法：加 padding: 24px 让阴影落在 padding
+   区域内（overflow 裁切的是 content box，padding box 内可见）。 */
+#fpContent .fp-scroll.markdown-body{
+  overflow-y:auto;
+  overflow-x:auto;        /* 显式声明，消除歧义 */
+  padding:20px 32px 0 64px;         /* top:20px 与导航间距；left:64px 与导航对齐；≥32px 右侧为阴影留足空间 */
+  height:100%;
+  scrollbar-width:none;
+}
+#fpContent .fp-scroll.markdown-body::-webkit-scrollbar{
+  display:none;
+}
+/* 内层容器：max-width 由 JS 测量后设定，不受滚动条影响 */
+.fp-scroll-inner{
+  max-width:var(--fp-max-content-width, none);
+}
+
+.fp-subtitle{
+  font-size:15px;
+  color:#6e6e73;
+  margin:0 0 28px 0;
+  line-height:1.6;
+}
+.fp-meta{
+  font-size:12px;
+  color:#8a8a8f;
+  margin-top:8px;
+  letter-spacing:0.01em;
+}
+
+/* ── 锚点跳转按钮 ───────────────────────────────────────────── */
+.fp-anchor-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:500;
+  color:#5a5a5f;
+  background:transparent;
+  border:1px solid rgba(0,0,0,0.1);
+  border-radius:0;
+  cursor:pointer;
+  margin:6px 8px 6px 0;
+  transition:all .15s ease;
+  letter-spacing:0.02em;
+}
+.fp-anchor-btn:hover{
+  color:#1a1a1c;
+  border-color:rgba(0,0,0,0.2);
+  background:rgba(0,0,0,0.02);
+}
+.fp-anchor-btn::after{
+  content:'';
+  display:inline-block;
+  width:12px;
+  height:12px;
+  margin-left:2px;
+  background:currentColor;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6 4L10 8L6 12' stroke='%23000' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6 4L10 8L6 12' stroke='%23000' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  opacity:.6;
+}
+.fp-anchor-row{
+  display:flex;
+  flex-wrap:wrap;
+  margin:12px -4px;
+}
+
+/* 占位提示 */
+.fp-placeholder-block{
+  background:transparent;
+  border-left:2px solid rgba(0,0,0,0.1);
+  padding:14px 20px;
+  border-radius:0;
+  margin:20px 0;
+}
+.fp-placeholder-label{
+  font-size:11px;
+  color:#8a8a8f;
+  font-style:normal;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  font-weight:500;
+}
+.fp-placeholder-block p{
+  margin-bottom:0;
+}
+
+.fp-lead{
+  font-size:16px;
+  color:#3a3a3c;
+  line-height:1.65;
+  margin-bottom:20px;
+  max-width:65ch;
+}
+
+/* ── 组件快照（图文并茂）───────────────────── */
+
+/* 段落分割线 */
+.fp-feature section {
+  padding-bottom: 0;
+}
+.fp-feature section + section {
+  padding-top: 36px;
+  margin-top: 36px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+.fp-feature-header h1 {
+  width: var(--fp-feature-header-w, 718px);
+  padding: 0 0 12px 0;
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 36px;
+  line-height: 1.15;
+  font-weight: 400;
+  color: #111114;
+  letter-spacing: -0.015em;
+  border-radius: 0;
+  border-bottom: none;
+}
+.fp-feature h2 {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #111114;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.fp-feature h3 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #1a1a1c;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+.fp-feature h4 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #2c2c2e;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+/* 正文段落 */
+.fp-feature p {
+  line-height: 1.65;
+}
+.fp-feature li {
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   组件快照系统（Component Snapshot System）
+   用于在交互说明（Feature Panel）中嵌入 Demo 组件的实样展示。
+
+   使用方式：
+     1. 在 features/<id>.js 里用 labeled() 辅助函数生成快照块：
+        labeled('标题', componentHtml)
+        → 产生 <div.fp-snapshot-wrap><span.tag>标题</span><div.fp-snapshot>...</div></div>
+
+     2. 选择布局容器包裹一组快照块：
+        ┌────────────────────┬──────────────────────────────┐
+        │ 布局类              │ 用途                         │
+        ├────────────────────┼──────────────────────────────┤
+        │ fp-snapshot-side   │ 1 个快照 + 右侧文字描述        │
+        │ fp-snapshot-row    │ 多个快照单元横向平铺（数量不限） │
+        │ (直接使用 wrap)     │ 单个快照，无布局容器           │
+        └────────────────────┴──────────────────────────────┘
+
+       每个快照单元的内部结构：
+         ┌─────────────────────────────────┐
+         │ .fp-snapshot-wrap               │
+         │  ├─ .tag                        │ ← 标题角标
+         │  ├─ .fp-snapshot                │ ← 组件快照本体
+         │  └─ .fp-snapshot-caption (可选)  │ ← 底部描述文字
+         └─────────────────────────────────┘
+
+     3. 各 feature 在 CSS 中设定自己的组件宽度（可选）：
+        .fp-snapshot > .my-component { width: 350px }
+
+   核心规则（MUST）：
+     ─ 布局容器（fp-snapshot-row / fp-snapshot-side）禁止设置 overflow:hidden/auto/scroll，
+       否则带 box-shadow 的组件阴影会被裁切。
+     ─ 快照的左对齐由 .markdown-body 的 padding 统一保证，
+       布局容器不应再有水平 padding，否则与文字产生错位。
+     ─ 布局容器内部的 .fp-snapshot-wrap 只处理垂直间距（margin/padding），
+       不设水平 padding。
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fp-snapshot-wrap {
+  margin: 20px 0;
+  padding: 4px 0;
+  /* ⚠ 无水平 padding — 由 .markdown-body 统一提供左对齐 */
+}
+
+/* 截图角标走全局 .tag 组件，此处只控制 tag 与下方快照的间距 */
+.fp-snapshot-wrap > .tag {
+  margin-bottom: 12px;
+}
+
+/* tag + 锚点按钮同行摆放 */
+.fp-tag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.fp-tag-row > .tag {
+  margin-bottom: 0;
+}
+
+.fp-snapshot {
+  display: flex;
+  justify-content: flex-start;
+  /* 快照内的组件左对齐 */
+  pointer-events: none;    /* 快照仅展示，按钮不触发 Demo 区事件代理 */
+}
+.fp-snapshot > * {
+  flex-shrink: 0;           /* 防止组件宽度被挤压 */
+}
+/* 组件具体宽度由各 feature 文件自行控制，此处只设基础宽度避免 stretching */
+.fp-snapshot > .ask-question-card {
+  width: var(--aq-width, 350px);
+  min-width: var(--aq-width, 350px);
+}
+.fp-snapshot > .ap-card {
+  width: var(--app-width, 350px);
+  min-width: var(--app-width, 350px);
+}
+
+/* ── Code Block 快照（代码块卡片）────────── */
+/* .fp-snapshot 已加 md class（见 feature-panel.js），markdown.css 中
+   .md .wb-card 全套样式直接命中，无需在此重写。此处只保留：
+   1. 宽度控制（与 Demo 区代码块等宽）
+   2. 快照不折叠的覆盖规则（说明文档需完整展示代码） */
+
+/* 宽度与 Demo 区代码块一致 */
+.fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot > .tbl-outer.wb-card-visual,
+.fp-snapshot-row .fp-snapshot-wrap .fp-snapshot > .tbl-outer.wb-card-code,
+.fp-snapshot-row .fp-snapshot-wrap .fp-snapshot > .tbl-outer.wb-card-visual {
+  width: var(--cb-width, 360px);
+  min-width: var(--cb-width, 360px);
+}
+
+/* ── 快照内 pre/code 重置 ──────────────────────────────────
+   #fpContent .markdown-body pre/code（本文件底部）是为文档正文代码块
+   设计的，带 #fpContent ID 选择器，特异性高于 demo 的
+   .md .wb-card-body pre，会误伤组件快照：给 pre 加白底+边框（嵌套边框），
+   给 code 加渐变灰底。此处用更高特异性重置，让 demo 原始样式生效。
+   ──────────────────────────────────────────────────────── */
+#fpContent .markdown-body .fp-snapshot pre,
+#fpContent .markdown-body .wb-card-body pre {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 12px 14px;
+  margin: 0;
+  color: var(--md-text-primary, #1c1c1e);
+  font-size: var(--md-font-pre, 13px);
+}
+#fpContent .markdown-body .fp-snapshot code,
+#fpContent .markdown-body .wb-card-body code {
+  background-color: transparent;
+  background-image: none;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* 快照内代码区默认不折叠，完整展示用于说明 */
+.md .fp-snapshot .wb-card-body.is-collapsible {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.md .fp-snapshot .wb-card-body.is-collapsible.is-collapsed pre {
+  max-height: none;
+  overflow: visible;
+}
+.md .fp-snapshot .wb-card-body.is-collapsible::after {
+  display: none !important;
+}
+.md .fp-snapshot .wb-card-expand {
+  display: none !important;
+}
+
+/* ── 4.1 折叠与展开演示：恢复 Demo 原始折叠行为 ──────────
+   .fp-collapse-demo 标记的快照容器，让折叠态真正展示
+   限高 280px + 渐隐遮罩 + 展开按钮，与 Demo 区完全一致。
+   ──────────────────────────────────────────────────────── */
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed {
+  position: relative;
+  overflow: hidden !important;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed pre {
+  max-height: 280px;
+  overflow: hidden;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed::after {
+  display: block !important;
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 75%);
+  pointer-events: none;
+  border-radius: 0 0 10px 10px;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-expand {
+  display: flex !important;
+}
+.md .fp-snapshot.fp-collapse-demo .wb-card-body.is-collapsible.is-collapsed .wb-card-expand {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 0 0 12px;
+  z-index: 1;
+}
+
+/* ── 全屏查看预览：fp-fs-preview ─────────────────────────
+   复用 Demo 的 code-sheet-overlay / tbl-fullscreen-overlay DOM，
+   在说明栏内以"预览模式"展示。
+   原则：只控制容器尺寸和定位，不覆盖 Demo 组件的内部样式。
+   ──────────────────────────────────────────────────────── */
+.fp-fs-preview {
+  position: relative;
+  margin: 20px 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--md-border, #e9ecf1);
+  background: #f5f5f7;
+}
+.fp-fs-preview-label {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  z-index: 10;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--md-text-muted, #8e8e93);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* 底部 Sheet 预览：竖屏手机比例
+   直接包裹 renderStaticCodeSheet() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed/translateY 定位。 */
+.fp-fs-preview.fp-fs-sheet {
+  width: 320px;
+  min-width: 320px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-shrink: 0;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 200px;
+  background: #fff;
+  border: 1px solid #e9ecf1;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body pre {
+  margin: 0;
+  padding: 12px 14px;
+  height: 100%;
+  overflow: auto;
+  font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #1c1c1e;
+  background: transparent;
+  white-space: pre;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body pre code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+.fp-fs-preview.fp-fs-sheet .code-sheet-body iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* 横屏二级页预览：横屏手机比例
+   直接包裹 renderStaticTableFullscreen() 返回的真实 DOM，
+   .fp-static 标记静态预览态，覆盖 Demo 的 fixed 定位和进入动画。 */
+.fp-fs-preview.fp-fs-landscape {
+  width: 520px;
+  min-width: 520px;
+  height: 300px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fullscreen-overlay.fp-static {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  display: flex;
+  border-radius: 0;
+  animation: none;
+  height: 100%;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fs-nav {
+  height: 48px;
+  padding: 0 12px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-fs-content {
+  padding: 0 12px;
+}
+.fp-fs-preview.fp-fs-landscape .tbl-mermaid-fs {
+  padding: 16px;
+  min-height: 160px;
+}
+
+/* 全屏流程布局：对话流卡片 → 箭头 → 全屏预览 */
+.fp-fs-flow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  margin: 20px 0;
+  width: auto;
+}
+.fp-fs-flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+}
+.fp-fs-flow-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-text-muted, #8e8e93);
+  background: var(--md-bg-inset, #f0f0f5);
+  border: 1px solid var(--md-border, #d1d1d6);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* 全屏预览内按钮禁用态 */
+.fp-fs-preview .code-sheet-btn[disabled],
+.fp-fs-preview .code-sheet-btn-primary[disabled],
+.fp-fs-preview .tbl-fs-btn[disabled],
+.fp-fs-preview .tbl-fs-back[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Tool Call Node 快照（status line）────────── */
+.fp-tcn-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 360px;
+  padding: 4px 0;
+}
+/* 文字样式内联：状态章节的实样展示（无边框快照框、无 tag 标签）*/
+/* 视觉走 .tool-call-flat 约定：border: none, border-radius: 0, 无水平 padding */
+.fp-tcn-inline {
+  margin: 6px 0 14px;
+}
+.fp-content .fp-tcn-inline > .step-detail-link {
+  border: none;
+  border-radius: 0;
+  padding: var(--cv-status-padding-y) 0;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  /* 文档内纯展示，禁用点击以免误触发真实 sheet */
+  pointer-events: none;
+}
+.fp-content .fp-tcn-inline > .step-detail-link .status-chevron {
+  margin-left: 0;
+  padding-left: 4px;
+}
+/* 其他位置的状态行（fp-snapshot / fp-tcn-stack 内）保持默认边框样式不变 */
+/* 保障 Tool Call Node 扫光动画：status-fragments 的圆角不被 feature panel 覆盖 */
+.fp-content .step-detail-link.is-running .status-fragments{
+  border-radius:var(--cv-status-radius);
+}
+
+/* ── Tool Call Node 设计样式章节（3 模式循环 demo）────────── */
+.fp-tcn-modes {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  height: auto;
+}
+.fp-tcn-modes > .fp-snapshot-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: auto;
+  flex-shrink: 0;
+  padding: 2px 0;
+  margin: 0;
+}
+.fp-tcn-modes > .fp-snapshot-wrap > .tag {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  align-self: center;
+}
+.fp-tcn-modes > .fp-snapshot-wrap > .fp-snapshot {
+  flex: none;
+}
+.fp-tcn-mode-demo {
+  display: flex;
+  align-items: center;
+}
+/* 循环块里的状态行：基础（同 card 默认） */
+.fp-tcn-mode-demo .step-detail-link {
+  pointer-events: none;
+  width: 100%;
+}
+/* flat 和 stack 去边框 */
+.fp-tcn-mode-demo.tool-call-flat .step-detail-link,
+.fp-tcn-mode-demo.tool-call-stack .step-detail-link {
+  display: inline-flex;
+  width: auto;
+  justify-content: flex-start;
+  border: none;
+  border-radius: 0;
+  padding: var(--cv-status-padding-y) 0;
+  gap: 4px;
+}
+.fp-tcn-mode-demo.tool-call-flat .status-chevron,
+.fp-tcn-mode-demo.tool-call-stack .status-chevron {
+  margin-left: 0;
+  padding-left: 4px;
+}
+/* card 模式：保留基础边框，padding 略高，定宽匹配 demo */
+.fp-tcn-mode-demo.tool-call-card .step-detail-link {
+  padding: 7px var(--cv-status-padding-x);
+  width: var(--layout-shell-w);
+}
+
+/* ── Tool Call Node Sheet 静态快照 ────────── */
+.fp-sheet-mock {
+  width: 360px;
+  max-width: 100%;
+  border-radius: 34px 34px 0 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  background: #FAFAFA;
+}
+.fp-sheet-mock-detail {
+  background: #FAFAFA;
+}
+/* 文档里的 bottom-sheet：脱离 height:50%，按内容自适应 */
+.fp-content .fp-bottom-sheet-static {
+  height: auto;
+  position: relative;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+.fp-content .fp-bottom-sheet-static .sheet-body {
+  max-height: 380px;
+  overflow-y: auto;
+}
+.fp-content .fp-bottom-sheet-static .sheet-handle {
+  cursor: default;
+}
+
+/* 状态节描述文字（tag 下方、快照上方的简短说明） */
+.fp-state-desc {
+  font-size: 13px;
+  color: #6e6e73;
+  margin: 0 0 10px;
+  line-height: 1.55;
+}
+/* 状态节标签已合并到全局 .tag（见 base.css .tag） */
+
+/* ── Tool Call Node 状态 1.1 / 1.2 行排列 ────────── */
+.fp-states-row {
+  display: flex;
+  gap: 24px;
+  margin: 16px 0;
+}
+.fp-states-group {
+  flex: 1;
+  min-width: 0;
+}
+.fp-states-group > .tag {
+  margin-bottom: 12px;
+}
+.fp-states-inner-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.fp-states-inner-row > .fp-snapshot-wrap {
+  flex: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.fp-states-inner-row > .fp-snapshot-wrap > .tag {
+  flex-shrink: 0;
+  align-self: center;
+  margin-bottom: 0;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+.fp-states-inner-row > .fp-snapshot-wrap > .fp-tcn-inline {
+  margin: 0;
+}
+.fp-states-note {
+  font-size: 13px;
+  color: #424245;
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+
+/* ── Tool Call Node Sheet 并排展示 ────────── */
+.fp-sheet-pair {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 16px 8px;
+}
+.fp-sheet-pair-item {
+  display: flex;
+  flex-direction: column;
+  width: var(--layout-shell-w);
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.fp-sheet-pair-item .fp-sheet-mock {
+  width: 100%;
+  flex: 1;
+  min-height: 280px;
+}
+.fp-sheet-pair-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  padding-top: 28px;
+}
+.fp-sheet-pair-arrow span {
+  font-size: 24px;
+  color: #c7c7cc;
+  font-weight: 200;
+}
+/* Sheet 节标签已合并到全局 .tag（间距由外层 .fp-sheet-pair-item 控制） */
+
+/* 多个快照单元横向平铺（数量不限），宽度不足时自动折行 */
+.fp-snapshot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fp-row-gap, 30px);
+  margin: 16px 0;
+  align-items: flex-start !important;
+}
+.fp-snapshot-row > .fp-snapshot-wrap {
+  flex: none;
+  margin: 0;
+  align-self: flex-start;
+}
+/* row 上下文内，wrap 里首个可见内容元素清 top margin，保证真正顶对齐 */
+.fp-snapshot-row > .fp-snapshot-wrap > .fp-motion-diagram,
+.fp-snapshot-row > .fp-snapshot-wrap > h4,
+.fp-snapshot-row > .fp-snapshot-wrap > .tag {
+  margin-top: 0 !important;
+}
+/* 卡片高度不一时顶部对齐，避免拉伸 */
+.fp-snapshot-row.edge-scroll {
+  align-items: flex-start;
+}
+
+/* 快照底部描述 */
+.fp-snapshot-caption {
+  font-size: 13px;
+  color: #6e6e73;
+  line-height: 1.55;
+  margin-top: 10px;
+}
+
+/* 三列并排：快照 × 2 + 说明 */
+.fp-snapshot-trio {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.fp-snapshot-trio > .fp-snapshot-wrap {
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.fp-snapshot-trio-desc {
+  flex: 1;
+  min-width: 400px;
+  max-width: 400px;
+  padding-top: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #424245;
+}
+/* fp-snapshot-side-desc 在 fp-snapshot-trio 容器内时，固定宽度不压缩 */
+.fp-snapshot-trio > .fp-snapshot-side-desc {
+  flex: 0 0 400px;
+  min-width: 0;
+}
+.fp-snapshot-trio-desc h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: #1a1a1c;
+}
+.fp-snapshot-trio-desc h4:first-child {
+  margin-top: 0;
+}
+.fp-snapshot-trio-desc blockquote {
+  margin: 0 0 12px;
+  padding: 0 0 0 14px;
+  border-left: 3px solid #e8e8ed;
+}
+.fp-snapshot-trio-desc blockquote p {
+  font-size: 14px;
+  margin: 0;
+  color: #424245;
+  line-height: 1.65;
+}
+
+/* 卡片 + 文字描述 左右并排布局 */
+.fp-snapshot-side {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 16px 0;
+}
+.fp-snapshot-side > .fp-snapshot-wrap {
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.fp-snapshot-side > .fp-snapshot-wrap > .fp-snapshot > .ask-question-card {
+  width: var(--aq-width, 350px);
+  min-width: var(--aq-width, 350px);
+}
+.fp-snapshot-side-desc {
+  flex: 1;
+  min-width: 0;
+  padding-top: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #424245;
+}
+.fp-snapshot-side-desc h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 16px 0;
+  color: #1a1a1c;
+}
+.fp-snapshot-side-desc h4:first-child {
+  margin-top: 0;
+}
+.fp-snapshot-side-desc p,
+.fp-snapshot-side-desc li {
+  font-size: 14px;
+}
+.fp-snapshot-side-desc p {
+  margin: 0 0 6px;
+}
+.fp-snapshot-side-desc p:last-child {
+  margin-bottom: 0;
+}
+.fp-snapshot-side-desc ul {
+  margin: 0 0 6px;
+  padding-left: 18px;
+}
+.fp-snapshot-side-desc ul li {
+  margin-bottom: 4px;
+}
+.fp-snapshot-side-desc ul li:last-child {
+  margin-bottom: 0;
+}
+.fp-snapshot-side-desc strong {
+  color: #1d1d1f;
+}
+
+/* ── 动效演示舞台（§5）─────────────────────────────────────
+ * 基础 stage 不写 overflow:hidden —— 遵循「布局容器不能裁阴影」
+ * 的总规则（见上文 §fp-snapshot-row 注释 第 279-281 行）。
+ * 5.1（rise-fall）：stage 完全不裁，靠 keyframe 内 opacity:0 让
+ *   卡片在 translateY(100%) 时同步消失，shadow 全程完整。
+ * 5.2（slide-cycle）：必须裁掉左右兄弟 pane，但通过 padding 把
+ *   shadow 挤进 content box 之外的 padding 区域 —— overflow:hidden
+ *   只裁 content box，padding 区域保留 shadow。
+ */
+.fp-motion-stage {
+  position: relative;
+  width: var(--aq-width, 350px);
+  border-radius: var(--aq-radius, 20px);
+  background: transparent;
+}
+/* 5.1 升降循环：卡片走普通流自然撑起 stage 高度，升降仅用 transform + opacity
+   驱动 —— transform 不影响布局占位，平移到 translateY(100%) 时 stage 不塌陷，
+   且不需要写死 min-height（避免顶部空白）。 */
+.fp-motion-stage[data-motion-loop="rise-fall"] > .ask-question-card {
+  /* 占位走普通流；动画由 .ask-question-card 自身的 aq-loop-rise-fall 接管 */
+}
+/* 5.2 切题循环：padding 给 shadow 留容纳区，box-sizing:content-box 保证
+   pane 宽度仍是 var(--aq-width)；overflow:hidden 只裁 content box 外的
+   兄弟 pane，padding 区域不被裁，居中 pane 的 shadow 完整保留。 */
+/* 5.2 切题循环：高度由内部卡片自然撑起，不写死 height —— 与 5.1 保持一致。
+   padding 留给 box-shadow 容纳区（overflow:hidden 只裁 content box，padding
+   区域不被裁），box-sizing:content-box 保证卡片宽度仍是 var(--aq-width)。
+   滑切期间 runSlideTransition 内部会把 track height 同步为旧 body 高度，
+   stage 不需要参与。 */
+.fp-motion-stage--fixed {
+  box-sizing: content-box;
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* ── 原则指南专用组件 ────────────────────────────────────────── */
+
+/* 引言块 */
+.fp-lead-quote {
+  border-left: 2px solid rgba(0,0,0,0.12);
+  padding: 16px 22px;
+  margin: 0 0 32px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #3a3a3c;
+  background: transparent;
+  border-radius: 0;
+}
+.fp-lead-quote p {
+  margin-bottom: 8px;
+}
+.fp-lead-quote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Chat vs Agent 对比：左框 / VS / 右框 */
+.fp-compare-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  margin: 12px 0 24px;
+}
+.fp-compare-group {
+  margin: 0 0 48px;
+}
+.fp-compare-group .fp-lead-quote {
+  margin-top: 0;
+}
+.fp-compare-card {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #1a1a1c;
+  border-radius: 0;
+}
+.fp-compare-card--agent {
+  color: #f0f0f0;
+  background: #0e0e10;
+  border-color: #0e0e10;
+}
+.fp-compare-side {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid currentColor;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+.fp-compare-card--agent .fp-compare-side {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.fp-compare-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 24px;
+  margin-top: 4px;
+}
+.fp-compare-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 24px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+.fp-compare-field:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+.fp-compare-card--agent .fp-compare-field {
+  border-right-color: rgba(255, 255, 255, 0.18);
+}
+.fp-compare-key {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a8a8f;
+}
+.fp-compare-card--agent .fp-compare-key {
+  color: #a0a0a5;
+}
+.fp-compare-val {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 400;
+  color: inherit;
+}
+.fp-compare-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28px;
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8a8a8f;
+  user-select: none;
+}
+
+/* 总原则高亮块 */
+.fp-principle-summary {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  background: #1a1a1c;
+  color: #f0f0f0;
+  padding: 20px 24px;
+  border-radius: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.65;
+  margin: 16px 0 12px;
+  letter-spacing: 0.01em;
+}
+
+/* 结论引用块 */
+.fp-conclusion-quote {
+  border-left: 2px solid rgba(0,0,0,0.1);
+  padding: 16px 22px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #424245;
+  background: transparent;
+  border-radius: 0;
+  font-style: normal;
+}
+
+/* 原则卡片 */
+.fp-principle-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 20px;
+  margin: 24px 0;
+  padding: 24px 24px 24px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 0;
+}
+.fp-principle-number {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  color: #8a8a8f;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.fp-principle-body {
+  flex: 1;
+  min-width: 0;
+}
+#fpContent .fp-principle-card .fp-principle-body h2 {
+  margin: 0 0 10px;
+}
+#fpContent .fp-principle-card .fp-principle-body h3 {
+  margin: 0 0 10px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1c;
+}
+.fp-principle-body p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #424245;
+  margin: 0 0 12px;
+  max-width: 60ch;
+}
+.fp-principle-body ul {
+  padding: 0 0 0 14px;
+  margin: 8px 0 0;
+}
+.fp-principle-body ul li {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #424245;
+  margin-bottom: 4px;
+}
+
+/* 标题行：标题左侧 + 按钮右侧 */
+.fp-hdr-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.fp-hdr-row h2,
+.fp-hdr-row h3 {
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+/* ── Demo Control Button ────────────────────────────────
+   控制左侧 Demo 状态的统一按钮样式。
+   行为由 data-anchor（锚点跳转）或 data-action（自定义动作）决定。
+   使用 demoBtn() 辅助函数生成（engine/demo-btn.js）。
+   新增 button 直接 class="dc-btn" + data-anchor/data-action 即可。
+   ──────────────────────────────────────────────────── */
+.dc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 4px 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fff;
+  background: #2c2c2e;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s ease;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+.dc-btn:hover {
+  background: #3a3a3c;
+}
+.dc-btn svg {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+}
+.dc-btn-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* 操作按钮组：两个按钮横向排列 */
+.fp-action-btn-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* 操作按钮：深色紧凑型 */
+.fp-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fff;
+  background: #2c2c2e;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s ease;
+  letter-spacing: 0.02em;
+}
+.fp-action-btn:hover {
+  background: #3a3a3c;
+}
+.fp-action-btn svg {
+  flex-shrink: 0;
+}
+
+/* 备注 */
+.fp-note {
+  font-size: 13px !important;
+  color: #6e6e73 !important;
+  background: transparent;
+  border-left: 2px solid rgba(0,0,0,0.08);
+  padding: 12px 18px;
+  border-radius: 0;
+  margin-top: 16px !important;
+  line-height: 1.65 !important;
+}
+
+/* Do / Don't 两列 */
+.fp-do-dont {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+}
+.fp-do,
+.fp-dont {
+  flex: 1;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #1a1a1c;
+  border-radius: 0;
+  font-size: 15px;
+  background: transparent;
+}
+#fpContent .fp-do h3,
+#fpContent .fp-dont h3 {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 400;
+  margin: 0 0 10px;
+  color: inherit;
+}
+#fpContent .fp-do h3 { color: #28a745; }
+#fpContent .fp-dont h3 { color: #dc3545; }
+.fp-do ul,
+.fp-dont ul {
+  margin: 0;
+  padding-left: 16px;
+}
+.fp-do li,
+.fp-dont li {
+  line-height: 1.65;
+  margin-bottom: 4px;
+  color: #3a3a3c;
+}
+
+/* 好/坏示例对比 */
+.fp-example-compare {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+}
+.fp-example-good,
+.fp-example-bad {
+  flex: 1;
+  padding: 16px 18px;
+  border-radius: 0;
+  font-size: 13px;
+}
+.fp-example-good {
+  background: #f7fcf9;
+  border: 1px solid rgba(40,167,69,0.12);
+}
+.fp-example-bad {
+  background: #fdf7f7;
+  border: 1px solid rgba(220,53,69,0.12);
+}
+.fp-example-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+.fp-label-good { color: #28a745; }
+.fp-label-bad { color: #dc3545; }
+.fp-example-good ul,
+.fp-example-bad ul {
+  margin: 0;
+  padding-left: 16px;
+}
+.fp-example-good li,
+.fp-example-bad li {
+  line-height: 1.65;
+  margin-bottom: 4px;
+  color: #3a3a3c;
+  font-family: 'SF Mono', 'Menlo', monospace;
+}
+
+/* ── Override github-markdown.css for feature panel ────────── */
+/* 容器级样式 + 排版覆写（衬线标题 + 间距调优） */
+#fpContent .markdown-body {
+  background-color: transparent !important;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  color: #1a1a1c;
+  font-size: 15px;
+  line-height: 1.65;
+}
+/* 衬线标题覆写 */
+#fpContent .markdown-body h1 {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: #111114;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+#fpContent .markdown-body h2 {
+  font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #111114;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+#fpContent .markdown-body h3 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #1a1a1c;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+#fpContent .markdown-body h4 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #2c2c2e;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+/* 快照侧边说明中的 h4 覆盖上面的通用规则（同特异性，靠后优先） */
+#fpContent .fp-snapshot-side-desc h4,
+#fpContent .fp-snapshot-trio-desc h4 {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+#fpContent .markdown-body p {
+  margin-bottom: 14px;
+}
+#fpContent .markdown-body li {
+  line-height: 1.65;
+}
+#fpContent .markdown-body a {
+  color: #5a4a3a;
+  text-decoration: underline;
+  text-decoration-color: rgba(90,74,58,0.3);
+  text-underline-offset: 2px;
+}
+#fpContent .markdown-body a:hover {
+  color: #3a2e22;
+  text-decoration-color: rgba(58,46,34,0.5);
+}
+/* Mermaid 图：防止溢出内容区 */
+#fpContent .markdown-body .mermaid {
+  margin: 24px 0;
+  overflow-x: auto;
+  text-align: center;
+}
+/* 使用流程 ASCII 图 —— 底色与引用块一致 */
+#fpContent section[data-section="flow"] pre {
+  background-color: var(--blockquote-bg-color);
+  border: 1px solid var(--blockquote-border-color);
+  border-radius: 0;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+/* 表格样式微调 */
+#fpContent .markdown-body table {
+  border-color: rgba(0,0,0,0.06);
+}
+#fpContent .markdown-body table th {
+  font-weight: 600;
+  font-size: 13px;
+  color: #6e6e73;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background-color: transparent;
+}
+#fpContent .markdown-body table tr:nth-child(2n) {
+  background-color: #f9f8f6;
+}
+/* ── 快照内 .tbl 表格：覆盖 GitHub Markdown CSS 的全边框 ──────────
+   GitHub Markdown CSS 给 th/td 加 border:1px solid（网格线），
+   与 Demo 里只有横线的样式不符。此处按 markdown.css 的 .md .tbl 规则重置。
+   ─────────────────────────────────────────────────────────────────────────────── */
+#fpContent .markdown-body .tbl {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+#fpContent .markdown-body .tbl th {
+  border: none;
+  background: #f7f7f7;
+  color: var(--md-text-muted, #6e6e73);
+  font-size: var(--md-font-table-th, 13px);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+#fpContent .markdown-body .tbl td {
+  border: none;
+  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.08));
+  padding: 12px 16px;
+  color: var(--md-text-primary, #1a1a1c);
+  vertical-align: top;
+  white-space: nowrap;
+}
+#fpContent .markdown-body .tbl tr:last-child td {
+  border-bottom: none;
+}
+/* ── 表格卡片外壳（.tbl-outer.wb-card-table）────────────────────
+    markdown.css 中 .md .tbl-outer 等样式依赖 .md 前缀，
+    在 feature-panel（.markdown-body 上下文）中不生效，需在此覆写。
+   ────────────────────────────────────────────────────────────────── */
+#fpContent .markdown-body .tbl-outer.wb-card-table {
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid var(--md-border, #e9ecf1);
+  background: #fff;
+  overflow: hidden;
+}
+#fpContent .markdown-body .tbl-toolbar.wb-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  background: #f7f7f7;
+  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.06)) !important;
+}
+/* 表头行底线 —— 覆盖 GitHub Markdown CSS */
+#fpContent .markdown-body .tbl th {
+  border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.08)) !important;
+}
+#fpContent .markdown-body .tbl-toolbar-title.wb-card-title {
+  font-family: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--md-text-muted, #6e6e73);
+  white-space: nowrap;
+}
+#fpContent .markdown-body .tbl-toolbar-actions.wb-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+#fpContent .markdown-body .tbl-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+#fpContent .markdown-body blockquote {
+  border-left-color: rgba(0,0,0,0.1);
+  padding: 12px 20px 1px;
+  color: #424245;
+}
+/* 代码块 — 参考 fp-principle-card 卡片样式 */
+#fpContent .markdown-body pre {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 0;
+  padding: 16px 20px;
+  color: #424245;
+  margin-bottom: 24px;
+}
+#fpContent .markdown-body code {
+  font-size: 13px;
+  background-color: transparent;
+  background-image: linear-gradient(rgba(103, 96, 82, 0.12), rgba(103, 96, 82, 0.12));
+}
+/* 无序列表缩进与标题对齐 */
+#fpContent .markdown-body ul {
+  padding-left: 14px;
+}
+
+/* ============================================================
+ * Sheet 快照样式（仅供 Feature Panel §sheet 使用）
+ * ============================================================ */
+
+/* ── 快照容器：模拟手机壳内的 sheet 定位 ───────────────────
+ * live 版本 sheet 依赖 phone-shell 绝对定位，快照需要独立容器。
+ * 宽度固定 320px（与 ask-question 快照宽度对齐），高度自适应内容。
+ */
+.fp-sheet-shell-frame {
+  position: relative;
+  width: 320px;
+  height: 420px;
+  border-radius: var(--phone-radius, 38px);
+  overflow: hidden;
+  background: #f5f5f7;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* 让快照内的 sheet-overlay 覆盖整个 frame */
+.fp-sheet-shell-frame .sheet-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+}
+
+/* 快照内 bottom-sheet 的高度由 state class 控制，不受父级百分比影响 */
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height):not(.code-variant) {
+  height: 50% !important;
+}
+.fp-sheet-shell-frame .bottom-sheet:not(.auto-height).expanded:not(.code-variant) {
+  height: 90% !important;
+}
+
+/* ── 拖拽状态机示意图（§3.3）────────────────────────────── */
+.fp-motion-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 24px 0;
+  padding: 32px 20px;
+  background: #f5f5f7;
+  border-radius: 12px;
+}
+.fp-motion-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 24px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  min-width: 120px;
+}
+.fp-motion-state .tag {
+  font-size: 13px;
+  font-weight: 600;
+}
+.fp-motion-state .fp-motion-hint {
+  font-size: 12px;
+  color: #86868b;
+  margin: 0;
+  text-align: center;
+}
+.fp-motion-arrow {
+  font-size: 18px;
+  color: #86868b;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+ * Sheet 动效循环（仅供 Feature Panel §4 使用，不影响真实运行时）
+ * ============================================================
+ * 4.1 进出动效循环：总周期 4s
+ *   升起 0.36s（9%）→ 停留 2s（50%）→ 落下 0.36s（9%）→ 间隔 1.28s（32%）
+ *   沿用真实参数：overlay opacity 0.28s ease，sheet transform 0.36s cubic-bezier(0.32,0.72,0,1)
+ */
+@keyframes fp-sheet-loop-rise-fall {
+  0%      { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  9%      { opacity: 1; transform: translateY(0);    animation-timing-function: linear; }
+  59%     { opacity: 1; transform: translateY(0);    animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  68%     { opacity: 0; transform: translateY(100%); animation-timing-function: linear; }
+  100%    { opacity: 0; transform: translateY(100%); }
+}
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"] .bottom-sheet {
+  animation: fp-sheet-loop-rise-fall 4s infinite;
+}
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"],
+.fp-motion-stage[data-motion-loop="sheet-expand"] {
+  width: auto;
+  overflow: hidden;
+}
+/* 遮罩同步淡入淡出，比浮层略快（0.28s vs 0.36s），与真实参数一致 */
+@keyframes fp-sheet-loop-overlay {
+  0%      { opacity: 0; animation-timing-function: ease; }
+  7%      { opacity: 1; animation-timing-function: linear; }
+  59%     { opacity: 1; animation-timing-function: ease; }
+  66%     { opacity: 0; animation-timing-function: linear; }
+  100%    { opacity: 0; }
+}
+.fp-motion-stage[data-motion-loop="sheet-rise-fall"] .sheet-overlay {
+  animation: fp-sheet-loop-overlay 4s infinite;
+}
+
+/* 4.2 展开/折叠动效循环：总周期 3s
+ *   折叠停留 1s（33%）→ 展开 0.32s（10.7%）→ 展开停留 0.8s（26.7%）→ 折叠 0.32s（10.7%）→ 间隔 0.56s（18.6%）
+ *   沿用真实参数：height 0.32s cubic-bezier(0.32,0.72,0,1)
+ */
+@keyframes fp-sheet-loop-expand {
+  0%      { height: 50%; animation-timing-function: linear; }
+  33%     { height: 50%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  43.7%   { height: 90%; animation-timing-function: linear; }
+  70.4%   { height: 90%; animation-timing-function: cubic-bezier(0.32,0.72,0,1); }
+  81.1%   { height: 50%; animation-timing-function: linear; }
+  100%    { height: 50%; }
+}
+.fp-motion-stage[data-motion-loop="sheet-expand"] .bottom-sheet {
+  animation: fp-sheet-loop-expand 3s infinite;
+}
+
+/* ============================================================
+ * 代码 Sheet 快照样式（§2.2 构成对比中使用）
+ * 代码 Sheet 快照由 renderStaticCodeSheetShell 生成，结构为：
+ *   .fp-sheet-shell-frame
+ *     └── .sheet-overlay.vis.show
+ *         └── .bottom-sheet.code-variant
+ *             ├── .code-sheet-header
+ *             └── .code-sheet-body
+ * 直接放在 .fp-snapshot 内，通过 .fp-sheet-shell-frame 约束尺寸。
+ * ============================================================ */
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant {
+  position: relative;
+  width: 100%;
+  transform: none;
+  border-radius: 34px 34px 0 0;
+  box-shadow: none;
+}
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant .code-sheet-body {
+  overflow-y: auto;
+  max-height: none;
+  flex: 1;
+}
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet.code-variant .code-sheet-body pre {
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 12px 14px;
+}
+
+/* ── 构成章节（图文上下） ─────────────────────────────── */
+.fp-anatomy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+.fp-anatomy-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.fp-anatomy-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f0f0f2;
+  font-size: 13px;
+  color: #86868b;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+.fp-anatomy-item h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1c;
+}
+.fp-anatomy-item p {
+  margin: 0;
+  color: #515154;
+  font-size: 14px;
+  line-height: 1.5;
+}
+/* scroll-nav 快照等高等齐 */
+.fp-snapshot-row--eq-height {
+  align-items: stretch;
+}
+.fp-snapshot-row--eq-height .fp-snapshot-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.fp-snapshot-row--eq-height .fp-snapshot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ============================================================
+ * Sheet 内容类型快照（Sheet Content）
+ * ============================================================ */
+/* Sheet 外壳快照容器 — 使用 renderStaticSheetShell 输出
+ * 宽度由 renderStaticSheetShell 的 width 参数控制（内联样式），
+ * CSS 不覆盖，让各 feature 自行控制宽度 */
+.fp-snapshot .fp-sheet-shell-frame {
+  flex-shrink: 0;
+}
+/* Sheet 外壳快照中的 sheet-body 限制高度 */
+.fp-snapshot .fp-sheet-shell-frame .sheet-body {
+  max-height: 260px;
+  overflow-y: auto;
+}
+/* 构成章节解剖快照：按 50% 真实高度展示 sheet-body，不截断 */
+.fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-body {
+  max-height: none;
+}
+/* 二级详情快照 */
+.fp-snapshot .sd-container {
+  width: 340px;
+  min-width: 340px;
+}
+/* 二级详情快照内的 sd-card 代码变体 */
+.fp-snapshot .sd-variant-code {
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 120px;
+  overflow-y: auto;
+}
+/* 空状态快照内 sheet-empty 居中 */
+.fp-snapshot .sheet-empty {
+  width: 100%;
+  min-width: auto;
+  padding: 30px 20px;
+  text-align: center;
+  color: #86868b;
+  font-size: 13px;
+}
+/* 确保 fp-snapshot 内 Sheet 外壳快照正确布局
+ * 移除了 !important 覆盖，让 renderStaticSheetShell 的内联样式（position:absolute;inset:0）
+ * 和参数（width/height/state）完全控制布局 */
+.fp-snapshot .fp-sheet-shell-frame {
+  position: relative;
+}
+.fp-snapshot .fp-sheet-shell-frame .sheet-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
+/* 构成章节的 Sheet 快照需展示遮罩，以匹配真实 Demo 外观 */
+.fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-overlay {
+  background: rgba(0,0,0,0.30) !important;
+  backdrop-filter: blur(10px) !important;
+}
+.fp-snapshot .fp-sheet-shell-frame .bottom-sheet {
+  transform: translateY(0) !important;
+  position: relative !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06) !important;
+}
+/* 事件行列表容器（renderStaticSheet 返回的多个 s-row 直接平铺） */
+.fp-snapshot-wrap .fp-snapshot {
+  flex-direction: column;
+  gap: 4px;
+}

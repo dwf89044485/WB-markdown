@@ -1,0 +1,232 @@
+// ============================================================
+// SCROLL-NAV — 快速滚动按钮（↑ ↓）交互设计文档（图文并茂版）
+// ============================================================
+// 快照：由 engine/scroll-nav.js 的 renderStaticScrollNav() 实时渲染
+//       改左边组件样式 → 右边文档自动同步
+// ============================================================
+
+import { renderStaticScrollNav } from '../engine/scroll-nav.js';
+
+const snapCache = {};
+function snap(key, opts) {
+  if (!snapCache[key]) snapCache[key] = renderStaticScrollNav(opts);
+  return snapCache[key];
+}
+
+function getSnapshots() {
+  return {
+    // §2 构成：两个按钮都可见
+    bothVisible: snap('bothVisible', { upVisible: true, downVisible: true }),
+    // §2 构成：只显示 ↑（在底部）
+    onlyUp: snap('onlyUp', { upVisible: true, downVisible: false }),
+    // §2 构成：只显示 ↓（在顶部）
+    onlyDown: snap('onlyDown', { upVisible: false, downVisible: true }),
+    // §2 构成：全部隐藏
+    bothHidden: snap('bothHidden', { upVisible: false, downVisible: false }),
+
+    // §4 交互：双击后出现的教学提示（↑ 按钮）
+    tooltipUp: snap('tooltipUp', { upVisible: true, downVisible: true, tooltip: { on: 'up', text: '双击可跳转顶部' } }),
+    // §4 交互：教学提示（↓ 按钮）
+    tooltipDown: snap('tooltipDown', { upVisible: true, downVisible: true, tooltip: { on: 'down', text: '双击可跳转底部' } }),
+
+  };
+}
+
+// 辅助：带标签的快照块
+function labeled(label, html, desc, width, height, alignSelf) {
+  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const rightPart = descHtml;
+  const styles = [];
+  if (width) styles.push(`width:${width}px`);
+  if (height) styles.push(`height:${height}px`);
+  if (alignSelf) styles.push(`align-self:${alignSelf}`);
+  const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
+  return `<div class="fp-snapshot-wrap"${styleAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
+}
+
+// 辅助：并排快照
+function labeledRow(items) {
+  return `<div class="fp-snapshot-row">${items.map(i => labeled(i.label, i.html, i.desc, i.width, i.height, i.alignSelf)).join('')}</div>`;
+}
+
+// 实际锚点目标：nodeIndex 2（含多轮对话，滚动按钮可见）
+// 滚动按钮在 playback 多轮对话后出现，resolveNodeStep 换算 timeline 索引
+const STEP_SCROLL_VISIBLE = 2;
+
+export default {
+  id: 'scroll-nav',
+  type: 'feature',
+  label: '快速滚动',
+  anchors: {
+    'buttons-appear': {
+      nodeIndex: STEP_SCROLL_VISIBLE,
+      actionOffset: 0,
+      until: () => {
+        const up = document.getElementById('scrollUp');
+        return up && !up.classList.contains('is-hidden');
+      },
+      label: '看滚动按钮出现',
+    },
+    'single-click-up': {
+      nodeIndex: STEP_SCROLL_VISIBLE,
+      actionOffset: 0,
+      until: () => {
+        const up = document.getElementById('scrollUp');
+        return up && !up.classList.contains('is-hidden');
+      },
+      label: '看单击 ↑ 跳转',
+    },
+    'double-click-tooltip': {
+      nodeIndex: STEP_SCROLL_VISIBLE,
+      actionOffset: 0,
+      until: () => {
+        const up = document.getElementById('scrollUp');
+        return up && !up.classList.contains('is-hidden');
+      },
+      label: '看双击提示',
+    },
+  },
+  get content() {
+    const s = getSnapshots();
+    return `
+    <article class="fp-feature">
+      <header class="fp-feature-header">
+        <h1>快速滚动</h1>
+        <p class="fp-subtitle">按轮次跳转 · 两个毛玻璃圆形按钮悬浮在对话右下角，输入框上方</p>
+      </header>
+
+      <section data-section="overview">
+        <h2>1. 概述</h2>
+        <h3>定义</h3>
+        <p>快速滚动按钮是悬浮在对话区域的<strong>向上/向下快捷导航</strong>，让用户在不拖拽滚动条的情况下，按「轮次」快速跳转对话位置。</p>
+        <h3>使用场景</h3>
+        <ul>
+          <li>对话较长时，快速回到上一轮或跳到最新一轮</li>
+          <li>用户想顶部查看初始指令，或底部查看 agent 最新回复</li>
+          <li>流式输出时，用户想自由翻阅历史而不被自动滚底打断</li>
+        </ul>
+        <h3>设计目标</h3>
+        <p>让<strong>长对话中的导航</strong>成为一种<strong>可感知、低认知成本</strong>的操作。</p>
+      </section>
+
+      <section data-section="anatomy">
+        <h2>2. 按钮构成（结构）</h2>
+        <h3>显隐规则</h3>
+        <p>只取决于滚动位置，让不需要的按钮自动消失：</p>
+        <table>
+          <thead><tr><th>滚动位置</th><th>↑</th><th>↓</th></tr></thead>
+          <tbody>
+            <tr><td>对话在顶部</td><td>消失</td><td>可见</td></tr>
+            <tr><td>翻到中间</td><td>可见</td><td>可见</td></tr>
+            <tr><td>对话在底部</td><td>可见</td><td>消失</td></tr>
+          </tbody>
+        </table>
+        <p><strong>例外</strong>：表格全屏时强制隐藏；对话不足一轮整体隐藏；输入框激活/全屏态时禁用。</p>
+        <div class="fp-snapshot-row fp-snapshot-row--eq-height">
+          ${labeled('对话在顶部时', s.onlyDown, null, 260, 200, 'auto')}
+          ${labeled('对话在中间时', s.bothVisible, null, 260, 200, 'auto')}
+          ${labeled('对话在底部时', s.onlyUp, null, 260, 200, 'auto')}
+        </div>
+      </section>
+
+      <section data-section="interaction" id="sec-interaction">
+        <h2>3. 交互与状态</h2>
+
+        <h3>3.1 ↑ 向上按钮</h3>
+
+        <h4>单击</h4>
+        <p>根据用户消息是否在可视区域内：</p>
+        <ul>
+          <li><strong>在可视区内</strong>：定位上一条对话，并将上条对话 User 消息置于可视区顶部</li>
+          <li><strong>不在可视区内</strong>：定位本轮对话，并将本轮对话 User 消息置于可视区顶部</li>
+        </ul>
+
+        <h4>双击</h4>
+        <p>直接跳转至顶部。<strong>首次双击</strong>，Pop 提示"双击可跳转顶部"，此后静默执行。</p>
+
+        <h4>连续点击</h4>
+        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转顶部"。</p>
+
+        <div class="fp-snapshot-row">
+          ${labeled('双击', s.tooltipUp, '出现教学提示，2.5s 后自动淡出', 260.114)}
+        </div>
+
+        <h3>3.2 ↓ 向下按钮</h3>
+
+        <h4>单击</h4>
+        <p>跳到下一轮开头；已是最后一轮则直接滚到对话底部。</p>
+
+        <h4>双击</h4>
+        <p>直接跳转至底部。<strong>首次双击</strong>，Pop 提示"双击可跳转底部"，此后静默执行。</p>
+
+        <h4>连续点击</h4>
+        <p>每次点击不在双击阈值内（&gt;300ms）但 &lt;600ms，连续 2 次以上，即出 Pop 提示"双击可跳转底部"。</p>
+
+        <div class="fp-snapshot-row">
+          ${labeled('双击', s.tooltipDown, '', 260.109)}
+        </div>
+
+        <h3>3.3 滚动保护</h3>
+        <p>Agent 流式输出时，通过 ↑↓ 翻页会临时阻止自动滚底——用户在 Agent 输出的同时可以自由翻阅历史，不会被打断。</p>
+      </section>
+
+      <section data-section="motion">
+        <h2>4. 动效</h2>
+        <p>快速滚动按钮有两个动效：按钮的入场出现，以及点击后的平滑滚动。</p>
+
+        <h3>4.1 按钮入场</h3>
+        <p>按钮从隐藏变为显示时，使用<strong>纯渐显（opacity 0→1）</strong>，无位移。这样按钮「出现」但不会突然移动内容位置，避免干扰阅读。</p>
+        <table>
+          <thead><tr><th>参数</th><th>值</th><th>意图</th></tr></thead>
+          <tbody>
+            <tr><td>动画类型</td><td>opacity 0 → 1</td><td>纯渐显，无位移，不打断阅读流</td></tr>
+            <tr><td>时长</td><td>由浏览器默认 transition（opacity）</td><td>短促出现，不拖沓</td></tr>
+            <tr><td>离场</td><td>display: none（无动画）</td><td>消失不需要动画，减少状态管理复杂度</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.2 滚动过渡</h3>
+        <p>点击按钮后，对话容器使用 <code>scroll-behavior: smooth</code> 实现平滑滚动。动画期间内，临时阻止 Agent 流式输出的自动滚底，避免冲突。</p>
+        <table>
+          <thead><tr><th>参数</th><th>值</th><th>意图</th></tr></thead>
+          <tbody>
+            <tr><td>滚动方式</td><td><code>scrollTo({ behavior: 'smooth' })</code></td><td>原生平滑滚动，与系统滚动体验一致</td></tr>
+            <tr><td>保护时长</td><td>scrollend 事件 或 500ms 超时兜底</td><td>确保在滚动完成前，自动滚底不会中途插入</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section data-section="rationale">
+        <h2>5. 设计原理</h2>
+        <h3>为什么用「双击」而不是「长按」触发跳顶/跳底</h3>
+        <p>双击是一个<strong>已有用户心智</strong>的操作（如网页双击选中、文件双击打开）。长按需要等待系统反馈（Haptic Touch），且移动端长按容易与拖拽冲突。双击 300ms 内完成，感知成本低。</p>
+        <h3>为什么连续点击会触发教学提示</h3>
+        <p>用户在快速点击时，通常是在<strong>找快捷方式但不敢试</strong>。这时候弹出提示，比等用户自己发现双击更及时。每次符合「不在双击阈值内但 &lt;600ms」的连续点击都出提示，确保用户不会错过。</p>
+        <h3>为什么按钮入场用「纯渐显」而不是「从底部滑入」</h3>
+        <p>按钮出现在输入框上方，如果带位移，会让用户觉得「内容被顶上去了」。纯渐显让按钮「出现」但不「移动」，对阅读流的干扰最小。</p>
+      </section>
+
+      <section data-section="related">
+        <h2>6. Do / Don't</h2>
+        <div class="fp-do-dont">
+          <div class="fp-do">
+            <h3>Do</h3>
+            <ul>
+              <li>只在多轮对话时出现，避免单轮时按钮无意义。</li>
+              <li>教学提示用「操作 + 效果」的文案，让用户看完就知道双击能做什么。</li>
+              <li>滚动保护要在 scrollend 或超时后及时解除，避免永久阻止自动滚底。</li>
+            </ul>
+          </div>
+          <div class="fp-dont">
+            <h3>Don't</h3>
+            <ul>
+              <li>不要让按钮覆盖可点击区域（输入框、发送按钮等）。</li>
+              <li>不要给按钮离场做动画——消失就要彻底消失，避免残影。</li>
+              <li>不要在非用户操作时自动触发跳顶/跳底，这会让用户失去位置感。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </article>`;
+  },
+};

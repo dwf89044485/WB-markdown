@@ -182,6 +182,13 @@ function flipTransition(enter) {
     el.style.transition = '';
     el.style.transformOrigin = '';
     el.removeEventListener('transitionend', onEnd);
+    // 退出全屏后重新测量高度，确保 --cp-height 准确
+    if (!enter) {
+      requestAnimationFrame(() => {
+        syncLineCount();
+        measureHeight();
+      });
+    }
   };
   el.addEventListener('transitionend', onEnd);
 
@@ -191,6 +198,12 @@ function flipTransition(enter) {
     el.style.transition = '';
     el.style.transformOrigin = '';
     el.removeEventListener('transitionend', onEnd);
+    if (!enter) {
+      requestAnimationFrame(() => {
+        syncLineCount();
+        measureHeight();
+      });
+    }
   }, 420);
 }
 

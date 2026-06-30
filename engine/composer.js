@@ -231,19 +231,6 @@ function exitFullScreen() {
   requestAnimationFrame(() => { if (els.textarea) els.textarea.focus(); });
 }
 
-function exitFullScreen() {
-  if (!state.fullScreen) return;
-  state.fullScreen = false;
-  els.shell.classList.remove('is-fullscreen');
-  if (els.composer) els.composer.classList.remove('cp-is-fullscreen');
-  requestAnimationFrame(() => {
-    // 重建 compact 态 inline height（autoGrowAndCount 在 syncLineCount 内）
-    syncLineCount();
-    measureHeight();
-    if (els.textarea) els.textarea.focus();
-  });
-}
-
 // ── ResizeObserver 生命周期 ──────────────────────────────
 function observeHeight() {
   if (resizeObserver || !els.textarea) return;

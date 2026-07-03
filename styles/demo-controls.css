@@ -543,16 +543,19 @@
 .dc-theme-btn{
   display:inline-flex;
   align-items:center;
-  justify-content:center;
+  gap:4px;
   height:var(--dc-control-height);
-  padding:0 12px;
+  padding:0 8px;
   border:0;
   border-radius:var(--dc-control-radius);
   background:#EBEBEB;
-  color:var(--dc-label-color);
-  font-size:14px;
+  color:rgba(0,0,0,.7);
+  font-size:12px;
   font-weight:500;
+  line-height:22px;
   cursor:pointer;
+  outline:none;
+  white-space:nowrap;
   flex-shrink:0;
   transition:background .12s ease,color .12s ease;
 }

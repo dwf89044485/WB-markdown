@@ -487,7 +487,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   var TARGET_CELL = 68; // 目标格子尺寸（px），手机模式 393/6≈65.5, 852/12=71，取中值
   var COLS  = 6;
   var ROWS  = 12;
-  var COLOR = 'var(--color-grid-line)';
+  var COLOR = '#BBBAB0';
   var DASH  = '8 8';
 
   function r(n){ return Math.round(n * 10) / 10; }
@@ -608,7 +608,7 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
     boxSvg += solidLines;
     for(var ci=0;ci<corners.length;ci++){
       var cx=corners[ci][0], cy=corners[ci][1];
-      boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="var(--color-grid-tile)" stroke="'+COLOR+'" stroke-width="1"/>';
+      boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="#F8F6F1" stroke="'+COLOR+'" stroke-width="1"/>';
     }
     boxSvg += '</svg>';
 

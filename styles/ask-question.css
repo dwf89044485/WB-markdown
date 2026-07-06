@@ -1,6 +1,6 @@
 /* ── Ask User Question ─────────────────────────────── */
 :root {
-  --aq-bg: #FAFAFA;
+  --aq-bg: var(--color-bg-canvas);
   --aq-radius: 20px;
   --aq-padding: 20px;
   --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
@@ -14,7 +14,7 @@
   --aq-font-lg: 17px;
   --aq-line-height: 24px;
 
-  --aq-option-bg: #F2F2F2;
+  --aq-option-bg: var(--color-bg-soft);
   --aq-option-selected-bg: #EBEBEB;
   --aq-option-height: 46px;
   --aq-option-radius: 10px;
@@ -27,7 +27,7 @@
 
   --aq-num-size: 20px;
   --aq-num-radius: 90px;
-  --aq-num-bg: #F2F2F2;
+  --aq-num-bg: var(--color-bg-soft);
 
   --aq-checkbox-size: 20px;
   --aq-checkbox-radius: 8px;
@@ -275,7 +275,7 @@
 /* SortableJS 拖拽状态类 */
 .aq-sort-chosen {
   /* 被选中（手指按下）的原始行 — 白底+投影浮起效果 */
-  background: #fff !important;
+  background: var(--color-bg-surface) !important;
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
   z-index: 1;
 }
@@ -285,7 +285,7 @@
 }
 .aq-sort-fallback {
   /* 跟随手指的克隆元素 — 白底+投影 */
-  background: #fff !important;
+  background: var(--color-bg-surface) !important;
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08) !important;
   border-radius: var(--aq-option-radius) !important;
   z-index: 9999 !important;
@@ -293,7 +293,7 @@
 }
 /* 排序拖拽提示（停留3秒后高亮第2项） */
 .aq-option.aq-sort-hint {
-  background: #fff !important;
+  background: var(--color-bg-surface) !important;
   box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
   position: relative;
   z-index: 2;
@@ -415,6 +415,7 @@
 .aq-option.is-selected .aq-checkbox {
   background: var(--aq-checkbox-checked-bg);
   border-color: var(--aq-checkbox-checked-bg);
+  color: #fff;
 }
 
 /* 排序拖拽手柄 */

@@ -14,7 +14,11 @@ function inlineIcon(name) {
   if (!raw) return '';
   return raw
     .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
-    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
+    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"')
+    .replace(/fill="rgba\([^)]+\)"/gi, 'fill="currentColor"')
+    .replace(/stroke="rgba\([^)]+\)"/gi, 'stroke="currentColor"')
+    .replace(/fill="(white|black)"/gi, 'fill="currentColor"')
+    .replace(/stroke="(white|black)"/gi, 'stroke="currentColor"');
 }
 const ICON_COPY = () => inlineIcon('wb-copy.svg');
 const ICON_SHARE = () => inlineIcon('wb-share.svg');

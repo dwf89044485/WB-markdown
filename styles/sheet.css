@@ -346,6 +346,9 @@
   color:#3c3c43;
 }
 .s-sub-ico .tool-svg{display:block;width:20px;height:20px;object-fit:contain;}
+.s-sub-ico{color:var(--color-text-primary);}
+.s-sub-ico .todo-done-icon{opacity:0.3;}
+.s-sub-ico .todo-empty-icon{opacity:0.7;}
 .s-todo-tool{display:none;}
 .s-sub-txt{
   flex:1;min-width:0;

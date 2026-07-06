@@ -20,7 +20,7 @@ function injectCSS() {
   position: absolute;
   width: 40px; height: 40px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.1);
+  background: var(--color-border-weak);
   pointer-events: none;
   z-index: 100;
   opacity: 0;
@@ -34,8 +34,8 @@ function injectCSS() {
   0%   { opacity: 0; transform: translate(var(--ci-dx), var(--ci-dy)) scale(0.5); }
   20%  { opacity: 1; transform: translate(var(--ci-dx), var(--ci-dy)) scale(1); }
   38%  { transform: translate(0, 0) scale(1); }
-  58%  { background: rgba(0,0,0,0.2); transform: scale(0.88); }
-  75%  { background: rgba(0,0,0,0.1); transform: scale(1); }
+  58%  { background: var(--color-bg-control); transform: scale(0.88); }
+  75%  { background: var(--color-border-weak); transform: scale(1); }
   88%  { opacity: 1; }
   100% { opacity: 0; transform: scale(0.8); }
 }`;

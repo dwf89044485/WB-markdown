@@ -89,8 +89,8 @@ console.log(result.progress); // 0.85 → 完成 85%
 
   <div class="nc-ring">
     <svg viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="42" stroke="#eee" stroke-width="8" fill="none"/>
-      <circle cx="50" cy="50" r="42" stroke="#34c759" stroke-width="8" fill="none"
+      <circle cx="50" cy="50" r="42" stroke="var(--color-border-weak)" stroke-width="8" fill="none"/>
+      <circle cx="50" cy="50" r="42" stroke="var(--color-accent-green)" stroke-width="8" fill="none"
               stroke-dasharray="263" stroke-dashoffset="40"
               transform="rotate(-90 50 50)"/>
     </svg>

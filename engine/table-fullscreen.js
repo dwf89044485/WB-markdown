@@ -21,7 +21,11 @@ function fsIcon(file) {
   if (!raw) return '';
   return raw
     .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
-    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
+    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"')
+    .replace(/fill="rgba\([^)]+\)"/gi, 'fill="currentColor"')
+    .replace(/stroke="rgba\([^)]+\)"/gi, 'stroke="currentColor"')
+    .replace(/fill="(white|black)"/gi, 'fill="currentColor"')
+    .replace(/stroke="(white|black)"/gi, 'stroke="currentColor"');
 }
 
 const FS_COPY = fsIcon('wb-copy.svg');
@@ -92,7 +96,7 @@ async function renderMermaidSvg(src) {
     return svg;
   } catch (err) {
     console.warn('[mermaid] 渲染失败:', err);
-    return '<div style="padding:24px;color:#c62828">Mermaid 渲染失败：' + (err.message || err) + '</div>';
+    return '<div style="padding:24px;color:var(--color-accent-red)">Mermaid 渲染失败：' + (err.message || err) + '</div>';
   }
 }
 
@@ -204,7 +208,7 @@ document.addEventListener('click', function(e) {
   /* 反馈 */
   const orig = btn.innerHTML;
   btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display:block"><path fill="currentColor" transform="matrix(1 0 0 1 3 3.99854)" d="M5.1314 6.7172L11.4243 0.4243L10.5757 -0.4243L4.2828 5.8686L4.2732 5.8783Q4.0908 6.0607 4 6.1423Q3.9092 6.0607 3.7268 5.8783L3.7172 5.8686L0.4243 2.5757L-0.4243 3.4243L2.8686 6.7172L2.8783 6.7268Q3.1924 7.041 3.3327 7.1476Q3.6556 7.3929 4 7.3929Q4.3444 7.3929 4.6673 7.1476Q4.8076 7.041 5.1217 6.7268L5.1314 6.7172Z" fill-rule="evenodd"/></svg>';
-  btn.style.color = '#34C759';
+  btn.style.color = 'var(--color-accent-green)';
   btn.classList.add('is-checked');
   setTimeout(function() {
     btn.innerHTML = orig;

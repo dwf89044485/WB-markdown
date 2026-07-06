@@ -385,7 +385,7 @@ export function setComposerChip(chip) {
   els.chipMount.innerHTML = `
     <button class="cp-chip" type="button" tabindex="-1" aria-label="移除标签">
       <span class="cp-chip-label"><span class="cp-chip-text">${chip.label}</span></span>
-      <svg class="cp-chip-close" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9M9 1L1 9" stroke="#030303" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg class="cp-chip-close" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>`;
   const btn = $('.cp-chip', els.chipMount);
   if (btn) btn.addEventListener('pointerdown', (e) => { e.preventDefault(); setComposerChip(null); });

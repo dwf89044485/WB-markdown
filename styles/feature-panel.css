@@ -13,7 +13,7 @@
   flex-direction:column;
   gap:0;
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
-  color:#1a1a1c;
+  color:var(--color-text-primary);
   --fp-min-content-width:1000;
 }
 
@@ -29,7 +29,7 @@
   background-color:transparent;
   background-image:none;
   box-shadow:none;
-  border-bottom:1px solid rgba(0,0,0,0.12);
+  border-bottom:1px solid var(--color-border-weak);
 }
 /* 区域标签：同 feature header h1 风格 */
 .fp-section-label{
@@ -37,7 +37,7 @@
   font-size:36px;
   font-weight:400;
   line-height:1.15;
-  color:#111114;
+  color:var(--color-heading);
   letter-spacing:-0.015em;
   white-space:nowrap;
   margin-bottom:18px;
@@ -56,9 +56,9 @@
   font-size:13px;
   font-weight:500;
   line-height:1.3;
-  color:#6e6e73;
+  color:var(--color-text-muted);
   background:transparent;
-  border:1px solid rgba(0,0,0,0.08);
+  border:1px solid var(--color-border-weak);
   border-radius:0;
   cursor:pointer;
   user-select:none;
@@ -67,17 +67,17 @@
   letter-spacing:0.01em;
 }
 .fp-tab:hover{
-  color:#1a1a1c;
+  color:var(--color-text-primary);
   border-color:rgba(0,0,0,0.15);
-  background:rgba(0,0,0,0.02);
+  background:var(--color-bg-canvas);
 }
 .fp-tab:active{
-  background:rgba(0,0,0,0.04);
+  background:var(--color-bg-soft);
 }
 .fp-tab.is-active{
-  color:#fff;
-  background:#1a1a1c;
-  border-color:#1a1a1c;
+  color:var(--color-bg-surface);
+  background:var(--color-text-primary);
+  border-color:var(--color-text-primary);
 }
 
 /* ── 内容区 ─────────────────────────────────────────────────── */
@@ -106,13 +106,13 @@
 
 .fp-subtitle{
   font-size:15px;
-  color:#6e6e73;
+  color:var(--color-text-muted);
   margin:0 0 28px 0;
   line-height:1.6;
 }
 .fp-meta{
   font-size:12px;
-  color:#8a8a8f;
+  color:var(--color-text-secondary);
   margin-top:8px;
   letter-spacing:0.01em;
 }
@@ -125,9 +125,9 @@
   padding:6px 12px;
   font-size:12px;
   font-weight:500;
-  color:#5a5a5f;
+  color:var(--color-text-dim);
   background:transparent;
-  border:1px solid rgba(0,0,0,0.1);
+  border:1px solid var(--color-border-weak);
   border-radius:0;
   cursor:pointer;
   margin:6px 8px 6px 0;
@@ -135,9 +135,9 @@
   letter-spacing:0.02em;
 }
 .fp-anchor-btn:hover{
-  color:#1a1a1c;
+  color:var(--color-text-primary);
   border-color:rgba(0,0,0,0.2);
-  background:rgba(0,0,0,0.02);
+  background:var(--color-bg-canvas);
 }
 .fp-anchor-btn::after{
   content:'';
@@ -159,14 +159,14 @@
 /* 占位提示 */
 .fp-placeholder-block{
   background:transparent;
-  border-left:2px solid rgba(0,0,0,0.1);
+  border-left:2px solid var(--color-border-weak);
   padding:14px 20px;
   border-radius:0;
   margin:20px 0;
 }
 .fp-placeholder-label{
   font-size:11px;
-  color:#8a8a8f;
+  color:var(--color-text-secondary);
   font-style:normal;
   margin-bottom:8px;
   text-transform:uppercase;
@@ -179,7 +179,7 @@
 
 .fp-lead{
   font-size:16px;
-  color:#3a3a3c;
+  color:var(--color-bg-active);
   line-height:1.65;
   margin-bottom:20px;
   max-width:65ch;
@@ -194,7 +194,7 @@
 .fp-feature section + section {
   padding-top: 36px;
   margin-top: 36px;
-  border-top: 1px solid rgba(0,0,0,0.04);
+  border-top: 1px solid var(--color-bg-soft);
 }
 .fp-feature-header h1 {
   width: var(--fp-feature-header-w, 718px);
@@ -203,7 +203,7 @@
   font-size: 36px;
   line-height: 1.15;
   font-weight: 400;
-  color: #111114;
+  color: var(--color-heading);
   letter-spacing: -0.015em;
   border-radius: 0;
   border-bottom: none;
@@ -214,7 +214,7 @@
   font-size: 24px;
   line-height: 1.2;
   letter-spacing: -0.01em;
-  color: #111114;
+  color: var(--color-heading);
   margin-top: 40px;
   margin-bottom: 16px;
   padding-bottom: 0;
@@ -225,7 +225,7 @@
   font-weight: 600;
   font-size: 17px;
   line-height: 1.35;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
   margin-top: 32px;
   margin-bottom: 12px;
 }
@@ -234,7 +234,7 @@
   font-weight: 600;
   font-size: 15px;
   line-height: 1.4;
-  color: #2c2c2e;
+  color: var(--color-text-primary);
   margin-top: 24px;
   margin-bottom: 8px;
 }
@@ -407,7 +407,7 @@
   position: absolute;
   left: 0; right: 0; bottom: 0;
   height: 80px;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 75%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--color-bg-surface) 75%);
   pointer-events: none;
   border-radius: 0 0 10px 10px;
 }
@@ -432,7 +432,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--md-border, #e9ecf1);
-  background: #f5f5f7;
+  background: var(--color-bg-canvas);
 }
 .fp-fs-preview-label {
   position: absolute;
@@ -470,8 +470,8 @@
   flex: 1;
   overflow-y: auto;
   max-height: 200px;
-  background: #fff;
-  border: 1px solid #e9ecf1;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   overflow: hidden;
   position: relative;
@@ -485,7 +485,7 @@
   font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size: 11px;
   line-height: 1.5;
-  color: #1c1c1e;
+  color: var(--color-text-primary);
   background: transparent;
   white-space: pre;
 }
@@ -502,7 +502,7 @@
   width: 100%;
   height: 100%;
   border: 0;
-  background: #fff;
+  background: var(--color-bg-surface);
 }
 
 /* 横屏二级页预览：横屏手机比例
@@ -668,10 +668,10 @@
   max-width: 100%;
   border-radius: 34px 34px 0 0;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
-  background: #FAFAFA;
+  background: var(--color-bg-canvas);
 }
 .fp-sheet-mock-detail {
-  background: #FAFAFA;
+  background: var(--color-bg-canvas);
 }
 /* 文档里的 bottom-sheet：脱离 height:50%，按内容自适应 */
 .fp-content .fp-bottom-sheet-static {
@@ -692,7 +692,7 @@
 /* 状态节描述文字（tag 下方、快照上方的简短说明） */
 .fp-state-desc {
   font-size: 13px;
-  color: #6e6e73;
+  color: var(--color-text-muted);
   margin: 0 0 10px;
   line-height: 1.55;
 }
@@ -804,7 +804,7 @@
 /* 快照底部描述 */
 .fp-snapshot-caption {
   font-size: 13px;
-  color: #6e6e73;
+  color: var(--color-text-muted);
   line-height: 1.55;
   margin-top: 10px;
 }
@@ -840,7 +840,7 @@
   font-size: 15px;
   font-weight: 600;
   margin: 16px 0 8px;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
 }
 .fp-snapshot-trio-desc h4:first-child {
   margin-top: 0;
@@ -848,7 +848,7 @@
 .fp-snapshot-trio-desc blockquote {
   margin: 0 0 12px;
   padding: 0 0 0 14px;
-  border-left: 3px solid #e8e8ed;
+  border-left: 3px solid var(--color-border-weak);
 }
 .fp-snapshot-trio-desc blockquote p {
   font-size: 14px;
@@ -885,7 +885,7 @@
   font-size: 15px;
   font-weight: 600;
   margin: 16px 0;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
 }
 .fp-snapshot-side-desc h4:first-child {
   margin-top: 0;
@@ -911,7 +911,7 @@
   margin-bottom: 0;
 }
 .fp-snapshot-side-desc strong {
-  color: #1d1d1f;
+  color: var(--color-text-primary);
 }
 
 /* ── 动效演示舞台（§5）─────────────────────────────────────
@@ -953,12 +953,12 @@
 
 /* 引言块 */
 .fp-lead-quote {
-  border-left: 2px solid rgba(0,0,0,0.12);
+  border-left: 2px solid var(--color-border-weak);
   padding: 16px 22px;
   margin: 0 0 32px;
   font-size: 15px;
   line-height: 1.75;
-  color: #3a3a3c;
+  color: var(--color-bg-active);
   background: transparent;
   border-radius: 0;
 }
@@ -987,11 +987,11 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border: 1px solid #1a1a1c;
+  border: 1px solid var(--color-text-primary);
   border-radius: 0;
 }
 .fp-compare-card--agent {
-  color: #f0f0f0;
+  color: var(--color-bg-soft);
   background: #0e0e10;
   border-color: #0e0e10;
 }
@@ -1020,7 +1020,7 @@
   flex-direction: column;
   gap: 6px;
   padding-right: 24px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid var(--color-border-weak);
 }
 .fp-compare-field:last-child {
   border-right: none;
@@ -1034,10 +1034,10 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #8a8a8f;
+  color: var(--color-text-secondary);
 }
 .fp-compare-card--agent .fp-compare-key {
-  color: #a0a0a5;
+  color: var(--color-text-faint);
 }
 .fp-compare-val {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
@@ -1056,15 +1056,15 @@
   font-weight: 400;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #8a8a8f;
+  color: var(--color-text-secondary);
   user-select: none;
 }
 
 /* 总原则高亮块 */
 .fp-principle-summary {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;
-  background: #1a1a1c;
-  color: #f0f0f0;
+  background: var(--color-text-primary);
+  color: var(--color-bg-soft);
   padding: 20px 24px;
   border-radius: 0;
   font-size: 18px;
@@ -1076,7 +1076,7 @@
 
 /* 结论引用块 */
 .fp-conclusion-quote {
-  border-left: 2px solid rgba(0,0,0,0.1);
+  border-left: 2px solid var(--color-border-weak);
   padding: 16px 22px;
   margin: 16px 0;
   font-size: 14px;
@@ -1096,8 +1096,8 @@
   gap: 20px;
   margin: 24px 0;
   padding: 24px 24px 24px;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 0;
 }
 .fp-principle-number {
@@ -1105,8 +1105,8 @@
   width: 26px;
   height: 26px;
   background: transparent;
-  color: #8a8a8f;
-  border: 1px solid rgba(0,0,0,0.1);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-weak);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1127,7 +1127,7 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
 }
 .fp-principle-body p {
   font-size: 14px;
@@ -1174,8 +1174,8 @@
   font-size: 11px;
   font-weight: 500;
   line-height: 1.4;
-  color: #fff;
-  background: #2c2c2e;
+  color: var(--color-bg-surface);
+  background: var(--color-bg-active);
   border: none;
   border-radius: 0;
   cursor: pointer;
@@ -1185,7 +1185,7 @@
   -webkit-font-smoothing: antialiased;
 }
 .dc-btn:hover {
-  background: #3a3a3c;
+  background: var(--color-bg-active);
 }
 .dc-btn svg {
   flex-shrink: 0;
@@ -1214,8 +1214,8 @@
   font-size: 11px;
   font-weight: 500;
   line-height: 1.4;
-  color: #fff;
-  background: #2c2c2e;
+  color: var(--color-bg-surface);
+  background: var(--color-bg-active);
   border: none;
   border-radius: 0;
   cursor: pointer;
@@ -1224,7 +1224,7 @@
   letter-spacing: 0.02em;
 }
 .fp-action-btn:hover {
-  background: #3a3a3c;
+  background: var(--color-bg-active);
 }
 .fp-action-btn svg {
   flex-shrink: 0;
@@ -1233,9 +1233,9 @@
 /* 备注 */
 .fp-note {
   font-size: 13px !important;
-  color: #6e6e73 !important;
+  color: var(--color-text-muted) !important;
   background: transparent;
-  border-left: 2px solid rgba(0,0,0,0.08);
+  border-left: 2px solid var(--color-border-weak);
   padding: 12px 18px;
   border-radius: 0;
   margin-top: 16px !important;
@@ -1255,7 +1255,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border: 1px solid #1a1a1c;
+  border: 1px solid var(--color-text-primary);
   border-radius: 0;
   font-size: 15px;
   background: transparent;
@@ -1270,7 +1270,7 @@
   color: inherit;
 }
 #fpContent .fp-do h3 { color: #28a745; }
-#fpContent .fp-dont h3 { color: #dc3545; }
+#fpContent .fp-dont h3 { color: var(--color-accent-red); }
 .fp-do ul,
 .fp-dont ul {
   margin: 0;
@@ -1280,7 +1280,7 @@
 .fp-dont li {
   line-height: 1.65;
   margin-bottom: 4px;
-  color: #3a3a3c;
+  color: var(--color-bg-active);
 }
 
 /* 好/坏示例对比 */
@@ -1297,11 +1297,11 @@
   font-size: 13px;
 }
 .fp-example-good {
-  background: #f7fcf9;
+  background: var(--color-bg-canvas);
   border: 1px solid rgba(40,167,69,0.12);
 }
 .fp-example-bad {
-  background: #fdf7f7;
+  background: var(--color-bg-canvas);
   border: 1px solid rgba(220,53,69,0.12);
 }
 .fp-example-label {
@@ -1313,7 +1313,7 @@
   margin-bottom: 10px;
 }
 .fp-label-good { color: #28a745; }
-.fp-label-bad { color: #dc3545; }
+.fp-label-bad { color: var(--color-accent-red); }
 .fp-example-good ul,
 .fp-example-bad ul {
   margin: 0;
@@ -1323,7 +1323,7 @@
 .fp-example-bad li {
   line-height: 1.65;
   margin-bottom: 4px;
-  color: #3a3a3c;
+  color: var(--color-bg-active);
   font-family: 'SF Mono', 'Menlo', monospace;
 }
 
@@ -1333,7 +1333,7 @@
   background-color: transparent !important;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
   font-size: 15px;
   line-height: 1.65;
 }
@@ -1344,7 +1344,7 @@
   font-size: 32px;
   line-height: 1.15;
   letter-spacing: -0.015em;
-  color: #111114;
+  color: var(--color-heading);
   border-bottom: none;
   padding-bottom: 0;
   margin-top: 0;
@@ -1356,7 +1356,7 @@
   font-size: 24px;
   line-height: 1.2;
   letter-spacing: -0.01em;
-  color: #111114;
+  color: var(--color-heading);
   border-bottom: none;
   padding-bottom: 0;
   margin-top: 40px;
@@ -1367,7 +1367,7 @@
   font-weight: 600;
   font-size: 17px;
   line-height: 1.35;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
   margin-top: 32px;
   margin-bottom: 12px;
 }
@@ -1376,7 +1376,7 @@
   font-weight: 600;
   font-size: 15px;
   line-height: 1.4;
-  color: #2c2c2e;
+  color: var(--color-text-primary);
   margin-top: 24px;
   margin-bottom: 8px;
 }
@@ -1419,18 +1419,18 @@
 }
 /* 表格样式微调 */
 #fpContent .markdown-body table {
-  border-color: rgba(0,0,0,0.06);
+  border-color: var(--color-border);
 }
 #fpContent .markdown-body table th {
   font-weight: 600;
   font-size: 13px;
-  color: #6e6e73;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   background-color: transparent;
 }
 #fpContent .markdown-body table tr:nth-child(2n) {
-  background-color: #f9f8f6;
+  background-color: var(--color-bg-canvas);
 }
 /* ── 快照内 .tbl 表格：覆盖 GitHub Markdown CSS 的全边框 ──────────
    GitHub Markdown CSS 给 th/td 加 border:1px solid（网格线），
@@ -1442,8 +1442,8 @@
 }
 #fpContent .markdown-body .tbl th {
   border: none;
-  background: #f7f7f7;
-  color: var(--md-text-muted, #6e6e73);
+  background: var(--color-bg-soft);
+  color: var(--md-text-muted, var(--color-text-muted));
   font-size: var(--md-font-table-th, 13px);
   white-space: nowrap;
   position: sticky;
@@ -1453,7 +1453,7 @@
   border: none;
   border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.08));
   padding: 12px 16px;
-  color: var(--md-text-primary, #1a1a1c);
+  color: var(--md-text-primary, var(--color-text-primary));
   vertical-align: top;
   white-space: nowrap;
 }
@@ -1468,7 +1468,7 @@
   margin: 0;
   border-radius: 10px;
   border: 1px solid var(--md-border, #e9ecf1);
-  background: #fff;
+  background: var(--color-bg-surface);
   overflow: hidden;
 }
 #fpContent .markdown-body .tbl-toolbar.wb-card-toolbar {
@@ -1476,7 +1476,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 7px 12px;
-  background: #f7f7f7;
+  background: var(--color-bg-soft);
   border-bottom: 1px solid var(--md-border-soft, rgba(0,0,0,0.06)) !important;
 }
 /* 表头行底线 —— 覆盖 GitHub Markdown CSS */
@@ -1487,7 +1487,7 @@
   font-family: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
   font-size: 13px;
   font-weight: 400;
-  color: var(--md-text-muted, #6e6e73);
+  color: var(--md-text-muted, var(--color-text-muted));
   white-space: nowrap;
 }
 #fpContent .markdown-body .tbl-toolbar-actions.wb-card-actions {
@@ -1502,14 +1502,14 @@
   overscroll-behavior-x: contain;
 }
 #fpContent .markdown-body blockquote {
-  border-left-color: rgba(0,0,0,0.1);
+  border-left-color: var(--color-border-weak);
   padding: 12px 20px 1px;
   color: #424245;
 }
 /* 代码块 — 参考 fp-principle-card 卡片样式 */
 #fpContent .markdown-body pre {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 0;
   padding: 16px 20px;
   color: #424245;
@@ -1539,8 +1539,8 @@
   height: 420px;
   border-radius: var(--phone-radius, 38px);
   overflow: hidden;
-  background: #f5f5f7;
-  border: 1px solid rgba(0,0,0,0.06);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border);
 }
 
 /* 让快照内的 sheet-overlay 覆盖整个 frame */
@@ -1566,7 +1566,7 @@
   gap: 24px;
   margin: 24px 0;
   padding: 32px 20px;
-  background: #f5f5f7;
+  background: var(--color-bg-canvas);
   border-radius: 12px;
 }
 .fp-motion-state {
@@ -1575,9 +1575,9 @@
   align-items: center;
   gap: 8px;
   padding: 20px 24px;
-  background: #fff;
+  background: var(--color-bg-surface);
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid var(--color-border);
   min-width: 120px;
 }
 .fp-motion-state .tag {
@@ -1586,13 +1586,13 @@
 }
 .fp-motion-state .fp-motion-hint {
   font-size: 12px;
-  color: #86868b;
+  color: var(--color-text-secondary);
   margin: 0;
   text-align: center;
 }
 .fp-motion-arrow {
   font-size: 18px;
-  color: #86868b;
+  color: var(--color-text-secondary);
   font-weight: 300;
   letter-spacing: 2px;
 }
@@ -1695,9 +1695,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f0f0f2;
+  background: var(--color-bg-soft);
   font-size: 13px;
-  color: #86868b;
+  color: var(--color-text-secondary);
   font-weight: 600;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
 }
@@ -1705,11 +1705,11 @@
   margin: 0 0 4px;
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1c;
+  color: var(--color-text-primary);
 }
 .fp-anatomy-item p {
   margin: 0;
-  color: #515154;
+  color: var(--color-text-dim);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -1765,7 +1765,7 @@
   min-width: auto;
   padding: 30px 20px;
   text-align: center;
-  color: #86868b;
+  color: var(--color-text-secondary);
   font-size: 13px;
 }
 /* 确保 fp-snapshot 内 Sheet 外壳快照正确布局
@@ -1782,7 +1782,7 @@
 }
 /* 构成章节的 Sheet 快照需展示遮罩，以匹配真实 Demo 外观 */
 .fp-snapshot .fp-sheet-shell-frame.fp-show-overlay .sheet-overlay {
-  background: rgba(0,0,0,0.30) !important;
+  background: var(--color-text-faint) !important;
   backdrop-filter: blur(10px) !important;
 }
 .fp-snapshot .fp-sheet-shell-frame .bottom-sheet {

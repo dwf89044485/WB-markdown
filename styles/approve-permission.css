@@ -1,6 +1,6 @@
 /* ── Approve Permission ──────────────────────────── */
 :root {
-  --ap-bg: #FFFFFF;
+  --ap-bg: var(--color-bg-surface);
   --ap-radius: 20px;
   --ap-padding: 20px;
   --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
@@ -18,8 +18,8 @@
 
   --ap-warning-color: #B12B41;
 
-  --ap-option-bg: #FAFAFA;
-  --ap-option-selected-bg: #EBEBEB;
+  --ap-option-bg: var(--color-bg-canvas);
+  --ap-option-selected-bg: var(--color-bg-control);
   --ap-option-height: 46px;
   --ap-option-radius: 10px;
   --ap-option-gap: 10px;
@@ -28,10 +28,10 @@
 
   --ap-num-size: 20px;
   --ap-num-radius: 90px;
-  --ap-num-bg: #F2F2F2;
+  --ap-num-bg: var(--color-bg-soft);
   --ap-num-selected-bg: #3D3D3D;
   --ap-num-color: #3D3D3D;
-  --ap-num-selected-color: #FFFFFF;
+  --ap-num-selected-color: var(--color-bg-surface);
 
 }
 

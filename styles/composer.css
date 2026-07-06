@@ -26,7 +26,7 @@
   padding:0 var(--composer-padding-x) var(--composer-padding-bottom);
   flex-shrink:0;
   position:relative;
-  background:#fafafa;
+  background:var(--color-bg-canvas);
 }
 .composer::before{
   content:"";
@@ -46,7 +46,7 @@
   height:56px;
   border-radius:28px;        /* 设计稿 borderRadius=28 */
   overflow:hidden;
-  background:#fff;
+  background:var(--color-bg-surface);
   box-shadow:0 4px 10px rgba(0,0,0,0.05), inset 1px 1px 0 0 rgba(255,255,255,1);
   /* 始终 column：.cp-body（内容）在上、.cp-bar（按钮栏）在下。
    * 单行态 .cp-body 折叠为 0、占位文字浮在 bar 里；激活态 .cp-body 展开成 textarea。

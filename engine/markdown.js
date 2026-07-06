@@ -21,7 +21,11 @@ function getIcon(name) {
   // 让图标颜色继承 currentColor，便于按钮主次态切换
   return raw
     .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
-    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"');
+    .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"')
+    .replace(/fill="rgba\([^)]+\)"/gi, 'fill="currentColor"')
+    .replace(/stroke="rgba\([^)]+\)"/gi, 'stroke="currentColor"')
+    .replace(/fill="(white|black)"/gi, 'fill="currentColor"')
+    .replace(/stroke="(white|black)"/gi, 'stroke="currentColor"');
 }
 const ICON_COPY     = () => getIcon('wb-copy.svg');
 const ICON_SHARE    = () => getIcon('wb-share.svg');

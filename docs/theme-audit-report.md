@@ -281,7 +281,19 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 
 **目标**：消灭 ~300+ 处硬编码颜色，建立全局 → 模块二级 Token 体系，所有颜色通过 `var(--color-*)` 引用。完成后页面视觉零变化，但为暗色模式打好地基。
 
-**验收标准**：全局搜索 `#[0-9a-fA-F]{3,8}` 和 `rgba?\(` 在 `styles/*.css` 中仅出现在 `:root` 变量定义和语义色注释中，业务规则中零硬编码。
+**验收标准**：`styles/*.css` 中所有**业务组件样式规则**（与 selector / DOM 结构相关的规则）禁止出现直接的 hex / rgba 字面量，必须通过 `var(--color-*)` 或模块级变量引用。
+
+**以下场景允许保留字面量，不视为违规**：
+
+- `:root` 变量定义本身（变量值必须是字面量）
+- 装饰性色值：网格线 `#BBBAB0`、Mermaid 图表配色、文档纯文本色等不参与主题切换的固定色
+- 效果性色值中的 `transparent` / `currentColor`（非颜色字面量）
+- `features/*.js` 中的文档内容色（纯说明文本，非组件样式）
+
+**额外验收产出物**：
+
+- **变量覆盖率仪表盘**：用脚本扫描 `styles/*.css`，统计每个文件的硬编码色值数量（排除上述例外），输出前后对比表，确认覆盖率从 <15% 提升至 >95%
+- **视觉回归验证**：阶段一完成后对关键页面截图（首页 / sheet 浮层 / feature panel / demo 控制台），与改造前对比确认零视觉变化
 
 #### 1.1 全局颜色 Token 定义（`styles/base.css :root`）
 
@@ -300,13 +312,20 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
   --color-text-primary: #1c1c1e;    /* 正文主色 */
   --color-text-secondary: #8e8e93;  /* 次要文字 */
   --color-text-muted: #6e6e73;      /* 弱化文字 */
-  --color-text-faint: rgba(0,0,0,0.30);  /* 最弱文字 */
-  --color-text-dim: rgba(0,0,0,0.7);     /* 中弱文字 */
+  --color-text-faint: #b0b0b0;      /* 最弱文字（不透明，避免暗色alpha反转） */
+  --color-text-dim: #5a5a5e;        /* 中弱文字（不透明，避免暗色alpha反转） */
   --color-text-strong: #000;        /* 最强文字（状态栏时间等） */
   --color-heading: #111114;         /* 标题 */
 
   --color-border: #e9ecf1;          /* 标准边框 */
-  --color-border-weak: rgba(0,0,0,0.08); /* 弱边框 */
+  --color-border-weak: #e0e0e5;     /* 弱边框（不透明，避免暗色alpha反转） */
+
+  /* === 语义色（全局统一定义，所有模块引用） === */
+  --color-accent-blue: #007AFF;     /* 链接/强调蓝 */
+  --color-accent-purple: #5e5ce6;   /* 行内代码/品牌紫 */
+  --color-accent-green: #00C29A;    /* 成功/加载绿 */
+  --color-accent-orange: #F2991C;   /* 警告橙 */
+  --color-accent-red: #c62828;      /* 错误红（Mermaid fail 等） */
 
   /* === 阴影体系 === */
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
@@ -315,7 +334,11 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 }
 ```
 
+> **设计决策**：`--color-text-faint` / `--color-text-dim` 原为 `rgba(0,0,0,0.30)` / `rgba(0,0,0,0.7)`，改为不透明色值。原因：alpha 黑色在暗色反转为 `rgba(255,255,255,0.7)` 时视觉差异巨大（白色半透明在深色底上偏灰白，与原亮色态的浅灰感知不一致）。不透明色值在两种模式下均可独立精调。
+
 #### 1.2 模块级变量引用全局 Token
+
+> **强阻塞依赖**：本步骤必须在 §1.1 完成后进行。如果 §1.1 的全局 `--color-*` 未定义，模块级变量引用会得到空值回退，导致样式闪烁或丢失。
 
 将已有模块级变量的值改为引用全局 `--color-*`，建立二级映射：
 
@@ -325,6 +348,9 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
   --md-text-primary: var(--color-text-primary);
   --md-surface: var(--color-bg-surface);
   --md-border: var(--color-border);
+  --md-accent: var(--color-accent-blue);
+  --md-purple: var(--color-accent-purple);
+  --md-warning: var(--color-accent-orange);
   /* ... 其余 --md-* 同理引用 --color-* ... */
 }
 
@@ -332,19 +358,50 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 :root {
   --aq-bg: var(--color-bg-canvas);
   --aq-text: var(--color-text-primary);
-  /* ... 其余 --aq-* 同理 ... */
+  --aq-option-bg: var(--color-bg-soft);
+  --aq-checkbox-border: var(--color-border);
+  --aq-btn-action-bg: var(--color-text-primary);
+  /* ... 其余 --aq-* 同理引用 --color-* ... */
 }
 
 /* approve-permission.css :root */
 :root {
-  /* --ap-* 变量值改为引用 --color-* */
+  /* --ap-* 变量值改为引用 --color-*，建立与其他模块一致的二级映射 */
+  --ap-bg: var(--color-bg-surface);
+  --ap-text: var(--color-text-primary);
+  --ap-border: var(--color-border);
+  /* ... 所有 --ap-* 同理引用 --color-* ... */
 }
 ```
 
 #### 1.3 SVG Registry 异常修复（2 处）
 
-- `icons-inline.js:6`：`ing.svg` 的 `fill="white"` → 确认语义后改为 `fill="currentColor"` + 父级控制 color
-- `icons-inline.js:36`：`wb-more-indicator.svg` 的 `#D97757` → 在 `svgFromRegistry()` 增加白名单（`data-color="fixed"` 标记或 exclude 列表），保护语义色不被误替换
+> **关键约束**：`icons-inline.js` 是自动生成文件（AGENTS.md 明确禁止手动修改），**任何修改都会在下次生成时被覆盖**。所有适配必须在运行时完成，不碰源文件。
+
+**修复策略**：
+
+- `icons-inline.js:6`：`ing.svg` 的 `fill="white"` → 在 `svgFromRegistry()` 的替换 regex 中增加对命名色（`white`/`black`）的覆盖，统一转为 `currentColor` + 父级 CSS 控制 `color`
+- `icons-inline.js:36`：`wb-more-indicator.svg` 的 `#D97757` → **简化方案**：直接让 `svgFromRegistry()` 将其替换为 `currentColor`，然后通过 CSS class 控制颜色（`.wb-more-indicator { color: var(--color-accent-orange-warm); }`）。不需要白名单机制——因为该图标的使用场景固定，CSS class 可以精确控制其颜色
+
+**需同步修改的 currentColor 替换入口**（4 处，逻辑统一）：
+- `engine/icons.js:59-63` — 主入口
+- `engine/markdown.js:22-24` — 表格工具栏图标
+- `engine/table-fullscreen.js:23-24` — 全屏工具栏图标
+- `engine/code-fullscreen-sheet.js:16-17` — 代码全屏工具栏图标
+
+**改造要点**：在 regex 中增加对 `fill="white"` / `fill="black"` 等命名色的覆盖：
+
+```js
+const modified = raw
+  .replace(/fill="#[0-9a-fA-F]+"/g, 'fill="currentColor"')
+  .replace(/stroke="#[0-9a-fA-F]+"/g, 'stroke="currentColor"')
+  .replace(/fill="rgba\([^)]+\)"/gi, 'fill="currentColor"')
+  .replace(/stroke="rgba\([^)]+\)"/gi, 'stroke="currentColor"')
+  .replace(/fill="(white|black)"/gi, 'fill="currentColor"')      // 新增：命名色
+  .replace(/stroke="(white|black)"/gi, 'stroke="currentColor"');  // 新增：命名色
+```
+
+> **回归注意**：改为 `currentColor` 后需追踪每个调用方是否已通过 CSS 设置 `color` / `fill`，否则图标可能不可见。建议改完后全局截图对比。
 
 #### 1.4 `engine/icons.js` ICONS 对象 currentColor 化（7 项）
 
@@ -354,18 +411,18 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 
 #### 1.5 CSS 文件硬编码替换为 `var(--color-*)`（按优先级排序）
 
-**排序原则：最大头先啃，Token 体系 early 压测。**
+**排序原则：先用小文件验证 Token 体系跑通，确认命名和粒度无问题后再啃大头，避免大文件压测后返工。**
 
-1. `styles/base.css` — 全局背景 `#fafafa`、文本、`--status-icon-color`
-2. `styles/feature-panel.css` — 右侧说明栏（~100+ 处，最大头，提前以压测 Token 体系）
-   - **注意特异性冲突**：`#fpContent .markdown-body`（ID 选择器，44 处）特异性高于 `github-markdown.css` 的类选择器，硬编码色必须替换为 `var(--color-*)`
-3. `styles/conversation.css` — 消息气泡、状态行
+1. `styles/base.css` — 全局背景 `#fafafa`、文本、`--status-icon-color`（Token 定义所在文件，首先确立全局色）
+2. `styles/composer.css` — 输入框外壳、按钮、wb-more（~18 处，中等规模，作为 Token 体系**首次验证**）
+3. `styles/sheet.css` — 底部浮层遮盖、面板（~30 处，结构清晰，作为 Token 体系**第二次验证**）
+4. `styles/conversation.css` — 消息气泡、状态行
    - **注意 `drop-shadow` 反向语义**：`#fafafa` 做 `drop-shadow()` 文字描边不能简单替换为 `var(--color-bg-canvas)`，需单独定义 `--color-text-stroke` 变量
-4. `styles/composer.css` — 输入框外壳、按钮、wb-more
-5. `styles/sheet.css` — 底部浮层遮盖、面板
-6. `styles/approve-permission.css` — 权限请求卡片（已有 `--ap-*`，只需让 `--ap-*` 引用 `--color-*`）
-7. `styles/ask-question.css` — 问答卡片（`:root` 外 ~11 处硬编码需逐条替换）
-8. `styles/demo-controls.css` — 控制面板按压/激活态（5 层级状态需逐层替换）
+5. `styles/demo-controls.css` — 控制面板按压/激活态（~50+ 处，4-5 层级交互状态需逐层替换，复杂度不亚于 feature-panel，**提前到此位以暴露复杂性**）
+6. `styles/feature-panel.css` — 右侧说明栏（~100+ 处，最大头，在 Token 体系已验证后处理）
+   - **注意特异性冲突**：`#fpContent .markdown-body`（ID 选择器，44 处）特异性高于 `github-markdown.css` 的类选择器，硬编码色必须替换为 `var(--color-*)`
+7. `styles/approve-permission.css` — 权限请求卡片（已有 `--ap-*`，只需让 `--ap-*` 引用 `--color-*`）
+8. `styles/ask-question.css` — 问答卡片（`:root` 外 ~11 处硬编码需逐条替换）
 9. `styles/markdown.css` — 卡片/toolbar/表格（`:root` 外的硬编码替换为 `var(--md-*)` 或 `var(--color-*)`）
 
 #### 1.6 Engine JS 内联颜色 currentColor 化
@@ -375,11 +432,34 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 - `engine/player-state.js:63-72`：回复操作图标 7 个 `#000` → `currentColor`
 - `engine/player-dom.js:27`：Agent 头像 `#000` + `#FFF` → `currentColor` + CSS class
 - `engine/scroll-nav.js`：上下箭头 `fill="black"` → `currentColor`
-- `engine/showcase-codeblock.js`：营养环 `#eee` → `var(--color-border-weak)`；`#34c759` → `var(--color-accent-green)`
-- `engine/table-fullscreen.js`：复制成功 `#34C759` → `var(--color-accent-green)`；mermaid fail `#c62828` → `var(--color-accent-red)`
-- `engine/click-indicator.js`：指示点 `rgba(0,0,0,0.1)` → `var(--color-border-weak)`
+- `engine/showcase-codeblock.js`：营养环 `#eee` / `#34c759` → **Canvas 2D API 不支持 CSS `var()`**，需封装 `getThemeColor()` 工具函数：
 
-#### 1.7 `index.html` 内联 SVG 和脚本颜色 currentColor 化
+```js
+/** 读取 CSS 变量当前值（用于 Canvas / WebGL 等不支持 var() 的场景） */
+function getThemeColor(varName) {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(varName)
+    .trim();
+}
+// 用法：ctx.strokeStyle = getThemeColor('--color-accent-green');
+```
+
+  - 营养环 `#34c759` → `getThemeColor('--color-accent-green')`
+  - 底色 `#eee` → `getThemeColor('--color-border-weak')`
+  - **关键**：主题切换时需重新调用绘制函数刷新 Canvas，不能靠 CSS 变量自动更新
+
+- `engine/table-fullscreen.js`：复制成功 `#34C759` → `getThemeColor('--color-accent-green')`（Canvas 场景）；mermaid fail `#c62828` → `getThemeColor('--color-accent-red')`
+- `engine/click-indicator.js`：指示点 `rgba(0,0,0,0.1)` → `getThemeColor('--color-border-weak')`
+
+#### 1.7 Glass 按钮暗色参数 PoC（与 §1.5 并行推进）
+
+> **提前到阶段一的原因**：Glass 按钮暗色参数可能需要全新的 `--color-glass-*` 变量，属于 Token 体系范畴。如果等到阶段二才发现需要大改，会阻塞交付。阶段一同步让设计师出暗色玻璃参数，阶段二直接套用。
+
+- `base.css:353-371` 的 `.glass-btn / .glass-capsule` 使用大量 `rgba(255,255,255, ...)` 渐变和阴影
+- 阶段一目标：**不改外观**，只将这些 `rgba(255,255,255,...)` 抽成 `--color-glass-*` 变量（如 `--color-glass-highlight`、`--color-glass-border`、`--color-glass-shadow-inner`）
+- 同步输出暗色参数 PoC（由设计师确认），写入 `[data-theme="dark"]` 覆盖块备用（阶段二启用）
+
+#### 1.8 `index.html` 内联 SVG 和脚本颜色 currentColor 化
 
 - 状态栏 SVG 图标（L46-50 + L62-99）→ `fill="currentColor"` + CSS 控制
 - 导航栏按钮图标（L62、L79、L88）→ `fill="currentColor"`
@@ -418,6 +498,33 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
    - 设置 `document.documentElement.style.colorScheme` 让浏览器原生控件（滚动条、输入框）自动适配
    - 同步 `.fp-scroll` 的 `data-theme` 属性（见 2.4）
 4. 在 `html` 上添加全局过渡动画：`transition: background-color 0.3s ease, color 0.3s ease`（**不要用 `transition: all`**，会严重影响性能）
+5. **`prefers-color-scheme` 实时监听**：系统主题变化时自动跟随（仅当用户未手动切换时）：
+
+```js
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('wb-theme')) {
+    document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+    syncFeaturePanelTheme(e.matches ? 'dark' : 'light');
+  }
+});
+```
+
+6. **`#ctrlTheme` 按钮状态指示**：切换后更新 `aria-label` 和图标，让用户一眼看出当前模式：
+
+```js
+btn.setAttribute('aria-label', isDark ? '切换为亮色模式' : '切换为暗色模式');
+btn.classList.toggle('is-dark', isDark); // CSS 可据此切换图标/样式
+```
+
+7. **CSS 媒体查询兜底**：即使 JS 失败，系统暗色偏好仍有最低保障：
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* 暗色变量覆盖（与 [data-theme="dark"] 相同） */
+  }
+}
+```
 
 #### 2.2 全局暗色覆盖块（`styles/base.css [data-theme="dark"]`）
 
@@ -425,6 +532,7 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 
 ```css
 [data-theme="dark"] {
+  color-scheme: dark; /* 让浏览器原生控件自动适配 */
   --color-bg-canvas: #1c1c1e;
   --color-bg-surface: #2c2c2e;
   --color-bg-elevated: #3a3a3c;
@@ -443,12 +551,14 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
   --color-border: #38383a;
   --color-border-weak: rgba(255,255,255,0.10);
 
-  /* 暗色阴影需提高不透明度，否则在深色背景上不可见 */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+  /* 暗色阴影从低不透明度起步，避免脏黑色块感（视觉反馈后再精调） */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.15);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.35);
 }
 ```
+
+> **设计决策**：阴影值从 `0.3~0.5` 降低至 `0.15~0.35` 起步。原因：`0.5` 不透明度在 `#1c1c1e` 底上会产生脏黑色块感，先从保守值开始，视觉反馈后再调高。
 
 #### 2.3 Glass 按钮暗色质感（需视觉 PoC）
 
@@ -461,7 +571,10 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 - `feature-panel.js:76` 中 `.fp-scroll` 硬写了 `data-theme="light"`，需在 `controls-theme.js` 切换时同步更新为 `"dark"`
 - `vendor/github-markdown.css` 已原生支持 `[data-theme="dark"]`，切换属性即可生效
 - **但需处理特异性冲突**：`feature-panel.css` 中 44 处 `#fpContent .markdown-body`（ID 选择器）会覆盖 `github-markdown.css` 的类选择器。阶段一已将硬编码替换为 `var(--color-*)`，此处应已解决，但需验证
-- **Feature Panel 快照一致性**：快照通过 `renderStaticXxx(mode: 'static')` 生成，需确认暗色下快照容器是否传入主题信息，避免形成"亮色孤岛"
+- **Feature Panel 快照一致性**：快照通过 `renderStaticXxx(mode: 'static')` 生成。需确认两点：
+  1. 快照容器是否为独立 DOM 节点——如果是，`data-theme="dark"` 不会自动从父级传播，需在快照容器上显式设置
+  2. `renderStaticXxx()` 是否需要增加 `theme` 参数——如果快照内部有硬编码色（如 inline style），仅靠 CSS 变量无法覆盖，需在渲染时传入主题信息
+  3. 验证方法：阶段二实施时先切暗色，逐一打开含快照的 Feature Panel 页面，检查是否有"亮色孤岛"
 
 #### 2.5 外部依赖主题切换
 
@@ -470,6 +583,7 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 - **Mermaid**：`theme: 'default'` → `theme: 'dark'`
   - **必须重新渲染**：Mermaid 渲染是一次性的，切主题需重新调用 `mermaid.run({ theme: 'dark' })` 重绘所有已渲染图表，不能仅靠 CSS 变量切换
   - 切回亮色时同理需 `mermaid.run({ theme: 'default' })` 重绘
+  - **性能评估**：单页 Mermaid 图表超过 5 张时，全量重绘可能导致 200ms+ 卡顿。如出现性能问题，考虑按可视区域按需重绘（`IntersectionObserver` 懒触发），或仅在首次切换时重绘一次并缓存
 
 ---
 
@@ -477,15 +591,15 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 
 > 以下风险按所属阶段标注（阶段一 / 阶段二 / 跨阶段），便于实施时对照检查。
 
-### 6.1 SVG 颜色替换白名单缺失【阶段一】
+### 6.1 SVG 语义色处理策略【阶段一】
 
-`svgFromRegistry()` 的无差别替换会把所有 `fill="#xxx"` 替换成 `currentColor`，但 `wb-more-indicator.svg`（`#D97757`）是语义色，不应变色。需要增加白名单机制：要么在 SVG 自身标记 `data-color="fixed"`，要么在 `svgFromRegistry()` 中增加 exclude 列表。
+`svgFromRegistry()` 的无差别替换会把所有 `fill="#xxx"` 替换成 `currentColor`。对于 `wb-more-indicator.svg`（`#D97757` 暖橙语义色），不需要复杂的白名单机制——直接让 `currentColor` 替换生效，通过父级 CSS class 控制 `color` 值即可保持语义色。例如 `.wb-more-btn { color: var(--color-accent-orange); }`，暗色模式只需覆盖该变量。
+
+`ing.svg` 的 `fill="white"` 需在上游 SVG 生成流程中改为 `fill="#000"`（使其被 regex 覆盖），或在 `svgFromRegistry()` 中增加对命名色 `white`/`black` 的替换覆盖。**不直接修改 `icons-inline.js`**（自动生成文件，改动会被覆盖）。
 
 **涉及文件**：
-- `engine/icons.js:59-63`
-- `engine/markdown.js:22-24`
-- `engine/table-fullscreen.js:23-24`
-- `engine/code-fullscreen-sheet.js:16-17`
+- `engine/icons.js:59-63`（`svgFromRegistry()` 增加命名色替换）
+- `engine/markdown.js:22-24`、`engine/table-fullscreen.js:23-24`、`engine/code-fullscreen-sheet.js:16-17`（同步增加命名色替换）
 
 ### 6.2 右侧 Feature Panel 的 GitHub Markdown 主题【阶段二】
 
@@ -508,9 +622,9 @@ highlight.js 主题切换（`github.min.css` → `github-dark.min.css`）和 Mer
 
 > **警告：不能纯代码反色**。白色透明层多层叠加的毛玻璃质感，直接反色会得到浑浊灰色块，丧失折射层次感。暗色玻璃仍需保留浅色高光层模拟折射（参考 Apple `UIBlurEffect.systemMaterialDark` 的实现思路）。**建议在实施前先做视觉 PoC 验证**，由设计师确认暗色玻璃参数后再批量替换。
 
-### 6.5 `demo-controls.css` 的高频点击态【阶段一】
+### 6.5 `demo-controls.css` 的高频点击态【跨阶段】
 
-demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-active:hover / is-active:active），每个状态都硬编码了颜色。暗色模式需要保持同样的层级关系，不能只覆盖基础态。
+demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-active:hover / is-active:active），每个状态都硬编码了颜色。阶段一需完成硬编码→变量替换（复杂度不亚于 `feature-panel.css`，已提前到 §1.5 第 5 位处理）；阶段二暗色覆盖时需保持同样的层级关系，不能只覆盖基础态，每个交互层级都需对应的暗色变量。
 
 ### 6.6 `feature-panel.css` 的规模【阶段一】
 
@@ -530,7 +644,7 @@ demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-ac
 
 ### 6.10 阴影体系在暗色下不可见【阶段二】
 
-当前阴影均为 `rgba(0,0,0,0.08)` 等低对比度设计，在暗色背景上几乎不可见，会导致卡片/浮层的层级关系丢失。需定义 `--shadow-sm/md/lg` 暗色变量集，提高不透明度至 `0.3~0.5`（见 Step 1 中的阴影 Token 定义）。
+当前阴影均为 `rgba(0,0,0,0.08)` 等低对比度设计，在暗色背景上几乎不可见，会导致卡片/浮层的层级关系丢失。需定义 `--shadow-sm/md/lg` 暗色变量集，从 `0.15~0.35` 起步（而非 `0.3~0.5`，后者在 `#1c1c1e` 底上会产生脏黑色块感），视觉反馈后再调高。
 
 ### 6.11 主题切换过渡动画【阶段二】
 
@@ -538,4 +652,16 @@ demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-ac
 
 ### 6.12 `color-scheme` 元属性【阶段二】
 
-在 `html[data-theme="dark"]` 上设置 `color-scheme: dark` 可让浏览器原生控件（滚动条、表单输入框、`<select>` 下拉等）自动适配暗色，无需额外 CSS。报告原方案未提及此属性。
+在 `html[data-theme="dark"]` 上设置 `color-scheme: dark` 可让浏览器原生控件（滚动条、表单输入框、`<select>` 下拉等）自动适配暗色，无需额外 CSS。已在 §2.2 覆盖块中写入。
+
+### 6.13 `wb-card` 组件独立暗色策略【跨阶段】
+
+`wb-card` 有独立的视觉语言（`#e9ecf1` 边框 + 浅色背景 + 玻璃质感），不应与普通 `--color-bg-surface` 混为一谈。阶段一变量化时需为其定义独立的 `--color-card-bg` / `--color-card-border` 变量；阶段二暗色覆盖时需单独调参，不能简单复用 surface 暗色值。
+
+### 6.14 第三方依赖版本锁定【跨阶段】
+
+`vendor/github-markdown.css` 和 highlight.js CDN CSS 在实施期间应锁定版本，避免上游更新引入新的颜色变量或破坏暗色支持。当前 highlight.js 固定在 `11.10.0`，`github-markdown.css` 为本地 vendor 副本无需担心。但实施期间不要手动更新这两个文件。
+
+### 6.15 Canvas 2D API 不支持 CSS 变量【阶段一】
+
+`engine/showcase-codeblock.js` 的营养环使用 Canvas 2D API（`fillStyle` / `strokeStyle`），不支持 `var()` 语法。需封装 `getThemeColor()` 工具函数通过 `getComputedStyle()` 读取 CSS 变量值。**关键风险**：主题切换时 Canvas 不会自动重绘，必须在切换回调中手动调用绘制函数刷新所有 Canvas 元素。

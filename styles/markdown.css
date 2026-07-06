@@ -34,6 +34,7 @@
   --md-line-h4:1.25;
   --md-line-h5h6:1.6;
   --md-text-primary:var(--color-text-primary);
+  --md-text-body:var(--md-text-body);
   --md-text-secondary:#3c3c43;
   --md-text-muted:var(--color-text-muted);
   --md-heading:var(--color-heading);
@@ -161,7 +162,7 @@
   position:relative;
   font-size:var(--md-font-li);
   line-height:var(--md-line-li);
-  color:#2c2c2e;
+  color:var(--md-text-body);
 }
 .md-node ul li{font-size:var(--md-font-node-li);line-height:1.52;padding-top:var(--md-space-2);padding-bottom:var(--md-space-2);}
 .md ul li::before{
@@ -184,7 +185,7 @@
   position:relative;
   font-size:var(--md-font-li);
   line-height:var(--md-line-li);
-  color:#2c2c2e;
+  color:var(--md-text-body);
 }
 .md ol li::before{
   content:counter(md-ol-counter) ".";
@@ -601,7 +602,7 @@
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:var(--md-font-pre);
   line-height:1.5;
-  color:#2c2c2e;
+  color:var(--md-text-body);
   background:transparent;
   padding:0;border-radius:0;
   white-space:pre;
@@ -720,7 +721,7 @@
   color:var(--color-text-faint);letter-spacing:-.12px;white-space:nowrap;
 }
 .response-cost .cost-svg{width:13px;height:13px;opacity:.58;}
-.response-cost strong{font-size:12px;font-weight:600;color:#a7a7ad;}
+.response-cost strong{font-size:12px;font-weight:600;color:var(--color-text-faint);}
 .response-action-btn svg path,
 .response-action-btn svg circle,
 .response-action-btn svg rect{fill:var(--color-text-strong);fill-opacity:1;}

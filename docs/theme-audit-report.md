@@ -151,11 +151,15 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 | `--aq-btn-action-bg` | `#3D3D3D` |
 | `--aq-input-placeholder-opacity` | `0.3` |
 
-#### `styles/base.css :root` — 1 个颜色变量
+> **注意**：`:root` 之外仍有 ~11 处硬编码颜色（如 `#3D3D3D`、`#fff !important`、`rgba(0,0,0,0.12)` 等），变量化率实际仅约 50%。暗色改造时不能只覆盖 `:root`，需逐条排查 `:root` 外的硬编码。
+
+#### `styles/base.css :root` — 1 个颜色变量 + 完整 spacing 体系
 
 | 变量 | 值 |
 |------|-----|
 | `--status-icon-color` | `#000` |
+
+> **重要**：`base.css :root` 已定义完整的 `--spacing-*` 间距体系（约 30 个变量），是全局 token 的正确归属文件。暗色模式的全局颜色变量应在此处增补，而非在 `markdown.css` 中定义。
 
 ### 2.2 高频重复硬编码色（下一步应抽成全局变量）
 
@@ -169,7 +173,7 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 | **`#8e8e93`** | ~12 | 副标题/弱文字 | `--color-text-secondary` |
 | **`#6e6e73`** | ~8 | muted 文字/标签色 | `--color-text-muted` |
 | **`#EBEBEB`** | ~12 | demo 控件按钮/滑块/灰底 | `--color-bg-control` |
-| **`rgba(0,0,0,0.30)`** | ~6 | 弱文字（timing-bar、thinking-btn） | `--color-text-weak` |
+| **`rgba(0,0,0,0.30)`** | ~6 | 弱文字（timing-bar、thinking-btn） | `--color-text-faint` |
 | **`rgba(0,0,0,0.7)`** | ~6 | 演示控件次级文字、停止按钮 | `--color-text-dim` |
 | **`#3B3B3B`** | ~3 | demo 控件激活态背景 | `--color-bg-active` |
 | **`#e9ecf1`** | ~3 | wb-card / code sheet 边框 | `--color-border` |
@@ -191,7 +195,9 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 | `base.css` | ~25 | ~4% | 全局背景色多 |
 | `composer.css` | ~18 | 0% | 中等 |
 | `conversation.css` | ~12 | 0% | 中等 |
-| **合计** | **~280+** | **<15%** | |
+| `approve-permission.css` | ~13 | ~85% | 已有 --ap-* 变量体系，但变量值仍为硬编码亮色 |
+| `ask-question.css` | ~22 | ~50% | :root 有 11 token，但 :root 外仍有 ~11 处硬编码 |
+| **合计** | **~300+** | **<15%** | |
 
 ### 3.2 JS 引擎硬编码颜色
 
@@ -239,13 +245,15 @@ statusStackHTML(labels) → renderStatusToolIcon(label)
 
 ### 4.2 右侧 Feature Panel 的 GitHub Markdown 主题
 
-`index.html:16` 从 CDN 加载 `github-markdown.css`：
+`index.html:16` 从本地加载 `vendor/github-markdown.css`：
 
 ```html
 <link rel="stylesheet" href="./vendor/github-markdown.css">
 ```
 
-GitHub Markdown CSS 本身没有 `.markdown-body[data-theme="dark"]` 支持。暗色模式时需要另外加载 GitHub Dark 主题（CDN 或 vendor），或者自己覆盖。
+**`vendor/github-markdown.css` 已原生支持暗色模式**——该文件第 14 行起通过 `@media (prefers-color-scheme: dark)` 和 `[data-theme="dark"]` 属性选择器提供了完整的暗色变量覆盖。因此 Feature Panel 的暗色切换**不需要额外加载任何 CSS**，只需将 `.fp-scroll` 元素的 `data-theme` 属性从 `"light"` 切换为 `"dark"` 即可。
+
+> **注意**：`github-markdown.css` 的暗色规则作用于 `.markdown-body[data-theme="dark"]`（类选择器），而 `feature-panel.css` 中大量规则使用 `#fpContent .markdown-body`（ID 选择器）。ID 选择器特异性高于类选择器，可能导致 `feature-panel.css` 中的硬编码颜色覆盖掉 `github-markdown.css` 的暗色变量。这是实施时需重点排查的特异性冲突。
 
 ### 4.3 代码高亮（highlight.js）
 
@@ -265,45 +273,131 @@ GitHub Markdown CSS 本身没有 `.markdown-body[data-theme="dark"]` 支持。�
 
 ## 5. 实施路线
 
-### Step 1 — 修 SVG Registry 异常（2 处，低风险）
+### Step 0 — 骨架接线（30 分钟，可立即验证）
+
+先搭建可切换的最小骨架，后续每一步都能即时在浏览器中 toggle 验证效果：
+
+1. 在 `styles/base.css :root` 增补 2-3 个核心全局变量（`--color-bg-base`、`--color-text-primary`），并添加 `[data-theme="dark"]` 空壳覆盖块
+2. 创建 `engine/controls-theme.js`，绑定 `#ctrlTheme.click`，切换 `document.documentElement.dataset.theme`
+3. 在 `index.html` 的 `<head>` 内联一段同步防闪屏脚本（FOUC prevention）：
+
+```html
+<script>
+  // 在 CSS 加载前同步读取主题，防止暗色用户看到一帧白屏
+  (function() {
+    var saved = localStorage.getItem('wb-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = saved || (prefersDark ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+    if (theme === 'dark') document.documentElement.style.colorScheme = 'dark';
+  })();
+</script>
+```
+
+4. `controls-theme.js` 中实现完整切换逻辑：
+   - 首次访问读取 `prefers-color-scheme` 系统偏好作为默认值
+   - 用户手动切换后 `localStorage.setItem('wb-theme', ...)` 覆盖
+   - 设置 `document.documentElement.style.colorScheme` 让浏览器原生控件（滚动条、输入框）自动适配
+   - 同步 `.fp-scroll` 的 `data-theme` 属性
+5. 在 `html` 上添加全局过渡动画：`transition: background-color 0.3s ease, color 0.3s ease`（**不要用 `transition: all`**，会严重影响性能）
+
+### Step 1 — 抽取全局颜色 Token（地基，必须最先做）
+
+在 `styles/base.css :root` 增补全局颜色变量（**不放 `markdown.css`**，`base.css` 已有完整的 `--spacing-*` 体系，是全局 token 的正确归属）：
+
+```css
+:root {
+  /* === 全局颜色 Token === */
+  --color-bg-canvas: #fafafa;       /* 最底层背景（页面/phone shell） */
+  --color-bg-surface: #fff;         /* 卡片/面板表面 */
+  --color-bg-elevated: #fff;        /* 浮层/弹窗（z-index 最高层） */
+  --color-bg-control: #EBEBEB;      /* 控制面板按钮 */
+  --color-bg-soft: #f2f2f2;         /* 弱背景 */
+  --color-bg-active: #3B3B3B;       /* 激活态背景 */
+
+  --color-text-primary: #1c1c1e;    /* 正文主色 */
+  --color-text-secondary: #8e8e93;  /* 次要文字 */
+  --color-text-muted: #6e6e73;      /* 弱化文字 */
+  --color-text-faint: rgba(0,0,0,0.30);  /* 最弱文字 */
+  --color-text-dim: rgba(0,0,0,0.7);     /* 中弱文字 */
+  --color-text-strong: #000;        /* 最强文字（状态栏时间等） */
+  --color-heading: #111114;         /* 标题 */
+
+  --color-border: #e9ecf1;          /* 标准边框 */
+  --color-border-weak: rgba(0,0,0,0.08); /* 弱边框 */
+
+  /* === 阴影体系 === */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+[data-theme="dark"] {
+  --color-bg-canvas: #1c1c1e;
+  --color-bg-surface: #2c2c2e;
+  --color-bg-elevated: #3a3a3c;
+  --color-bg-control: #3a3a3c;
+  --color-bg-soft: #2c2c2e;
+  --color-bg-active: #48484a;
+
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a1a1a6;
+  --color-text-muted: #8e8e93;
+  --color-text-faint: rgba(255,255,255,0.30);
+  --color-text-dim: rgba(255,255,255,0.7);
+  --color-text-strong: #fff;
+  --color-heading: #f5f5f7;
+
+  --color-border: #38383a;
+  --color-border-weak: rgba(255,255,255,0.10);
+
+  /* 暗色阴影需提高不透明度，否则在深色背景上不可见 */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+}
+```
+
+然后在 `markdown.css :root` 中让模块级 `--md-*` 变量引用全局 `--color-*`：
+
+```css
+:root {
+  --md-text-primary: var(--color-text-primary);
+  --md-surface: var(--color-bg-surface);
+  --md-border: var(--color-border);
+  /* ... 其余 --md-* 同理引用 --color-* ... */
+}
+```
+
+这样暗色覆盖只需在 `base.css` 写一处 `[data-theme="dark"]`，所有 `--md-*` 自动跟随。
+
+### Step 2 — 修 SVG Registry 异常（2 处，低风险）
 
 - `icons-inline.js:6`：`ing.svg` 的 `fill="white"` → 需确认语义。如果它是空态占位，应改为 `fill="currentColor"` + 父级控制 color
 - `icons-inline.js:36`：`wb-more-indicator.svg` 的 `#D97757` → 需在 `svgFromRegistry()` 增加白名单，或改用 CSS class 控制颜色
 
-### Step 2 — `engine/icons.js` ICONS 对象（7 项）
+### Step 3 — `engine/icons.js` ICONS 对象（7 项）
 
 - `ok`、`todoOk`、`todoEmpty`：改用 `currentColor` 或 CSS 变量
 - `spin`、`todoSpin`、`warn`：语义色保留，但支持暗色微调（通过 CSS 或 theme-aware 值）
 - `chevron`：已用 `currentColor`，无需改动
 
-### Step 3 — 抽取全局颜色变量
-
-在 `styles/markdown.css :root` 增补全局变量（推荐命名 `--cv-*` 或 `--color-*`）：
-
-```
---color-bg-base: #fafafa;      /* 页面/phone shell 背景 */
---color-bg-surface: #fff;      /* 卡片/面板 */
---color-bg-control: #EBEBEB;   /* 控制面板按钮 */
---color-bg-soft: #f2f2f2;     /* 弱背景 */
---color-text-primary: #1c1c1e; /* 正文主色 */
---color-text-secondary: #8e8e93; /* 弱文字 */
---color-text-weak: rgba(0,0,0,0.30); /* 最弱文字 */
---color-text-dim: rgba(0,0,0,0.7); /* 中弱文字 */
---color-border: #e9ecf1;       /* 标准边框 */
---color-border-weak: rgba(0,0,0,0.08); /* 弱边框 */
-```
-
-然后在 `:root [data-theme="dark"]` 或 `[data-theme="dark"]` 里覆盖。
-
 ### Step 4 — 各 CSS 文件追加暗色覆盖（按优先级排序）
 
+**排序原则：最大头先啃，Token 体系 early 压测。**
+
 1. `styles/base.css` — 全局背景 `#fafafa`、文本、玻璃按钮
-2. `styles/conversation.css` — 消息气泡、状态行
-3. `styles/composer.css` — 输入框外壳、按钮、wb-more
-4. `styles/sheet.css` — 底部浮层遮盖、面板
-5. `styles/demo-controls.css` — 控制面板按压/激活态
-6. `styles/markdown.css` — 卡片/toolbar/表格（变量已定义，直接覆盖）
-7. `styles/feature-panel.css` — 右侧说明栏（~100+ 处，最大头）
+2. `styles/feature-panel.css` — 右侧说明栏（~100+ 处，最大头，提前到第二位以压测 Token 体系）
+   - **注意特异性冲突**：`#fpContent .markdown-body`（ID 选择器，44 处）会覆盖 `github-markdown.css` 的 `.markdown-body[data-theme="dark"]`（类选择器）。需将 `feature-panel.css` 中的硬编码色替换为 `var(--color-*)`，否则暗色变量无法生效
+   - **Feature Panel 快照一致性**：快照通过 `renderStaticXxx(mode: 'static')` 生成，需确认暗色下快照容器是否传入主题信息，避免形成"亮色孤岛"
+3. `styles/conversation.css` — 消息气泡、状态行
+   - **注意 `drop-shadow` 反向语义**：`conversation.css` 中使用 `#fafafa` 做 `drop-shadow()` 文字描边，暗色底上需改为深色描边，逻辑跟背景色是反的，不能简单用 `var(--color-bg-base)` 替换
+4. `styles/composer.css` — 输入框外壳、按钮、wb-more
+5. `styles/sheet.css` — 底部浮层遮盖、面板
+6. `styles/approve-permission.css` — 权限请求卡片（已有 `--ap-*` 变量体系，只需在 `[data-theme="dark"]` 中覆盖变量值）
+7. `styles/ask-question.css` — 问答卡片（`:root` 有 11 token，但 `:root` 外仍有 ~11 处硬编码需逐条排查）
+8. `styles/demo-controls.css` — 控制面板按压/激活态（5 层级状态需逐层覆盖）
+9. `styles/markdown.css` — 卡片/toolbar/表格（变量已定义，直接覆盖）
 
 ### Step 5 — Engine JS 内联颜色
 
@@ -317,13 +411,13 @@ GitHub Markdown CSS 本身没有 `.markdown-body[data-theme="dark"]` 支持。�
 - 导航栏按钮图标（L62、L79、L88）→ 改 `currentColor`
 - 网格颜色（L490: `#BBBAB0`、L611: `#F8F6F1`）→ 定义 CSS 变量
 
-### Step 7 — `#ctrlTheme` 接线
+### Step 7 — 外部依赖主题切换
 
-- 创建 `engine/controls-theme.js`，绑定 `#ctrlTheme.click`
-- 切换逻辑：`document.documentElement.dataset.theme = 'dark' / 'light'`
-- 持久化：`localStorage.setItem('wb-theme', ...)`
-- 右侧面板同步：`feature-panel.js` 中 `.fp-scroll` 的 `data-theme` 属性
-- 同步 Mermaid 和 highlight.js 主题切换
+- **highlight.js**：切换 `github.min.css` → `github-dark.min.css`
+  - 运行时动态替换 `<link>` 有 FOUC 风险，建议预加载双主题 CSS + `disabled` 属性切换
+- **Mermaid**：`theme: 'default'` → `theme: 'dark'`
+  - **必须重新渲染**：Mermaid 渲染是一次性的，切主题需重新调用 `mermaid.run({ theme: 'dark' })` 重绘所有已渲染图表，不能仅靠 CSS 变量切换
+  - 切回亮色时同理需 `mermaid.run({ theme: 'default' })` 重绘
 
 ---
 
@@ -339,14 +433,13 @@ GitHub Markdown CSS 本身没有 `.markdown-body[data-theme="dark"]` 支持。�
 - `engine/table-fullscreen.js:23-24`
 - `engine/code-fullscreen-sheet.js:16-17`
 
-### 6.2 右侧 Feature Panel 的 GitHub Markdown 主题静态加载
+### 6.2 右侧 Feature Panel 的 GitHub Markdown 主题
 
-`index.html:16` 加载了 `vendor/github-markdown.css`（Light 版），但 `index.html:18` 还加载了 CDN 版 `github.min.css`（highlight.js 主题）。暗色模式需要：
-- 加载 `vendor/github-markdown-dark.css` 或自行覆盖
-- 切换 highlight.js 主题为 `github-dark.min.css`
-- 切换 Mermaid `theme: 'dark'`
+`vendor/github-markdown.css` **已原生支持暗色模式**（第 14 行起通过 `[data-theme="dark"]` 属性选择器提供暗色变量覆盖）。暗色切换只需将 `.fp-scroll` 的 `data-theme` 属性从 `"light"` 改为 `"dark"`，无需额外加载 CSS。
 
-这些是外部样式，不是 CSS 变量可以覆盖的，需��额外加载。
+**但需注意特异性冲突**：`feature-panel.css` 中 44 处使用 `#fpContent .markdown-body`（ID 选择器），特异性高于 `github-markdown.css` 的 `.markdown-body[data-theme="dark"]`（类选择器）。如果不把 `feature-panel.css` 中的硬编码色替换为 `var(--color-*)`，暗色变量会被 ID 选择器覆盖而失效。
+
+highlight.js 主题切换（`github.min.css` → `github-dark.min.css`）和 Mermaid 主题切换（`theme: 'dark'` + 重新渲染）仍需处理。
 
 ### 6.3 `#fafafa` 全局背景色的影响面
 
@@ -359,6 +452,8 @@ GitHub Markdown CSS 本身没有 `.markdown-body[data-theme="dark"]` 支持。�
 - 浅白色内阴影 → 改为深色内发光
 - 浅色外边框 → 改为深色外边框
 
+> **警告：不能纯代码反色**。白色透明层多层叠加的毛玻璃质感，直接反色会得到浑浊灰色块，丧失折射层次感。暗色玻璃仍需保留浅色高光层模拟折射（参考 Apple `UIBlurEffect.systemMaterialDark` 的实现思路）。**建议在实施前先做视觉 PoC 验证**，由设计师确认暗色玻璃参数后再批量替换。
+
 ### 6.5 `demo-controls.css` 的高频点击态
 
 demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-active:hover / is-active:active），每个状态都硬编码了颜色。暗色模式需要保持同样的层级关系，不能只覆盖基础态。
@@ -370,3 +465,23 @@ demo 控件的按钮有 4-5 层级（normal / hover / active / is-active / is-ac
 ### 6.7 右侧面板的 `data-theme="light"` 不可被 `:root` 的 `data-theme` 继承
 
 `feature-panel.js:76` 在 `.fp-scroll` 上硬写了 `data-theme="light"`，这是一个**绝对属性**，不会因为 `document.documentElement.dataset.theme = 'dark'` 而自动变。切换暗色模式时需要同步更新此属性。
+
+### 6.8 FOUC 防闪屏（Flash of Unstyled Content）
+
+使用 `localStorage` 持久化主题时，如果主题切换逻辑在 CSS 加载之后执行，暗色用户会先看到一帧白屏再跳变为暗色。**必须在 `<head>` 内联一段同步脚本**，在 CSS 加载前读取并设置 `data-theme`（见 Step 0 中的内联脚本）。
+
+### 6.9 `prefers-color-scheme` 系统偏好缺失
+
+报告原方案只考虑了手动 toggle + localStorage，未考虑首次访问时读取系统偏好。完整策略应是：**系统偏好作默认 → 用户手动切换后 localStorage 覆盖**。否则首次访问的暗色系统用户仍会看到亮色主题。
+
+### 6.10 阴影体系在暗色下不可见
+
+当前阴影均为 `rgba(0,0,0,0.08)` 等低对比度设计，在暗色背景上几乎不可见，会导致卡片/浮层的层级关系丢失。需定义 `--shadow-sm/md/lg` 暗色变量集，提高不透明度至 `0.3~0.5`（见 Step 1 中的阴影 Token 定义）。
+
+### 6.11 主题切换过渡动画
+
+直接切换 `data-theme` 会导致颜色瞬间跳变，体验生硬。需在 `html` 上添加 `transition: background-color 0.3s ease, color 0.3s ease`。**注意不要用 `transition: all`**，会严重影响性能并导致布局抖动。
+
+### 6.12 `color-scheme` 元属性
+
+在 `html[data-theme="dark"]` 上设置 `color-scheme: dark` 可让浏览器原生控件（滚动条、表单输入框、`<select>` 下拉等）自动适配暗色，无需额外 CSS。报告原方案未提及此属性。

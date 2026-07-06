@@ -96,6 +96,10 @@ body{
   --color-border: #e9ecf1;
   --color-border-weak: #e0e0e5;
 
+  /* === 网格装饰色 === */
+  --color-grid-line: #BBBAB0;
+  --color-grid-tile: #F8F6F1;
+
   /* === 语义色 === */
   --color-accent-blue: #007AFF;
   --color-accent-purple: #5e5ce6;
@@ -531,7 +535,7 @@ body:has(.phone-shell.tbl-landscape){
   transform: translateY(-50%);
   white-space: nowrap;
   background: rgba(0,0,0,0.78);
-  color: #fff;
+  color: var(--color-bg-surface);
   font-size: 12px;
   padding: 5px 10px;
   border-radius: 8px;

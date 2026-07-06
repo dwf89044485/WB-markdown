@@ -15,13 +15,13 @@
   --aq-line-height: 24px;
 
   --aq-option-bg: var(--color-bg-soft);
-  --aq-option-selected-bg: #EBEBEB;
+  --aq-option-selected-bg: var(--color-bg-control);
   --aq-option-height: 46px;
   --aq-option-radius: 10px;
   --aq-option-gap: 10px;
   --aq-option-padding: 10px 8px;
 
-  --aq-badge-bg: #EBEBEB;
+  --aq-badge-bg: var(--color-bg-control);
   --aq-badge-radius: 180px;
   --aq-badge-padding: 2px 12px;
 
@@ -170,7 +170,7 @@
 }
 .aq-close-btn svg {
   position: relative;
-  color: #3D3D3D;
+  color: var(--aq-text);
 }
 
 /* 问题区：标签 + 文字 */
@@ -310,7 +310,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--aq-text);
-  color: #fff;
+  color: var(--color-bg-surface);
   font-family: var(--aq-font);
   font-weight: var(--aq-text-regular);
   font-size: 12px;
@@ -415,7 +415,7 @@
 .aq-option.is-selected .aq-checkbox {
   background: var(--aq-checkbox-checked-bg);
   border-color: var(--aq-checkbox-checked-bg);
-  color: #fff;
+  color: var(--color-bg-surface);
 }
 
 /* 排序拖拽手柄 */
@@ -521,7 +521,7 @@
 }
 .aq-action-btn.is-action {
   background: var(--aq-btn-action-bg);
-  color: #FFFFFF;
+  color: var(--color-bg-surface);
 }
 
 /* 图标按钮（下一步 / 提交） */

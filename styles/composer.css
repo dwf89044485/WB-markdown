@@ -62,7 +62,7 @@
 }
 /* 多行态背景色（设计稿 18:5225：#FFFFFF，lineCount>=4 时保持白色） */
 .composer-shell.is-expanded.has-expand-handle{
-  background:#FFFFFF;
+  background:var(--color-bg-surface);
 }
 /* 激活态：高度由 JS 测量写入 --cp-height。
  * 始终 justify-content:flex-end（单行态按钮栏贴底），
@@ -231,8 +231,8 @@
   cursor:pointer;
 }
 .cp-chip-label{ display:flex; align-items:center; gap:3px; }
-.cp-chip-label svg{ width:15px; height:15px; color:#030303; }
-.cp-chip-text{ font-size:12px; line-height:16px; color:#030303; }
+.cp-chip-label svg{ width:15px; height:15px; color:var(--color-text-primary); }
+.cp-chip-text{ font-size:12px; line-height:16px; color:var(--color-text-primary); }
 .cp-chip-close{ width:10px; height:10px; opacity:.4; flex-shrink:0; }
 
 /* ── 激活态 textarea + 展开手柄 ───────────────────────────────
@@ -251,7 +251,7 @@
   max-height:200px;
   overflow-y:auto;
   font-family:"PingFang SC", "Helvetica Neue", sans-serif;
-  color:#000;
+  color:var(--color-text-strong);
   padding:1px 4px;          /* 设计稿内层 text frame padding */
 }
 .composer-shell.is-expanded .cp-textarea{ display:block; }
@@ -285,7 +285,7 @@
 .cp-fs-backdrop{
   position:fixed;
   inset:0;
-  background:#000;
+  background:var(--color-text-strong);
   opacity:0;
   pointer-events:none;
   z-index:60;
@@ -370,7 +370,7 @@
   font-size:14px;
   line-height:24px;
   min-height:120px;
-  color:#1c1c1e;
+  color:var(--color-text-primary);
 }
 /* 全屏态展开手柄不需要 */
 .composer-shell.is-fullscreen .cp-expand-handle{ display:none; }

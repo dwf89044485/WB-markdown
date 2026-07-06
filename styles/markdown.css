@@ -243,7 +243,7 @@
   border-radius:16px;
   text-decoration:none;
 }
-.file-card:active{background:#e8e8e8;}
+.file-card:active{background:var(--color-border-weak);}
 .file-card-icon{
   width:28px;height:28px;flex:0 0 28px;
   display:flex;align-items:center;justify-content:center;
@@ -304,7 +304,7 @@
   justify-content:space-between;
   padding:2px 2px 2px 10px;
   border-bottom:1px solid var(--color-border);
-  background:#f7f7f7;
+  background:var(--color-bg-canvas);
 }
 .md .wb-card-title,
 .md .tbl-toolbar-title{
@@ -490,7 +490,7 @@
 }
 .md .tbl th{
   position:sticky;top:0;
-  background:#f7f7f7;
+  background:var(--color-bg-canvas);
   color:var(--md-text-muted);
   font-weight:680;
   padding:9px 16px;
@@ -575,7 +575,7 @@
   justify-content:space-between;
   padding:7px 10px;
   border-bottom:.5px solid var(--md-border);
-  background:#f0f0f5;
+  background:var(--color-bg-soft);
 }
 .md .code-lang{
   font-size:12.5px;
@@ -717,7 +717,7 @@
   margin-left:6px;
   display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
   height:36px;padding:0;font-size:12px;line-height:1;font-weight:500;
-  color:#b1b1b6;letter-spacing:-.12px;white-space:nowrap;
+  color:var(--color-text-faint);letter-spacing:-.12px;white-space:nowrap;
 }
 .response-cost .cost-svg{width:13px;height:13px;opacity:.58;}
 .response-cost strong{font-size:12px;font-weight:600;color:#a7a7ad;}
@@ -726,7 +726,7 @@
 .response-action-btn svg rect{fill:var(--color-text-strong);fill-opacity:1;}
 .response-cost svg path,
 .response-cost svg circle,
-.response-cost svg rect{fill:#b1b1b6;fill-opacity:1;}
+.response-cost svg rect{fill:var(--color-text-faint);fill-opacity:1;}
 
 /* ── RESPONSE MORE POPOVER ────────────────────────────────── */
 .response-more-popover{

@@ -42,7 +42,7 @@
 /* ── USER MESSAGE ────────────────────────────────────────── */
 .user-msg-wrap{display:flex;justify-content:flex-end;padding:var(--cv-user-wrap-padding-y) var(--cv-msg-gutter-x);margin-bottom:var(--cv-user-wrap-margin-bottom);}
 .user-bubble{
-  max-width:82%;background:#e9e9eb;
+  max-width:82%;background:var(--color-bg-soft);
   border-radius:18px 18px 5px 18px;
   padding:var(--cv-user-bubble-padding-y) var(--cv-user-bubble-padding-x);font-size:15.5px;line-height:1.45;color:var(--color-text-primary);letter-spacing:-0.2px;
 }
@@ -126,7 +126,7 @@
 .step-detail-link svg{display:none;}
 .step-detail-link.is-running{
   border-radius:var(--cv-status-radius);
-  color:#999;
+  color:var(--color-text-faint);
 }
 .step-detail-link.is-running .status-fragments{
   position:relative;
@@ -220,7 +220,7 @@
 .stack-icon-wrap:nth-child(5){z-index:1;}
 .status-stack-count{
   font-size:14.5px;
-  color:#999;
+  color:var(--color-text-faint);
   white-space:nowrap;
   line-height:1;
 }
@@ -276,7 +276,7 @@
   display:inline-flex;
   align-items:center;
   height:15px;
-  color:#999;
+  color:var(--color-text-faint);
 }
 .status-chevron{
   display:inline-flex;
@@ -286,7 +286,7 @@
   padding-left:var(--cv-status-chevron-padding-left);
   padding-right:0;
   height:15px;
-  color:#999;
+  color:var(--color-text-faint);
 }
 .status-line-enter{animation:agentIn .22s cubic-bezier(.2,.8,.2,1) both;}
 

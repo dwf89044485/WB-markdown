@@ -53,7 +53,7 @@
 /* ── BOTTOM SHEET ────────────────────────────────────────── */
 .bottom-sheet{
   position:relative;
-  background:#FAFAFA;
+  background:var(--color-bg-canvas);
   width:100%;
   height:50%;
   border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
@@ -141,7 +141,7 @@
 }
 .sheet-top .sheet-handle{
   width:72px;height:6px;
-  background:#d7d7dc;border-radius:99px;
+  background:var(--color-border-weak);border-radius:99px;
   cursor:ns-resize;
   flex-shrink:0;
   position:static;
@@ -150,14 +150,14 @@
 
 /* ── SHEET DETAIL VIEW (二级 sheet) ──────────────────────── */
 .sheet-body.detail-mode{
-  background:#FAFAFA;
+  background:var(--color-bg-canvas);
   padding-top:0;
   padding-bottom:20px;
   gap:0;
 }
 .sheet-body.detail-mode::before{display:none;}
 .bottom-sheet.detail-mode{
-  background:#FAFAFA;
+  background:var(--color-bg-canvas);
 }
 .sd-container{
   display:flex;
@@ -171,21 +171,21 @@
 }
 .sd-label{
   font-size:14px;font-weight:600;
-  color:#3D3D3D;line-height:24px;
+  color:var(--color-text-primary);line-height:24px;
   padding:15px 0;
 }
 .sd-card{
-  background:#FFFFFF;
-  border:1px solid #F2F2F2;
+  background:var(--color-bg-surface);
+  border:1px solid var(--color-bg-soft);
   border-radius:10px;
   padding:6px;
   font-size:15px;line-height:24px;
-  color:#3D3D3D;
+  color:var(--color-text-primary);
   white-space:pre-wrap;
   word-break:break-all;
 }
 .sd-dim{
-  color:#8e8e93;
+  color:var(--color-text-secondary);
   font-size:14px;
 }
 .sd-variant-code{
@@ -217,7 +217,7 @@
   display:flex;
   flex-direction:column;
   gap:var(--sheet-stack-gap);
-  color:#1c1c1e;
+  color:var(--color-text-primary);
   -webkit-overflow-scrolling:touch;
 }
 .sheet-body::-webkit-scrollbar{width:0;height:0;display:none;}
@@ -225,7 +225,7 @@
 .sheet-source-title{
   padding:0 var(--sheet-body-left);
   margin-bottom:var(--spacing-8);
-  font-size:15px;font-weight:600;color:#1c1c1e;letter-spacing:-.2px;
+  font-size:15px;font-weight:600;color:var(--color-text-primary);letter-spacing:-.2px;
 }
 .bottom-sheet.expanded .sheet-body{overflow-y:auto;}
 
@@ -237,7 +237,7 @@
   top:var(--sheet-guide-top);
   bottom:var(--sheet-guide-bottom);
   width:1px;
-  background:#e5e5ea;
+  background:var(--color-border);
   z-index:0;
 }
 .sheet-body:empty::before{display:none;}
@@ -257,7 +257,7 @@
 .s-ico{
   width:24px;height:24px;flex:0 0 24px;
   display:flex;align-items:center;justify-content:center;
-  background:#FAFAFA;border-radius:6px;
+  background:var(--color-bg-canvas);border-radius:6px;
   margin-top:0;z-index:2;
 }
 .s-ico-img{
@@ -266,7 +266,7 @@
   box-sizing:border-box;
   background:transparent;border-radius:0;
   display:flex;align-items:center;justify-content:center;
-  color:#3c3c43;
+  color:var(--color-text-primary);
 }
 .s-ico,.s-ico-img{
   display:flex;
@@ -284,17 +284,17 @@
 .s-text{
   flex:0 0 auto;min-width:0;
   font-size:14px;line-height:1.42;font-weight:600;
-  color:#1c1c1e;letter-spacing:-0.24px;
+  color:var(--color-text-primary);letter-spacing:-0.24px;
   display:inline-flex;align-items:center;
   white-space:nowrap;
 }
 .s-text.dim{
   font-size:14px;line-height:1.42;font-weight:500;
-  color:#8e8e93;letter-spacing:-0.22px;
+  color:var(--color-text-secondary);letter-spacing:-0.22px;
   display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .s-row-chevron{
-  font-size:21px;line-height:1;color:#9b9ba1;transform:translateY(1px);
+  font-size:21px;line-height:1;color:var(--color-text-secondary);transform:translateY(1px);
 }
 .s-row:has(.s-row-chevron){cursor:pointer;}
 
@@ -305,17 +305,17 @@
   border-radius:12px;
   background:transparent;
   box-shadow:none;
-  color:#5b5b61;
+  color:var(--color-text-dim);
   font-size:13.5px;line-height:1.42;letter-spacing:-.15px;
 }
 .event-card-title{display:none;}
 .event-card-body{
-  color:#5b5b61;font-size:13.5px;line-height:1.5;letter-spacing:-.16px;white-space:pre-wrap;
+  color:var(--color-text-dim);font-size:13.5px;line-height:1.5;letter-spacing:-.16px;white-space:pre-wrap;
 }
 .sheet-empty{
   position:relative;z-index:1;
   margin-left:var(--sheet-empty-margin-left);padding:var(--sheet-empty-padding-top) 0 var(--sheet-empty-padding-bottom);
-  font-size:15px;color:#8e8e93;
+  font-size:15px;color:var(--color-text-secondary);
 }
 
 /* Tool-type icon tint overrides */
@@ -342,8 +342,8 @@
   padding:2px;
   box-sizing:border-box;
   display:flex;align-items:center;justify-content:center;
-  background:#FAFAFA;border-radius:6px;z-index:2;
-  color:#3c3c43;
+  background:var(--color-bg-canvas);border-radius:6px;z-index:2;
+  color:var(--color-text-primary);
 }
 .s-sub-ico .tool-svg{display:block;width:20px;height:20px;object-fit:contain;}
 .s-sub-ico{color:var(--color-text-primary);}
@@ -353,10 +353,10 @@
 .s-sub-txt{
   flex:1;min-width:0;
   font-size:14px;line-height:1.48;font-weight:500;
-  color:#2c2c2e;letter-spacing:-.18px;
+  color:var(--color-text-primary);letter-spacing:-.18px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.s-sub-txt.active{color:#111114;font-weight:600;}
+.s-sub-txt.active{color:var(--color-heading);font-weight:600;}
 
 /* ============================================================
    CODE FULLSCREEN SHEET — 代码块全屏展示（非表格）
@@ -372,7 +372,7 @@
   justify-content:space-between;
   width:100%;
   flex-shrink:0;
-  border-bottom:1px solid #E9ECF1;
+  border-bottom:1px solid var(--color-border);
   padding:16px;
 }
 .bottom-sheet.code-variant .code-sheet-left,
@@ -381,14 +381,14 @@
   align-items:center;
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
   font-size:13px;
-  color:#000;
+  color:var(--color-text-strong);
   white-space:nowrap;
 }
 .bottom-sheet.code-variant .code-sheet-title,
 .bottom-sheet.products-variant .code-sheet-title{
   font-size:17px;
   font-weight:600;
-  color:#000;
+  color:var(--color-text-strong);
 }
 
 /* HTML 类型 segmented 控件「预览 / 代码」 */
@@ -396,7 +396,7 @@
   display:flex;
   gap:4px;
   align-items:flex-start;
-  background:#f2f2f2;
+  background:var(--color-bg-soft);
   border-radius:8px;
   padding:4px;
   width:141px;
@@ -413,12 +413,12 @@
   font-family:'PingFang SC','PingFang TC','Helvetica Neue',sans-serif;
   font-size:15px;
   line-height:22px;
-  color:#000;
+  color:var(--color-text-strong);
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:background .14s ease;
 }
-.bottom-sheet.code-variant .code-sheet-tab.is-active{ background:#fff; }
+.bottom-sheet.code-variant .code-sheet-tab.is-active{ background:var(--color-bg-surface); }
 
 /* 玻璃胶囊按钮组 */
 .bottom-sheet.code-variant .code-sheet-actions.glass-capsule,
@@ -446,7 +446,7 @@
   border:none;
   border-radius:50px;
   background:transparent;
-  color:#000;
+  color:var(--color-text-strong);
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   outline:none;
@@ -487,7 +487,7 @@
 /* 内容区 */
 .bottom-sheet.code-variant .code-sheet-body{
   flex:1 1 0;
-  background:#fff;
+  background:var(--color-bg-surface);
   overflow:hidden;
   position:relative;
   min-height:0;
@@ -500,7 +500,7 @@
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:13px;
   line-height:1.55;
-  color:#1c1c1e;
+  color:var(--color-text-primary);
   background:transparent;
   white-space:pre;
 }
@@ -518,7 +518,7 @@
   width:100%;
   height:100%;
   border:0;
-  background:#fff;
+  background:var(--color-bg-surface);
 }
 
 /* ── 行号 ──────────────────────────────────────────── */
@@ -533,12 +533,12 @@
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:13px;
   line-height:1.55;
-  color:#8E8E93;
+  color:var(--color-text-secondary);
   text-align:right;
   user-select:none;
   -webkit-user-select:none;
   white-space:pre;
-  border-right:1px solid #E9ECF1;
+  border-right:1px solid var(--color-border);
 }
 .bottom-sheet.code-variant .code-sheet-body .code-line-content{
   flex:1;
@@ -549,7 +549,7 @@
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:13px;
   line-height:1.55;
-  color:#1c1c1e;
+  color:var(--color-text-primary);
   background:transparent;
   white-space:pre;
 }
@@ -590,10 +590,10 @@
 /* 产物 sheet header：无分割线，背景与内容区一致 */
 .bottom-sheet.products-variant .code-sheet-header{
   border-bottom:none;
-  background:#FAFAFA;
+  background:var(--color-bg-canvas);
 }
 .bottom-sheet.products-variant .products-list{
-  background:#FAFAFA;
+  background:var(--color-bg-canvas);
 }
 
 /* ── 查看全部产物链接 ────────────────────────────── */
@@ -607,7 +607,7 @@
   gap:4px;
   font-size:13px;
   font-weight:400;
-  color:#1c1c1e;
+  color:var(--color-text-primary);
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;

@@ -28,12 +28,11 @@
 | 3 | 新交互功能 → 先搜现成方案，确认无方案再自写 | 直接从零手写拖拽排序 |
 | 4 | 视觉体系 → 沿用现有 class / token，不新增硬编码 px | 直接写 `margin: 12px` |
 | 5 | 间距 → 只走 `--cv-agent-stack-gap` / `--cv-exec-stack-gap` | 在子级加 `margin-bottom` 叠加间距 |
-| 6 | `icons-inline.js` → 禁止手动修改，AI 无需读取 | — |
-| 7 | 剧本数据 → 只改 `scenario.js`，不写进 HTML | — |
-| 8 | commit → 每完成一件事立即提交，不等用户说 | — |
-| 9 | `git reset` → 只能用 `--keep`，禁止用 `--hard` | `git reset --hard HEAD~1` |
-| 10 | Feature Panel 快照尺寸 → 由各 `features/<id>.js` 通过 `opts.width/height` 自行控制，禁止在 CSS 中用 `!important` 全局覆盖 | `.fp-snapshot .fp-sheet-shell-frame { width: 390px !important; }` |
-| 11 | Feature Panel 快照渲染 → 必须调 Demo 已有的 `renderStaticXxx()`，禁止在 feature 文件里重写 HTML | 在 `features/sheet.js` 里拼 `<header>...<pre>` 字符串 |
+| 6 | 剧本数据 → 只改 `scenario.js`，不写进 HTML | — |
+| 7 | commit → 每完成一件事立即提交，不等用户说 | — |
+| 8 | `git reset` → 只能用 `--keep`，禁止用 `--hard` | `git reset --hard HEAD~1` |
+| 9 | Feature Panel 快照尺寸 → 由各 `features/<id>.js` 通过 `opts.width/height` 自行控制，禁止在 CSS 中用 `!important` 全局覆盖 | `.fp-snapshot .fp-sheet-shell-frame { width: 390px !important; }` |
+| 10 | Feature Panel 快照渲染 → 必须调 Demo 已有的 `renderStaticXxx()`，禁止在 feature 文件里重写 HTML | 在 `features/sheet.js` 里拼 `<header>...<pre>` 字符串 |
 
 ---
 
@@ -71,7 +70,7 @@
 | `features/ask-question.js` | AskQuestion feature：说明内容 + 6 个细粒度锚点 |
 | `styles/ask-question.css` | 问答卡片样式 |
 | `styles/feature-panel.css` | 右侧说明栏样式 |
-| `icons-inline.js` | **⛔ 自动生成（SVG 内联 28KB），禁止手动修改，AI 无需读取** |
+| `icons-inline.js` | 自动生成的 SVG 内联仓库（约 28KB）。AI 无需读取；手动编辑已由 hook 自动拦截 |
 
 > **行号级细节**（表格渲染关键位置、全屏样式区块起止行等）已内联在各文件顶部注释中，需要时直接查阅对应文件。
 

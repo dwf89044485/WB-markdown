@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/showcase-codeblock.js
 // 「代码块样式」场景：独立展示 4 种容器样式，与剧本无关
 // 触发：index.html 中带 data-scene="codeblock-showcase" 的按钮

@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // ============================================================
 // PLAYER — Director timeline · playback lifecycle · public API
 // ============================================================

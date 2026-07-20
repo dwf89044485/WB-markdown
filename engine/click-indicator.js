@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // ============================================================
 // CLICK-INDICATOR — 视觉锚点指示器
 // 自包含: CSS 运行时注入一次

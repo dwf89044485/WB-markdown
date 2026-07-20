@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 /* === controls-stepper.js 架构注释 ===
  * IIFE，步进控制绑定。
  * #ctrlPrevStep → directorPrevStep（player.js 导出）

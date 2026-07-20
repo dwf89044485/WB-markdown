@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/table-fullscreen.js
 // 表格全屏查看 — 从 index.html 内联脚本抽离
 // 依赖：index.html 中的 #tblOverlay / #tblFsContent / #tblFsBack / .phone-shell

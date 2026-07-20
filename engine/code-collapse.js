@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/code-collapse.js
 // 代码块过长折叠：渲染后探测 pre.scrollHeight > 280 → 保留折叠态；否则去掉折叠 class 显示完整内容
 // 「查看全部」按钮的点击拉起二级 sheet，由 code-fullscreen-sheet.js 接管

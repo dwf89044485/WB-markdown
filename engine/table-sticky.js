@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/table-sticky.js
 // 工具卡片吸顶：所有 .tbl-outer (.wb-card) 容器在滚到视口上方时
 //   - 表格 → toolbar + thead 两行吸顶

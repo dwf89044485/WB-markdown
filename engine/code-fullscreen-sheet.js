@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/code-fullscreen-sheet.js
 // 代码块全屏 Sheet — 非表格类卡片（JS / HTML / JSON / Mermaid 等）的全屏展示
 // 使用 sheet.js 的 openSheet/closeSheet + .code-variant 统一渲染

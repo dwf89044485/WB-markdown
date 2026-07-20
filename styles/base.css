@@ -1,3 +1,4 @@
+/* © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485 */
 /* ============================================================
    BASE — Reset · Phone Shell · Status Bar · Nav Bar · Glass System · Composer
    ============================================================ */
@@ -260,6 +261,21 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     justify-content:center;
     overflow:hidden;
     width:100%;
+    position:relative;
+  }
+  /* 舞台底部署名：手机壳外、公开页可见，不参与交互 */
+  .stage-credit{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:12px;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:0.02em;
+    color:var(--color-text-secondary);
+    opacity:0.6;
+    pointer-events:none;
+    user-select:none;
   }
   .design-notes{
     flex:1 1 var(--layout-notes-min-w);

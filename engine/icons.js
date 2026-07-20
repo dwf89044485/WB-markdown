@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // ============================================================
 // ICONS — SVG registry · tool icon inference · status line render
 // No imports — reads window.WORKBUDDY_INLINE_ICONS and window.WORKBUDDY_ICON_ALIASES

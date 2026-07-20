@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 /* === feature-jump.js 架构注释 ===
  * jumpToAnchor(anchor) 完整流程：
  * 解析 nodeIndex → resolveNodeStep → goToStep（jumpDirectorTo fast-render）

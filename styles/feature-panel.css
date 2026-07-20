@@ -1,3 +1,4 @@
+/* © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485 */
 /* ============================================================
    FEATURE PANEL — 右侧交互说明栏样式
    视觉方向：极简作品集风格（参考 Ines Maruchal）
@@ -31,6 +32,16 @@
   box-shadow:none;
   border-bottom:1px solid var(--color-border-weak);
 }
+/* 标题行：左侧「交互说明」+ 右侧署名，横排两端对齐 */
+.fp-nav-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  width:100%;
+  padding-right:64px;
+  box-sizing:border-box;
+  margin-bottom:18px;
+}
 /* 区域标签：同 feature header h1 风格 */
 .fp-section-label{
   font-family:Georgia,'Noto Serif SC','Songti SC',serif;
@@ -40,7 +51,19 @@
   color:var(--color-heading);
   letter-spacing:-0.015em;
   white-space:nowrap;
-  margin-bottom:18px;
+}
+/* 标题行右侧署名：衬线斜体、muted，对齐标题基线，杂志署名感 */
+.fp-byline{
+  flex:0 0 auto;
+  font-family:Georgia,'Noto Serif SC','Songti SC',serif;
+  font-style:italic;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.15;
+  color:var(--color-text-secondary);
+  letter-spacing:0.01em;
+  white-space:nowrap;
+  user-select:none;
 }
 /* Tab 标签栏 */
 .fp-tab-bar{

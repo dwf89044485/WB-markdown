@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 /* === controls-speed.js 架构注释 ===
  * IIFE（非 ES module），随 player.js 模块加载后执行。
  * 监听 #ctrlSpeedSlider（range 5~1500，步进5）→ 同步 scenario.playback.tokensPerSecond

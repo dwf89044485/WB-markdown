@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // ── Demo Control Button 辅助函数 ─────────────────────────
 // 统一生成控制左侧 Demo 状态的按钮 HTML。
 //

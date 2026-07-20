@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // engine/mermaid-render.js
 // 把代码块里的 ```mermaid 源码用 vendor/mermaid.min.js 渲染成 SVG
 // 入口：监听 .wb-card-mermaid 卡片出现 → 渲染；同时 highlight.js 跳过它们

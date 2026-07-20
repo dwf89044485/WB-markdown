@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 // ============================================================
 // FEATURE PANEL — 主控
 // ============================================================
@@ -69,7 +70,10 @@ function buildShell() {
   rootEl.innerHTML = `
     <div class="fp-root">
       <nav class="fp-nav">
-        <span class="fp-section-label">交互说明</span>
+        <div class="fp-nav-head">
+          <span class="fp-section-label">交互说明</span>
+          <span class="fp-byline">by Joseph Deng</span>
+        </div>
         <div class="fp-tab-bar" id="fpTabBar"></div>
       </nav>
       <div class="fp-content" id="fpContent">

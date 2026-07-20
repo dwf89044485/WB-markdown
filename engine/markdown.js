@@ -1,3 +1,4 @@
+// © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485
 /* === markdown.js 架构注释 ===
  * 通用工具卡片系统（.wb-card / .tbl-outer）：
  *   - 容器类型：表格、代码块（执行类/HTML/不可执行类）、Mermaid

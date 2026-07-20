@@ -263,12 +263,12 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     width:100%;
     position:relative;
   }
-  /* 舞台底部署名：手机壳外、公开页可见，不参与交互 */
+  /* 舞台顶部署名：手机壳外、公开页可见，不参与交互 */
   .stage-credit{
     position:absolute;
     left:0;
     right:0;
-    bottom:12px;
+    top:12px;
     text-align:center;
     font-size:11px;
     letter-spacing:0.02em;

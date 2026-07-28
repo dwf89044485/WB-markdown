@@ -5,6 +5,7 @@
 
 import { sleep, sleepDelay, fastRender, currentTokensPerSecond, scrollIfFull } from './core.js';
 import { markdownToHtml } from './markdown.js';
+import { renderMermaidUnder } from './mermaid-render.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -77,8 +78,9 @@ export async function appendHTMLTypedTo(container, html) {
       c.classList.remove('typing-block-enter');
     }
   }
-  // 敲完后对本批新增内容里的代码块统一做语法高亮
+  // 敲完后再统一高亮与渲染，避免 Mermaid 半截源码被提前替换。
   highlightCodeBlocksAfter(startMark);
+  await renderMermaidUnder(container);
   startMark.remove();
   await sleepDelay('stepDelay', 470);
 }

@@ -282,11 +282,11 @@ export function markdownToHtml(markdown) {
 // collapsed: null → 不折叠（无折叠按钮，用于短代码展示）
 // ── 静态 Mermaid 可视化卡片（供 Feature Panel 快照复用）────────────
 // 卡片外壳与其他类型一致（标题 Mermaid + 复制/保存图片/分享/全屏 按钮），
-// 内容区直接放 .mermaid 容器，由 feature-panel.js 的 mermaid.run() 完成 SVG 渲染。
+// 内容区直接放 .mermaid 源节点，由 mermaid-render.js 共享入口完成 SVG 渲染。
 export function renderStaticMermaidCard(code) {
   const actions = buildCardActions('visual', { allowImageSave: true });
-  // code 不经过 escapeHtml —— Mermaid 解析 textContent，不是 HTML
-  const body = `<div class="wb-card-body"><div class="mermaid">${code}</div></div>`;
+  // Mermaid 读取 textContent；先转义可保留源码中的标签文本并避免注入 HTML。
+  const body = `<div class="wb-card-body"><div class="mermaid">${escapeHtml(code)}</div></div>`;
   return renderCardShell({
     title: 'Mermaid',
     actions,

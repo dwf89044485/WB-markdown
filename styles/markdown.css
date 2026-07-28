@@ -816,6 +816,23 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
   from{opacity:0;}
   to{opacity:1;}
 }
+@keyframes tbl-fs-out{
+  from{opacity:1;}
+  to{opacity:0;}
+}
+.tbl-fullscreen-overlay.is-closing{
+  animation:tbl-fs-out .28s ease forwards;
+  pointer-events:none;
+}
+/* prefers-reduced-motion: 缩减为纯淡出，时长保持克制 */
+@media (prefers-reduced-motion: reduce){
+  .tbl-fullscreen-overlay{
+    animation:tbl-fs-in .2s ease;
+  }
+  .tbl-fullscreen-overlay.is-closing{
+    animation:tbl-fs-out .2s ease forwards;
+  }
+}
 
 /* ── NAV BAR ────────────────────────────────────────────── */
 .tbl-fs-nav{

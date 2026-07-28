@@ -158,12 +158,19 @@ if (window.visualViewport) {
 
 /* ── 返回 ─────────────────────────────────────────────── */
 function closeFullscreen() {
-  overlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
-  shell.classList.remove('tbl-landscape');
-  content.innerHTML = '';
-  currentMermaidSrc = null;
-  if (window.buildGrid) window.buildGrid();
-  if (window.fitShellScale) window.fitShellScale();
+  // 如果已在关闭中，不重复触发
+  if (overlay.classList.contains('is-closing')) return;
+  overlay.classList.add('is-closing');
+  overlay.addEventListener('animationend', function onCloseEnd(e) {
+    if (e.animationName !== 'tbl-fs-out') return;
+    overlay.removeEventListener('animationend', onCloseEnd);
+    overlay.classList.remove('is-active', 'is-closing', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
+    shell.classList.remove('tbl-landscape');
+    content.innerHTML = '';
+    currentMermaidSrc = null;
+    if (window.buildGrid) window.buildGrid();
+    if (window.fitShellScale) window.fitShellScale();
+  });
 }
 fsBack.addEventListener('click', closeFullscreen);
 

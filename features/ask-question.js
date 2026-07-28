@@ -127,7 +127,7 @@ function labeled(label, html, btnAnchor, desc) {
   const btn = btnAnchor
     ? `<button class="fp-anchor-btn" data-anchor="${btnAnchor}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
     : '';
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const descHtml = desc ? `<span style="color:var(--fp-text-secondary);font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml + btn;
   return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
 }
@@ -299,7 +299,7 @@ export default {
           ${labeled('用户输入', s.singleInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：点击后，<strong style="color:#a8071a">等待 300ms，让用户感知到已选选项</strong>，自动进入下一题。</p>
+          <p><strong>交互</strong>：点击后，<strong style="color:var(--fp-emphasis)">等待 300ms，让用户感知到已选选项</strong>，自动进入下一题。</p>
           <p><strong>输入与选项互斥</strong>：输入框输入则清空已选项，点击选项则清空输入框。输入框通过 placeholder「以上都不是，我来告诉你」明确示意互斥关系。</p>
         </blockquote>
         <h3>4.2 多选题</h3>
@@ -309,7 +309,7 @@ export default {
           ${labeled('用户输入', s.multiInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：点选项 toggle 选中/取消，<strong style="color:#a8071a">不自动进入下一题</strong>，需手动按"下一步"确认。</p>
+          <p><strong>交互</strong>：点选项 toggle 选中/取消，<strong style="color:var(--fp-emphasis)">不自动进入下一题</strong>，需手动按"下一步"确认。</p>
           <p><strong>输入与选项共存</strong>：输入框输入不影响已选项，点击选项也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可叠加而非替代"。</p>
         </blockquote>
         <h3 id="sec-sort">4.3 排序题</h3>
@@ -320,7 +320,7 @@ export default {
           ${labeled('用户输入', s.sortInput)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：<strong style="color:#a8071a">下一步按钮默认亮起，可直接下一步。</strong>拖拽移动 3px 触发排序，首次进入有引导气泡，完成首次拖拽后永久消失。</p>
+          <p><strong>交互</strong>：<strong style="color:var(--fp-emphasis)">下一步按钮默认亮起，可直接下一步。</strong>拖拽移动 3px 触发排序，首次进入有引导气泡，完成首次拖拽后永久消失。</p>
           <p><strong>输入与排序共存</strong>：输入框输入不影响排序结果，排序操作也不影响输入框内容。输入框通过 placeholder「我来额外补充说明」示意"可额外补充"。</p>
         </blockquote>
       </section>
@@ -346,7 +346,7 @@ export default {
                 <tr>
                   <td>升起（入场）</td>
                   <td>300ms</td>
-                  <td>cubic-bezier(0, 0, 0.2, 1)<br><span style="color:#86868b;font-size:12px">快进慢收，末尾有落点感</span></td>
+                  <td>cubic-bezier(0, 0, 0.2, 1)<br><span style="color:var(--fp-text-secondary);font-size:12px">快进慢收，末尾有落点感</span></td>
                   <td>卡片"弹出"到位，末尾的减速感让内容稳定落座</td>
                 </tr>
                 <tr>
@@ -359,7 +359,7 @@ export default {
             </table>
             <blockquote>
               <p>入场比出场慢——这是刻意的。用户点击关闭时注意力已经转移，出场越快越好；而内容"到来"需要一点时间建立存在感。</p>
-              <p style="color:#86868b;font-size:12px;margin-top:6px">左侧演示按真实参数循环：升起 0.3s → 停留 2s → 落下 0.25s → 间隔 1s。</p>
+              <p style="color:var(--fp-text-secondary);font-size:12px;margin-top:6px">左侧演示按真实参数循环：升起 0.3s → 停留 2s → 落下 0.25s → 间隔 1s。</p>
             </blockquote>
           </div>
         </div>
@@ -397,7 +397,7 @@ export default {
             </table>
             <blockquote>
               <p>切题动效还承担防误操作的职责：动画播放期间（300ms）屏蔽二次点击，避免快速连点后题目状态错乱。</p>
-              <p style="color:#86868b;font-size:12px;margin-top:6px">左侧演示按真实参数循环：每题停留 1s，切题 0.3s ease-out，从 1/4 走到 4/4 后回到起点。</p>
+              <p style="color:var(--fp-text-secondary);font-size:12px;margin-top:6px">左侧演示按真实参数循环：每题停留 1s，切题 0.3s ease-out，从 1/4 走到 4/4 后回到起点。</p>
             </blockquote>
           </div>
         </div>

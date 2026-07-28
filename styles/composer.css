@@ -35,7 +35,7 @@
   top:calc(var(--composer-fade-height) * -1);
   left:0;right:0;
   height:var(--composer-fade-height);
-  background:linear-gradient(to bottom,rgba(250,250,250,0) 0%,rgba(250,250,250,1) 100%);
+  background:linear-gradient(to bottom,var(--color-bg-canvas-transparent) 0%,var(--color-bg-canvas) 100%);
   pointer-events:none;
   z-index:1;
 }
@@ -48,7 +48,7 @@
   border-radius:28px;        /* 设计稿 borderRadius=28 */
   overflow:hidden;
   background:var(--color-bg-surface);
-  box-shadow:0 4px 10px rgba(0,0,0,0.05), inset 1px 1px 0 0 rgba(255,255,255,1);
+  box-shadow:var(--shadow-composer);
   /* 始终 column：.cp-body（内容）在上、.cp-bar（按钮栏）在下。
    * 单行态 .cp-body 折叠为 0、占位文字浮在 bar 里；激活态 .cp-body 展开成 textarea。
    * 按钮栏 .cp-bar 始终在底部一行，单行↔激活切换时按钮 DOM 不动、不跳。 */
@@ -106,7 +106,7 @@
   text-align:center;
   font-size:17px;
   line-height:24px;
-  color:rgba(0,0,0,0.3);
+  color:var(--color-text-placeholder);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -182,14 +182,14 @@
 .cp-tool-btn:active::after,
 .cp-send-btn:active::after,
 .cp-stop-btn:active::after{
-  background:rgba(60,60,67,0.12);
+  background:var(--color-state-pressed);
 }
 .cp-send-btn svg{ width:40px; height:40px; display:block; }
 
 /* 停止圆点：全局统一 40×40（与发送圆、设计稿一致）。 */
 .composer-stop-circle{
   width:40px;height:40px;border-radius:50%;
-  background:rgba(0,0,0,0.7);
+  background:var(--color-bg-stop);
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;
   flex-shrink:0;
@@ -226,7 +226,7 @@
   margin-bottom:4px;
   gap:6px;
   padding:6px 10px 6px 8px;
-  background:#E7EFF4;
+  background:var(--color-bg-chip);
   border-radius:100px;
   border:none;
   cursor:pointer;
@@ -256,7 +256,7 @@
   padding:1px 4px;          /* 设计稿内层 text frame padding */
 }
 .composer-shell.is-expanded .cp-textarea{ display:block; }
-.cp-textarea::placeholder{ color:rgba(0,0,0,0.3); }
+.cp-textarea::placeholder{ color:var(--color-text-placeholder); }
 /* 展开手柄：行内 26×26（设计稿 #2935），lineCount<4 时用 visibility 隐藏但保留占位，
  * 避免出现/消失时 textarea 宽度跳变。 */
 .cp-expand-handle{
@@ -336,7 +336,7 @@
 .cp-fs-clear{
   font-size:14px;
   line-height:24px;
-  color:rgba(0,0,0,0.4);
+  color:var(--color-text-subtle);
   border:none;background:none;cursor:pointer;
   padding:0;
 }
@@ -394,7 +394,7 @@
   align-items:center;
   gap:10px;
   padding:8px 14px;
-  background:#eff0f2;
+  background:var(--color-bg-tool);
   border-radius:60px;
   border:none;
   cursor:pointer;
@@ -413,7 +413,7 @@
 .cp-wb-separator{
   width:0;
   height:17px;
-  border-left:0.5px solid #868688;
+  border-left:0.5px solid var(--color-border-tool);
   flex-shrink:0;
 }
 .cp-wb-indicator{

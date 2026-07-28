@@ -120,7 +120,7 @@ function labeled(label, html, btnAnchor, desc) {
   const btn = btnAnchor
     ? `<button class="fp-anchor-btn" data-anchor="${btnAnchor}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
     : '';
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const descHtml = desc ? `<span style="color:var(--fp-text-secondary);font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml + btn;
   return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
 }
@@ -247,7 +247,7 @@ export default {
         <p>拖拽是事件 Sheet 最核心的交互，用户通过拖拽在折叠/展开之间切换，或直接下拉关闭。代码 Sheet 无拖拽条，不参与此交互。拖拽逻辑采用<strong>双向滞后阈值</strong>，避免在临界点反复抖动。</p>
         <div class="fp-snapshot-row fp-snapshot-row--eq-height">
           <div class="fp-snapshot-wrap">
-            <div class="fp-motion-diagram" style="border:1px solid #e9ecf1;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px">
+            <div class="fp-motion-diagram" style="border:1px solid var(--fp-border);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px">
               <div class="fp-motion-state" data-state="collapsed">
                 <span class="tag">折叠态 50%</span>
                 <p class="fp-motion-hint">上拖展开 · 下拖关闭</p>

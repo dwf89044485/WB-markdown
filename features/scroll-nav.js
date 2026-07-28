@@ -35,14 +35,14 @@ function getSnapshots() {
 
 // 辅助：带标签的快照块
 function labeled(label, html, desc, width, height, alignSelf) {
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const descHtml = desc ? `<span style="color:var(--fp-text-secondary);font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml;
   const styles = [];
   if (width) styles.push(`width:${width}px`);
   if (height) styles.push(`height:${height}px`);
   if (alignSelf) styles.push(`align-self:${alignSelf}`);
   const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
-  return `<div class="fp-snapshot-wrap"${styleAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:#f5f5f7;border-radius:12px">${html}</div></div>`;
+  return `<div class="fp-snapshot-wrap"${styleAttr}><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot" style="padding:16px;background:var(--color-bg-snapshot);border-radius:12px">${html}</div></div>`;
 }
 
 // 辅助：并排快照

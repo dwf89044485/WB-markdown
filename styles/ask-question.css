@@ -4,9 +4,9 @@
   --aq-bg: var(--color-bg-canvas);
   --aq-radius: 20px;
   --aq-padding: 20px;
-  --aq-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1), inset 0 0.8px 0 0 rgba(255, 255, 255, 1);
+  --aq-shadow: var(--shadow-question);
 
-  --aq-text: #3D3D3D;
+  --aq-text: var(--color-text-body);
   --aq-text-regular: 400;
   --aq-text-semibold: 600;
   --aq-font: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -32,11 +32,11 @@
 
   --aq-checkbox-size: 20px;
   --aq-checkbox-radius: 8px;
-  --aq-checkbox-border: #D5D5D5;
-  --aq-checkbox-checked-bg: #3D3D3D;
+  --aq-checkbox-border: var(--color-border-checkbox);
+  --aq-checkbox-checked-bg: var(--color-bg-emphasis);
 
-  --aq-btn-skip-bg: #F4F2F2;
-  --aq-btn-action-bg: #3D3D3D;
+  --aq-btn-skip-bg: var(--color-bg-soft-warm);
+  --aq-btn-action-bg: var(--color-bg-emphasis);
   --aq-btn-height: 36px;
   --aq-btn-radius: 120px;
   --aq-btn-padding: 1px 18px;
@@ -232,7 +232,7 @@
   background: transparent;
 }
 .aq-options.many-options::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.12);
+  background: var(--color-state-pressed);
   border-radius: 2px;
 }
 
@@ -277,7 +277,7 @@
 .aq-sort-chosen {
   /* 被选中（手指按下）的原始行 — 白底+投影浮起效果 */
   background: var(--color-bg-surface) !important;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-floating);
   z-index: 1;
 }
 .aq-sort-ghost {
@@ -287,7 +287,7 @@
 .aq-sort-fallback {
   /* 跟随手指的克隆元素 — 白底+投影 */
   background: var(--color-bg-surface) !important;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08) !important;
+  box-shadow: var(--shadow-floating) !important;
   border-radius: var(--aq-option-radius) !important;
   z-index: 9999 !important;
   opacity: 1 !important;
@@ -295,7 +295,7 @@
 /* 排序拖拽提示（停留3秒后高亮第2项） */
 .aq-option.aq-sort-hint {
   background: var(--color-bg-surface) !important;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-floating);
   position: relative;
   z-index: 2;
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -416,7 +416,7 @@
 .aq-option.is-selected .aq-checkbox {
   background: var(--aq-checkbox-checked-bg);
   border-color: var(--aq-checkbox-checked-bg);
-  color: var(--color-bg-surface);
+  color: var(--color-text-on-emphasis);
 }
 
 /* 排序拖拽手柄 */
@@ -495,7 +495,7 @@
   background: transparent;
 }
 .aq-input-field::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.12);
+  background: var(--color-state-pressed);
   border-radius: 2px;
 }
 
@@ -524,7 +524,7 @@
 .aq-action-btn.is-skip:active { opacity: 0.65; }
 .aq-action-btn.is-action {
   background: var(--aq-btn-action-bg);
-  color: var(--color-bg-surface);
+  color: var(--color-text-on-emphasis);
 }
 
 /* 图标按钮（下一步 / 提交） */

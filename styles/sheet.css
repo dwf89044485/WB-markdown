@@ -297,7 +297,8 @@
 .s-row-chevron{
   font-size:21px;line-height:1;color:var(--color-text-secondary);transform:translateY(1px);
 }
-.s-row:has(.s-row-chevron){cursor:pointer;}
+.s-row:has(.s-row-chevron){cursor:pointer;transition:opacity .1s ease;}
+.s-row:has(.s-row-chevron):active{opacity:.6;}
 
 /* ── EVENT CARD ──────────────────────────────────────────── */
 .event-card{
@@ -492,6 +493,7 @@
   overflow:hidden;
   position:relative;
   min-height:0;
+  transition:opacity .15s ease;
 }
 .bottom-sheet.code-variant .code-sheet-body pre{
   margin:0;

@@ -121,8 +121,16 @@ function bindCodeSheetEvents(bodyEl) {
     }
     if (act === 'view' && currentState && currentState.kind === 'view') {
       currentState.htmlMode = currentState.htmlMode === 'preview' ? 'code' : 'preview';
+      const contentEl = bodyEl.querySelector('.code-sheet-body');
+      if (contentEl) contentEl.style.opacity = '0';
       bodyEl.innerHTML = renderCodeSheetHTML(currentState, { mode: 'live' });
       bindCodeSheetEvents(bodyEl);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const newContentEl = bodyEl.querySelector('.code-sheet-body');
+          if (newContentEl) newContentEl.style.opacity = '';
+        });
+      });
       return;
     }
   });

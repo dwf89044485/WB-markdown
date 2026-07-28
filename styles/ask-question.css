@@ -519,7 +519,9 @@
 .aq-action-btn.is-skip {
   background: var(--aq-btn-skip-bg);
   color: var(--aq-text);
+  transition: opacity 80ms ease;
 }
+.aq-action-btn.is-skip:active { opacity: 0.65; }
 .aq-action-btn.is-action {
   background: var(--aq-btn-action-bg);
   color: var(--color-bg-surface);

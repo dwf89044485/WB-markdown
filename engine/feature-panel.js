@@ -418,6 +418,7 @@ async function renderRoute(route) {
 
   currentFeature = f;
   const scrollEl = contentEl.querySelector('.fp-scroll');
+  scrollEl.style.opacity = '0';
   scrollEl.innerHTML = f.content;
 
   // 给 .fp-snapshot 加 md class，复用 markdown.css 中 .md .wb-card 全套样式
@@ -532,6 +533,13 @@ async function renderRoute(route) {
     document.querySelectorAll('.dc-scene-btn').forEach((b) => b.classList.remove('is-active'));
     document.querySelector('.dc-scene-btn[data-scene="codeblock-showcase"]')?.classList.add('is-active');
   }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const scrollEl = contentEl.querySelector('.fp-scroll');
+      if (scrollEl) scrollEl.style.opacity = '';
+    });
+  });
 }
 
 // ── Tool Call Node「设计样式」顺序播放 ──────────

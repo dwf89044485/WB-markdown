@@ -155,7 +155,7 @@
   border-radius:0;
   cursor:pointer;
   margin:6px 8px 6px 0;
-  transition:all .15s ease;
+  transition:color .15s ease, border-color .15s ease, background .15s ease;
   letter-spacing:0.02em;
 }
 .fp-anchor-btn:hover{

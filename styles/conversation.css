@@ -76,7 +76,7 @@
   flex-shrink:0;
 }
 .timing-arrow.collapsed{transform:rotate(0deg);transition:transform 0.3s ease-out;}
-.timing-arrow:not(.collapsed){transform:rotate(90deg);transition:transform 1.2s ease-in-out;}
+.timing-arrow:not(.collapsed){transform:rotate(90deg);transition:transform 200ms cubic-bezier(.32,.72,0,1);}
 #timingMount:empty{display:none;}
 
 /* ── EXEC AREA ───────────────────────────────────────────── */
@@ -137,7 +137,7 @@
 .step-detail-link.is-running .status-fragments::after{
   content:"";position:absolute;inset:0;transform:translateX(-115%);
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);
-  animation:wbSweep 1.15s ease-in-out infinite;pointer-events:none;
+  animation:wbSweep 1.15s linear infinite;pointer-events:none;
 }
 @keyframes wbSweep{to{transform:translateX(115%);}}
 

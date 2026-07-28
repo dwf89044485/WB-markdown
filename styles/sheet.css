@@ -209,6 +209,11 @@
   to{transform:translateX(0);opacity:1}
 }
 
+@media (prefers-reduced-motion: reduce){
+  @keyframes slideInRight { from{opacity:0;} to{opacity:1;} }
+  @keyframes slideInLeft  { from{opacity:0;} to{opacity:1;} }
+}
+
 .sheet-body{
   position:relative;
   padding:var(--sheet-body-padding-top) var(--sheet-side-padding) var(--sheet-body-padding-bottom) var(--sheet-body-left);

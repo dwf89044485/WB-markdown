@@ -91,6 +91,14 @@
   animation: aq-slide-down 0.25s ease-in-out forwards;
 }
 
+@media (prefers-reduced-motion: reduce){
+  @keyframes aq-slide-up   { from{opacity:0;} to{opacity:1;} }
+  @keyframes aq-slide-down { from{opacity:1;} to{opacity:0;} }
+  /* 循环演示动画：完全关闭 */
+  .ask-question-card.aq-loop-rise-fall,
+  .fp-motion-stage[data-motion-loop="rise-fall"] .ask-question-card { animation:none; opacity:1; }
+}
+
 /* ── 循环升降演示（仅供 feature panel §5 使用，不影响真实运行时）──
  * 总周期 3.55s = 升 0.3s + 停留 2s + 落 0.25s + 间隔 1s
  * 时间百分比：升 8.45% / 停留至 64.79% / 落至 71.83% / 间隔至 100%

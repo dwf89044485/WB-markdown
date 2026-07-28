@@ -626,6 +626,10 @@
 @keyframes typingCaret{50%{opacity:0;}}
 @keyframes mdBlockIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
 
+@media (prefers-reduced-motion: reduce){
+  @keyframes mdBlockIn { from{opacity:0;} to{opacity:1;} }
+}
+
 /* ── RESPONSE ACTIONS ────────────────────────────────────── */
 
 /* ── RESPONSE ACTIONS (业务块，在 #mainActions 内) ─────── */

@@ -103,18 +103,7 @@ flowchart TD
     ST --> |点击| D1["L3 浮层详情
     Sheet 承载工具调用细节"]
     D1 --> |点击展开| O1["L4 原始细节
-    命令输入/输出、API 响应"]
-
-    style CF fill:#f0f4ff,stroke:#6b7fff
-    style R1 fill:#e0f2fe,stroke:#38bdf8
-    style E1 fill:#f0fdf4,stroke:#4ade80
-    style ND fill:#f0fdf4,stroke:#4ade80
-    style TK fill:#f5f0ff,stroke:#a78bfa
-    style MD fill:#fafafa,stroke:#d1d5db
-    style ST fill:#fff7ed,stroke:#fb923c
-    style AU fill:#fafafa,stroke:#d1d5db
-    style D1 fill:#fef3c7,stroke:#f59e0b
-    style O1 fill:#fce7f3,stroke:#ec4899</div>
+    命令输入/输出、API 响应"]</div>
       </section>
 
       <section>

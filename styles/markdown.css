@@ -85,6 +85,30 @@
   --md-space-12:var(--spacing-24);
 }
 
+:root[data-theme="dark"]{
+  --md-text-secondary:var(--color-text-document-secondary);
+  --md-accent-soft:rgba(88,166,255,0.12);
+  --md-accent-soft-strong:rgba(88,166,255,0.16);
+  --md-accent-softest:rgba(88,166,255,0.06);
+  --md-accent-border:rgba(88,166,255,0.34);
+  --md-warning:#ffb340;
+  --md-warning-soft:rgba(255,179,64,0.14);
+  --md-blockquote-bg:#24262b;
+  --md-surface-transparent:rgba(32,34,38,0);
+  --md-surface-soft:#24262b;
+  --md-border:#3b3e45;
+  --md-border-soft:#30333a;
+  --md-inline-code-bg:rgba(204,188,160,0.15);
+  --md-file-title-color:rgba(239,235,228,0.94);
+  --md-file-meta-color:rgba(230,227,221,0.58);
+  --md-file-arrow-color:rgba(230,227,221,0.72);
+  --md-source-label-color:rgba(230,227,221,0.55);
+  --md-copy-success:#58d273;
+  --md-shadow-card:0 8px 22px rgba(0,0,0,0.26);
+  --md-shadow-link:0 6px 18px rgba(88,166,255,0.12);
+  --md-shadow-sticky:0 2px 12px rgba(0,0,0,0.34);
+}
+
 /* ── .md BASE ────────────────────────────────────────────── */
 .md{
   font-family:var(--md-font-family);

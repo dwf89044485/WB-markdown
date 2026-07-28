@@ -82,6 +82,29 @@ function syncFullscreenOrientation() {
   if (window.fitShellScale) window.fitShellScale();
 }
 
+async function renderFullscreenMermaid(src, request, theme = getMermaidTheme()) {
+  let svg;
+  let rendered = false;
+  try {
+    svg = await renderMermaidSvg(src, { theme });
+    rendered = true;
+  } catch (error) {
+    console.warn('[mermaid] 渲染失败:', error);
+    svg = '<div style="padding:24px;color:var(--color-accent-red)">Mermaid 渲染失败：' + escapeHtmlFs(error.message || error) + '</div>';
+  }
+
+  if (request !== mermaidFullscreenRequest || !overlay.classList.contains('is-active')) return;
+  const mount = document.createElement('div');
+  mount.className = 'tbl-mermaid-fs';
+  mount.innerHTML = svg;
+  mount.dataset.mermaidSource = src;
+  if (rendered) {
+    mount.dataset.mermaidRendered = '1';
+    mount.dataset.mermaidTheme = theme;
+  }
+  content.replaceChildren(mount);
+}
+
 /* ── 全屏入口 ────────────────────────────────────────── */
 document.addEventListener('click', async function(e) {
   const btn = e.target.closest('.tbl-btn.tbl-maximize');
@@ -110,29 +133,7 @@ document.addEventListener('click', async function(e) {
     overlay.classList.add('is-active');
     syncFullscreenOrientation();
 
-    const theme = getMermaidTheme();
-    let svg;
-    let rendered = false;
-    try {
-      svg = await renderMermaidSvg(src, { theme });
-      rendered = true;
-    } catch (error) {
-      console.warn('[mermaid] 渲染失败:', error);
-      svg = '<div style="padding:24px;color:var(--color-accent-red)">Mermaid 渲染失败：' + escapeHtmlFs(error.message || error) + '</div>';
-    }
-
-    // 用户等待时可能关闭或打开另一张图，旧结果不能覆盖新请求
-    if (request === mermaidFullscreenRequest && overlay.classList.contains('is-active')) {
-      const mount = document.createElement('div');
-      mount.className = 'tbl-mermaid-fs mermaid';
-      mount.innerHTML = svg;
-      mount.dataset.mermaidSource = src;
-      if (rendered) {
-        mount.dataset.mermaidRendered = '1';
-        mount.dataset.mermaidTheme = theme;
-      }
-      content.replaceChildren(mount);
-    }
+    await renderFullscreenMermaid(src, request);
     return;
   } else {
     return;
@@ -147,6 +148,15 @@ window.addEventListener('orientationchange', syncFullscreenOrientation);
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', syncFullscreenOrientation);
 }
+window.addEventListener('wb:themechange', (event) => {
+  if (!overlay.classList.contains('is-active') || !currentMermaidSrc) return;
+  const request = ++mermaidFullscreenRequest;
+  const theme = event.detail?.theme || getMermaidTheme();
+  content.innerHTML = '<div class="tbl-mermaid-fs"><div class="tbl-mermaid-loading">渲染中…</div></div>';
+  renderFullscreenMermaid(currentMermaidSrc, request, theme).catch((error) => {
+    console.warn('[mermaid-fs] theme redraw failed', error);
+  });
+});
 
 /* ── 返回 ─────────────────────────────────────────────── */
 function closeFullscreen() {

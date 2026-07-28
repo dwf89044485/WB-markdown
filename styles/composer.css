@@ -185,6 +185,7 @@
   background:var(--color-state-pressed);
 }
 .cp-send-btn svg{ width:40px; height:40px; display:block; }
+.cp-stop-btn{ color:var(--color-text-on-emphasis); }
 
 /* 停止圆点：全局统一 40×40（与发送圆、设计稿一致）。 */
 .composer-stop-circle{

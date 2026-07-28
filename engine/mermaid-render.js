@@ -2,13 +2,28 @@
 // engine/mermaid-render.js
 // Mermaid 唯一初始化与渲染协调入口：统一左侧代码块、右侧源节点和全屏 SVG
 
-const DEFAULT_THEME = 'default';
+const DEFAULT_THEME = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 const SOURCE_KEEPER_SELECTOR = 'script[type="text/x-mermaid-source"]';
 const RENDER_TARGET_SELECTOR = 'pre code.lang-mermaid, .mermaid, .wb-mermaid-svg[data-mermaid-rendered="1"]';
 const BASE_CONFIG = Object.freeze({
   startOnLoad: false,
   securityLevel: 'loose',
   fontFamily: 'Inter, "PingFang SC", -apple-system, sans-serif'
+});
+const THEME_VARIABLE_TOKENS = Object.freeze({
+  background: '--mermaid-background',
+  primaryColor: '--mermaid-primary-color',
+  primaryTextColor: '--mermaid-primary-text-color',
+  primaryBorderColor: '--mermaid-primary-border-color',
+  secondaryColor: '--mermaid-secondary-color',
+  tertiaryColor: '--mermaid-tertiary-color',
+  lineColor: '--mermaid-line-color',
+  clusterBkg: '--mermaid-cluster-bg',
+  clusterBorder: '--mermaid-cluster-border',
+  edgeLabelBackground: '--mermaid-edge-label-bg',
+  noteBkgColor: '--mermaid-note-bg',
+  noteBorderColor: '--mermaid-note-border',
+  noteTextColor: '--mermaid-note-text'
 });
 
 let activeTheme = DEFAULT_THEME;
@@ -23,7 +38,24 @@ const svgCache = new Map();
 const elementRequests = new WeakMap();
 
 function normalizeTheme(theme) {
-  return String(theme || DEFAULT_THEME);
+  return theme === 'dark' ? 'dark' : 'light';
+}
+
+function readThemeVariables(theme) {
+  const styles = getComputedStyle(document.documentElement);
+  const variables = {
+    darkMode: theme === 'dark',
+    fontFamily: BASE_CONFIG.fontFamily
+  };
+  for (const [name, token] of Object.entries(THEME_VARIABLE_TOKENS)) {
+    const value = styles.getPropertyValue(token).trim();
+    if (value) variables[name] = value;
+  }
+  variables.mainBkg = variables.primaryColor;
+  variables.nodeTextColor = variables.primaryTextColor;
+  variables.textColor = variables.primaryTextColor;
+  variables.titleColor = variables.primaryTextColor;
+  return variables;
 }
 
 function cacheKey(theme, source) {
@@ -36,7 +68,7 @@ function enqueue(task) {
   return next;
 }
 
-function ensureInitialized(theme) {
+function ensureInitialized(theme, themeVariables) {
   if (!window.mermaid) {
     throw new Error('Mermaid 未加载');
   }
@@ -44,7 +76,8 @@ function ensureInitialized(theme) {
 
   window.mermaid.initialize({
     ...BASE_CONFIG,
-    theme
+    theme: 'base',
+    themeVariables
   });
   initializedTheme = theme;
 }
@@ -94,7 +127,8 @@ export function setMermaidTheme(theme) {
 
 export function initializeMermaid(theme = activeTheme) {
   const resolvedTheme = normalizeTheme(theme);
-  return enqueue(() => ensureInitialized(resolvedTheme));
+  const themeVariables = readThemeVariables(resolvedTheme);
+  return enqueue(() => ensureInitialized(resolvedTheme, themeVariables));
 }
 
 function cacheSvg(key, svg) {
@@ -160,11 +194,13 @@ export function renderMermaidSvg(source, { theme = activeTheme } = {}) {
   const resolvedTheme = normalizeTheme(theme);
   const key = cacheKey(resolvedTheme, src);
   if (svgCache.has(key)) return Promise.resolve(instantiateSvg(svgCache.get(key)));
+  // 在入队前快照 CSS 变量，避免快速切换时队列读取到后一个主题的 DOM 值。
+  const themeVariables = readThemeVariables(resolvedTheme);
 
   return enqueue(async () => {
     if (svgCache.has(key)) return instantiateSvg(svgCache.get(key));
 
-    ensureInitialized(resolvedTheme);
+    ensureInitialized(resolvedTheme, themeVariables);
     const id = `wb-mermaid-${Date.now()}-${++renderSeq}`;
     const result = await window.mermaid.render(id, src);
     const svg = (result && result.svg) || '';
@@ -252,11 +288,21 @@ export function renderMermaidUnder(root = document, { theme = activeTheme, force
 }
 
 function init() {
+  setMermaidTheme(document.documentElement.dataset.theme);
   initializeMermaid().catch((error) => {
     console.warn('[mermaid-render] init failed', error);
   });
   renderMermaidUnder(document);
 }
+
+function handleThemeChange(event) {
+  const theme = setMermaidTheme(event.detail?.theme || document.documentElement.dataset.theme);
+  renderMermaidUnder(document, { theme, force: true }).catch((error) => {
+    console.warn('[mermaid-render] theme redraw failed', error);
+  });
+}
+
+window.addEventListener('wb:themechange', handleThemeChange);
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);

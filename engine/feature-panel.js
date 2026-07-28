@@ -78,7 +78,7 @@ function buildShell() {
         <div class="fp-tab-bar" id="fpTabBar"></div>
       </nav>
       <div class="fp-content" id="fpContent">
-        <div class="fp-scroll markdown-body" data-theme="light"></div>
+        <div class="fp-scroll markdown-body"></div>
       </div>
     </div>
   `;

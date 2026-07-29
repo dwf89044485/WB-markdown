@@ -688,11 +688,14 @@ function initSheetDrag() {
     if (variantLocked()) return;
     stopSpring();  // 弹簧进行中也可随时重新抓住（从当前位置接管）
     const touch = e.touches ? e.touches[0] : e;
+    const isMouse = !e.touches;
     const isExpanded = sheet.classList.contains('expanded');
 
     if (isExpanded) {
       // 90%: 内容不在顶部 → 正常滚动，不接管
       if (body.scrollTop > 0) return;
+      // 鼠标：阻止默认行为防文字框选；触屏不能拦，否则向上滚动失效
+      if (isMouse) e.preventDefault();
     } else {
       // 50%: 整个面板即抓手
       e.preventDefault();

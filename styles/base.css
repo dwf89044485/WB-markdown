@@ -387,15 +387,9 @@ body{
   --mermaid-note-text:#e6e3dd;
 }
 
-html,
-body,
-.phone-shell,
-.conversation,
-.nav-bar::before,
-.composer,
-.design-notes{
-  transition:background-color .2s ease,border-color .2s ease,color .2s ease;
-}
+/* 主题切换刻意“瞬时同步”：不对外表层单独加 .2s 过渡，避免头尾瞬间变黑、
+ * 中间（对话区，最重且最后绘制）拖尾的分段感。所有表面在同一帧换色。
+ * 各组件自身的 hover/press 过渡不受影响（定义在各自模块内）。 */
 @media (prefers-reduced-motion:reduce){
   html,
   body,
@@ -403,7 +397,7 @@ body,
   .conversation,
   .nav-bar::before,
   .composer,
-  .design-notes{transition:none;}
+  .design-notes{transition:none !important;}
 }
 
 /* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */

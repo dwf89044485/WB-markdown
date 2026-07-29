@@ -809,7 +809,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   window.buildGrid = buildGrid;
   window.fitShellScale = fitShellScale;
   window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
-  window.addEventListener('wb:themechange', buildGrid);
+  // 主题切换时整页网格重算较重，延后到绘制之后，避免阻塞首帧导致中间拖尾。
+  window.addEventListener('wb:themechange', function(){ requestAnimationFrame(buildGrid); });
   var ro = new ResizeObserver(function() {
     requestAnimationFrame(function() { buildGrid(); fitShellScale(); });
   });

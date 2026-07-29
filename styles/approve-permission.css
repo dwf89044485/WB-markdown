@@ -211,3 +211,9 @@
 .fp-motion-stage[data-motion-loop="rise-fall-ap"] .ap-card {
   animation: ap-loop-rise-fall 3.55s infinite;
 }
+
+@media (prefers-reduced-motion: reduce){
+  @keyframes ap-slide-up   { from{opacity:0;} to{opacity:1;} }
+  @keyframes ap-slide-down { from{opacity:1;} to{opacity:0;} }
+  .fp-motion-stage[data-motion-loop="rise-fall-ap"] .ap-card { animation:none; opacity:1; }
+}

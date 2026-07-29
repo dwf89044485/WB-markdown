@@ -601,11 +601,74 @@ export function maybeClose(e) {
 }
 
 // ── Drag interaction ──────────────────────────────────────
-// 50%: 面板任意位置操控——上拖展开、下拖关闭
+// 物理模型（apple-design 技能：直接操控 + 动量投影 + 可中断弹簧 + 橡皮筋阻尼）
+// 50%: 面板任意位置操控——上拖展开、下拖（带阻尼）关闭
 // 90%: 内容在顶部时下拖折叠；不在顶部时正常滚动
 let dragState = null;
 
+const SHEET_DRAG_MIN = 20;    // 拖拽视觉下限（%），再低走橡皮筋阻尼
+const SHEET_DRAG_MAX = 95;    // 拖拽视觉上限（%），再高走橡皮筋阻尼
+const DRAG_INTENT_PX = 10;    // 拖拽意图阈值：位移超过才接管手势
+const VELOCITY_WINDOW = 120;  // 松手速度采样窗口（ms）
+const SPRING_K = 438.6;       // 弹簧刚度——Apple sheet 参数：阻尼比 0.8 / 响应 0.3s（质量 1）
+const SPRING_C = 33.5;        // 弹簧阻尼
+const DECEL_RATE = 0.998;     // 动量投影衰减率（Apple 滚动手感）
+
+// 最小弹簧：始终从当前位置+当前速度出发，任意时刻可被手势打断接管
+const spring = { raf: 0, pct: 0, v: 0, target: 0, last: 0 };
+
+function stopSpring() {
+  if (spring.raf) cancelAnimationFrame(spring.raf);
+  spring.raf = 0;
+}
+
+function currentPct(containerH) {
+  const sheet = $('#sheet');
+  return (sheet.getBoundingClientRect().height / containerH) * 100;
+}
+
+function applyPct(pct) {
+  const sheet = $('#sheet');
+  sheet.style.height = pct + '%';
+  sheet.classList.toggle('expanded', pct >= 70);
+}
+
+function springTo(target, initialV, containerH) {
+  stopSpring();
+  spring.pct = currentPct(containerH);
+  spring.v = initialV || 0;
+  spring.target = target;
+  spring.last = performance.now();
+  const step = (now) => {
+    const dt = Math.min((now - spring.last) / 1000, 0.032);
+    spring.last = now;
+    const accel = -SPRING_K * (spring.pct - spring.target) - SPRING_C * spring.v;
+    spring.v += accel * dt;
+    spring.pct += spring.v * dt;
+    applyPct(spring.pct);
+    if (Math.abs(spring.pct - spring.target) < 0.05 && Math.abs(spring.v) < 3) {
+      applyPct(spring.target);
+      spring.raf = 0;
+      return;
+    }
+    spring.raf = requestAnimationFrame(step);
+  };
+  spring.raf = requestAnimationFrame(step);
+}
+
+// 橡皮筋：越过边界后渐进阻尼（Apple 公式，c=0.55）
+function rubberband(overshoot, dim) {
+  const c = 0.55;
+  return (overshoot * dim * c) / (dim + c * Math.abs(overshoot));
+}
+
+// 动量投影：预测松手后的停驻点（Apple《Designing Fluid Interfaces》）
+function project(vPctPerSec) {
+  return (vPctPerSec / 1000) * DECEL_RATE / (1 - DECEL_RATE);
+}
+
 function resetSheetHeight() {
+  stopSpring();
   const sheet = $('#sheet');
   if (!sheet) return;
   sheet.classList.remove('expanded');
@@ -617,77 +680,83 @@ function initSheetDrag() {
   const body = $('#sheetBody');
   if (!sheet || !body) return;
 
+  // 代码 / 产物 Sheet 是固定高度且有专属关闭按钮，不参与高度拖拽
+  const variantLocked = () =>
+    sheet.classList.contains('code-variant') || sheet.classList.contains('products-variant');
+
   const onStart = (e) => {
+    if (variantLocked()) return;
+    stopSpring();  // 弹簧进行中也可随时重新抓住（从当前位置接管）
     const touch = e.touches ? e.touches[0] : e;
-    const rect = sheet.getBoundingClientRect();
     const isExpanded = sheet.classList.contains('expanded');
 
-    if (!isExpanded) {
-      // 50%: 整个面板都可拖
+    if (isExpanded) {
+      // 90%: 内容不在顶部 → 正常滚动，不接管
+      if (body.scrollTop > 0) return;
+    } else {
+      // 50%: 整个面板即抓手
       e.preventDefault();
-      dragState = { resize: true, startExpanded: false,
-        startY: touch.clientY, startH: rect.height,
-        containerH: sheet.parentElement.getBoundingClientRect().height };
-      return;
     }
-
-    // 90%: 内容在顶部时才可能折叠
-    if (body.scrollTop > 0) return;
-    dragState = { resize: false, startExpanded: true,
-      startY: touch.clientY, startH: rect.height,
-      containerH: sheet.parentElement.getBoundingClientRect().height };
+    const containerH = sheet.parentElement.getBoundingClientRect().height;
+    dragState = {
+      mode: null,   // null=未判定方向 | 'resize'=拖拽接管
+      startY: touch.clientY,
+      startPct: currentPct(containerH),
+      containerH,
+      history: [{ y: touch.clientY, t: performance.now() }],
+    };
   };
 
   const onMove = (e) => {
     if (!dragState) return;
     const y = e.touches ? e.touches[0].clientY : e.clientY;
-    const dy = dragState.startY - y;
-    const isExpanded = sheet.classList.contains('expanded');
+    const dy = dragState.startY - y;  // 正=向上拖
 
-    // 90%: 首次上拖则释放（走滚动）
-    if (isExpanded && !dragState.resize) {
-      if (dy >= 0) { dragState = null; return; }
-      dragState.resize = true;
-      e.preventDefault();
+    if (dragState.mode === null) {
+      if (Math.abs(dy) < DRAG_INTENT_PX) return;
+      // 90%: 首次向上拖 → 让给内容滚动
+      if (sheet.classList.contains('expanded') && dy > 0) { dragState = null; return; }
+      dragState.mode = 'resize';
     }
 
-    if (!dragState.resize) return;
     e.preventDefault();
-    sheet.style.transition = 'none';
-    const h = Math.max(0, dragState.startH + dy);
-    const pct = Math.min(80, Math.max(10, (h / dragState.containerH) * 100));
+    const h = dragState.history;
+    h.push({ y, t: performance.now() });
+    if (h.length > 8) h.shift();
 
-    // 40% + 下拖超过阈值 → 关闭 sheet（基于拖拽起始状态，避免折叠过程中误关）
-    if (!dragState.startExpanded && dy < -40) {
-      dragState = null;
-      closeSheet();
-      return;
-    }
-
-    sheet.style.height = pct + '%';
-    sheet.classList.toggle('expanded', pct >= 70);
+    const rawPct = dragState.startPct + (dy / dragState.containerH) * 100;
+    let pct = rawPct;
+    if (rawPct > SHEET_DRAG_MAX) pct = SHEET_DRAG_MAX + rubberband(rawPct - SHEET_DRAG_MAX, 40);
+    else if (rawPct < SHEET_DRAG_MIN) pct = SHEET_DRAG_MIN - rubberband(SHEET_DRAG_MIN - rawPct, 40);
+    applyPct(pct);
   };
 
   const onEnd = () => {
     if (!dragState) return;
-    const currentH = sheet.getBoundingClientRect().height;
-    const pct = (currentH / dragState.containerH) * 100;
-    const wasExpanded = dragState.startExpanded;
+    const ds = dragState;
     dragState = null;
-    sheet.style.transition = 'height 0.32s cubic-bezier(0.32,0.72,0,1), transform 0.36s cubic-bezier(0.32,0.72,0,1)';
-    // 双向滞后：从折叠态拉起需过半（50%）才展开，从展开态拉下到75%即折叠
-    const threshold = wasExpanded ? 75 : 50;
-    if (pct >= threshold) {
-      sheet.style.height = SHEET_HEIGHT_EXPANDED + '%';
-      sheet.classList.add('expanded');
-    } else {
-      sheet.style.height = SHEET_HEIGHT_COLLAPSED + '%';
-      sheet.classList.remove('expanded');
+    if (ds.mode !== 'resize') return;
+
+    // 松手速度：取最近 120ms 采样窗口（pct/s，正=向上）
+    const h = ds.history;
+    const last = h[h.length - 1];
+    let ref = h[0];
+    for (let i = h.length - 1; i >= 0; i--) {
+      ref = h[i];
+      if (last.t - h[i].t >= VELOCITY_WINDOW) break;
     }
-    sheet.addEventListener('transitionend', function h() {
-      sheet.style.transition = '';
-      sheet.removeEventListener('transitionend', h);
-    });
+    const dtMs = Math.max(last.t - ref.t, 1);
+    const vPct = ((ref.y - last.y) / dtMs) * 1000 / ds.containerH * 100;
+
+    // 吞掉拖拽后的那一次 click（避免误触发事件行点击/详情跳转）
+    const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+    document.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => document.removeEventListener('click', swallow, { capture: true }), 350);
+
+    // 动量投影 → 最近落点：关闭 / 50% / 90%，弹簧携速度交接
+    const projected = currentPct(ds.containerH) + project(vPct);
+    if (projected < 25) { closeSheet(); return; }
+    springTo(projected >= 70 ? SHEET_HEIGHT_EXPANDED : SHEET_HEIGHT_COLLAPSED, vPct, ds.containerH);
   };
 
   sheet.addEventListener('mousedown', onStart);
@@ -696,6 +765,7 @@ function initSheetDrag() {
   sheet.addEventListener('touchstart', onStart, { passive: false });
   document.addEventListener('touchmove', onMove, { passive: false });
   document.addEventListener('touchend', onEnd);
+  document.addEventListener('touchcancel', onEnd);
 }
 
 // Initialize on first sheet render

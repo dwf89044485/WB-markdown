@@ -2,7 +2,7 @@
 name: feature-panel-visual-language
 description: 右侧交互设计说明文档的视觉设计语言。只规范说明文档如何呈现，不规范 Agent 产品本身。
 status: draft
-updated: 2026-06-22
+updated: 2026-07-28
 colors:
   ink-primary: '#111114'
   ink-body: '#1a1a1c'
@@ -14,6 +14,17 @@ colors:
   inverse-text: '#f0f0f0'
   border-subtle: '#0000000a'
   border-default: '#0000001f'
+dark-colors:
+  ink-primary: '#f2f2f4'
+  ink-body: '#dedee2'
+  ink-secondary: '#a8a8ae'
+  ink-muted: '#85858c'
+  surface-document: '#18181b'
+  surface-soft: '#202024'
+  surface-inverse: '#252529'
+  inverse-text: '#ededf0'
+  border-subtle: '#ffffff14'
+  border-default: '#ffffff24'
 typography:
   title-serif:
     fontFamily: "Georgia, 'Noto Serif SC', 'Songti SC', serif"
@@ -96,6 +107,16 @@ components:
 | `{colors.border-subtle}` | 分割线、轻量卡片边界 | 强交互按钮边框 |
 
 色彩不承担装饰任务。它主要服务层级、分组和强调。
+
+### 2.1 暗色模式
+
+暗色模式只替换颜色语义 token，不改变排版、留白和组件层级，也不引入另一套“夜间 App”视觉语言。
+
+- 文档底色使用深炭色而不是纯黑，保留纸张般的柔和层次。
+- 标题和正文使用柔和浅灰而不是纯白，避免长时间阅读时产生刺眼反差。
+- 分组优先使用轻边界和细微明度差，不用发光描边、重阴影或大面积高对比色块。
+- 链接、引用、代码与强调块必须继续使用各自语义 token；禁止在组件内写死只适合亮色的颜色。
+- 暗色下仍要保持“可评审的设计论文”气质：克制、清晰、留白，不做成开发者控制台。
 
 ## 3. Typography
 

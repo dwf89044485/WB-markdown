@@ -22,6 +22,7 @@ import { hideAllOverlays } from './overlay-registry.js';
 import { renderShowcase } from './showcase-codeblock.js';
 import { sleep } from './core.js';
 import { runSlideTransition, renderAskQuestionHTML } from './ask-question.js';
+import { renderMermaidUnder } from './mermaid-render.js';
 import { SAMPLE_Q, defaultSampleAnswers } from '../features/ask-question.js';
 
 // ════════════════════════════════════════════════════════════════
@@ -77,7 +78,7 @@ function buildShell() {
         <div class="fp-tab-bar" id="fpTabBar"></div>
       </nav>
       <div class="fp-content" id="fpContent">
-        <div class="fp-scroll markdown-body" data-theme="light"></div>
+        <div class="fp-scroll markdown-body"></div>
       </div>
     </div>
   `;
@@ -443,12 +444,8 @@ async function renderRoute(route) {
     inner.style.setProperty('--fp-max-content-width', f.maxContentWidth + 'px');
   }
 
-  // 渲染 Mermaid 流程图
-  if (window.mermaid) {
-    Promise.resolve().then(() => {
-      mermaid.run({ nodes: scrollEl.querySelectorAll('.mermaid') }).catch(console.warn);
-    });
-  }
+  // 通过共享入口渲染 Mermaid 流程图，并保留源码供后续主题重绘
+  renderMermaidUnder(scrollEl);
 
   // 代码块语法高亮（与 Demo 区一致：跳过 mermaid，其余调 hljs.highlightElement）
   if (window.hljs) {

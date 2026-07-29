@@ -84,7 +84,7 @@ function labeled(label, html, anchorId, desc) {
   const anchorBtn = anchorId
     ? `<button class="fp-anchor-btn" data-anchor="${anchorId}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
     : '';
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const descHtml = desc ? `<span style="color:var(--fp-text-secondary);font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml + anchorBtn;
   return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
 }
@@ -173,12 +173,12 @@ export default {
         <div class="fp-snapshot-row">
           <div class="fp-snapshot-wrap">
             <span class="tag">高风险形态</span>
-            <p style="color:#86868b;font-size:12px;margin:0 0 8px">涉及文件删除、系统配置修改等，<strong style="color:#a8071a">标题下方出现红色告警提醒</strong></p>
+            <p style="color:var(--fp-text-secondary);font-size:12px;margin:0 0 8px">涉及文件删除、系统配置修改等，<strong style="color:var(--fp-emphasis)">标题下方出现红色告警提醒</strong></p>
             <div class="fp-snapshot">${s.anatomyHighRisk}</div>
           </div>
           <div class="fp-snapshot-wrap">
             <span class="tag">普通命令形态</span>
-            <p style="color:#86868b;font-size:12px;margin:0 0 8px">git push、npm install 等</p>
+            <p style="color:var(--fp-text-secondary);font-size:12px;margin:0 0 8px">git push、npm install 等</p>
             <div class="fp-snapshot">${s.anatomyNormal}</div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default {
           ${labeled('已选（选中第 1 项）', s.selectedState)}
         </div>
         <blockquote>
-          <p><strong>交互</strong>：点击选项 → 该选项进入选中态 → <strong style="color:#a8071a">停留 300ms 让用户感知已选</strong> → 卡片向下滑出并消失。</p>
+          <p><strong>交互</strong>：点击选项 → 该选项进入选中态 → <strong style="color:var(--fp-emphasis)">停留 300ms 让用户感知已选</strong> → 卡片向下滑出并消失。</p>
         </blockquote>
 
       </section>
@@ -209,7 +209,7 @@ export default {
           </div>
           <div class="fp-snapshot-side-desc">
             <p>卡片从屏幕下缘滑入（300ms），点击选项后向下滑出（250ms）。入场缓动偏弹跳（到来需要存在感），出场缓动平直（用户已决策，越快离开越好）。</p>
-            <p style="color:#86868b;font-size:12px">左侧演示按真实参数循环：升起 0.3s → 停留 2s → 落下 0.25s → 间隔 1s。</p>
+            <p style="color:var(--fp-text-secondary);font-size:12px">左侧演示按真实参数循环：升起 0.3s → 停留 2s → 落下 0.25s → 间隔 1s。</p>
           </div>
         </div>
       </section>

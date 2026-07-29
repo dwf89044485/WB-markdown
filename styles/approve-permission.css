@@ -4,10 +4,10 @@
   --ap-bg: var(--color-bg-surface);
   --ap-radius: 20px;
   --ap-padding: 20px;
-  --ap-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.1);
+  --ap-shadow: var(--shadow-card);
 
-  --ap-text: #3D3D3D;
-  --ap-text-title: rgba(0, 0, 0, 0.9);
+  --ap-text: var(--color-text-body);
+  --ap-text-title: var(--color-text-title);
   --ap-text-regular: 400;
   --ap-text-medium: 500;
   --ap-text-semibold: 600;
@@ -17,7 +17,7 @@
   --ap-font-title: 16px;
   --ap-line-height: 24px;
 
-  --ap-warning-color: #B12B41;
+  --ap-warning-color: var(--color-accent-danger);
 
   --ap-option-bg: var(--color-bg-canvas);
   --ap-option-selected-bg: var(--color-bg-control);
@@ -30,9 +30,9 @@
   --ap-num-size: 20px;
   --ap-num-radius: 90px;
   --ap-num-bg: var(--color-bg-soft);
-  --ap-num-selected-bg: #3D3D3D;
-  --ap-num-color: #3D3D3D;
-  --ap-num-selected-color: var(--color-bg-surface);
+  --ap-num-selected-bg: var(--color-bg-emphasis);
+  --ap-num-color: var(--color-text-body);
+  --ap-num-selected-color: var(--color-text-on-emphasis);
 
 }
 

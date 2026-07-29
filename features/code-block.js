@@ -92,12 +92,12 @@ function snap(key, ...args) {
 }
 
 function getSnapshots() {
-  let tableCard = '<div style="color:red">表格渲染失败</div>';
+  let tableCard = '<div class="fp-render-error">表格渲染失败</div>';
   try {
     tableCard = markdownToHtml(SAMPLES.table);
   } catch (e) {
     console.error('[code-block] markdownToHtml error:', e);
-    tableCard = `<div style="color:red">markdownToHtml 错误: ${e.message}</div>`;
+    tableCard = `<div class="fp-render-error">markdownToHtml 错误: ${e.message}</div>`;
   }
   return {
     typeExec:      snap('typeExec',     { lang: 'javascript', code: SAMPLES.js }),

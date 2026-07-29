@@ -111,7 +111,7 @@ function labeled(label, html, btnAnchor, desc) {
   const btn = btnAnchor
     ? `<button class="fp-anchor-btn" data-anchor="${btnAnchor}" style="margin-left:auto;font-size:12px;padding:5px 10px">查看示例</button>`
     : '';
-  const descHtml = desc ? `<span style="color:#86868b;font-size:13px">${desc}</span>` : '';
+  const descHtml = desc ? `<span style="color:var(--fp-text-secondary);font-size:13px">${desc}</span>` : '';
   const rightPart = descHtml + btn;
   return `<div class="fp-snapshot-wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="tag">${label}</span>${rightPart}</div><div class="fp-snapshot">${html}</div></div>`;
 }
@@ -121,30 +121,30 @@ function labeled(label, html, btnAnchor, desc) {
 const SNAP_DIAGRAM_SVG = `
 <svg viewBox="0 0 340 420" width="100%" style="max-width:340px;display:block;margin:0 auto" role="img" aria-label="落点规则示意">
   <!-- 橡皮筋区 -->
-  <rect x="70" y="8"   width="180" height="32" rx="6" fill="#f5f5f7"/>
-  <rect x="70" y="380" width="180" height="32" rx="6" fill="#f5f5f7"/>
+  <rect x="70" y="8"   width="180" height="32" rx="6" fill="var(--color-bg-inset)"/>
+  <rect x="70" y="380" width="180" height="32" rx="6" fill="var(--color-bg-inset)"/>
   <!-- 展开区 -->
-  <rect x="70" y="40"  width="180" height="102" rx="6" fill="#e8f0fe"/>
+  <rect x="70" y="40"  width="180" height="102" rx="6" fill="var(--color-bg-chip)"/>
   <!-- 折叠区 -->
-  <rect x="70" y="142" width="180" height="204" rx="6" fill="#e9f9ee"/>
+  <rect x="70" y="142" width="180" height="204" rx="6" fill="var(--color-border-positive-soft)"/>
   <!-- 关闭区 -->
-  <rect x="70" y="346" width="180" height="34" rx="6" fill="#fdecea"/>
+  <rect x="70" y="346" width="180" height="34" rx="6" fill="var(--color-bg-danger-soft)"/>
   <!-- 档位线 -->
-  <line x1="60" y1="57"  x2="260" y2="57"  stroke="#1d1d1f" stroke-width="2"/>
-  <line x1="60" y1="244" x2="260" y2="244" stroke="#1d1d1f" stroke-width="2"/>
+  <line x1="60" y1="57"  x2="260" y2="57"  stroke="var(--color-text-primary)" stroke-width="2"/>
+  <line x1="60" y1="244" x2="260" y2="244" stroke="var(--color-text-primary)" stroke-width="2"/>
   <!-- 决策边界线（虚线） -->
-  <line x1="60" y1="142" x2="260" y2="142" stroke="#86868b" stroke-width="1" stroke-dasharray="4 3"/>
-  <line x1="60" y1="346" x2="260" y2="346" stroke="#86868b" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="60" y1="142" x2="260" y2="142" stroke="var(--color-text-caption)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="60" y1="346" x2="260" y2="346" stroke="var(--color-text-caption)" stroke-width="1" stroke-dasharray="4 3"/>
   <!-- 文字标注 -->
-  <text x="266" y="61"  font-size="12" fill="#1d1d1f" font-weight="600">90% 展开</text>
-  <text x="266" y="248" font-size="12" fill="#1d1d1f" font-weight="600">50% 折叠</text>
-  <text x="266" y="146" font-size="11" fill="#86868b">70 边界</text>
-  <text x="266" y="350" font-size="11" fill="#86868b">25 边界</text>
-  <text x="160" y="95"  font-size="12" fill="#2456c4" text-anchor="middle">预测点落这里 → 展开</text>
-  <text x="160" y="248" font-size="12" fill="#137333" text-anchor="middle">预测点落这里 → 折叠</text>
-  <text x="160" y="367" font-size="11" fill="#c5221f" text-anchor="middle">→ 关闭</text>
-  <text x="160" y="30"  font-size="11" fill="#86868b" text-anchor="middle">95 以上 · 橡皮筋</text>
-  <text x="160" y="402" font-size="11" fill="#86868b" text-anchor="middle">20 以下 · 橡皮筋</text>
+  <text x="266" y="61"  font-size="12" fill="var(--color-text-primary)" font-weight="600">90% 展开</text>
+  <text x="266" y="248" font-size="12" fill="var(--color-text-primary)" font-weight="600">50% 折叠</text>
+  <text x="266" y="146" font-size="11" fill="var(--color-text-caption)">70 边界</text>
+  <text x="266" y="350" font-size="11" fill="var(--color-text-caption)">25 边界</text>
+  <text x="160" y="95"  font-size="12" fill="var(--color-accent-blue)" text-anchor="middle">预测点落这里 → 展开</text>
+  <text x="160" y="248" font-size="12" fill="var(--color-success)" text-anchor="middle">预测点落这里 → 折叠</text>
+  <text x="160" y="367" font-size="11" fill="var(--color-accent-red)" text-anchor="middle">→ 关闭</text>
+  <text x="160" y="30"  font-size="11" fill="var(--color-text-caption)" text-anchor="middle">95 以上 · 橡皮筋</text>
+  <text x="160" y="402" font-size="11" fill="var(--color-text-caption)" text-anchor="middle">20 以下 · 橡皮筋</text>
 </svg>`;
 
 export default {
@@ -299,7 +299,7 @@ export default {
         </blockquote>
         <div class="fp-snapshot-row fp-snapshot-row--eq-height">
           <div class="fp-snapshot-wrap">
-            <div class="fp-motion-diagram" style="border:1px solid #e9ecf1;border-radius:12px;padding:20px;display:flex;justify-content:center">
+            <div class="fp-motion-diagram" style="border:1px solid var(--fp-border);border-radius:12px;padding:20px;display:flex;justify-content:center">
               ${SNAP_DIAGRAM_SVG}
             </div>
           </div>

@@ -1078,7 +1078,7 @@
   color: var(--color-text-secondary);
 }
 .fp-compare-card--agent .fp-compare-key {
-  color: var(--color-text-faint);
+  color: var(--color-text-inverse-muted);
 }
 .fp-compare-val {
   font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif;

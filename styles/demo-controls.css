@@ -560,10 +560,15 @@
   outline:none;
   white-space:nowrap;
   flex-shrink:0;
-  transition:background .12s ease,color .12s ease;
+  transform-origin:center;
+  transition:background .12s ease,color .12s ease,transform .1s ease-out;
 }
 .dc-theme-btn:hover{ background:var(--color-bg-control-hover); }
-.dc-theme-btn:active{ background:var(--color-bg-control-active); }
+/* 按住即轻微回应，先把视线锚定在圆形揭示的真实来源。 */
+.dc-theme-btn:active{
+  background:var(--color-bg-control-active);
+  transform:scale(.97);
+}
 
 /* ── Pad resolution dropdown ──────────────────────────────── */
 .dc-pad-select{

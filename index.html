@@ -8,6 +8,9 @@
 <meta name="author" content="Joseph Deng">
 <meta name="generator" content="WorkBuddy 动态原型 — Joseph Deng">
 <title>WorkBuddy — Agent 对话流动态原型</title>
+<!-- 两套高亮主题都预热：切换时新 root 快照不能等网络加载样式。 -->
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css">
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css">
 <link id="hljs-theme-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css">
 <link id="hljs-theme-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" disabled>
 <script>
@@ -809,8 +812,8 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
   window.buildGrid = buildGrid;
   window.fitShellScale = fitShellScale;
   window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
-  // 主题切换时整页网格重算较重，延后到绘制之后，避免阻塞首帧导致中间拖尾。
-  window.addEventListener('wb:themechange', function(){ requestAnimationFrame(buildGrid); });
+  // View Transition 采新 root 快照前必须已经读到目标主题的网格 SVG 与角框颜色。
+  window.addEventListener('wb:themechange', function(){ buildGrid(); });
   var ro = new ResizeObserver(function() {
     requestAnimationFrame(function() { buildGrid(); fitShellScale(); });
   });

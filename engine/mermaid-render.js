@@ -7,48 +7,23 @@ const SOURCE_KEEPER_SELECTOR = 'script[type="text/x-mermaid-source"]';
 const RENDER_TARGET_SELECTOR = 'pre code.lang-mermaid, .mermaid, .wb-mermaid-svg[data-mermaid-rendered="1"]';
 
 // 主题切换时，已渲染的 SVG 颜色是“烤进内联样式”的，无法靠 CSS 变量即时换色。
-// 这里用主题名映射到 Token，让旧图在异步重绘回来前先按新主题色即时覆盖，避免闪白。
-const THEME_TO_VARS = Object.freeze({
+// fallback 只在 CSS token 读取失败时使用；真实颜色必须在每次切换时从当前主题实时读取。
+const MERMAID_THEME_FALLBACKS = Object.freeze({
   dark: {
-    background: getVar('--mermaid-background', '#202226'),
-    primaryColor: getVar('--mermaid-primary-color', '#29344b'),
-    primaryTextColor: getVar('--mermaid-primary-text-color', '#e6e3dd'),
-    primaryBorderColor: getVar('--mermaid-primary-border-color', '#7893d4'),
-    lineColor: getVar('--mermaid-line-color', '#969aa3'),
-    secondaryColor: getVar('--mermaid-secondary-color', '#243b34'),
-    tertiaryColor: getVar('--mermaid-tertiary-color', '#403326'),
-    clusterBkg: getVar('--mermaid-cluster-bg', '#24262b'),
-    clusterBorder: getVar('--mermaid-cluster-border', '#555961'),
-    edgeLabelBackground: getVar('--mermaid-edge-label-bg', '#202226'),
-    noteBkgColor: getVar('--mermaid-note-bg', '#403923'),
-    noteBorderColor: getVar('--mermaid-note-border', '#8d7a3d'),
-    noteTextColor: getVar('--mermaid-note-text', '#e6e3dd')
+    background: '#202226', primaryColor: '#29344b', primaryTextColor: '#e6e3dd',
+    primaryBorderColor: '#7893d4', lineColor: '#969aa3', secondaryColor: '#243b34',
+    tertiaryColor: '#403326', clusterBkg: '#24262b', clusterBorder: '#555961',
+    edgeLabelBackground: '#202226', noteBkgColor: '#403923',
+    noteBorderColor: '#8d7a3d', noteTextColor: '#e6e3dd'
   },
   light: {
-    background: getVar('--mermaid-background', '#fff'),
-    primaryColor: getVar('--mermaid-primary-color', '#eef3ff'),
-    primaryTextColor: getVar('--mermaid-primary-text-color', '#1c1c1e'),
-    primaryBorderColor: getVar('--mermaid-primary-border-color', '#6b7fff'),
-    lineColor: getVar('--mermaid-line-color', '#6e6e73'),
-    secondaryColor: getVar('--mermaid-secondary-color', '#eef8f2'),
-    tertiaryColor: getVar('--mermaid-tertiary-color', '#fff5e8'),
-    clusterBkg: getVar('--mermaid-cluster-bg', '#f7f7f8'),
-    clusterBorder: getVar('--mermaid-cluster-border', '#d1d1d6'),
-    edgeLabelBackground: getVar('--mermaid-edge-label-bg', '#fff'),
-    noteBkgColor: getVar('--mermaid-note-bg', '#fff8d8'),
-    noteBorderColor: getVar('--mermaid-note-border', '#d6b85c'),
-    noteTextColor: getVar('--mermaid-note-text', '#3d3d3d')
+    background: '#fff', primaryColor: '#eef3ff', primaryTextColor: '#1c1c1e',
+    primaryBorderColor: '#6b7fff', lineColor: '#6e6e73', secondaryColor: '#eef8f2',
+    tertiaryColor: '#fff5e8', clusterBkg: '#f7f7f8', clusterBorder: '#d1d1d6',
+    edgeLabelBackground: '#fff', noteBkgColor: '#fff8d8',
+    noteBorderColor: '#d6b85c', noteTextColor: '#3d3d3d'
   }
 });
-
-function getVar(token, fallback) {
-  try {
-    const v = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-    return v || fallback;
-  } catch (e) {
-    return fallback;
-  }
-}
 const BASE_CONFIG = Object.freeze({
   startOnLoad: false,
   securityLevel: 'loose',
@@ -100,6 +75,13 @@ function readThemeVariables(theme) {
   variables.textColor = variables.primaryTextColor;
   variables.titleColor = variables.primaryTextColor;
   return variables;
+}
+
+function readMermaidThemePaints(theme) {
+  return {
+    ...MERMAID_THEME_FALLBACKS[normalizeTheme(theme)],
+    ...readThemeVariables(normalizeTheme(theme))
+  };
 }
 
 function cacheKey(theme, source) {
@@ -266,17 +248,14 @@ function collectTargets(root) {
   });
 }
 
-function applyMermaidThemeVars(target, theme) {
-  const svg = target.matches('pre code.lang-mermaid')
-    ? target.closest('pre')?.nextElementSibling?.querySelector?.('svg')
-    : target.querySelector?.('svg');
+export function applyMermaidThemeToSvg(svg, theme = activeTheme) {
   if (!svg) return;
-  const vars = THEME_TO_VARS[theme] || THEME_TO_VARS.light;
+  const vars = readMermaidThemePaints(theme);
   svg.style.setProperty('background-color', vars.background);
   svg.style.color = vars.primaryTextColor;
+
   svg.querySelectorAll('[fill]:not([fill="none"]):not([fill^="url"])').forEach((el) => {
-    const f = el.getAttribute('fill');
-    if (f === 'currentColor') el.style.fill = vars.primaryTextColor;
+    if (el.getAttribute('fill') === 'currentColor') el.style.fill = vars.primaryTextColor;
   });
   svg.querySelectorAll('.node rect, .node circle, .node ellipse, .node polygon, .node path').forEach((el) => {
     if (el.hasAttribute('fill') && el.getAttribute('fill') !== 'none') el.style.fill = vars.primaryColor;
@@ -285,19 +264,40 @@ function applyMermaidThemeVars(target, theme) {
   svg.querySelectorAll('.edgePath path, .edge path, .flowchart-link').forEach((el) => {
     if (el.hasAttribute('stroke')) el.style.stroke = vars.lineColor;
   });
+  svg.querySelectorAll('marker path, marker polygon').forEach((el) => {
+    // Mermaid 的箭头常把颜色只写在 SVG <style> 里，元素本身没有 fill / stroke 属性。
+    el.style.fill = vars.lineColor;
+    el.style.stroke = vars.lineColor;
+  });
   svg.querySelectorAll('.cluster rect').forEach((el) => {
     if (el.hasAttribute('fill') && el.getAttribute('fill') !== 'none') el.style.fill = vars.clusterBkg;
     if (el.hasAttribute('stroke')) el.style.stroke = vars.clusterBorder;
   });
-  svg.querySelectorAll('.edgeLabel, .edgeLabel p, .label').forEach((el) => {
+  svg.querySelectorAll('.cluster text, .cluster .label, .label text, .nodeLabel, .nodeLabel *').forEach((el) => {
     el.style.color = vars.primaryTextColor;
+    if (el instanceof SVGElement) el.style.fill = vars.primaryTextColor;
+  });
+  svg.querySelectorAll('.edgeLabel, .edgeLabel *').forEach((el) => {
+    el.style.color = vars.primaryTextColor;
+    if (el instanceof SVGElement) el.style.fill = vars.primaryTextColor;
+  });
+  svg.querySelectorAll('.edgeLabel foreignObject div').forEach((el) => {
     el.style.background = vars.edgeLabelBackground;
+    el.style.color = vars.primaryTextColor;
   });
   svg.querySelectorAll('.note, .noteText').forEach((el) => {
     if (el.hasAttribute('fill') && el.getAttribute('fill') !== 'none') el.style.fill = vars.noteBkgColor;
     if (el.hasAttribute('stroke')) el.style.stroke = vars.noteBorderColor;
     el.style.color = vars.noteTextColor;
+    if (el.matches('.noteText')) el.style.fill = vars.noteTextColor;
   });
+}
+
+function applyMermaidThemeVars(target, theme) {
+  const svg = target.matches('pre code.lang-mermaid')
+    ? target.closest('pre')?.nextElementSibling?.querySelector?.('svg')
+    : target.querySelector?.('svg');
+  applyMermaidThemeToSvg(svg, theme);
 }
 
 async function renderTarget(target, theme, force) {

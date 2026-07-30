@@ -398,6 +398,39 @@ body{
   .nav-bar::before,
   .composer,
   .design-notes{transition:none !important;}
+
+  :root.is-theme-revealing::view-transition-group(root),
+  :root.is-theme-revealing::view-transition-image-pair(root),
+  :root.is-theme-revealing::view-transition-old(root),
+  :root.is-theme-revealing::view-transition-new(root){animation:none !important;}
+}
+
+/* 主题揭示只动画根级新快照：旧快照在下，新快照以硬边圆形露出。
+ * 不对真实组件做颜色过渡，圆边因此能像素级切开同一图标、文字或 SVG。 */
+@keyframes wb-theme-reveal{
+  from{clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
+  to{clip-path:circle(var(--wb-theme-reveal-radius) at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
+}
+
+:root.is-theme-revealing::view-transition-group(root),
+:root.is-theme-revealing::view-transition-image-pair(root),
+:root.is-theme-revealing::view-transition-old(root){
+  animation:none;
+  mix-blend-mode:normal;
+}
+
+:root.is-theme-revealing::view-transition-old(root){
+  opacity:1;
+  z-index:0;
+}
+
+/* 用完整 animation 覆写 UA 的 new(root) opacity 淡入，确保边界不是透明渐变。 */
+:root.is-theme-revealing::view-transition-new(root){
+  animation:wb-theme-reveal 420ms cubic-bezier(.2,.75,.25,1) both;
+  clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));
+  opacity:1;
+  mix-blend-mode:normal;
+  z-index:1;
 }
 
 /* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */

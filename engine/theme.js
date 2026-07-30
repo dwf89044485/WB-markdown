@@ -4,12 +4,17 @@
 const STORAGE_KEY = 'workbuddy.theme';
 const THEMES = new Set(['light', 'dark']);
 const THEME_COLORS = Object.freeze({ light: '#fafafa', dark: '#17181b' });
+const REVEAL_CLASS = 'is-theme-revealing';
 const root = document.documentElement;
 const systemThemeQuery = typeof window.matchMedia === 'function'
   ? window.matchMedia('(prefers-color-scheme: dark)')
   : null;
+const reducedMotionQuery = typeof window.matchMedia === 'function'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)')
+  : null;
 
 let manualTheme = readStoredTheme();
+let activeThemeReveal = null;
 
 function isTheme(value) {
   return THEMES.has(value);
@@ -55,6 +60,69 @@ function syncThemeButton(theme) {
   button.setAttribute('aria-pressed', String(isDark));
 }
 
+function clearThemeReveal(reveal) {
+  if (activeThemeReveal !== reveal) return;
+  activeThemeReveal = null;
+  root.classList.remove(REVEAL_CLASS);
+  root.style.removeProperty('--wb-theme-reveal-x');
+  root.style.removeProperty('--wb-theme-reveal-y');
+  root.style.removeProperty('--wb-theme-reveal-radius');
+
+  const button = document.getElementById('ctrlTheme');
+  if (button) button.removeAttribute('aria-disabled');
+}
+
+function interruptThemeReveal(commitTheme) {
+  const reveal = activeThemeReveal;
+  if (!reveal) return;
+
+  // View Transition 的照片撤掉后，底下必须已经是真实的最终主题。
+  if (typeof commitTheme === 'function') {
+    commitTheme();
+    reveal.committed = true;
+  } else if (!reveal.committed) {
+    setTheme(reveal.targetTheme);
+    reveal.committed = true;
+  }
+
+  try {
+    reveal.transition?.skipTransition();
+  } catch (error) {
+    // transition 已结束或浏览器拒绝跳过时，清理临时状态即可。
+  }
+  clearThemeReveal(reveal);
+}
+
+function applyExternalTheme(theme) {
+  if (activeThemeReveal) {
+    interruptThemeReveal(() => applyTheme(theme));
+    return;
+  }
+  applyTheme(theme);
+}
+
+function canRevealTheme() {
+  return typeof document.startViewTransition === 'function' && !reducedMotionQuery?.matches;
+}
+
+function measureRevealOrigin(button) {
+  const rect = button.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+
+  const viewportWidth = document.documentElement.clientWidth;
+  const viewportHeight = document.documentElement.clientHeight;
+  if (!viewportWidth || !viewportHeight) return null;
+
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  const radius = Math.ceil(Math.hypot(
+    Math.max(x, viewportWidth - x),
+    Math.max(y, viewportHeight - y)
+  )) + 2;
+
+  return { x, y, radius };
+}
+
 export function getTheme() {
   return isTheme(root.dataset.theme) ? root.dataset.theme : systemTheme();
 }
@@ -86,28 +154,69 @@ export function setTheme(theme, { persist = true } = {}) {
   return applyTheme(theme);
 }
 
-function toggleTheme() {
-  setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+function revealTheme() {
+  const button = document.getElementById('ctrlTheme');
+  if (!button || activeThemeReveal) return;
+
+  const nextTheme = getTheme() === 'dark' ? 'light' : 'dark';
+  const origin = measureRevealOrigin(button);
+  if (!origin || !canRevealTheme()) {
+    setTheme(nextTheme);
+    return;
+  }
+
+  root.style.setProperty('--wb-theme-reveal-x', `${origin.x}px`);
+  root.style.setProperty('--wb-theme-reveal-y', `${origin.y}px`);
+  root.style.setProperty('--wb-theme-reveal-radius', `${origin.radius}px`);
+  root.classList.add(REVEAL_CLASS);
+  // 保持快照中的按钮外观不变；交互由 activeThemeReveal 锁定，ARIA 告知不可重复触发。
+  button.setAttribute('aria-disabled', 'true');
+
+  const reveal = { transition: null, targetTheme: nextTheme, committed: false };
+  activeThemeReveal = reveal;
+
+  try {
+    const transition = document.startViewTransition(() => {
+      if (!reveal.committed) {
+        setTheme(reveal.targetTheme);
+        reveal.committed = true;
+      }
+    });
+    reveal.transition = transition;
+    transition.finished.catch(() => {}).finally(() => clearThemeReveal(reveal));
+  } catch (error) {
+    clearThemeReveal(reveal);
+    setTheme(nextTheme);
+  }
 }
 
 function handleSystemThemeChange() {
-  if (manualTheme === null) applyTheme(systemTheme());
+  if (manualTheme === null) applyExternalTheme(systemTheme());
 }
 
 function handleStorage(event) {
   if (event.key !== STORAGE_KEY) return;
   if (event.newValue === null) {
     manualTheme = null;
-    applyTheme(systemTheme());
+    applyExternalTheme(systemTheme());
     return;
   }
   if (!isTheme(event.newValue)) return;
   manualTheme = event.newValue;
-  applyTheme(manualTheme);
+  applyExternalTheme(manualTheme);
+}
+
+function handleViewportChange() {
+  // 尺寸变化会使原圆心 / 半径失效；撤照片，直接露出已提交的真实主题。
+  interruptThemeReveal();
+}
+
+function handleReducedMotionChange(event) {
+  if (event.matches) interruptThemeReveal();
 }
 
 const themeButton = document.getElementById('ctrlTheme');
-if (themeButton) themeButton.addEventListener('click', toggleTheme);
+if (themeButton) themeButton.addEventListener('click', revealTheme);
 
 if (systemThemeQuery) {
   if (typeof systemThemeQuery.addEventListener === 'function') {
@@ -117,8 +226,18 @@ if (systemThemeQuery) {
   }
 }
 
+if (reducedMotionQuery) {
+  if (typeof reducedMotionQuery.addEventListener === 'function') {
+    reducedMotionQuery.addEventListener('change', handleReducedMotionChange);
+  } else if (typeof reducedMotionQuery.addListener === 'function') {
+    reducedMotionQuery.addListener(handleReducedMotionChange);
+  }
+}
+
 if (typeof window.addEventListener === 'function') {
   window.addEventListener('storage', handleStorage);
+  window.addEventListener('resize', handleViewportChange);
+  window.addEventListener('orientationchange', handleViewportChange);
 }
 
 applyTheme(manualTheme || getTheme());

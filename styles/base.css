@@ -426,7 +426,8 @@ body{
 
 /* 用完整 animation 覆写 UA 的 new(root) opacity 淡入，确保边界不是透明渐变。 */
 :root.is-theme-revealing::view-transition-new(root){
-  animation:wb-theme-reveal 420ms cubic-bezier(.2,.75,.25,1) both;
+  /* 匀速扩张：首帧能清楚看见圆从主题按钮中心露出，不出现前段猛冲。 */
+  animation:wb-theme-reveal 420ms linear both;
   clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));
   opacity:1;
   mix-blend-mode:normal;

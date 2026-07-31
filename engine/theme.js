@@ -109,12 +109,16 @@ function measureRevealOrigin(button) {
   const rect = button.getBoundingClientRect();
   if (!rect.width || !rect.height) return null;
 
-  const viewportWidth = document.documentElement.clientWidth;
-  const viewportHeight = document.documentElement.clientHeight;
+  // 圆是画在当前可视区域快照上的；浏览器缩放 / 视口偏移时必须按 visualViewport 换算。
+  const visualViewport = window.visualViewport;
+  const viewportWidth = visualViewport?.width || document.documentElement.clientWidth;
+  const viewportHeight = visualViewport?.height || document.documentElement.clientHeight;
   if (!viewportWidth || !viewportHeight) return null;
 
-  const x = rect.left + rect.width / 2;
-  const y = rect.top + rect.height / 2;
+  const viewportOffsetX = visualViewport?.offsetLeft || 0;
+  const viewportOffsetY = visualViewport?.offsetTop || 0;
+  const x = rect.left + rect.width / 2 - viewportOffsetX;
+  const y = rect.top + rect.height / 2 - viewportOffsetY;
   const radius = Math.ceil(Math.hypot(
     Math.max(x, viewportWidth - x),
     Math.max(y, viewportHeight - y)

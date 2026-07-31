@@ -423,6 +423,16 @@ body{
   to{clip-path:circle(var(--wb-theme-reveal-radius) at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
 }
 
+/* 揭示期间真实页面必须已是完整新主题；唯一允许运动的是根新快照的圆形裁剪。 */
+:root.is-theme-revealing,
+:root.is-theme-revealing::before,
+:root.is-theme-revealing::after,
+:root.is-theme-revealing *,
+:root.is-theme-revealing *::before,
+:root.is-theme-revealing *::after{
+  transition:none !important;
+}
+
 :root.is-theme-revealing::view-transition-group(root),
 :root.is-theme-revealing::view-transition-image-pair(root),
 :root.is-theme-revealing::view-transition-old(root){

@@ -5,6 +5,8 @@ const STORAGE_KEY = 'workbuddy.theme';
 const THEMES = new Set(['light', 'dark']);
 const THEME_COLORS = Object.freeze({ light: '#fafafa', dark: '#17181b' });
 const REVEAL_CLASS = 'is-theme-revealing';
+const REVEAL_DURATION_MS = 1200;
+const REVEAL_EASING = 'cubic-bezier(.77,0,.175,1)';
 const root = document.documentElement;
 const systemThemeQuery = typeof window.matchMedia === 'function'
   ? window.matchMedia('(prefers-color-scheme: dark)')
@@ -64,9 +66,6 @@ function clearThemeReveal(reveal) {
   if (activeThemeReveal !== reveal) return;
   activeThemeReveal = null;
   root.classList.remove(REVEAL_CLASS);
-  root.style.removeProperty('--wb-theme-reveal-x');
-  root.style.removeProperty('--wb-theme-reveal-y');
-  root.style.removeProperty('--wb-theme-reveal-radius');
 
   const button = document.getElementById('ctrlTheme');
   if (button) button.removeAttribute('aria-disabled');
@@ -123,8 +122,13 @@ function measureRevealOrigin(button) {
     Math.max(x, viewportWidth - x),
     Math.max(y, viewportHeight - y)
   )) + 2;
+  const normalizedDiagonal = Math.hypot(viewportWidth, viewportHeight) / Math.SQRT2;
 
-  return { x, y, radius };
+  return {
+    centerXPercent: x / viewportWidth * 100,
+    centerYPercent: y / viewportHeight * 100,
+    radiusPercent: radius / normalizedDiagonal * 100
+  };
 }
 
 export function getTheme() {
@@ -169,9 +173,6 @@ function revealTheme() {
     return;
   }
 
-  root.style.setProperty('--wb-theme-reveal-x', `${origin.x}px`);
-  root.style.setProperty('--wb-theme-reveal-y', `${origin.y}px`);
-  root.style.setProperty('--wb-theme-reveal-radius', `${origin.radius}px`);
   root.classList.add(REVEAL_CLASS);
   // 保持快照中的按钮外观不变；交互由 activeThemeReveal 锁定，ARIA 告知不可重复触发。
   button.setAttribute('aria-disabled', 'true');
@@ -187,6 +188,25 @@ function revealTheme() {
       }
     });
     reveal.transition = transition;
+    transition.ready.then(() => {
+      if (activeThemeReveal !== reveal) return;
+      reveal.animation = root.animate(
+        {
+          clipPath: [
+            `circle(0% at ${origin.centerXPercent}% ${origin.centerYPercent}%)`,
+            `circle(${origin.radiusPercent}% at ${origin.centerXPercent}% ${origin.centerYPercent}%)`
+          ]
+        },
+        {
+          duration: REVEAL_DURATION_MS,
+          easing: REVEAL_EASING,
+          fill: 'both',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
+    }).catch(() => {
+      if (activeThemeReveal === reveal) interruptThemeReveal();
+    });
     transition.finished.catch(() => {}).finally(() => clearThemeReveal(reveal));
   } catch (error) {
     clearThemeReveal(reveal);

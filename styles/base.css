@@ -369,20 +369,20 @@ body{
   --shadow-sheet:0 4px 24px rgba(0,0,0,0.38), 0 30px 64px rgba(0,0,0,0.44), 0 4px 14px rgba(0,0,0,0.3);
   --shadow-sheet-preview:0 -2px 12px rgba(0,0,0,0.25);
   --shadow-sheet-static:0 2px 12px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.24);
-  --shadow-glass:0 6px 24px rgba(0,0,0,0.32), inset 0.8px 0.8px 0 rgba(255,255,255,0.08);
-  --shadow-nav-glass:0 7px 30px rgba(0,0,0,0.34), inset 0 1px 0 var(--color-glass-shadow-inner-top), inset 0 -1px 0 var(--color-glass-shadow-inner-bottom);
+  --shadow-glass:0 2px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
+  --shadow-nav-glass:0 5px 20px rgba(0,0,0,0.28), inset 0 1px 0 var(--color-glass-shadow-inner-top), inset 0 -1px 0 var(--color-glass-shadow-inner-bottom);
 
-  --color-glass-border:rgba(255,255,255,0.12);
-  --color-glass-border-top:rgba(255,255,255,0.2);
-  --color-glass-border-left:rgba(255,255,255,0.15);
-  --color-glass-border-right:rgba(255,255,255,0.08);
-  --color-glass-shadow-inner-top:rgba(255,255,255,0.14);
+  --color-glass-border:rgba(255,255,255,0.10);
+  --color-glass-border-top:rgba(255,255,255,0.13);
+  --color-glass-border-left:rgba(255,255,255,0.10);
+  --color-glass-border-right:rgba(255,255,255,0.06);
+  --color-glass-shadow-inner-top:rgba(255,255,255,0.07);
   --color-glass-shadow-inner-bottom:rgba(0,0,0,0.2);
-  --color-glass-layer1-top:rgba(255,255,255,0.09);
-  --color-glass-layer1-bottom:rgba(255,255,255,0.025);
-  --color-glass-layer2-glow:rgba(255,255,255,0.12);
-  --color-glass-layer2-accent:rgba(255,255,255,0.05);
-  --color-glass-layer3-highlight:rgba(255,255,255,0.12);
+  --color-glass-layer1-top:rgba(255,255,255,0.05);
+  --color-glass-layer1-bottom:rgba(255,255,255,0.02);
+  --color-glass-layer2-glow:rgba(255,255,255,0.06);
+  --color-glass-layer2-accent:rgba(255,255,255,0.03);
+  --color-glass-layer3-highlight:rgba(255,255,255,0.06);
   --color-glass-layer3-shadow:rgba(0,0,0,0.12);
 
   --mermaid-background:#1C1F23;
@@ -419,11 +419,7 @@ body{
 }
 
 /* 主题揭示只动画根级新快照：旧快照在下，新快照以硬边圆形露出。
- * 不对真实组件做颜色过渡，圆边因此能像素级切开同一图标、文字或 SVG。 */
-@keyframes wb-theme-reveal{
-  from{clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
-  to{clip-path:circle(50px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
-}
+ * 圆心与半径由 theme.js 在快照 ready 后以固定数值写入，避免伪元素内 CSS 变量坐标漂移。 */
 
 /* 揭示期间真实页面必须已是完整新主题；唯一允许运动的是根新快照的圆形裁剪。 */
 :root.is-theme-revealing,
@@ -447,11 +443,10 @@ body{
   z-index:0;
 }
 
-/* 用完整 animation 覆写 UA 的 new(root) opacity 淡入，确保边界不是透明渐变。 */
+/* 关闭 UA 的 new(root) 淡入；theme.js 在 ready 后只运行动画层的圆形裁剪。 */
 :root.is-theme-revealing::view-transition-new(root){
-  /* 屏幕内形变的强 ease-in-out：轻启、匀速推进、平滑收住。 */
-  animation:wb-theme-reveal 1200ms cubic-bezier(.77,0,.175,1) both;
-  clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));
+  animation:none;
+  clip-path:circle(0px);
   opacity:1;
   mix-blend-mode:normal;
   z-index:1;

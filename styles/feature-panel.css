@@ -700,7 +700,7 @@
 /* card 模式：保留基础边框，padding 略高，定宽匹配 demo */
 .fp-tcn-mode-demo.tool-call-card .step-detail-link {
   padding: 7px var(--cv-status-padding-x);
-  width: var(--layout-shell-w);
+  width: var(--fp-snapshot-shell-w, 393px);
 }
 
 /* ── Tool Call Node Sheet 静态快照 ────────── */
@@ -794,7 +794,7 @@
 .fp-sheet-pair-item {
   display: flex;
   flex-direction: column;
-  width: var(--layout-shell-w);
+  width: var(--fp-snapshot-shell-w, 393px);
   flex-shrink: 0;
   flex-grow: 0;
 }

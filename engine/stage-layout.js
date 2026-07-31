@@ -101,6 +101,44 @@ export function chooseIntegerGrid(width, height) {
   };
 }
 
+export function buildGridModel(geometry) {
+  const verticalXs = Array.from(
+    { length: geometry.cols + 3 },
+    (_, index) => {
+      const gridIndex = index - 1;
+      if (gridIndex === -1) return 0;
+      if (gridIndex === 0) return geometry.shellLeft;
+      if (gridIndex === geometry.cols) return geometry.shellRight;
+      if (gridIndex === geometry.cols + 1) return geometry.leftAreaW;
+      return geometry.shellLeft + gridIndex * geometry.cellW;
+    },
+  );
+
+  const firstRow = Math.min(0, Math.ceil(-geometry.shellTop / geometry.cellH));
+  const lastRow = Math.max(
+    geometry.rows,
+    Math.floor((geometry.stageH - geometry.shellTop) / geometry.cellH),
+  );
+  const horizontalYs = Array.from(
+    { length: lastRow - firstRow + 1 },
+    (_, index) => {
+      const gridIndex = firstRow + index;
+      if (gridIndex === 0) return geometry.shellTop;
+      if (gridIndex === geometry.rows) return geometry.shellTop + geometry.displayH;
+      return geometry.shellTop + gridIndex * geometry.cellH;
+    },
+  );
+
+  return {
+    verticalXs,
+    horizontalYs,
+    shellTop: geometry.shellTop,
+    shellBottom: geometry.shellTop + geometry.displayH,
+    shellLeft: geometry.shellLeft,
+    shellRight: geometry.shellRight,
+  };
+}
+
 export function computeStageGeometry({
   preset,
   userOrientation,
@@ -121,27 +159,36 @@ export function computeStageGeometry({
 
   const orientation = transientOrientation ?? userOrientation;
   const { width: logicalW, height: logicalH } = resolveOrientedSize(preset, orientation);
-  const expandedUsableH = Math.max(1, viewportH - toggleH - controlsExpandedH - 24);
+  const expandedStageViewportH = Math.max(0, viewportH - toggleH - controlsExpandedH);
+  const expandedUsableH = Math.max(1, expandedStageViewportH - 24);
   const expandedScale = Math.min(1, expandedUsableH / logicalH);
   const collapseThreshold = previousAutoCollapsed ? 0.9 : 0.85;
-  const autoCollapsed = Boolean(
-    userExpanded && allowAutoCollapse && expandedScale < collapseThreshold,
-  );
+  let autoCollapsed = false;
+  if (userExpanded) {
+    autoCollapsed = allowAutoCollapse
+      ? expandedScale < collapseThreshold
+      : previousAutoCollapsed;
+  }
   const controlsExpanded = Boolean(userExpanded && !autoCollapsed);
   const effectiveControlsH = controlsExpanded ? controlsExpandedH : 0;
-  const usableH = Math.max(1, viewportH - toggleH - effectiveControlsH - 24);
+  const stageViewportH = Math.max(0, viewportH - toggleH - effectiveControlsH);
+  const usableH = Math.max(1, stageViewportH - 24);
   const scale = Math.min(1, usableH / logicalH);
   const displayW = logicalW * scale;
   const displayH = logicalH * scale;
+  const shellTop = (stageViewportH - displayH) / 2;
   const grid = chooseIntegerGrid(displayW, displayH);
   const cellW = grid.cellW;
   const cellH = grid.cellH;
   const leftAreaW = displayW + 2 * cellW;
+  const layoutMinW = Math.max(1440, leftAreaW + 884);
 
   return {
     orientation,
     logicalW,
     logicalH,
+    stageViewportH,
+    shellTop,
     usableH,
     expandedScale,
     autoCollapsed,
@@ -155,7 +202,9 @@ export function computeStageGeometry({
     cellW,
     cellH,
     leftAreaW,
-    layoutMinW: Math.max(1440, leftAreaW + 884),
+    layoutMinW,
+    stageW: Math.max(viewportW, layoutMinW),
+    stageH: viewportH,
     shellLeft: cellW,
     shellRight: cellW + displayW,
     stageStandalone: forceStandalone || (!forceDesktop && viewportW <= 599),

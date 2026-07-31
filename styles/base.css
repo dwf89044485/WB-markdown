@@ -232,11 +232,7 @@ body{
   --color-glass-layer3-highlight: rgba(255,255,255,0.45);
   --color-glass-layer3-shadow: rgba(255,255,255,0.08);
 
-  /* ── LAYOUT TOKENS (phone shell / left area / layout) ── */
-  --layout-shell-w:393px;
-  --layout-shell-h:852px;
-  --layout-left-area-w:524px;
-  --layout-min-w:1440px;
+  /* ── LAYOUT TOKENS ── */
   --layout-notes-min-w:840px;
   --fp-feature-header-w:718px;
   --scroll-nav-overlap-extra:40px;
@@ -452,16 +448,16 @@ body{
   z-index:1;
 }
 
-/* ── PAD MODE (iPad Air 11" shell) ─────────────────────────── */
-:root.device-pad {
-  --layout-shell-w:840px;
-  --layout-shell-h:1190px;
-  --layout-left-area-w:976px;
-  --layout-min-w:1860px;
-  --layout-notes-min-w:840px;
-  --fp-feature-header-w:718px;
-  --scroll-nav-overlap-extra:40px;
+.stage-root{
+  position:relative;
+  width:100%;
+  min-width:var(--stage-layout-min-w, 1440px);
+  min-height:100dvh;
 }
+.stage-root .shell-viewport{
+  position:relative;
+}
+
 /* ── STANDALONE MODE (手机上全屏浏览) ────────────────────────── */
 /* 显式强制：?standalone=1（或历史兼容 class=is-standalone） */
 html.force-standalone body,
@@ -473,10 +469,31 @@ html.is-standalone body{
   height:100dvh;
   overflow:hidden;
 }
-html.force-standalone .phone-shell,
-html.is-standalone .phone-shell{
+html.force-standalone .stage-root,
+html.is-standalone .stage-root,
+html.force-standalone .layout-main,
+html.is-standalone .layout-main,
+html.force-standalone .left-area,
+html.is-standalone .left-area,
+html.force-standalone .shell-viewport,
+html.is-standalone .shell-viewport{
+  width:100%;
+  min-width:0;
+  height:100dvh;
+}
+html.force-standalone .stage-root .shell-frame,
+html.is-standalone .stage-root .shell-frame{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100dvh;
+  transform:none;
+}
+html.force-standalone .stage-root .shell-frame .phone-shell,
+html.is-standalone .stage-root .shell-frame .phone-shell{
+  width:100%;
+  height:100dvh;
+  transform:none;
   border-radius:0;
   box-shadow:none;
   border:none;
@@ -489,16 +506,21 @@ html.is-standalone .nav-bar{top:0;padding-top:0;}
 html.force-standalone .conversation,
 html.is-standalone .conversation{padding-top:var(--standalone-conversation-padding-top);}
 html.force-standalone .design-notes,
-html.is-standalone .design-notes{display:none;}
+html.is-standalone .design-notes,
+html.force-standalone .dc-toggle,
+html.is-standalone .dc-toggle,
+html.force-standalone .demo-controls,
+html.is-standalone .demo-controls,
 html.force-standalone .paper-bg,
 html.is-standalone .paper-bg,
 html.force-standalone .grid-overlay,
-html.is-standalone .grid-overlay{display:none;}
+html.is-standalone .grid-overlay,
+html.force-standalone .corner-boxes,
+html.is-standalone .corner-boxes{display:none;}
 html.force-standalone .left-area,
 html.is-standalone .left-area{width:100%;background:var(--color-bg-canvas);}
 html.force-standalone .layout-main,
 html.is-standalone .layout-main{position:relative;z-index:1;}
-html.is-standalone .demo-controls{display:none;}
 html.force-standalone .user-msg-wrap,
 html.is-standalone .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
 html.force-standalone .agent-msg,
@@ -516,9 +538,25 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     height:100dvh;
     overflow:hidden;
   }
-  html:not(.force-desktop) .phone-shell{
+  html:not(.force-desktop) .stage-root,
+  html:not(.force-desktop) .layout-main,
+  html:not(.force-desktop) .left-area,
+  html:not(.force-desktop) .shell-viewport{
+    width:100%;
+    min-width:0;
+    height:100dvh;
+  }
+  html:not(.force-desktop) .stage-root .shell-frame{
+    position:absolute;
+    inset:0;
     width:100%;
     height:100dvh;
+    transform:none;
+  }
+  html:not(.force-desktop) .stage-root .shell-frame .phone-shell{
+    width:100%;
+    height:100dvh;
+    transform:none;
     border-radius:0;
     box-shadow:none;
     border:none;
@@ -531,7 +569,8 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
   html:not(.force-desktop) .dc-toggle,
   html:not(.force-desktop) .demo-controls,
   html:not(.force-desktop) .paper-bg,
-  html:not(.force-desktop) .grid-overlay{display:none;}
+  html:not(.force-desktop) .grid-overlay,
+  html:not(.force-desktop) .corner-boxes{display:none;}
   html:not(.force-desktop) .left-area{width:100%;background:var(--color-bg-canvas);}
   html:not(.force-desktop) .user-msg-wrap{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
   html:not(.force-desktop) .agent-msg{padding-left:var(--standalone-msg-gutter-x);padding-right:var(--standalone-msg-gutter-x);}
@@ -554,16 +593,15 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     display:flex;
     flex-direction:row;
     align-items:flex-start;
-    /* 总宽至少 1364：左 524 + 右 840 */
-    min-width:var(--layout-min-w);
+    min-width:var(--stage-layout-min-w, 1440px);
     width:100%;
     height:100dvh;
     padding:0;
     gap:0;
   }
   .left-area{
-    width:var(--layout-left-area-w);
-    flex:0 0 var(--layout-left-area-w);
+    width:var(--stage-left-area-w, 524px);
+    flex:0 0 var(--stage-left-area-w, 524px);
     height:100dvh;
     display:flex;
     flex-direction:column;
@@ -578,6 +616,12 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
     overflow:hidden;
     width:100%;
     position:relative;
+  }
+  .shell-frame{
+    position:relative;
+    width:var(--stage-display-w, 393px);
+    height:var(--stage-display-h, 852px);
+    flex:0 0 auto;
   }
   /* 舞台顶部署名：与右侧「交互说明」署名同款字体（Georgia 衬线斜体） */
   .stage-credit{
@@ -611,23 +655,21 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 }
 
 /* ── PHONE SHELL ─────────────────────────────────────────── */
-.phone-shell{
-  width:var(--layout-shell-w);height:var(--layout-shell-h);background:var(--color-bg-canvas);border-radius:0;
+.stage-root .shell-frame .phone-shell{
+  width:var(--stage-logical-w, 393px);
+  height:var(--stage-logical-h, 852px);
+  background:var(--color-bg-canvas);
+  border-radius:0;
   box-shadow:none;
   border:1px solid var(--color-border-default);
-  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
   isolation:isolate;
   flex-shrink:0;
-  transform-origin:center center;
-  will-change:transform;
-}
-/* 横屏模式：交换宽高 */
-.phone-shell.phone-landscape{
-  width:var(--layout-shell-h);height:var(--layout-shell-w);
-}
-body:has(.phone-shell.phone-landscape),
-body:has(.phone-shell.tbl-landscape){
-  --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
+  transform:scale(var(--stage-scale, 1));
+  transform-origin:top left;
 }
 
 /* ── STATUS BAR ──────────────────────────────────────────── */

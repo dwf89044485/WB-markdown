@@ -58,11 +58,14 @@
 </head>
 <body>
 <!-- WorkBuddy 动态原型 · 设计 / 实现：Joseph Deng · https://github.com/dwf89044485 -->
+<div class="stage-root">
 <div class="paper-bg" aria-hidden="true"></div>
-<div class="grid-overlay" aria-hidden="true"></div>
+<svg class="grid-overlay" aria-hidden="true"></svg>
+<svg class="corner-boxes" aria-hidden="true"></svg>
 <div class="layout-main">
 <div class="left-area">
 <div class="shell-viewport">
+<div class="shell-frame">
 <div class="phone-shell">
   <!-- Status Bar -->
   <div class="status-bar">
@@ -266,6 +269,7 @@
   </div>
 
 </div> <!-- /phone-shell -->
+</div> <!-- /shell-frame -->
 <div class="stage-credit" aria-hidden="true">Demo by Joseph Deng</div>
 </div> <!-- /shell-viewport -->
 
@@ -374,10 +378,12 @@
   <div class="design-notes-inner"></div>
 </div>
 </div><!-- /layout-main -->
+</div><!-- /stage-root -->
 
 <script src="./scenario.js"></script>
 <script src="./icons-inline.js"></script>
 <script src="./vendor/Sortable.min.js"></script>
+<script type="module" src="./engine/stage-controller.js"></script>
 <script type="module" src="./engine/theme.js"></script>
 <script type="module" src="./engine/player.js"></script>
 <script type="module">
@@ -511,329 +517,6 @@ var COPY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" widt
 <script type="module" src="./engine/code-collapse.js"></script>
 <!-- Mermaid Render — 把 ```mermaid 源码渲染成 SVG -->
 <script type="module" src="./engine/mermaid-render.js"></script>
-<script>
-/* ── 网格：手机宽切 6 份，高切 12 份 ────────────────── */
-(function(){
-  var TARGET_CELL = 68; // 目标格子尺寸（px），手机模式 393/6≈65.5, 852/12=71，取中值
-  var COLS  = 6;
-  var ROWS  = 12;
-  var DASH  = '8 8';
 
-  function r(n){ return Math.round(n * 10) / 10; }
-
-  function buildGrid(){
-    var phone  = document.querySelector('.phone-shell');
-    var overlay = document.querySelector('.grid-overlay');
-    if(!phone || !overlay) return;
-    var themeStyles = getComputedStyle(document.documentElement);
-    var COLOR = themeStyles.getPropertyValue('--color-grid-line').trim() || '#BBBAB0';
-    var TILE = themeStyles.getPropertyValue('--color-grid-tile').trim() || '#F8F6F1';
-
-    // 移动端/standalone：隐藏网格装饰
-    var isMobile = document.documentElement.classList.contains('force-standalone') ||
-      (!document.documentElement.classList.contains('force-desktop') && window.innerWidth <= 900);
-    if(isMobile){
-      overlay.style.display = 'none';
-      var boxEl=document.querySelector('.corner-boxes');
-      if(boxEl)boxEl.style.display='none';
-      return;
-    }
-
-    overlay.style.display = '';
-
-    // 手机在正常文档流中，直接读实际位置
-    var pR = phone.getBoundingClientRect();
-    var pw = pR.width;
-    var ph = pR.height;
-
-    // 动态计算网格份数：确保格子接近正方形
-    COLS = Math.max(1, Math.round(pw / TARGET_CELL));
-    ROWS = Math.max(1, Math.round(ph / TARGET_CELL));
-
-    // 网格步长由壳子尺寸动态计算（colStep = pw/COLS, rowStep = ph/ROWS）
-    var colStep = pw / COLS;
-    var rowStep = ph / ROWS;
-
-    // 把格子尺寸写入 CSS 变量，供横屏时 left-area 宽度计算使用
-    document.documentElement.style.setProperty('--tbl-grid-cell', r(colStep) + 'px');
-
-    // 可视区域边界（视口坐标系）
-    var leftEdge   = pR.left - colStep;
-    var rightEdge  = pR.right + colStep;
-
-    // demo 区域底部：以控制面板实际底部为准
-    var demoBottom = pR.bottom + 4 * rowStep;  // fallback
-    var ctrl = document.querySelector('.demo-controls');
-    if(ctrl){
-      var ctrlR = ctrl.getBoundingClientRect();
-      if(ctrlR.bottom > pR.bottom) demoBottom = ctrlR.bottom;
-    }
-
-    var vw = Math.max(window.innerWidth, rightEdge);
-    var vh = Math.max(window.innerHeight, demoBottom);
-
-    // ── 网格虚线（画在 grid-overlay 上） ──────────
-    var lines = '';
-
-    function dashLine(x1,y1,x2,y2){
-      lines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" stroke="'+COLOR+'" stroke-width="1" stroke-dasharray="'+DASH+'"/>';
-    }
-
-    var x, y;
-    // 纸纹右边框位置，虚线跳过这里
-    var edgeX = [rightEdge];
-    var edgeY = [];
-    function onEdge(pos, edges){
-      for(var i=0;i<edges.length;i++){
-        if(Math.abs(pos - edges[i]) < 0.5) return true;
-      }
-      return false;
-    }
-    // 竖线：从手机左边缘向左向右延展，跳过手机左右边界和纸纹右边框
-    for(x = pR.left; x <= rightEdge; x += colStep){
-      if(onEdge(x, edgeX)) continue;
-      dashLine(x, 0, x, vh);
-    }
-    for(x = pR.left - colStep; x >= leftEdge; x -= colStep){
-      if(onEdge(x, edgeX)) continue;
-      dashLine(x, 0, x, vh);
-    }
-    // 横线：从手机顶边向下延展到可视区底部，跳过手机上下边界
-    for(y = pR.top; y <= vh; y += rowStep){
-      if(onEdge(y, edgeY)) continue;
-      dashLine(leftEdge, y, rightEdge, y);
-    }
-    for(y = pR.top - rowStep; y >= 0; y -= rowStep){
-      if(onEdge(y, edgeY)) continue;
-      dashLine(leftEdge, y, rightEdge, y);
-    }
-
-    // demo 区域底部边界：以控制面板实际底部为准
-    var ctrl = document.querySelector('.demo-controls');
-    if(ctrl){
-      var ctrlR = ctrl.getBoundingClientRect();
-      demoBottom = ctrlR.bottom;
-    }
-
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">'
-            + lines + '</svg>';
-
-    overlay.style.backgroundImage = 'url(data:image/svg+xml,'+encodeURIComponent(svg)+')';
-    overlay.style.backgroundSize = r(vw)+'px '+r(vh)+'px';
-
-    // 手机四周实线描边 + 四角方框（corner-boxes，z-index=2）
-    var solidLines = '';
-    function solidLine(x1,y1,x2,y2){
-      solidLines += '<line x1="'+r(x1)+'" y1="'+r(y1)+'" x2="'+r(x2)+'" y2="'+r(y2)+'" stroke="'+COLOR+'" stroke-width="1"/>';
-    }
-
-    // 手机四周实线，与虚线网格在同一条坐标上，精确重叠
-    solidLine(pR.left, pR.top, pR.left, pR.bottom);      // 左边
-    solidLine(pR.right, pR.top, pR.right, pR.bottom);    // 右边
-    solidLine(pR.left, pR.top, pR.right, pR.top);       // 上边
-    solidLine(pR.left, pR.bottom, pR.right, pR.bottom);  // 下边
-
-    // 四角 10×10 方框压手机上面
-    var S = 10, H = S / 2;
-    var corners = [[pR.left,pR.top],[pR.right,pR.top],[pR.left,pR.bottom],[pR.right,pR.bottom]];
-    var boxSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+r(vw)+'" height="'+r(vh)+'">';
-    boxSvg += solidLines;
-    for(var ci=0;ci<corners.length;ci++){
-      var cx=corners[ci][0], cy=corners[ci][1];
-      boxSvg += '<rect x="'+r(cx-H)+'" y="'+r(cy-H)+'" width="'+S+'" height="'+S+'" fill="'+TILE+'" stroke="'+COLOR+'" stroke-width="1"/>';
-    }
-    boxSvg += '</svg>';
-
-    var boxEl = document.querySelector('.corner-boxes');
-    if(!boxEl){
-      boxEl = document.createElement('div');
-      boxEl.className = 'corner-boxes';
-      boxEl.setAttribute('aria-hidden','true');
-      document.body.appendChild(boxEl);
-    }
-    boxEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2;background-image:url(data:image/svg+xml,'+encodeURIComponent(boxSvg)+');background-size:'+r(vw)+'px '+r(vh)+'px;background-repeat:no-repeat';
-    boxEl.style.display = '';
-  }
-
-  /* ── 设备模式切换 ────────────────────────────────── */
-  var PAD_RESOLUTIONS = {
-    'ipad-mini':        { w: 744,  h: 1133 },
-    'ipad-air-11':      { w: 840,  h: 1190 },
-    'ipad-pro-129':     { w: 1024, h: 1366 },
-    'android-expanded': { w: 1280, h: 800  },
-    'surface-pro-8':    { w: 1440, h: 960  }
-  };
-  var PAD_MARGIN = 136;
-
-  function setPadResolution(key) {
-    var res = PAD_RESOLUTIONS[key];
-    if (!res) return;
-    var root = document.documentElement;
-    var leftW = res.w + PAD_MARGIN;
-    root.style.setProperty('--layout-shell-w', res.w + 'px');
-    root.style.setProperty('--layout-shell-h', res.h + 'px');
-    root.style.setProperty('--layout-left-area-w', leftW + 'px');
-    root.style.setProperty('--layout-min-w', (leftW + 884) + 'px');
-    var shell = document.querySelector('.phone-shell');
-    var oBtn = document.getElementById('ctrlOrientation');
-    if (shell) {
-      var needLandscape = res.h > res.w;
-      if (needLandscape && !shell.classList.contains('phone-landscape')) {
-        shell.classList.add('phone-landscape');
-        if (oBtn) { oBtn.querySelector('span').textContent = '竖屏'; oBtn.setAttribute('aria-label', '切换为竖屏'); }
-      } else if (!needLandscape && shell.classList.contains('phone-landscape')) {
-        shell.classList.remove('phone-landscape');
-        if (oBtn) { oBtn.querySelector('span').textContent = '横屏'; oBtn.setAttribute('aria-label', '切换为横屏'); }
-      }
-    }
-    buildGrid();
-    fitShellScale(true);
-  }
-
-  function clearPadResolutionOverrides() {
-    var s = document.documentElement.style;
-    s.removeProperty('--layout-shell-w');
-    s.removeProperty('--layout-shell-h');
-    s.removeProperty('--layout-left-area-w');
-    s.removeProperty('--layout-min-w');
-  }
-
-  function setDeviceMode(mode){
-    var root = document.documentElement;
-    var shell = document.querySelector('.phone-shell');
-    var isPad = mode === 'pad';
-    if (isPad) {
-      root.classList.add('device-pad');
-      var padSelect = document.getElementById('ctrlPadResolution');
-      if (padSelect) setPadResolution(padSelect.value);
-      if (shell && !shell.classList.contains('phone-landscape')) {
-        shell.classList.add('phone-landscape');
-        var oBtn = document.getElementById('ctrlOrientation');
-        if (oBtn) {
-          oBtn.querySelector('span').textContent = '竖屏';
-          oBtn.setAttribute('aria-label', '切换为竖屏');
-        }
-      }
-    } else {
-      root.classList.remove('device-pad');
-      clearPadResolutionOverrides();
-      if (shell && shell.classList.contains('phone-landscape')) {
-        shell.classList.remove('phone-landscape');
-        var oBtn = document.getElementById('ctrlOrientation');
-        if (oBtn) {
-          oBtn.querySelector('span').textContent = '横屏';
-          oBtn.setAttribute('aria-label', '切换为横屏');
-        }
-      }
-    }
-    var btnPhone = document.getElementById('ctrlDevicePhone');
-    var btnPad = document.getElementById('ctrlDevicePad');
-    if (btnPhone) { btnPhone.classList.toggle('is-active', !isPad); }
-    if (btnPad)   { btnPad.classList.toggle('is-active', isPad); }
-    buildGrid();
-    fitShellScale(true);
-  }
-
-  document.getElementById('ctrlDevicePhone').addEventListener('click', function(){ setDeviceMode('phone'); });
-  document.getElementById('ctrlDevicePad').addEventListener('click', function(){ setDeviceMode('pad'); });
-
-  var padResSelect = document.getElementById('ctrlPadResolution');
-  if (padResSelect) {
-    padResSelect.addEventListener('change', function() {
-      if (document.documentElement.classList.contains('device-pad')) {
-        setPadResolution(this.value);
-      }
-    });
-  }
-
-  /* ── 横竖屏切换 ───────────────────────────────── */
-  var orientationBtn = document.getElementById('ctrlOrientation');
-  if (orientationBtn) {
-    orientationBtn.addEventListener('click', function() {
-      var shell = document.querySelector('.phone-shell');
-      var isLandscape = shell.classList.toggle('phone-landscape');
-      this.querySelector('span').textContent = isLandscape ? '竖屏' : '横屏';
-      this.setAttribute('aria-label', isLandscape ? '切换为竖屏' : '切换为横屏');
-      buildGrid();
-      fitShellScale();
-    });
-  }
-
-  /* ── Shell 等比缩放适配可用区域 ────────────────── */
-  var panelAutoCollapsed = false;
-
-  function fitShellScale(allowCollapse) {
-    // 手机端/standalone 模式：禁止缩放，手机壳就是视口本身
-    var root = document.documentElement;
-    var isStandalone = root.classList.contains('force-standalone') ||
-      (!root.classList.contains('force-desktop') && window.innerWidth <= 900);
-    if (isStandalone) return;
-
-    var shell = document.querySelector('.phone-shell');
-    if (!shell) return;
-    var viewport = document.querySelector('.shell-viewport');
-    if (!viewport) return;
-    var controls = document.querySelector('.demo-controls');
-
-    shell.style.transform = '';
-
-    var availW = viewport.clientWidth - 48;
-    var availH = viewport.clientHeight - 24;
-    var shellW = shell.offsetWidth;
-    var shellH = shell.offsetHeight;
-    var scale = Math.min(1, availW / shellW, availH / shellH);
-
-    if (allowCollapse && scale < 0.85 && controls && controls.classList.contains('is-expanded')) {
-      controls.classList.remove('is-expanded');
-      var toggle = document.getElementById('dcToggle');
-      if (toggle) {
-        toggle.classList.add('is-collapsed');
-        toggle.setAttribute('aria-label', '展开控制面板');
-        toggle.setAttribute('title', '展开控制面板');
-      }
-      panelAutoCollapsed = true;
-      availH = viewport.clientHeight - 24;
-      scale = Math.min(1, availW / shellW, availH / shellH);
-    }
-
-    if (scale < 1) {
-      shell.style.transform = 'scale(' + scale + ')';
-      var scaledW = Math.ceil(shellW * scale);
-      var leftW = scaledW + PAD_MARGIN;
-      document.documentElement.style.setProperty('--layout-left-area-w', leftW + 'px');
-      document.documentElement.style.setProperty('--layout-min-w', (leftW + 884) + 'px');
-    } else {
-      shell.style.transform = '';
-    }
-  }
-
-  buildGrid();
-  fitShellScale();
-  window.buildGrid = buildGrid;
-  window.fitShellScale = fitShellScale;
-  window.addEventListener('resize', function() { buildGrid(); fitShellScale(); });
-  // View Transition 采新 root 快照前必须已经读到目标主题的网格 SVG 与角框颜色。
-  window.addEventListener('wb:themechange', function(){ buildGrid(); });
-  var ro = new ResizeObserver(function() {
-    requestAnimationFrame(function() { buildGrid(); fitShellScale(); });
-  });
-  var shellViewport = document.querySelector('.shell-viewport');
-  if(shellViewport) ro.observe(shellViewport);
-
-  /* ── 控制面板展开/收起 ──────────────────────────── */
-  var dcToggle = document.getElementById('dcToggle');
-  if (dcToggle) {
-    dcToggle.addEventListener('click', function() {
-      var controls = document.querySelector('.demo-controls');
-      var isExpanded = controls.classList.toggle('is-expanded');
-      this.classList.toggle('is-collapsed', !isExpanded);
-      this.setAttribute('aria-label', isExpanded ? '收起控制面板' : '展开控制面板');
-      this.setAttribute('title', isExpanded ? '收起控制面板' : '展开控制面板');
-      panelAutoCollapsed = false;
-      setTimeout(function() { buildGrid(); fitShellScale(); }, 400);
-    });
-  }
-})();
-</script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import test from 'node:test';
 
 import {
   DEVICE_PRESETS,
+  buildGridModel,
   chooseIntegerGrid,
   computeStageGeometry,
   resolveOrientedSize,
@@ -151,10 +152,55 @@ test('returns all geometry identities without rounding', () => {
       assert.equal(geometry.cellH, geometry.displayH / geometry.rows);
       assert.equal(geometry.leftAreaW, geometry.displayW + 2 * geometry.cellW);
       assert.equal(geometry.layoutMinW, Math.max(1440, geometry.leftAreaW + 884));
+      assert.equal(geometry.stageW, Math.max(1600, geometry.layoutMinW));
+      assert.equal(geometry.stageH, 2000);
       assert.equal(geometry.shellLeft, geometry.cellW);
       assert.equal(geometry.shellRight, geometry.cellW + geometry.displayW);
+      assert.ok(Math.abs((geometry.leftAreaW - geometry.shellRight) - geometry.cellW) < 1e-10);
     }
   }
+});
+
+test('derives stage viewport height and centers the displayed shell within it', () => {
+  const expanded = geometryFor(presetById('phone'), 'portrait', {
+    viewportH: 1000,
+    toggleH: 29,
+    controlsExpandedH: 180,
+  });
+  const collapsed = geometryFor(presetById('phone'), 'portrait', {
+    viewportH: 1000,
+    toggleH: 29,
+    controlsExpandedH: 180,
+    userExpanded: false,
+  });
+
+  assert.equal(expanded.stageViewportH, 1000 - 29 - 180);
+  assert.equal(expanded.shellTop, (expanded.stageViewportH - expanded.displayH) / 2);
+  assert.equal(collapsed.stageViewportH, 1000 - 29);
+  assert.equal(collapsed.shellTop, (collapsed.stageViewportH - collapsed.displayH) / 2);
+});
+
+test('keeps exactly one grid cell on each side of the shell', () => {
+  const geometry = geometryFor(presetById('ipad-air'), 'landscape');
+
+  assert.equal(geometry.shellLeft, geometry.cellW);
+  assert.ok(Math.abs((geometry.leftAreaW - geometry.shellRight) - geometry.cellW) < 1e-10);
+});
+
+test('builds grid boundaries from geometry with demo edges on the same grid', () => {
+  const geometry = geometryFor(presetById('phone'), 'portrait', {
+    viewportH: 1000,
+    toggleH: 29,
+    controlsExpandedH: 180,
+  });
+  const model = buildGridModel(geometry);
+
+  assert.equal(model.verticalXs[0], 0);
+  assert.equal(model.verticalXs.at(-1), geometry.leftAreaW);
+  assert.ok(model.verticalXs.includes(geometry.shellLeft));
+  assert.ok(model.verticalXs.includes(geometry.shellRight));
+  assert.ok(model.horizontalYs.includes(model.shellTop));
+  assert.ok(model.horizontalYs.includes(model.shellBottom));
 });
 
 test('derives scale only from usable height and never from viewport width', () => {
@@ -272,7 +318,7 @@ test('falls back deterministically when an axis has no legal integer count', () 
   assert.equal(geometry.cellH, geometry.displayH / geometry.rows);
 });
 
-test('clamps usable height to 1 and scale to at most 1', () => {
+test('clamps stage viewport height to zero on extremely short viewports', () => {
   const constrained = geometryFor(presetById('phone'), 'portrait', {
     viewportH: 20,
     toggleH: 40,
@@ -281,8 +327,11 @@ test('clamps usable height to 1 and scale to at most 1', () => {
     viewportH: 5000,
   });
 
+  assert.equal(constrained.stageViewportH, 0);
   assert.equal(constrained.usableH, 1);
   assert.equal(constrained.scale, 1 / 852);
+  assert.equal(constrained.displayH, 1);
+  assert.equal(constrained.shellTop, -constrained.displayH / 2);
   assert.equal(unconstrained.scale, 1);
 });
 
@@ -388,11 +437,25 @@ test('never auto-restores controls that the user explicitly collapsed', () => {
   assert.equal(geometry.effectiveControlsH, 0);
 });
 
-test('honors allowAutoCollapse=false even below the collapse threshold', () => {
+test('preserves an existing automatic collapse while automatic decisions are disabled', () => {
+  const geometry = geometryFor(presetById('phone'), 'portrait', {
+    viewportH: 2000,
+    controlsExpandedH: 200,
+    allowAutoCollapse: false,
+    previousAutoCollapsed: true,
+  });
+
+  assert.equal(geometry.autoCollapsed, true);
+  assert.equal(geometry.controlsExpanded, false);
+  assert.equal(geometry.effectiveControlsH, 0);
+});
+
+test('expands after manual state clears the previous automatic collapse', () => {
   const geometry = geometryFor(presetById('phone'), 'portrait', {
     viewportH: 500,
     controlsExpandedH: 200,
     allowAutoCollapse: false,
+    previousAutoCollapsed: false,
   });
 
   assert.equal(geometry.autoCollapsed, false);

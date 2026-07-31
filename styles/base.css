@@ -427,7 +427,7 @@ body{
 /* 用完整 animation 覆写 UA 的 new(root) opacity 淡入，确保边界不是透明渐变。 */
 :root.is-theme-revealing::view-transition-new(root){
   /* 无回弹的快速响应与平稳落定：圆是一次空间揭示，不是匀速进度条。 */
-  animation:wb-theme-reveal 400ms cubic-bezier(.16,1,.3,1) both;
+  animation:wb-theme-reveal 1200ms cubic-bezier(.16,1,.3,1) both;
   clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));
   opacity:1;
   mix-blend-mode:normal;

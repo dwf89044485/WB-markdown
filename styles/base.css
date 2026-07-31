@@ -813,6 +813,9 @@ html.is-standalone .composer{padding:0 var(--standalone-composer-padding-x) max(
 .nav-menu-btn:active::after{background:var(--color-state-hover-subtle);}
 .nav-menu-btn,
 .capsule-btn{border:none;}
+/* 暗色下菜单按钮补细边框：亮色靠阴影+高光描边，深底上投影失效，
+ * 与右侧胶囊统一用发丝边表达轮廓。 */
+:root[data-theme="dark"] .nav-menu-btn{border:1px solid var(--color-glass-border);}
 
 .nav-actions{
   display:inline-flex;

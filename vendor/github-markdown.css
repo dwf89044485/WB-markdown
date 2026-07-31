@@ -12,17 +12,17 @@
   --fgColor-accent: Highlight;
 }
 :root[data-theme="dark"] .markdown-body {
-    /* dark — 暖纸墨体系（与 base.css 暗色 token 同色温） */
+    /* dark — 近黑中性体系（与 base.css 暗色 token 同体系） */
     color-scheme: dark;
     --fgColor-accent: #0A84FF;
     --bgColor-attention-muted: #bb800926;
-    --bgColor-default: #1C1B19;
-    --bgColor-muted: #242220;
-    --bgColor-neutral-muted: rgba(237,233,226,0.12);
+    --bgColor-default: #0F1113;
+    --bgColor-muted: #16181B;
+    --bgColor-neutral-muted: rgba(232,236,241,0.12);
     --borderColor-accent-emphasis: #0A84FF;
     --borderColor-attention-emphasis: #9e6a03;
     --borderColor-danger-emphasis: #da3633;
-    --borderColor-default: #3A362F;
+    --borderColor-default: #2D3136;
     --borderColor-done-emphasis: #7D7AFF;
     --borderColor-success-emphasis: #30D158;
     --color-prettylights-syntax-brackethighlighter-angle: #9198a1;
@@ -55,17 +55,17 @@
     --color-prettylights-syntax-variable: #ffa657;
     --fgColor-attention: #FFB340;
     --fgColor-danger: #FF6961;
-    --fgColor-default: #EBE7DF;
+    --fgColor-default: #F2F4F6;
     --fgColor-done: #7D7AFF;
-    --fgColor-muted: rgba(237,233,226,0.60);
+    --fgColor-muted: rgba(232,236,241,0.60);
     --fgColor-success: #30D158;
-    --borderColor-muted: rgba(237,233,226,0.12);
+    --borderColor-muted: rgba(232,236,241,0.12);
     --color-prettylights-syntax-invalid-illegal-bg: var(--bgColor-danger-muted);
     --color-prettylights-syntax-invalid-illegal-text: var(--fgColor-danger);
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
-    --blockquote-border-color: #524E45;
-    --blockquote-bg-color: #242220;
+    --blockquote-border-color: #34383F;
+    --blockquote-bg-color: #16181B;
 }
 
 :root[data-theme="light"] .markdown-body {

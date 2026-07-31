@@ -165,6 +165,7 @@ body{
   --color-grid-tile: #F8F6F1;
   --color-paper-overlay: rgba(255,255,255,0.3);
   --color-stage-paper-overlay: rgba(255,255,255,0);
+  --color-console-paper-overlay: rgba(255,255,255,0.3);
   --color-paper-divider: #A6A59B;
   --color-paper-border: #BBBAB1;
   --color-drag-handle: #d7d7dc;
@@ -335,10 +336,11 @@ body{
   --color-grid-tile:#1B1D20;
   --color-paper-overlay:rgba(18,19,22,0.88);
   --color-stage-paper-overlay:rgba(8,9,11,0.95);
+  --color-console-paper-overlay:rgba(12,13,16,0.93);
   --color-paper-divider:#4A4F56;
   --color-paper-border:#42474E;
   --color-drag-handle:#4A4E55;
-  --color-dc-toggle-face:#23262B;
+  --color-dc-toggle-face:#1C1D20;
   --color-dc-toggle-stroke:#42474E;
   --color-dc-toggle-glyph:#E4E7EB;
 

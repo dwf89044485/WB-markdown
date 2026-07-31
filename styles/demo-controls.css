@@ -80,8 +80,10 @@
   flex-direction:row;
   gap:0;
   padding:20px 20px 20px;
+  /* 控制台专用罩层：暗色下比右栏纸面更深一档（面板是工具不是文档），
+   * 拉手 --color-dc-toggle-face 取同一合成色，与面板连成一体。 */
   background:
-    linear-gradient(var(--color-paper-overlay), var(--color-paper-overlay)),
+    linear-gradient(var(--color-console-paper-overlay), var(--color-console-paper-overlay)),
     url("../assets/paper/texture.png");
   background-repeat:no-repeat, repeat;
   background-attachment:scroll, fixed;

@@ -1115,6 +1115,28 @@
   letter-spacing: 0.01em;
 }
 
+/* 暗色下的强调块：不做白底翻转（白色大色块太突兀），
+ * 改用抬升面 + 强边框表达强调，文字保持中性白。 */
+:root[data-theme="dark"] .fp-principle-summary {
+  background: var(--color-bg-emphasis);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+}
+:root[data-theme="dark"] .fp-compare-card--agent {
+  background: var(--color-bg-emphasis);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+:root[data-theme="dark"] .fp-compare-card--agent .fp-compare-side {
+  border-color: var(--color-border-control);
+}
+:root[data-theme="dark"] .fp-compare-card--agent .fp-compare-field {
+  border-right-color: var(--color-border-control);
+}
+:root[data-theme="dark"] .fp-compare-card--agent .fp-compare-key {
+  color: var(--color-text-muted);
+}
+
 /* 结论引用块 */
 .fp-conclusion-quote {
   border-left: 2px solid var(--color-border-weak);

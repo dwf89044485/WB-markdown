@@ -26,6 +26,7 @@ const state = {
   device: 'phone',
   presetId: 'phone',
   userOrientation: 'portrait',
+  transientOwner: null,
   transientOrientation: null,
   userExpanded: controls?.classList.contains('is-expanded') ?? true,
   autoCollapsed: false,
@@ -35,7 +36,6 @@ let controlsExpandedH = 0;
 let currentGeometry = null;
 let refreshFrame = 0;
 let scheduledAllowAutoCollapse = false;
-let lastTableLandscape = shell?.classList.contains('tbl-landscape') ?? false;
 
 function presetFor(id) {
   const resolvedId = PRESET_ALIASES[id] ?? id;
@@ -161,12 +161,16 @@ function writeLayout(geometry) {
 
   root.classList.toggle('device-pad', state.device === 'pad');
   root.dataset.stageOrientation = geometry.orientation;
+  if (state.transientOwner) {
+    root.dataset.stageTransientOwner = state.transientOwner;
+    root.dataset.stageTransientOrientation = state.transientOrientation;
+  } else {
+    delete root.dataset.stageTransientOwner;
+    delete root.dataset.stageTransientOrientation;
+  }
   phoneButton?.classList.toggle('is-active', state.device === 'phone');
   padButton?.classList.toggle('is-active', state.device === 'pad');
-  shell?.classList.toggle(
-    'phone-landscape',
-    geometry.orientation === 'landscape' && !shell.classList.contains('tbl-landscape'),
-  );
+  shell?.classList.toggle('phone-landscape', geometry.orientation === 'landscape');
 
   controls?.classList.toggle('is-expanded', geometry.controlsExpanded);
   const controlsCollapsed = !geometry.controlsExpanded;
@@ -184,13 +188,10 @@ function writeLayout(geometry) {
 
 export function refresh({ allowAutoCollapse = false, remeasureControls = false } = {}) {
   const measuredControlsH = readControlsExpandedHeight(remeasureControls);
-  const transientOrientation = shell?.classList.contains('tbl-landscape')
-    ? 'landscape'
-    : state.transientOrientation;
   const geometry = computeStageGeometry({
     preset: presetFor(state.presetId),
     userOrientation: state.userOrientation,
-    transientOrientation,
+    transientOrientation: state.transientOrientation,
     viewportW: window.innerWidth,
     viewportH: window.innerHeight,
     toggleH: readToggleHeight(),
@@ -210,6 +211,32 @@ export function refresh({ allowAutoCollapse = false, remeasureControls = false }
   return geometry;
 }
 
+export function enterStageTransient(owner, orientation) {
+  if (typeof owner !== 'string' || !owner) {
+    throw new TypeError('Stage transient owner must be a non-empty string');
+  }
+  if (orientation !== 'portrait' && orientation !== 'landscape') {
+    throw new RangeError(`Unsupported stage transient orientation: ${orientation}`);
+  }
+  if (state.transientOwner === owner && state.transientOrientation === orientation) {
+    return false;
+  }
+
+  state.transientOwner = owner;
+  state.transientOrientation = orientation;
+  refresh({ allowAutoCollapse: true });
+  return true;
+}
+
+export function exitStageTransient(owner) {
+  if (state.transientOwner !== owner) return false;
+
+  state.transientOwner = null;
+  state.transientOrientation = null;
+  refresh({ allowAutoCollapse: true });
+  return true;
+}
+
 export function scheduleRefresh({ allowAutoCollapse = false } = {}) {
   scheduledAllowAutoCollapse ||= allowAutoCollapse;
   if (refreshFrame) return;
@@ -225,7 +252,6 @@ phoneButton?.addEventListener('click', () => {
   state.device = 'phone';
   state.presetId = 'phone';
   state.userOrientation = 'portrait';
-  state.transientOrientation = null;
   refresh({ allowAutoCollapse: true });
 });
 
@@ -233,7 +259,6 @@ padButton?.addEventListener('click', () => {
   state.device = 'pad';
   state.presetId = presetSelect?.value || 'ipad-air-11';
   state.userOrientation = 'landscape';
-  state.transientOrientation = null;
   refresh({ allowAutoCollapse: true });
 });
 
@@ -262,20 +287,5 @@ window.addEventListener('resize', () => scheduleRefresh({ allowAutoCollapse: tru
 window.addEventListener('wb:themechange', () => {
   if (currentGeometry) renderGrid(currentGeometry);
 });
-
-// 阶段三前兼容桥：旧 player 会直接移除 tbl-landscape，不经过 fullscreen shim。
-// 仅在该状态真正变化时刷新；controller 自身切换 phone-landscape 不会形成回路。
-if (shell) {
-  const tableLandscapeObserver = new MutationObserver(() => {
-    const nextTableLandscape = shell.classList.contains('tbl-landscape');
-    if (nextTableLandscape === lastTableLandscape) return;
-    lastTableLandscape = nextTableLandscape;
-    scheduleRefresh();
-  });
-  tableLandscapeObserver.observe(shell, { attributes: true, attributeFilter: ['class'] });
-}
-
-window.buildGrid = () => scheduleRefresh();
-window.fitShellScale = () => scheduleRefresh();
 
 refresh({ allowAutoCollapse: true });

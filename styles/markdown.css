@@ -1,11 +1,9 @@
 /* © Joseph Deng — WorkBuddy 动态原型 · https://github.com/dwf89044485 */
 /* === markdown.css 架构注释 ===
- * 第397行起：表格全屏交互样式
- *   .tbl-fullscreen-overlay — 全屏浮层
- *   .tbl-landscape — 手机壳横屏模式（桌面端 852×393，移动端竖向全屏）
+ * 表格全屏交互样式：
+ *   .tbl-fullscreen-overlay — 桌面舞台内全屏浮层
+ *   .tbl-mobile-portrait / .tbl-mobile-landscape — 移动 viewport 物理方向
  *   .tbl-fs-nav / .tbl-fs-content / .tbl-fs-actions — 全屏导航组件
- *   .phone-shell.tbl-landscape — 桌面端：手机壳变为 852×393，隐藏状态栏/对话流/输入框
- *   html:not(.force-desktop) .phone-shell.tbl-landscape — 移动端：竖向全屏，不旋转
  */
 
 /* ============================================================
@@ -832,6 +830,7 @@
 }
 html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile{
   position:fixed;
+  z-index:1000;
   top:0;
   left:0;
   width:100dvw;
@@ -970,36 +969,4 @@ html:not(.force-desktop) .tbl-fullscreen-overlay.tbl-mobile.tbl-mobile-landscape
 .tbl-mermaid-loading{
   color:var(--md-text-muted);
   font-size:14px;
-}
-/* ── LANDSCAPE (phone shell physically wide) ────────────── */
-/* 手机壳真的变成横屏尺寸：852x393，内容区域跟着变宽 */
-.phone-shell.tbl-landscape{
-  width:var(--layout-shell-h);
-  height:var(--layout-shell-w);
-  flex-shrink:0;
-}
-.phone-shell.tbl-landscape .tbl-fullscreen-overlay{
-  border-radius:0;
-}
-/* 横屏下隐藏所有原本的 UI（顶部状态栏、对话流、底部输入框、上下浮层） */
-.phone-shell.tbl-landscape > .status-bar,
-.phone-shell.tbl-landscape > #conv,
-.phone-shell.tbl-landscape > .conversation,
-.phone-shell.tbl-landscape > .composer,
-.phone-shell.tbl-landscape > .sheet-overlay,
-.phone-shell.tbl-landscape > .phone-controls{
-  display:none;
-}
-/* 横屏时覆盖宽度变量，让左侧容器、分界线、白色遮罩同步扩宽；
-   两侧各加一格（--tbl-grid-cell 由 JS buildGrid 写入，fallback 65px） */
-body:has(.phone-shell.tbl-landscape){
-  --layout-left-area-w:calc(var(--layout-shell-h) + 2 * var(--tbl-grid-cell, 65px));
-}
-/* 横屏时：left-area 改为 grid，
-   第一行撑满剩余高度（手机在其中居中），
-   toggle + 控制面板钉在最底部 */
-.left-area:has(> .phone-shell.tbl-landscape){
-  display:grid;
-  grid-template-rows:1fr auto auto;
-  align-items:center;
 }

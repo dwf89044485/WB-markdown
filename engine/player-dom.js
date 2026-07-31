@@ -242,6 +242,8 @@ export async function showThinkingLoading() {
 
 // ── DOM reset ─────────────────────────────────────────────
 export function resetPlaybackDom() {
+  document.dispatchEvent(new CustomEvent('wb:playback-reset'));
+
   // 清理 preChat 静态元素
   document.querySelectorAll('.prechat-static').forEach(el => el.remove());
 
@@ -256,15 +258,11 @@ export function resetPlaybackDom() {
   const mainBiz = $('#mainBiz');
   const mainActions = $('#mainActions');
   const overlay = $('#overlay');
-  const tblOverlay = $('#tblOverlay');
-  const phoneShell = $('.phone-shell');
 
   state.execOpen = true;
   state.stepsOpen = true;
   state.stepSeq = 0;
   if (overlay) overlay.className = 'sheet-overlay';
-  if (tblOverlay) tblOverlay.classList.remove('is-active', 'tbl-mobile', 'tbl-mobile-portrait', 'tbl-mobile-landscape');
-  if (phoneShell) phoneShell.classList.remove('tbl-landscape');
   if (userBubble) userBubble.textContent = '';
   if (userWrap) userWrap.className = 'user-msg-wrap is-hidden';
   if (agent) agent.className = 'agent-msg is-hidden';

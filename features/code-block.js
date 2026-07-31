@@ -5,12 +5,12 @@
 // 5 种类型：可执行 / 可预览 / 静态 / 可视化 / 表格
 // 快照：复用 engine/markdown.js 的 renderStaticCodeCard
 // 全屏快照：复用 engine/code-fullscreen-sheet.js 的 renderStaticCodeSheet
-//           复用 engine/table-fullscreen.js 的 renderStaticTableFullscreen
+//           复用 engine/table-fullscreen-view.js 的 renderStaticTableFullscreen
 // ============================================================
 
 import { renderStaticCodeCard, renderStaticMermaidCard, markdownToHtml } from '../engine/markdown.js';
 import { renderStaticCodeSheet } from '../engine/code-fullscreen-sheet.js';
-import { renderStaticTableFullscreen } from '../engine/table-fullscreen.js';
+import { renderStaticTableFullscreen } from '../engine/table-fullscreen-view.js';
 
 // ── 样本数据（取自 engine/showcase-codeblock.js 的真实场景）──
 const SAMPLES = {
@@ -257,7 +257,8 @@ export default {
             ${fsLandscapeWrap(renderStaticTableFullscreen({
               title: 'Mermaid',
               bodyHtml: `<div class="tbl-mermaid-fs"><div class="mermaid">${SAMPLES.mermaid}</div></div>`,
-              type: 'mermaid'
+              type: 'mermaid',
+              inlineIcons: window.WORKBUDDY_INLINE_ICONS || {},
             }))}
           </div>
         </div>

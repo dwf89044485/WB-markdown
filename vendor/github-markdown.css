@@ -16,8 +16,8 @@
     color-scheme: dark;
     --fgColor-accent: #0A84FF;
     --bgColor-attention-muted: #bb800926;
-    --bgColor-default: #0F1113;
-    --bgColor-muted: #16181B;
+    --bgColor-default: #16181B;
+    --bgColor-muted: #1C1F23;
     --bgColor-neutral-muted: rgba(232,236,241,0.12);
     --borderColor-accent-emphasis: #0A84FF;
     --borderColor-attention-emphasis: #9e6a03;
@@ -65,7 +65,7 @@
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
     --blockquote-border-color: #34383F;
-    --blockquote-bg-color: #16181B;
+    --blockquote-bg-color: #1C1F23;
 }
 
 :root[data-theme="light"] .markdown-body {

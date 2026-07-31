@@ -422,7 +422,7 @@ body{
  * 不对真实组件做颜色过渡，圆边因此能像素级切开同一图标、文字或 SVG。 */
 @keyframes wb-theme-reveal{
   from{clip-path:circle(0px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
-  to{clip-path:circle(var(--wb-theme-reveal-radius) at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
+  to{clip-path:circle(50px at var(--wb-theme-reveal-x) var(--wb-theme-reveal-y));}
 }
 
 /* 揭示期间真实页面必须已是完整新主题；唯一允许运动的是根新快照的圆形裁剪。 */

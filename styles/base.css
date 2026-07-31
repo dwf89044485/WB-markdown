@@ -369,17 +369,17 @@ body{
   --shadow-nav-glass:0 5px 20px rgba(0,0,0,0.28), inset 0 1px 0 var(--color-glass-shadow-inner-top), inset 0 -1px 0 var(--color-glass-shadow-inner-bottom);
 
   --color-glass-border:rgba(255,255,255,0.10);
-  --color-glass-border-top:rgba(255,255,255,0.13);
+  --color-glass-border-top:rgba(255,255,255,0.10);
   --color-glass-border-left:rgba(255,255,255,0.10);
-  --color-glass-border-right:rgba(255,255,255,0.06);
-  --color-glass-shadow-inner-top:rgba(255,255,255,0.07);
-  --color-glass-shadow-inner-bottom:rgba(0,0,0,0.2);
-  --color-glass-layer1-top:rgba(255,255,255,0.05);
-  --color-glass-layer1-bottom:rgba(255,255,255,0.02);
-  --color-glass-layer2-glow:rgba(255,255,255,0.06);
-  --color-glass-layer2-accent:rgba(255,255,255,0.03);
-  --color-glass-layer3-highlight:rgba(255,255,255,0.06);
-  --color-glass-layer3-shadow:rgba(0,0,0,0.12);
+  --color-glass-border-right:rgba(255,255,255,0.10);
+  --color-glass-shadow-inner-top:rgba(255,255,255,0);
+  --color-glass-shadow-inner-bottom:rgba(0,0,0,0);
+  --color-glass-layer1-top:rgba(255,255,255,0);
+  --color-glass-layer1-bottom:rgba(255,255,255,0);
+  --color-glass-layer2-glow:rgba(255,255,255,0);
+  --color-glass-layer2-accent:rgba(255,255,255,0);
+  --color-glass-layer3-highlight:rgba(255,255,255,0);
+  --color-glass-layer3-shadow:rgba(0,0,0,0);
 
   --mermaid-background:#1C1F23;
   --mermaid-primary-color:#232C40;

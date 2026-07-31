@@ -12,19 +12,19 @@
   --fgColor-accent: Highlight;
 }
 :root[data-theme="dark"] .markdown-body {
-    /* dark */
+    /* dark — 暖纸墨体系（与 base.css 暗色 token 同色温） */
     color-scheme: dark;
-    --fgColor-accent: #4493f8;
+    --fgColor-accent: #0A84FF;
     --bgColor-attention-muted: #bb800926;
-    --bgColor-default: #0d1117;
-    --bgColor-muted: #151b23;
-    --bgColor-neutral-muted: #656c7633;
-    --borderColor-accent-emphasis: #1f6feb;
+    --bgColor-default: #1C1B19;
+    --bgColor-muted: #242220;
+    --bgColor-neutral-muted: rgba(237,233,226,0.12);
+    --borderColor-accent-emphasis: #0A84FF;
     --borderColor-attention-emphasis: #9e6a03;
     --borderColor-danger-emphasis: #da3633;
-    --borderColor-default: #3d444d;
-    --borderColor-done-emphasis: #8957e5;
-    --borderColor-success-emphasis: #238636;
+    --borderColor-default: #3A362F;
+    --borderColor-done-emphasis: #7D7AFF;
+    --borderColor-success-emphasis: #30D158;
     --color-prettylights-syntax-brackethighlighter-angle: #9198a1;
     --color-prettylights-syntax-brackethighlighter-unmatched: #f85149;
     --color-prettylights-syntax-carriage-return-bg: #b62324;
@@ -53,19 +53,19 @@
     --color-prettylights-syntax-string-regexp: #7ee787;
     --color-prettylights-syntax-sublimelinter-gutter-mark: #3d444d;
     --color-prettylights-syntax-variable: #ffa657;
-    --fgColor-attention: #d29922;
-    --fgColor-danger: #f85149;
-    --fgColor-default: #f0f6fc;
-    --fgColor-done: #ab7df8;
-    --fgColor-muted: #9198a1;
-    --fgColor-success: #3fb950;
-    --borderColor-muted: #3d444db3;
+    --fgColor-attention: #FFB340;
+    --fgColor-danger: #FF6961;
+    --fgColor-default: #EBE7DF;
+    --fgColor-done: #7D7AFF;
+    --fgColor-muted: rgba(237,233,226,0.60);
+    --fgColor-success: #30D158;
+    --borderColor-muted: rgba(237,233,226,0.12);
     --color-prettylights-syntax-invalid-illegal-bg: var(--bgColor-danger-muted);
     --color-prettylights-syntax-invalid-illegal-text: var(--fgColor-danger);
     --focus-outlineColor: var(--borderColor-accent-emphasis);
     --borderColor-neutral-muted: var(--borderColor-muted);
-    --blockquote-border-color: #5B5953;
-    --blockquote-bg-color: #1C1E22;
+    --blockquote-border-color: #524E45;
+    --blockquote-bg-color: #242220;
 }
 
 :root[data-theme="light"] .markdown-body {

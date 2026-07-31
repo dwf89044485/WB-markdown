@@ -54,7 +54,8 @@
 /* ── BOTTOM SHEET ────────────────────────────────────────── */
 .bottom-sheet{
   position:relative;
-  background:var(--color-bg-canvas);
+  /* Apple base/elevated 模型：浮层比底下亮。亮值=canvas（与改造前一致），暗值=elevated。 */
+  background:var(--color-bg-sheet);
   width:100%;
   height:50%;
   border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;

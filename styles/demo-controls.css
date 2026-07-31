@@ -65,7 +65,7 @@
   line-height:0;
   flex-shrink:0;
 }
-.dc-toggle img{ display:none; }
+.dc-toggle img, .dc-toggle svg{ display:none; }
 .dc-toggle:not(.is-collapsed) .dc-toggle-open{ display:block; }
 .dc-toggle.is-collapsed .dc-toggle-close{ display:block; }
 

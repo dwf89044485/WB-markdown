@@ -187,6 +187,17 @@
 .cp-send-btn svg{ width:40px; height:40px; display:block; }
 .cp-stop-btn{ color:var(--color-text-on-emphasis); }
 
+/* 内联化工具图标（原 <img> 黑 SVG，暗底隐形）：亮色保持烤死的纯黑观感，
+ * 暗色跟随 text-primary 暖白。currentColor 由按钮颜色决定。 */
+.cp-voice-btn,
+.cp-expand-handle,
+.cp-fs-collapse,
+.cp-wb-more-btn{ color:#000; }
+:root[data-theme="dark"] .cp-voice-btn,
+:root[data-theme="dark"] .cp-expand-handle,
+:root[data-theme="dark"] .cp-fs-collapse,
+:root[data-theme="dark"] .cp-wb-more-btn{ color:var(--color-text-primary); }
+
 /* 停止圆点：全局统一 40×40（与发送圆、设计稿一致）。 */
 .composer-stop-circle{
   width:40px;height:40px;border-radius:50%;
@@ -283,11 +294,13 @@
  * ============================================================ */
 
 /* 全屏蒙层：默认透明无交互；全屏态时压暗下方 navbar/对话区。
- * z-index 高于 navbar(50)、低于全屏 composer。 */
+ * z-index 高于 navbar(50)、低于全屏 composer。
+ * 背景用 --color-overlay：亮色 rgba(0,0,0,0.3) 与原“黑底+opacity.3”等效，
+ * 暗色取 rgba(0,0,0,0.58) 正确压暗（原先暗色下 text-strong 近白导致“漂白”）。 */
 .cp-fs-backdrop{
   position:fixed;
   inset:0;
-  background:var(--color-text-strong);
+  background:var(--color-overlay);
   opacity:0;
   pointer-events:none;
   z-index:60;
@@ -295,7 +308,7 @@
 }
 /* 全屏态 class 由 composer.js toggle 到 .composer 上（不用 :has()，兼容 iOS 13.4+）。 */
 .composer.cp-is-fullscreen .cp-fs-backdrop{
-  opacity:0.3;
+  opacity:1;
 }
 /* 全屏态把整个 composer 提到 navbar 之上，确保 shell 盖住 navbar。
  * 同时脱离 phone-shell 的 flex 流撑满整列（status-bar+对话区+composer），
